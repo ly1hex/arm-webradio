@@ -1,0 +1,165 @@
+Important
+---------
+  SFH5110 is not pin compatible with TSOP17.
+  See sfh5110-tsop17.jpg and sfh5110-conn.jpg
+
+
+Known issues
+------------
+  * Main PCB: RJ45 Traffic LED not working.
+
+
+BOM
+---
+  Part-----Device---------Package
+  ARM      LMI LM3S6950   LQFP100
+  ARM_C1   27pF           C0603
+  ARM_C2   27pF           C0603
+  ARM_C3   22pF           C0603
+  ARM_C4   22pF           C0603
+  ARM_C5   100nF          C0603
+  ARM_C6   100nF          C0603
+  ARM_C7   100nF          C0603
+  ARM_C8   100nF          C0603
+  ARM_C9   100nF          C0603
+  ARM_C10  100nF          C0603
+  ARM_C11  100nF          C0603
+  ARM_C12  100nF          C0603
+  ARM_Q1   8MHz           HC49UP
+  ARM_Q2   25MHz          HC49UP
+  ARM_R1   10k            R0603
+  ARM_R2   10k            R0603
+  ARM_R3   10k            R0603
+  C1       22uF 63V       CPOL-153CLV-0810
+  C2       100nF          C0603
+  C3       100nF          C0603
+  C4       100uF          CPOL-153CLV-0810
+  C5       2uF            C0603
+  C6       2uF            C0603
+  C7       10nF           C0603
+  C8       2uF            C0603
+  C9       2uF            C0603
+  C10      2uF            C0603
+  C11      10nF           C0603
+  C12      2uF            C0603
+  C13      2uF            C0603
+  C14      10nF           C0603
+  C15      2uF            C0603
+  D1       Schottky 90V   DO214AA
+  EXP                     MA17-2
+  EXP_C1   100nF          C0603
+  EXP_C2   100nF          C0603
+  FM       Ramtron FM25x  SO8 (optional)
+  FM_C1    100nF          C0603
+  FM_R1    47k            R0603
+  FUSE     1A             R1206
+  JTAG                    MA10-2
+  L1       100uH          L-PIS4728
+  L2       10uH           L3216C
+  OUT      3.5mm          1503_09
+  POE      TPS2375D       SO8
+  POE_CLA  4k7 (4k4)      R0603
+  POE_D1   SMAJ58A        DO214AA
+  POE_DET  24k (25k)      R0603
+  POE_ILM  100k           R0603
+  RJ       RJ45-POE       Wuerth WE-7499211121
+  RJ_C1    100nF          C0603
+  RJ_C2    10pF           C0603
+  RJ_C3    10nF           C0603
+  RJ_C4    10pF           C0603
+  RJ_C5    10pF           C0603
+  RJ_C6    100nF          C0603
+  RJ_C7    10pF           C0603
+  RJ_R1    50             R0603
+  RJ_R2    50             R0603
+  RJ_R3    50             R0603
+  RJ_R4    50             R0603
+  RJ_R5    220            R0603
+  RJ_R6    220            R0603
+  SD       microSD        Molex microSD 492250821
+  SD_C1    100nF          C0603
+  SD_C2    2uF            C0603
+  SD_C3    4uF            C0805
+  SD_Q1    P-CHN          SOT23
+  SD_R1    1k             R0603
+  SD_R2    47k            R0603
+  SD_R3    47k            R0603
+  SD_R4    47k            R0603
+  SD_R5    47k            R0603
+  U1       MAX5035BUSA    SO8
+  U2       LP2985-3V3     SOT23-5
+  U3       LP2985-2V8     SOT23-5
+  U4       LP2985-1V8     SOT23-5
+  USB      USB-A          USB-A-S
+  USB_C1   1uF            C0603
+  USB_C2   10nF           C0603
+  USB_C3   100nF          C0603
+  USB_C4   4uF            C1206
+  USB_L1   10uH           L4532M
+  USB_Q1   P-CHN          SOT23
+  USB_R1   47k            R0603
+  USB_R2   4,7k           R0603
+  VS       VLSI VS1053    LQFP-48
+  VS_C1    27pF           C0603
+  VS_C2    27pF           C0603
+  VS_C3    10nF           C0603
+  VS_C4    10nF           C0603
+  VS_C5    47nF           C0603
+  VS_C6    1uF            C0603
+  VS_C7    100nF          C0603
+  VS_C8    100nF          C0603
+  VS_C9    100nF          C0603
+  VS_C10   100nF          C0603
+  VS_C11   100nF          C0603
+  VS_C12   100nF          C0603
+  VS_C13   100nF          C0603
+  VS_C14   100nF          C0603
+  VS_CL    10uF           C1812
+  VS_CL2   3.3nF          C0603
+  VS_CR    10uF           C1812
+  VS_CR2   3.3nF          C0603
+  VS_GBUF  0              R0603 (Line-Out for Headphones)
+  VS_GND   0              R0603 (Normal Line-Out)
+  VS_Q1    12.288MHz      HC49UP
+  VS_R1    1M             R0603
+  VS_R2    47k            R0603
+  VS_R3    22             R0603
+  VS_R4    22             R0603
+  VS_R5    10             R0603
+  VS_R6    10k            R0603
+  VS_R7    10k            R0603
+  VS_RL    470            R0603
+  VS_RR    470            R0603
+
+
+BOM (Exp)
+---
+  Part-----Device---------Package
+  EXP                     FE17-2_SMD
+  EXP_C1   100nF          C0603
+  EXP_C2   100nF          C0603
+  IR       TSOP17         TSOP17
+  IR_C1    2uF            C0603
+  IR_C2    100nF          C0603
+  IR_R1    1k             R0603
+  IR_R2    50             R0603
+  LCD      S65+Connector  S65-LCD
+  LCD_C1   100nF          C0603
+  LCD_C2   100nF          C0603
+  LCD_C3   100nF          C0603
+  LCD_C4   100nF          C0805
+  LCD_C5   2uF            C0805
+  LCD_D1   Schottky       DO214AA
+  LCD_L1   1mH            WE-PD3-S
+  LCD_Q1   NPN            SOT23
+  LCD_R1   47k            R0603
+  LCD_R2   47k            R0603
+  LCD_R3   4k7            R0603
+  LCD_R4   47k            R0603
+  SW       EC12E          Bourns PEC12 or Alps EC12
+  SW_C1    3.3nF          C0603
+  SW_C2    3.3nF          C0603
+  SW_C3    10nF           C0603
+  SW_R1    1k             R0603
+  SW_R2    1k             R0603
+  SW_R3    1k             R0603
