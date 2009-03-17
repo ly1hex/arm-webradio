@@ -1,0 +1,31 @@
+|| *Hardware* ||
+|| S65-Display                           || working (LPH88, LS020) ||
+|| Rotary Encoder                        || working (2 and 4 step encoder) ||
+|| IR Receiver                           || working ||
+|| SD-Card                               || working ||
+|| VS1033/VS1053                         || working ||
+|| F-RAM (currently not needed)          || - ||
+
+|| *Ethernet Stack* ||
+|| Protocols                             || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
+|| DHCP Client                           || working ||
+|| DNS Client                            || - ||
+|| NTP Client                            || working ||
+|| HTTP Server                           || working ||
+|| UPnP Device                           || working ||
+
+|| *FAT Stack* ||
+|| ChaN's FatFs                          || working ||
+
+|| *Functions* ||
+|| Play Shoutcast/Icecast streams        || working ||
+|| Play RTSP streams                     || - ||
+|| Play from SMB/CIFS Shares             || - ||
+|| Play from Memory Card                 || working ||
+|| Load Settings from Memory Card        || working ||
+|| Change Settings via Menu              || - ||
+|| Change Settings via HTTP              || - ||
+|| Control via HTTP                      || - ||
+|| Control via UPnP                      || Volume control works ||
+|| Alarm Clock                           || working ||
+|| Bootloader                            || - ||
