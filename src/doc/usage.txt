@@ -1,0 +1,13 @@
+Rotary encoder
+--------------
+  Left/right   - Scroll up/down
+  Normal press - Select/Enter
+  Long press   - Back/Abort
+
+
+IR remote control
+-----------------
+  2x Power     - Standby on/off
+  Volume +/-   - Volume control and in menu scroll page up/down
+  Up/down      - Scroll up/down
+  OK           - Select/Enter
