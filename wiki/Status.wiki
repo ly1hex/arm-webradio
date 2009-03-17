@@ -5,7 +5,6 @@
 || SD-Card                               || working ||
 || VS1033/VS1053                         || working ||
 || F-RAM (currently not needed)          || - ||
-
 || *Ethernet Stack* ||
 || Protocols                             || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
 || DHCP Client                           || working ||
@@ -13,10 +12,8 @@
 || NTP Client                            || working ||
 || HTTP Server                           || working ||
 || UPnP Device                           || working ||
-
 || *FAT Stack* ||
 || ChaN's FatFs                          || working ||
-
 || *Functions* ||
 || Play Shoutcast/Icecast streams        || working ||
 || Play RTSP streams                     || - ||
