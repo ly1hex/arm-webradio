@@ -377,7 +377,11 @@ unsigned int standby(unsigned int param)
       }
     }
 
-    if(alarm || keys_sw() || (ir_cmd() == SW_POWER))
+    if(alarm)
+    {
+      break;
+    }
+    else if(keys_sw() || (ir_cmd() == SW_POWER))
     {
       if((time.h >= 19) || (time.h <= 4))
       {
@@ -399,12 +403,12 @@ unsigned int standby(unsigned int param)
       {
         lcd_puts(20, 20, "Good Morning !", NORMALFONT, RGB(255,255,255), RGB(0,0,0));
       }
+      delay_ms(1000);
       break;
     }
   }
 
   fs_mount();
-  settings_read();
 
   cpu_speed(0); //high speed
 
@@ -434,11 +438,11 @@ int main()
     SysCtlResetCauseClear(r);
   }
 
-  //init brown-out reset
-  init_bor(1);
-
   //init pins and peripherals
   init_pins();
+
+  //init brown-out reset
+  init_bor(1);
 
   //init fault ints
 #if defined(DEBUG)
@@ -485,7 +489,11 @@ int main()
   # warning "LCD not defined"
   #endif
   DEBUGOUT("---\n");
-  DEBUGOUT(APPNAME" v"APPVERSION" ("__DATE__")\n");
+#if defined(APPRELEASE)
+  DEBUGOUT(APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
+#else
+  DEBUGOUT(APPNAME" v"APPVERSION"* ("__DATE__" "__TIME__")\n");
+#endif
   DEBUGOUT("Hardware: "LM3S_NAME"@%iMHz, "LCD_NAME")\n", SysCtlClockGet()/1000000);
 
   //init lcd
@@ -493,54 +501,60 @@ int main()
 
   //show start-up screen
   lcd_clear(RGB(0,0,0));
-  lcd_rect( 0,   0, LCD_WIDTH-1, 18, DEFAULT_FGCOLOR);
+  lcd_rect( 0,   0, LCD_WIDTH-1, 13, DEFAULT_EDGECOLOR);
+#if defined(APPRELEASE)
+  lcd_puts(30,   3, APPNAME" v"APPVERSION, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+#else
+  lcd_puts(30,   3, APPNAME" v"APPVERSION"*", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+#endif
   lcd_rect( 0, 118, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
-  lcd_puts(30,   5, APPNAME" v"APPVERSION, NORMALFONT, DEFAULT_BGCOLOR, DEFAULT_FGCOLOR);
-  lcd_puts(20, 120, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_puts(10,  30, "Hardware:", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(15,  40, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(20, 121, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_puts(10,  20, __DATE__" "__TIME__, SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  35, "Hardware:", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(15,  45, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
   if(r)
   {
-    i = lcd_puts(10,  55, "Reset: ", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+    i = lcd_puts(10,  60, "Reset: ", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
     if(r & SYSCTL_CAUSE_LDO)
     {
-      i = lcd_puts(i, 55, "LDO", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "LDO", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_SW)
     {
-      i = lcd_puts(i, 55, "SW", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "SW", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_WDOG)
     {
-      i = lcd_puts(i, 55, "WD", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "WD", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_BOR)
     {
-      i = lcd_puts(i, 55, "BOR", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "BOR", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_POR)
     {
-      i = lcd_puts(i, 55, "POR", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "POR", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_EXT)
     {
-      i = lcd_puts(i, 55, "EXT", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "EXT", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
     }
   }
 
   //init mmc & mount filesystem
-  lcd_puts(10,  75, "Init Memory Card...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  80, "Init Memory Card...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
   fs_mount();
 
   //init ethernet
-  lcd_puts(10,  85, "Init Ethernet...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  90, "Init Ethernet...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
   eth_init();
 
   //load settings
-  lcd_puts(10,  95, "Load Settings...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10, 100, "Load Settings...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
   settings_read();
 
   //set clock
+  menu_popup("NTP: Get Time...");
 #if defined(DEBUG)
   settime(0);
 #else
@@ -548,6 +562,7 @@ int main()
 #endif
 
   //advertise UPnP device
+  menu_popup("SSDP: Advertise...");
   ssdp_advertise();
 
   //cpu high speed
