@@ -140,8 +140,6 @@ unsigned int dhcp_getcfg(void)
 
   udp_close(index);
 
-  menu_update(1);
-
   if(dhcp_status == DHCP_ACK) //DHCP request sucessful
   {
     eth_setip(dhcp_ip);
