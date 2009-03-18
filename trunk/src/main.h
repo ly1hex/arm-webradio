@@ -16,6 +16,7 @@
 
 #define APPNAME                        "WebRadio" //max 15 characters
 #define APPVERSION                     "0.01"
+//#define APPRELEASE                     //Release version
 
 //Max characters
 #define MAX_NAME                       (32)  // 31 chars + zero (min 32)  "Test Station"
