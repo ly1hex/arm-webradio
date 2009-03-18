@@ -80,8 +80,8 @@ BOM
   SD_C1    100nF          C0603
   SD_C2    2uF            C0603
   SD_C3    4uF            C0805
-  SD_Q1    P-CHN          SOT23
-  SD_R1    1k             R0603
+  SD_Q1    P-CHN*         SOT23
+  SD_R1    47k            R0603
   SD_R2    47k            R0603
   SD_R3    47k            R0603
   SD_R4    47k            R0603
