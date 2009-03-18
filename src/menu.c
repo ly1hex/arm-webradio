@@ -10,6 +10,7 @@
 #include "io.h"
 #include "lcd/img.h"
 #include "lcd.h"
+#include "mmc.h"
 #include "station.h"
 #include "share.h"
 #include "card.h"
@@ -48,7 +49,7 @@ unsigned int bgcolor=0, fgcolor=0, selcolor=0, edgecolor=0;
 
 unsigned int menu_openfile(char *file)
 {
-  unsigned int r=0;
+  unsigned int r=0, nr;
 
   if(file[0])
   {
@@ -59,24 +60,17 @@ unsigned int menu_openfile(char *file)
 
     if(isdigit(file[0])) //station number
     {
-      menu_sub   = SUB_STATION;
-      menu_items = 1;
-      menu_first = 0;
-      menu_last  = 0;
-      menu_sel   = atoi(file);
+      nr       = atoi(file);
+      menu_sub = SUB_STATION;
       mainmenu[menu_sub].init();
-      if(station_open(menu_sel) == STATION_OPENED)
+      if(station_open(nr) == STATION_OPENED)
       {
         r = 1;
       }
     }
     else //path to card file
     {
-      menu_sub   = SUB_CARD;
-      menu_items = 1;
-      menu_first = 0;
-      menu_last  = 0;
-      menu_sel   = 0;
+      menu_sub = SUB_CARD;
       if(file != gbuf.card.file)
       {
         mainmenu[menu_sub].init();
@@ -86,7 +80,10 @@ unsigned int menu_openfile(char *file)
         r = 1;
       }
     }
-
+    menu_items = 1;
+    menu_first = 0;
+    menu_last  = 0;
+    menu_sel   = 0;
     menu_update(1);
   }
 
@@ -112,16 +109,13 @@ unsigned int menu_sw(void)
         {
           mainmenu[menu_sub].close();
         }
-        menu_mode    = MODE_SUB;
+        menu_mode = MODE_SUB;
         if(menu_last == 0)
         {
           menu_items   = mainmenu[menu_sub].items();
           menu_first   = menu_sel;
-          menu_last    = menu_sel+(MENU_LINES-1);
-          if(menu_last >= menu_items)
-          {
-            menu_last = menu_items-1;
-          }
+          menu_last    = (menu_items >= MENU_LINES)?(MENU_LINES-1):(menu_items-1);
+          menu_sel     = 0;
         }
       }
       break;
@@ -142,10 +136,9 @@ unsigned int menu_sw(void)
       }
       else
       {
-        if(mainmenu[menu_sel].open)
+        if(mainmenu[menu_sel].open) //open and stay in main mode
         {
           mainmenu[menu_sel].open(0);
-          //stay in main mode
           menu_lastsel = (menu_sel==(MAINITEMS-1))?0:(menu_sel+1);
         }
         else //back
