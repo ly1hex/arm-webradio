@@ -5,7 +5,7 @@
 //----- DEFINES -----
 #define STATION_FILE                   "STATION.PLS"
 
-#define STATION_TIMEOUT                (10) //s (play->buffer->play)
+#define STATION_TIMEOUT                (12) //s (play->buffer->play)
 #define STATION_TRY                    (4)  //x times
 
 #define STATION_BUFMIN                 (VS_BUFSIZE*10UL/100UL) //10% go into buffer mode
@@ -24,7 +24,7 @@ unsigned int                           station_open(unsigned int item);
 void                                   station_service(void);
 void                                   station_closeitem(void);
 unsigned int                           station_openitem(unsigned int item);
-void                                   station_getitemaddr(unsigned int item, char *addr);
+unsigned int                           station_getitemaddr(unsigned int item, char *addr);
 void                                   station_getitem(unsigned int item, char *name);
 unsigned int                           station_items(void);
 void                                   station_init(void);

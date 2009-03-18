@@ -50,26 +50,24 @@ unsigned int station_open(unsigned int item)
   unsigned int port;
   char url[MAX_URL];
 
-  if(item == 0)
+  if(station_getitemaddr(item, gbuf.station.addr) == 0)
   {
-    return;
+    return STATION_CLOSED;
   }
+
+  station_getitem(item, gbuf.menu.info);
+
+  menu_setinfo(MENU_STATE_STOP, "");
+  menu_popup("Open Station...");
+  DEBUGOUT("Station: %i %s\n", station_try, gbuf.station.addr);
+
+  vs_start();
 
   station_item    = item;
   station_status  = STATION_OPEN;
   station_timeout = getontime()+STATION_TIMEOUT;
 
-  vs_start();
-
-  station_getitem(item, gbuf.menu.info);
-  menu_setinfo(MENU_STATE_STOP, "");
-
-  station_getitemaddr(item, gbuf.station.addr);
   atoaddr(gbuf.station.addr, proto, 0, 0, &ip, &port, url);
-
-  menu_popup("Open Station...");
-  DEBUGOUT("Station: %i %s\n", station_try, gbuf.station.addr);
-
   if(strcmp(proto, "http") == 0)
   {
     r = shoutcast_open(ip, port, url);
@@ -198,21 +196,22 @@ unsigned int station_openitem(unsigned int item)
 }
 
 
-void station_getitemaddr(unsigned int item, char *addr)
+unsigned int station_getitemaddr(unsigned int item, char *addr)
 {
   char entry[16];
 
-  if(item == 0) //back
-  {
-    strcpy(addr, "");
-  }
-  else
+  *addr = 0;
+
+  if(item)
   {
     sprintf(entry, "FILE%i", item);
-    ini_getentry(STATION_FILE, entry, addr, MAX_ADDR-1);
+    if(ini_getentry(STATION_FILE, entry, addr, MAX_ADDR-1))
+    {
+      return 1;
+    }
   }
 
-  return;
+  return 0;
 }
 
 
