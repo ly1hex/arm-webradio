@@ -13,7 +13,7 @@
 || HTTP Server                           || working ||
 || UPnP Device                           || working ||
 || *FAT Stack* ||
-|| ChaN's FatFs                          || working ||
+|| ELM ChaN FatFs                        || working ||
 || *Functions* ||
 || Play Shoutcast/Icecast streams        || working ||
 || Play RTSP streams                     || - ||
