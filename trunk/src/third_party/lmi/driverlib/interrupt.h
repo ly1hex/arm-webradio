@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -52,8 +52,8 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void IntMasterEnable(void);
-extern void IntMasterDisable(void);
+extern tBoolean IntMasterEnable(void);
+extern tBoolean IntMasterDisable(void);
 extern void IntRegister(unsigned long ulInterrupt, void (*pfnHandler)(void));
 extern void IntUnregister(unsigned long ulInterrupt);
 extern void IntPriorityGroupingSet(unsigned long ulBits);

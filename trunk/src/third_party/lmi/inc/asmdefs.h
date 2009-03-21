@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Firmware Development Package.
+// This is part of revision 4201 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -63,7 +63,6 @@
 #define __THUMB_LABEL__         .thumb_func
 #define __WORD__                .word
 #define __INLINE_DATA__
-#define __INLINE_DATA_END__
 
 #endif // codered
 
@@ -92,10 +91,9 @@
 #define __IMPORT__              import
 #define __LABEL__
 #define __STR__                 dcb
-#define __THUMB_LABEL__
+#define __THUMB_LABEL__         thumb
 #define __WORD__                dcd
 #define __INLINE_DATA__         data
-#define __INLINE_DATA_END__     thumb
 
 #endif // ewarm
 
@@ -134,7 +132,6 @@
 #define __THUMB_LABEL__         .thumb_func
 #define __WORD__                .word
 #define __INLINE_DATA__
-#define __INLINE_DATA_END__
 
 #endif // gcc
 
@@ -174,7 +171,6 @@
 #define __THUMB_LABEL__
 #define __WORD__                dcd
 #define __INLINE_DATA__
-#define __INLINE_DATA_END__
 
 #endif // rvmdk
 
@@ -213,7 +209,6 @@
 #define __THUMB_LABEL__         .thumb_func
 #define __WORD__                .word
 #define __INLINE_DATA__
-#define __INLINE_DATA_END__
 
 #endif // sourcerygxx
 

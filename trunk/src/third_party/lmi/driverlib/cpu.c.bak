@@ -22,7 +22,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -43,7 +43,7 @@ CPUcpsid(void)
     //
     // Read PRIMASK and disable interrupts.
     //
-    __asm("    mrs     %0, PRIMASK\n"
+    __asm("    mrs     %0, primask\n"
           "    cpsid   i\n"
           "    bx      lr\n"
           : "=r" (ulRet));
@@ -104,7 +104,7 @@ CPUcpsie(void)
     //
     // Read PRIMASK and enable interrupts.
     //
-    __asm("    mrs     %0, PRIMASK\n"
+    __asm("    mrs     %0, primask\n"
           "    cpsie   i\n"
           "    bx      lr\n"
           : "=r" (ulRet));

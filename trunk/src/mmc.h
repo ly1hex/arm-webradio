@@ -31,6 +31,7 @@ unsigned int                           fs_isdir(char *path, unsigned int item);
 void                                   fs_getitemtag(char *path, unsigned int item, char *name);
 void                                   fs_getitem(char *path, unsigned int item, char *name);
 unsigned int                           fs_items(char *path);
+unsigned int                           fs_checkitem(FILINFO *finfo);
 void                                   fs_unmount(void);
 void                                   fs_mount(void);
 

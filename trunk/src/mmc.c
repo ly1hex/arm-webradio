@@ -633,15 +633,18 @@ unsigned int fs_isdir(char *path, unsigned int item)
   {
     while((f_readdir(&dir, &finfo) == FR_OK) && finfo.fname[0])
     {
-      if(item == i)
+      if(fs_checkitem(&finfo))
       {
-        if(finfo.fattrib & AM_DIR)
+        if(item == i)
         {
-          return 1;
+          if(finfo.fattrib & AM_DIR)
+          {
+            return 1;
+          }
+          break;
         }
-        break;
+        i++;
       }
-      i++;
     }
   }
 
@@ -717,22 +720,25 @@ void fs_getitem(char *path, unsigned int item, char *name)
   {
     while((f_readdir(&dir, &finfo) == FR_OK) && finfo.fname[0])
     {
-      if(item == i)
+      if(fs_checkitem(&finfo))
       {
-        if(finfo.fattrib & AM_DIR)
+        if(item == i)
         {
-          *name = '/';
-          strncpy(name+1, finfo.fname, MAX_NAME-1-1);
-          name[MAX_NAME-1] = 0;
+          if(finfo.fattrib & AM_DIR)
+          {
+            *name = '/';
+            strncpy(name+1, finfo.fname, MAX_NAME-1-1);
+            name[MAX_NAME-1] = 0;
+          }
+          else
+          {
+            strncpy(name, finfo.fname, MAX_NAME-1);
+            name[MAX_NAME-1] = 0;
+          }
+          break;
         }
-        else
-        {
-          strncpy(name, finfo.fname, MAX_NAME-1);
-          name[MAX_NAME-1] = 0;
-        }
-        break;
+        i++;
       }
-      i++;
     }
   }
 
@@ -755,11 +761,50 @@ unsigned int fs_items(char *path)
   {
     while((f_readdir(&dir, &finfo) == FR_OK) && finfo.fname[0])
     {
-      i++;
+      if(fs_checkitem(&finfo))
+      {
+        i++;
+      }
     }
   }
 
   return i;
+}
+
+
+unsigned int fs_checkitem(FILINFO *finfo)
+{
+  unsigned int len;
+  char c1, c2, c3;
+
+  if(!(finfo->fattrib & (AM_HID|AM_SYS))) //no system and hidden files
+  {
+    if(finfo->fattrib & AM_DIR) //directory
+    {
+      return 1;
+    }
+    else //file
+    {
+      len = strlen(finfo->fname);
+      c1 = toupper(finfo->fname[len-3]);
+      c2 = toupper(finfo->fname[len-2]);
+      c3 = toupper(finfo->fname[len-1]);
+
+      if(finfo->fname[len-4] == '.')
+      {
+        if(((c1 == 'A') && (c2 == 'A') && (c3 == 'C')) || //AAC
+           ((c1 == 'M') && (c2 == 'P') && (c3 == '3')) || //MP3
+           ((c1 == 'O') && (c2 == 'G') && (c3 == 'G')) || //OGG
+           ((c1 == 'W') && (c2 == 'M') && (c3 == 'A')))   //WMA
+
+        {
+          return 1;
+        }
+      }
+    }
+  }
+
+  return 0;
 }
 
 

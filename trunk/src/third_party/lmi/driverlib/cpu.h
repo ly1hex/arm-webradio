@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -44,8 +44,8 @@ extern "C"
 // Prototypes.
 //
 //*****************************************************************************
-extern void CPUcpsid(void);
-extern void CPUcpsie(void);
+extern unsigned long CPUcpsid(void);
+extern unsigned long CPUcpsie(void);
 extern void CPUwfi(void);
 
 //*****************************************************************************

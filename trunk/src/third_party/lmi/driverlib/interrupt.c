@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -127,13 +127,13 @@ void (*g_pfnRAMVectors[NUM_INTERRUPTS])(void);
 //! called or \b false if they were initially enabled.
 //
 //*****************************************************************************
-void
+tBoolean
 IntMasterEnable(void)
 {
     //
     // Enable processor interrupts.
     //
-    CPUcpsie();
+    return(CPUcpsie());
 }
 
 //*****************************************************************************
@@ -154,13 +154,13 @@ IntMasterEnable(void)
 //! function was called or \b false if they were initially enabled.
 //
 //*****************************************************************************
-void
+tBoolean
 IntMasterDisable(void)
 {
     //
     // Disable processor interrupts.
     //
-    CPUcpsid();
+    return(CPUcpsid());
 }
 
 //*****************************************************************************
