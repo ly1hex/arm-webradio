@@ -22,7 +22,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -35,33 +35,55 @@
 //
 //*****************************************************************************
 #if defined(codered) || defined(gcc) || defined(sourcerygxx)
-void __attribute__((naked))
+unsigned long __attribute__((naked))
 CPUcpsid(void)
 {
+    unsigned long ulRet;
+
     //
-    // Disable interrupts.
+    // Read PRIMASK and disable interrupts.
     //
-    __asm("    cpsid   i\n"
-          "    bx      lr\n");
+    __asm("    mrs     %0, primask\n" //PRIMASK
+          "    cpsid   i\n"
+          "    bx      lr\n"
+          : "=r" (ulRet));
+
+    //
+    // The return is handled in the inline assembly, but the compiler will
+    // still complain if there is not an explicit return here (despite the fact
+    // that this does not result in any code being produced because of the
+    // naked attribute).
+    //
+    return(ulRet);
 }
 #endif
 #if defined(ewarm)
-void
+unsigned long
 CPUcpsid(void)
 {
     //
-    // Disable interrupts.
+    // Read PRIMASK and disable interrupts.
     //
-    __asm("    cpsid   i\n");
+    __asm("    mrs     r0, PRIMASK\n"
+          "    cpsid   i\n");
+
+    //
+    // "Warning[Pe940]: missing return statement at end of non-void function"
+    // is suppressed here to avoid putting a "bx lr" in the inline assembly
+    // above and a superfluous return statement here.
+    //
+#pragma diag_suppress=Pe940
 }
+#pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm void
+__asm unsigned long
 CPUcpsid(void)
 {
     //
-    // Disable interrupts.
+    // Read PRIMASK and disable interrupts.
     //
+    mrs     r0, PRIMASK;
     cpsid   i;
     bx      lr
 }
@@ -74,34 +96,55 @@ CPUcpsid(void)
 //
 //*****************************************************************************
 #if defined(codered) || defined(gcc) || defined(sourcerygxx)
-void __attribute__((naked))
+unsigned long __attribute__((naked))
 CPUcpsie(void)
 {
+    unsigned long ulRet;
+
     //
-    // Enable interrupts.
+    // Read PRIMASK and enable interrupts.
     //
-    __asm("    cpsie   i\n"
-          "    bx      lr\n");
+    __asm("    mrs     %0, primask\n" //PRIMASK
+          "    cpsie   i\n"
+          "    bx      lr\n"
+          : "=r" (ulRet));
+
+    //
+    // The return is handled in the inline assembly, but the compiler will
+    // still complain if there is not an explicit return here (despite the fact
+    // that this does not result in any code being produced because of the
+    // naked attribute).
+    //
+    return(ulRet);
 }
 #endif
 #if defined(ewarm)
-void
+unsigned long
 CPUcpsie(void)
 {
     //
-    // Enable interrupts.
+    // Read PRIMASK and enable interrupts.
     //
-    __asm("    cpsie   i\n");
+    __asm("    mrs     r0, PRIMASK\n"
+          "    cpsie   i\n");
+
+    //
+    // "Warning[Pe940]: missing return statement at end of non-void function"
+    // is suppressed here to avoid putting a "bx lr" in the inline assembly
+    // above and a superfluous return statement here.
+    //
+#pragma diag_suppress=Pe940
 }
 #pragma diag_default=Pe940
 #endif
 #if defined(rvmdk) || defined(__ARMCC_VERSION)
-__asm void
+__asm unsigned long
 CPUcpsie(void)
 {
     //
-    // Enable interrupts.
+    // Read PRIMASK and enable interrupts.
     //
+    mrs     r0, PRIMASK;
     cpsie   i;
     bx      lr
 }

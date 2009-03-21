@@ -6,11 +6,11 @@ WebRadio v0.01 (c) Andreas Watterott (www.watterott.net)
 
 Third party software
 --------------------
-  Luminary Micro DriverLib 4053
+  Luminary Micro DriverLib 4201
     http://www.luminarymicro.com
     Modifications:
-      lmi/driverlib/cpu.c and cpu.h: CPUcpsid() and CPUcpsie() changed to void
-      lmi/driverlib/interrupt.c and interrupt.h: IntMasterEnable() and IntMasterDisable() changed to void
+      lmi/driverlib/cpu.c: 46: PRIMASK -> primask
+      lmi/driverlib/cpu.c:107: PRIMASK -> primask
       lmi/driverlib/interrupt.c:108: vtable -> .vectors_ram
 
   ChaN's FatFs 0.06

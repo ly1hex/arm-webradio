@@ -337,7 +337,6 @@ void lcd_init(void)
 
   ssi_speed(2000000); //2 MHz
   lcd_reset();
-  lcd_reset();
   lcd_clear(RGB(0,0,0));
   ssi_speed(0); //ssi speed up (0 = default speed)
 

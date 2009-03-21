@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1298,7 +1298,7 @@ GPIOPinTypeUART(unsigned long ulPort, unsigned char ucPins)
 //
 //! Configures pin(s) for use by the USB peripheral.
 //!
-//! \param ulPort is the base address of the USB port.
+//! \param ulPort is the base address of the GPIO port.
 //! \param ucPins is the bit-packed representation of the pin(s).
 //!
 //! Some USB pins must be properly configured for the USB peripheral to

@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4053 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -535,10 +535,10 @@ USBIntEnable(unsigned long ulBase, unsigned long ulFlags)
     // If any transmit interrupts were enabled then write the transmit
     // interrupt settings out to the hardware.
     //
-    if(ulFlags & (USB_INT_HOST_OUT | USB_INT_DEV_IN))
+    if(ulFlags & (USB_INT_HOST_OUT | USB_INT_DEV_IN | USB_INT_EP0))
     {
         HWREGH(ulBase + USB_O_TXIE) |=
-            ulFlags & (USB_INT_HOST_OUT | USB_INT_DEV_IN);
+            ulFlags & (USB_INT_HOST_OUT | USB_INT_DEV_IN | USB_INT_EP0);
     }
 
     //
@@ -1114,6 +1114,12 @@ USBDevEndpointStallClear(unsigned long ulBase, unsigned long ulEndpoint,
         //
         HWREGB(ulBase + USB_O_TXCSRL1 + EP_OFFSET(ulEndpoint)) &=
             ~(USB_TXCSRL1_STALL | USB_TXCSRL1_STALLED);
+
+        //
+        // Reset the data toggle.
+        //
+        HWREGB(ulBase + USB_O_TXCSRL1 + EP_OFFSET(ulEndpoint)) |=
+            USB_TXCSRL1_CLRDT;
     }
     else
     {
@@ -1122,6 +1128,12 @@ USBDevEndpointStallClear(unsigned long ulBase, unsigned long ulEndpoint,
         //
         HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) &=
             ~(USB_RXCSRL1_STALL | USB_RXCSRL1_STALLED);
+
+        //
+        // Reset the data toggle.
+        //
+        HWREGB(ulBase + USB_O_RXCSRL1 + EP_OFFSET(ulEndpoint)) |=
+            USB_TXCSRL1_CLRDT;
     }
 }
 
