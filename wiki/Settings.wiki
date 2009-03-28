@@ -5,7 +5,7 @@ INI-File with settings.
 
 || PlayMode       || Play mode (for future use) ||
 || AutoStart      || Auto start file (Station item number or path to Card file) ||
-|| IR             || IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2) ||
+|| IR             || IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2...) ||
 || ColorBG        || Background color: Red,Green,Blue (xxx,xxx,xxx) ||
 || ColorFG        || Foreground color: Red,Green,Blue (xxx,xxx,xxx) ||
 || ColorSel       || Selection color: Red,Green,Blue (xxx,xxx,xxx) ||
