@@ -1,0 +1,13 @@
+== Rotary encoder ==
+|| *Encoder*    || *Function*     ||
+|| Left/right   || Scroll up/down ||
+|| Normal press || Select/Enter   ||
+|| Long press   || Back/Abort     ||
+
+
+== IR remote control ==
+|| *Button*     || *Function*     ||
+|| 2x Power     || Standby on/off ||
+|| Volume +/-   || Volume control and in menu scroll page up/down ||
+|| Up/down      || Scroll up/down ||
+|| OK           || Select/Enter   ||
