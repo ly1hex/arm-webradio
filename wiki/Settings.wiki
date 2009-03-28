@@ -29,8 +29,7 @@ INI-File with settings.
 || AlarmFile1     || Alarm file 1 (Station item number or path to Card file) ||
 || AlarmFile2     || Alarm file 2, if 1st file not working ||
 || AlarmFile3     || Alarm file 3, if 2nd file not working ||
-
-
+ 
 
 === station.pls ===
 PLS-File with radio streams:
