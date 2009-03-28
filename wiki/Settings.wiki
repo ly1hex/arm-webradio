@@ -1,4 +1,4 @@
-== Files on the memory card ==
+== Files on the memory card (root directory) ==
 
 === settings.ini ===
 INI-File with settings.
