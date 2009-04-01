@@ -40,7 +40,7 @@ title1=Stream Name
 
 ...
 
-Note: Currently the radio has no DNS client so only IP-Addresses are working.
+_*Note*: Currently the radio has no DNS client so only IP-Addresses are working._
 
 
 === share.pls ===
