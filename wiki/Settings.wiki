@@ -34,11 +34,13 @@ INI-File with settings.
 === station.pls ===
 PLS-File with radio streams:
 
-file1=Stream Address
+file1=Stream Address (http://xxx.xxx.xxx.xxx:8000/url)
 
 title1=Stream Name
 
 ...
+
+Note: Currently the radio has no DNS client so only IP-Addresses are working.
 
 
 === share.pls ===
