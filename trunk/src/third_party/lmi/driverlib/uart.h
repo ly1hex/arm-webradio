@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -74,8 +74,8 @@ extern "C"
 #define UART_CONFIG_PAR_NONE    0x00000000  // No parity
 #define UART_CONFIG_PAR_EVEN    0x00000006  // Even parity
 #define UART_CONFIG_PAR_ODD     0x00000002  // Odd parity
-#define UART_CONFIG_PAR_ONE     0x00000086  // Parity bit is one
-#define UART_CONFIG_PAR_ZERO    0x00000082  // Parity bit is zero
+#define UART_CONFIG_PAR_ONE     0x00000082  // Parity bit is one
+#define UART_CONFIG_PAR_ZERO    0x00000086  // Parity bit is zero
 
 //*****************************************************************************
 //
@@ -138,6 +138,8 @@ extern void UARTConfigGetExpClk(unsigned long ulBase, unsigned long ulUARTClk,
                                 unsigned long *pulConfig);
 extern void UARTEnable(unsigned long ulBase);
 extern void UARTDisable(unsigned long ulBase);
+extern void UARTFIFOEnable(unsigned long ulBase);
+extern void UARTFIFODisable(unsigned long ulBase);
 extern void UARTEnableSIR(unsigned long ulBase, tBoolean bLowPower);
 extern void UARTDisableSIR(unsigned long ulBase);
 extern tBoolean UARTCharsAvail(unsigned long ulBase);

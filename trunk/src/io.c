@@ -296,40 +296,14 @@ int ir_cmd(void)
 }
 
 
-void ir_showdata(void)
+int ir_rawdata(void)
 {
-  unsigned int data, addr, cmd, curr_addr;
-  char tmp[32];
+  int data;
 
-  curr_addr = ir_addr();
-  ir_setaddr(IR_ALLADDR);
+  data    = ir_data;
+  ir_data = 0;
 
-  menu_popup("IR: Press a key...");
-
-  for(;;)
-  {
-    eth_service();
-
-    data    = ir_data;
-    ir_data = 0;
-
-    addr = (data&0x07C0)>>6;
-    cmd  = data&0x3F;
-
-    if(data & 0x8000)
-    {
-      sprintf(tmp, "IR: addr %i cmd %i", addr, cmd);
-      menu_popup(tmp);
-    }
-    if(keys_sw())
-    {
-        break;
-    }
-  }
-
-  ir_setaddr(curr_addr);
-
-  return;
+  return data;
 }
 
 
@@ -554,6 +528,8 @@ void keys_timerservice(void) //100 Hz
 
 void cpu_speed(unsigned int low_speed)
 {
+  delay_ms(10);
+
   IntMasterDisable();
   pwm_led(0);
 
@@ -586,6 +562,8 @@ void cpu_speed(unsigned int low_speed)
 
   ir_init();
   IntMasterEnable();
+
+  delay_ms(10);
 
 #if defined(DEBUG)
   UARTDisable(UART1_BASE);

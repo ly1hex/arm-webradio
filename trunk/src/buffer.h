@@ -17,26 +17,30 @@ typedef union
 
 typedef struct
 {
-  char info[MAX_INFOTXT];
-  char file[MAX_FILE];
+  char name[MAX_NAME];
+  char info[MAX_INFO];
+  char file[MAX_ADDR];
 } MENUBUFFER;
 
 typedef struct
 {
-  char info[MAX_INFOTXT];
+  char name[MAX_NAME];
+  char info[MAX_INFO];
   char addr[MAX_ADDR];
 } STATIONBUFFER;
 
 typedef struct
 {
-  char info[MAX_INFOTXT];
-  char file[MAX_FILE];
+  char name[MAX_NAME];
+  char info[MAX_INFO];
+  char file[MAX_ADDR];
 } SHAREBUFFER;
 
 typedef struct
 {
-  char          info[MAX_INFOTXT];
-  char          file[MAX_FILE];
+  char          name[MAX_NAME];
+  char          info[MAX_INFO];
+  char          file[MAX_ADDR];
   FIL           fsrc;
   unsigned char buf[CARD_READBUF];
 } CARDBUFFER;

@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4201 of the Stellaris Firmware Development Package.
+// This is part of revision 4423 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -417,9 +417,6 @@
 #define PHY_MR23_LED1_M         0x000000F0  // LED1 Source.
 #define PHY_MR23_LED1_LINK      0x00000000  // Link OK
 #define PHY_MR23_LED1_RXTX      0x00000010  // RX or TX Activity (Default LED1)
-#define PHY_MR23_LED1_TX        0x00000020  // TX Activity
-#define PHY_MR23_LED1_RX        0x00000030  // RX Activity
-#define PHY_MR23_LED1_COL       0x00000040  // Collision
 #define PHY_MR23_LED1_100       0x00000050  // 100BASE-TX mode
 #define PHY_MR23_LED1_10        0x00000060  // 10BASE-T mode
 #define PHY_MR23_LED1_DUPLEX    0x00000070  // Full-Duplex
@@ -428,9 +425,6 @@
 #define PHY_MR23_LED0_M         0x0000000F  // LED0 Source.
 #define PHY_MR23_LED0_LINK      0x00000000  // Link OK (Default LED0)
 #define PHY_MR23_LED0_RXTX      0x00000001  // RX or TX Activity
-#define PHY_MR23_LED0_TX        0x00000002  // TX Activity
-#define PHY_MR23_LED0_RX        0x00000003  // RX Activity
-#define PHY_MR23_LED0_COL       0x00000004  // Collision
 #define PHY_MR23_LED0_100       0x00000005  // 100BASE-TX mode
 #define PHY_MR23_LED0_10        0x00000006  // 10BASE-T mode
 #define PHY_MR23_LED0_DUPLEX    0x00000007  // Full-Duplex
@@ -569,6 +563,19 @@
 //
 //*****************************************************************************
 #define MAC_NP_NPR              0x0000003F  // Number of RX Frames in FIFO
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the PHY_MR23
+// register.
+//
+//*****************************************************************************
+#define PHY_MR23_LED1_TX        0x00000020  // TX Activity
+#define PHY_MR23_LED1_RX        0x00000030  // RX Activity
+#define PHY_MR23_LED1_COL       0x00000040  // Collision
+#define PHY_MR23_LED0_TX        0x00000002  // TX Activity
+#define PHY_MR23_LED0_RX        0x00000003  // RX Activity
+#define PHY_MR23_LED0_COL       0x00000004  // Collision
 
 #endif
 

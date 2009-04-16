@@ -16,8 +16,8 @@
 #include "vs.h"
 
 
+unsigned int vs_version=0, vs_playing=0;
 int vs_vol=0, vs_sbamp=0, vs_sbfreq=0, vs_stamp=0, vs_stfreq=0;
-unsigned int vs_playing=0;
 
 //VS1053: OGG Vorbis Decoder Patch 1.0
 #define VS1053_PLUGINLEN (396)
@@ -86,13 +86,13 @@ const unsigned short vs1033_plugin[VS1033_PLUGINLEN] =
 #endif
 
 
-void vs_plugin(unsigned int vs)
+void vs_plugin(void)
 {
   int i, len=0;
   unsigned short addr, n, val;
   const unsigned short *plugin;
 
-  if(vs == 1033)       //vs1033
+  if(vs_version == 1033)       //vs1033
   {
 #if (VS1033_PLUGINLEN != 0)
     plugin = vs1033_plugin;
@@ -100,7 +100,7 @@ void vs_plugin(unsigned int vs)
     DEBUGOUT("VS: load VS1033 plugin\n");
 #endif
   }
-  else if(vs == 1053) //vs1053
+  else if(vs_version == 1053) //vs1053
   {
 #if (VS1053_PLUGINLEN != 0)
     plugin = vs1053_plugin;
@@ -547,6 +547,7 @@ void vs_init(unsigned int vs) //vs = 1033 or 1053
     vs = DEFAULT_VS;
   }
 
+  vs_version = vs;
   vs_playing = 0;
 
   vsbuf_init();
@@ -567,7 +568,7 @@ void vs_init(unsigned int vs) //vs = 1033 or 1053
   vs_write_reg(VS_CLOCKF, 0x1800+SC_MUL_4X); //x4 = 48 MHz
 
   //load plugin
-  vs_plugin(vs);
+  vs_plugin();
 
   //set volume, bass, treble
   vs_setvolume(DEFAULT_VOLUME);

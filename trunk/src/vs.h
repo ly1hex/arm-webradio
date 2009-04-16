@@ -39,7 +39,7 @@
 
 
 //----- PROTOTYPES -----
-void                                   vs_plugin(unsigned int vs);
+void                                   vs_plugin(void);
 int                                    vs_treblefreq(void);
 void                                   vs_settreblefreq(int freq); //1000 - 15000 Hz
 int                                    vs_trebleamp(void);

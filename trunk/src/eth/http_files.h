@@ -11,9 +11,9 @@
 typedef struct
 {
   const char *name;
-  unsigned int type;
+  const unsigned int type;
   const unsigned char *data;
-  unsigned int len;
+  const unsigned int len;
 } HTTPFILE;
 
 typedef struct

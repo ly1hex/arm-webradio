@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -426,6 +426,56 @@ UARTDisable(unsigned long ulBase)
     //
     HWREG(ulBase + UART_O_CTL) &= ~(UART_CTL_UARTEN | UART_CTL_TXE |
                                     UART_CTL_RXE);
+}
+
+//*****************************************************************************
+//
+//! Enables the transmit and receive FIFOs.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! This functions enables the transmit and receive FIFOs in the UART.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTFIFOEnable(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(UARTBaseValid(ulBase));
+
+    //
+    // Enable the FIFO.
+    //
+    HWREG(ulBase + UART_O_LCRH) |= UART_LCRH_FEN;
+}
+
+//*****************************************************************************
+//
+//! Disables the transmit and receive FIFOs.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! This functions disables the transmit and receive FIFOs in the UART.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTFIFODisable(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(UARTBaseValid(ulBase));
+
+    //
+    // Disable the FIFO.
+    //
+    HWREG(ulBase + UART_O_LCRH) &= ~(UART_LCRH_FEN);
 }
 
 //*****************************************************************************

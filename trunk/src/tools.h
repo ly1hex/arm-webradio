@@ -16,6 +16,8 @@ typedef struct
 
 
 //----- PROTOTYPES -----
+char*                                  strrmvspace(char *dst, const char *src);
+char*                                  strtoupper(char *dst, const char *src);
 int                                    strstrk(char *dst, const char *src, const char *key);
 const char*                            strstri(const char *s, const char *pattern);
 int                                    strncmpi(const char *s1, const char *s2, size_t n);

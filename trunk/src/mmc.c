@@ -20,6 +20,7 @@ volatile unsigned int Timer1=0, Timer2=0; //100Hz decrement timer
 BYTE CardType=0; //b0:MMC, b1:SDC, b2:Block addressing
 FATFS fatfs;
 FIL file;
+char lfn[_DF1S ? (_MAX_LFN * 2 + 1) : (_MAX_LFN + 1)];
 
 
 void xmit_spi(BYTE dat)
@@ -534,100 +535,18 @@ DWORD get_fattime(void) //User Provided Timer Function for FatFs module
 }
 
 
-unsigned int ini_getentry(const char *filename, const char *entry, char *value, unsigned int len) //entry in upper case
-{
-  FRESULT res;
-  unsigned int i, entry_len, found=0, rd;
-  char c, buf[32];
-
-  *value = 0;
-
-  res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ);
-  if(res == FR_OK)
-  {
-    entry_len = strlen(entry);
-    i         = 0;
-    do
-    {
-      res = f_read(&file, &c, 1, &rd);
-      if((res != FR_OK) || (rd != 1))
-      {
-        break;
-      }
-      switch(c)
-      {
-        case '\r': //line end
-        case '\n':
-          i = 0;
-          break;
-        case '=':
-          if(strncmp(buf, entry, entry_len) == 0)
-          {
-            found = 1;
-          }
-          break;
-
-        case '#': //comment
-          if(i == 0)
-          {
-            while(1)
-            {
-              res = f_read(&file, &c, 1, &rd);
-              if((res != FR_OK) || (rd != 1))
-              {
-                break;
-              }
-              if((c == '\r') || (c == '\n'))
-              {
-                break;
-              }
-            }
-            break;
-          }
-        default:
-          if(i < 31)
-          {
-            buf[i++] = toupper(c);
-            buf[i] = 0;
-          }
-          break;
-      }
-    }while(found == 0);
-
-    if(found)
-    {
-      do
-      {
-        res = f_read(&file, &c, 1, &rd);
-        if((res != FR_OK) || (rd != 1))
-        {
-          break;
-        }
-
-        if((c == '\r') || (c == '\n'))
-        {
-          break;
-        }
-        else
-        {
-          *value++ = c;
-          *value   = 0;
-        }
-      }while(--len);
-    }
-
-    f_close(&file);
-  }
-
-  return found;
-}
 
 
-unsigned int fs_isdir(char *path, unsigned int item)
+unsigned int fs_isdir(const char *path, unsigned int item)
 {
   FILINFO finfo;
   DIR dir;
   unsigned int i=0;
+
+#if _USE_LFN
+  finfo.lfname = lfn;
+  finfo.lfsize = sizeof(lfn);
+#endif
 
   if(f_opendir(&dir, path) == FR_OK)
   {
@@ -663,26 +582,27 @@ offset len
 97 	30 	Comment
 127 	1 	Genre
 */
-void fs_getitemtag(char *path, unsigned int item, char *name)
+void fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int len)
 {
-  char tmp[MAX_FILE];
-  unsigned int rd;
+  //char tmp[MAX_ADDR];
+  //unsigned int rd;
 
-  fs_getitem(path, item, name);
+  fs_getitem(path, item, dst, len);
 
-  if(name[0] == '/') //directory
+/*
+  if(dst[0] == '/') //directory
   {
     return;
   }
 
-  rd = strlen(name);
-  if((toupper(name[rd-3]) == 'M') &&
-     (toupper(name[rd-2]) == 'P') &&
-     (toupper(name[rd-1]) == '3')) //MP3 file
+  rd = strlen(dst);
+  if((toupper(dst[rd-3]) == 'M') &&
+     (toupper(dst[rd-2]) == 'P') &&
+     (toupper(dst[rd-1]) == '3')) //MP3 file
   {
     strcpy(tmp, path);
     strcat(tmp, "/");
-    strcat(tmp, name);
+    strcat(tmp, dst);
 
     if(f_open(&file, tmp, FA_OPEN_EXISTING | FA_READ) == FR_OK)
     {
@@ -695,7 +615,7 @@ void fs_getitemtag(char *path, unsigned int item, char *name)
              (tmp[1] == 'A') &&
              (tmp[2] == 'G'))
           {
-            strncpy(name, tmp+3, 30);
+            strncpy(dst, tmp+3, 30);
             name[30] = 0;
           }
         }
@@ -703,18 +623,24 @@ void fs_getitemtag(char *path, unsigned int item, char *name)
       f_close(&file);
     }
   }
-
+*/
   return;
 }
 
 
-void fs_getitem(char *path, unsigned int item, char *name)
+void fs_getitem(const char *path, unsigned int item, char *dst, unsigned int len)
 {
   FILINFO finfo;
   DIR dir;
+  char *fname;
   unsigned int i=0;
 
-  *name = 0;
+#if _USE_LFN
+  finfo.lfname = lfn;
+  finfo.lfsize = sizeof(lfn);
+#endif
+
+  *dst = 0;
 
   if(f_opendir(&dir, path) == FR_OK)
   {
@@ -724,16 +650,21 @@ void fs_getitem(char *path, unsigned int item, char *name)
       {
         if(item == i)
         {
+#if _USE_LFN
+          fname = (*finfo.lfname)?finfo.lfname:finfo.fname;
+#else
+          fname = finfo.fname;
+#endif
           if(finfo.fattrib & AM_DIR)
           {
-            *name = '/';
-            strncpy(name+1, finfo.fname, MAX_NAME-1-1);
-            name[MAX_NAME-1] = 0;
+            *dst = '/';
+            strncpy(dst+1, fname, len-1-1);
+            dst[len-1] = 0;
           }
           else
           {
-            strncpy(name, finfo.fname, MAX_NAME-1);
-            name[MAX_NAME-1] = 0;
+            strncpy(dst, fname, len-1);
+            dst[len-1] = 0;
           }
           break;
         }
@@ -746,11 +677,16 @@ void fs_getitem(char *path, unsigned int item, char *name)
 }
 
 
-unsigned int fs_items(char *path)
+unsigned int fs_items(const char *path)
 {
   FILINFO finfo;
   DIR dir;
   unsigned int i=0;
+
+#if _USE_LFN
+  finfo.lfname = lfn;
+  finfo.lfsize = sizeof(lfn);
+#endif
 
   if(Stat & STA_NOINIT)
   {
@@ -795,8 +731,8 @@ unsigned int fs_checkitem(FILINFO *finfo)
         if(((c1 == 'A') && (c2 == 'A') && (c3 == 'C')) || //AAC
            ((c1 == 'M') && (c2 == 'P') && (c3 == '3')) || //MP3
            ((c1 == 'O') && (c2 == 'G') && (c3 == 'G')) || //OGG
+           ((c1 == 'W') && (c2 == 'A') && (c3 == 'V')) || //WAV
            ((c1 == 'W') && (c2 == 'M') && (c3 == 'A')))   //WMA
-
         {
           return 1;
         }
@@ -829,4 +765,219 @@ void fs_mount(void)
   f_mount(0, &fatfs);
 
   return;
+}
+
+
+unsigned int ini_searchentry(const char *filename, const char *entry)
+{
+  FRESULT res;
+  unsigned int i, entry_len, found, rd;
+  char c, buf[32];
+
+  res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ);
+  if(res != FR_OK)
+  {
+    return 0;
+  }
+
+  entry_len = strlen(entry);
+  i         = 0;
+  found     = 0;
+  do
+  {
+    res = f_read(&file, &c, 1, &rd);
+    if((res != FR_OK) || (rd != 1))
+    {
+      break;
+    }
+    switch(c)
+    {
+      case '\r': //line end
+      case '\n':
+        i = 0;
+        break;
+      case '=':
+        if(strncmp(buf, entry, entry_len) == 0)
+        {
+          found = file.fptr;
+        }
+        break;
+      case '#': //comment
+        if(i == 0)
+        {
+          while(1)
+          {
+            res = f_read(&file, &c, 1, &rd);
+            if((res != FR_OK) || (rd != 1))
+            {
+              break;
+            }
+            if((c == '\r') || (c == '\n'))
+            {
+              break;
+            }
+          }
+          break;
+        }
+      default:
+        if(c != ' ')
+        {
+          if(i<31)
+          {
+            buf[i++] = toupper(c);
+            buf[i]   = 0;
+          }
+        }
+        break;
+    }
+  }while(found == 0);
+
+  f_close(&file);
+
+  return found;
+}
+
+
+unsigned int ini_getentry(const char *filename, const char *entry, char *value, unsigned int len) //entry in upper case
+{
+  FRESULT res;
+  unsigned int i, entry_len, found=0, rd;
+  char c, *ptr;
+
+  ptr  = value;
+  *ptr = 0;
+
+  found = ini_searchentry(filename, entry);
+  if(found)
+  {
+    res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ);
+    if(res != FR_OK)
+    {
+      return 0;
+    }
+
+    f_lseek(&file, found);
+  
+    do
+    {
+      res = f_read(&file, &c, 1, &rd);
+      if((res != FR_OK) || (rd != 1))
+      {
+        break;
+      }
+  
+      if((c == '\r') || (c == '\n'))
+      {
+        break;
+      }
+      else
+      {
+        *ptr++ = c;
+      }
+    }while(--len);
+    *ptr = 0;
+  
+    f_close(&file);
+
+    strrmvspace(value, value);
+  }
+
+  return found;
+}
+
+
+unsigned int ini_setentry(const char *filename, const char *entry, const char *value)
+{
+  FRESULT res;
+  unsigned int i, len, dif, found=0, rd;
+  char c, buf[MAX_ADDR];
+
+  found = ini_searchentry(filename, entry);
+  if(found)
+  {
+    res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
+    if(res != FR_OK)
+    {
+      return 0;
+    }
+    f_lseek(&file, found);
+
+    //calc current value size
+    for(i=0; i<MAX_ADDR; i++)
+    {
+      res = f_read(&file, &c, 1, &rd);
+      if((res != FR_OK) || (rd != 1))
+      {
+        break;
+      }
+      if((c == '\n') || (c == '\r'))
+      {
+        break;
+      }
+    }
+
+    len = strlen(value); //new value
+    if(i == len) //same size
+    {
+      f_lseek(&file, found);
+      f_puts(value, &file);
+    }
+    else if(i > len) //new value size is smaller
+    {
+      //write value to entry
+      f_lseek(&file, found);
+      f_puts(value, &file);
+      //remove difference: old-new
+      dif = i-len;
+      for(i=file.fptr; (i+dif)<file.fsize; i++)
+      {
+        f_lseek(&file, i+dif);
+        f_read(&file, &c, 1, &rd);
+        if((res != FR_OK) || (rd != 1))
+        {
+          break;
+        }
+        f_lseek(&file, i);
+        f_putc(c, &file);
+      }
+      f_truncate(&file);
+    }
+    else if(i < len) //new value size is bigger
+    {
+      //extend file: new-old
+      dif = len-i;
+      len = file.fsize-(file.fptr-1);
+      for(i=file.fsize-1; len!=0; i--, len--)
+      {
+        f_lseek(&file, i);
+        f_read(&file, &c, 1, &rd);
+        if((res != FR_OK) || (rd != 1))
+        {
+          break;
+        }
+        f_lseek(&file, i+dif);
+        f_putc(c, &file);
+      }
+      //write value to entry
+      f_lseek(&file, found);
+      f_puts(value, &file);
+    }
+    f_close(&file);
+  }
+  else
+  {
+    res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
+    if(res != FR_OK)
+    {
+      return 0;
+    }
+    f_lseek(&file, file.fsize);
+    f_puts(entry, &file);
+    f_puts("=", &file);
+    f_puts(value, &file);
+    f_puts("\r\n", &file);
+    f_close(&file);
+  }
+
+  return 1;
 }

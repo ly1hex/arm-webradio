@@ -91,7 +91,8 @@ void card_closeitem(void)
     vs_stop();
     f_close(&gbuf.card.fsrc);
     shrink_path(gbuf.card.file);
-    menu_setinfo(MENU_STATE_STOP, "");
+    menu_setstatus(MENU_STATE_STOP);
+    menu_setinfo("");
     DEBUGOUT("Card: closed\n");
   }
 
@@ -110,7 +111,9 @@ unsigned int card_openfile(const char *file)
   {
     card_status = CARD_PLAY;
     vs_start();
-    menu_setinfo(MENU_STATE_PLAY, " ");
+    menu_setstatus(MENU_STATE_PLAY);
+    menu_setname(file);
+    menu_setinfo("");
     return MENU_PLAY;
   }
 
@@ -120,7 +123,7 @@ unsigned int card_openfile(const char *file)
 
 unsigned int card_openitem(unsigned int item)
 {
-  char tmp[MAX_NAME];
+  char tmp[MAX_ADDR];
 
   if(item == 0) //back
   {
@@ -133,30 +136,34 @@ unsigned int card_openitem(unsigned int item)
       shrink_path(gbuf.card.file);
     }
   }
-  else if(fs_isdir(gbuf.card.file, item-1)) //open dir
+  else
   {
-    fs_getitem(gbuf.card.file, item-1, tmp);
-    strcat(gbuf.card.file, tmp);
-  }
-  else //play item
-  {
-    fs_getitemtag(gbuf.card.file, item-1, gbuf.menu.info);
-    fs_getitem(gbuf.card.file, item-1, tmp);
-    strcat(gbuf.card.file, "/");
-    strcat(gbuf.card.file, tmp);
-    menu_setinfo(MENU_STATE_STOP, "");
-    DEBUGOUT("Card: %s\n", gbuf.card.file);
-    if(f_open(&gbuf.card.fsrc, gbuf.card.file, FA_OPEN_EXISTING | FA_READ) == FR_OK)
+    item--;
+    if(fs_isdir(gbuf.card.file, item)) //open dir
     {
-      card_status = CARD_PLAY;
-      vs_start();
-      menu_setinfo(MENU_STATE_PLAY, "");
-      return MENU_PLAY;
+      fs_getitem(gbuf.card.file, item, tmp, MAX_ADDR);
+      strcat(gbuf.card.file, tmp);
     }
-    else
+    else //play item
     {
-      shrink_path(gbuf.card.file);
-      return MENU_ERROR;
+      fs_getitemtag(gbuf.card.file, item, gbuf.menu.name, MAX_NAME);
+      menu_setinfo("");
+      fs_getitem(gbuf.card.file, item, tmp, MAX_ADDR);
+      strcat(gbuf.card.file, "/");
+      strcat(gbuf.card.file, tmp);
+      DEBUGOUT("Card: %s\n", gbuf.card.file);
+      if(f_open(&gbuf.card.fsrc, gbuf.card.file, FA_OPEN_EXISTING | FA_READ) == FR_OK)
+      {
+        card_status = CARD_PLAY;
+        vs_start();
+        menu_setstatus(MENU_STATE_PLAY);
+        return MENU_PLAY;
+      }
+      else
+      {
+        shrink_path(gbuf.card.file);
+        return MENU_ERROR;
+      }
     }
   }
 
@@ -172,7 +179,7 @@ void card_getitem(unsigned int item, char *name)
   }
   else
   {
-    fs_getitemtag(gbuf.card.file, item-1, name); //fs_getitem(card_dir, item-1, name);
+    fs_getitemtag(gbuf.card.file, item-1, name, MAX_NAME);
   }
 
   return;
@@ -191,8 +198,11 @@ void card_init(void)
 
   card_status = CARD_CLOSED;
 
+  gbuf.card.name[0] = 0;
   gbuf.card.info[0] = 0;
   gbuf.card.file[0] = 0;
+
+  menu_setstatus(MENU_STATE_STOP);
 
   return;
 }

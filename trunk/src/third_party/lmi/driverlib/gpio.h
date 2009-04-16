@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -142,6 +142,7 @@ extern void GPIOPinTypeSSI(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeTimer(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeUART(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeUSBDigital(unsigned long ulPort, unsigned char ucPins);
+
 //*****************************************************************************
 //
 // Mark the end of the C bindings section for C++ compilers.

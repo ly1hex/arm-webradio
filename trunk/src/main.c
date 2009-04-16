@@ -43,6 +43,7 @@ const char day_tab[7][3] =
   {"Su"},{"Mo"},{"Tu"},{"We"},{"Th"},{"Fr"},{"Sa"} //English
   //{"So"},{"Mo"},{"Di"},{"Mi"},{"Do"},{"Fr"},{"Sa"} //German
 };
+
 const char clock_tab[60][3] = 
 {
   {"00"},{"01"},{"02"},{"03"},{"04"},{"05"},{"06"},{"07"},{"08"},{"09"},
@@ -288,6 +289,8 @@ void settime(unsigned long s)
   clock_str[6] = clock_tab[time.s][0];
   clock_str[7] = clock_tab[time.s][1];
 
+  DEBUGOUT("Set time: %s %s\n", getclock(), getdate());
+
   return;
 }
 
@@ -466,6 +469,9 @@ int main()
   //init peripherals
   init_periph();
 
+  //low speed
+  cpu_speed(1);
+
   //enable interrupts
   IntMasterEnable();
 
@@ -488,73 +494,65 @@ int main()
   #else
   # warning "LCD not defined"
   #endif
-  DEBUGOUT("---\n");
-#if defined(APPRELEASE)
-  DEBUGOUT(APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
-#else
-  DEBUGOUT(APPNAME" v"APPVERSION"* ("__DATE__" "__TIME__")\n");
-#endif
-  DEBUGOUT("Hardware: "LM3S_NAME"@%iMHz, "LCD_NAME")\n", SysCtlClockGet()/1000000);
+  DEBUGOUT("\n---\n");
+  DEBUGOUT(APPNAME" v"APPVERSION""APPRELEASE_SYM" ("__DATE__" "__TIME__")\n");
+  DEBUGOUT("Hardware: "LM3S_NAME"@%iMHz, "LCD_NAME"\n", SysCtlClockGet()/1000000);
 
   //init lcd
   lcd_init();
 
   //show start-up screen
-  lcd_clear(RGB(0,0,0));
+  lcd_clear(DEFAULT_BGCOLOR);
   lcd_rect( 0,   0, LCD_WIDTH-1, 13, DEFAULT_EDGECOLOR);
-#if defined(APPRELEASE)
-  lcd_puts(30,   3, APPNAME" v"APPVERSION, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-#else
-  lcd_puts(30,   3, APPNAME" v"APPVERSION"*", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-#endif
+  lcd_puts(30,   3, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_rect( 0, 118, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, 121, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_puts(10,  20, __DATE__" "__TIME__, SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(10,  35, "Hardware:", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(15,  45, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  20, __DATE__" "__TIME__, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  35, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(15,  45, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   if(r)
   {
-    i = lcd_puts(10,  60, "Reset: ", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+    i = lcd_puts(10,  60, "Reset: ", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
     if(r & SYSCTL_CAUSE_LDO)
     {
-      i = lcd_puts(i, 60, "LDO", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "LDO", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_SW)
     {
-      i = lcd_puts(i, 60, "SW", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "SW", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_WDOG)
     {
-      i = lcd_puts(i, 60, "WD", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "WD", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_BOR)
     {
-      i = lcd_puts(i, 60, "BOR", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "BOR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_POR)
     {
-      i = lcd_puts(i, 60, "POR", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "POR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_EXT)
     {
-      i = lcd_puts(i, 60, "EXT", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 60, "EXT", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
   }
 
   //init mmc & mount filesystem
-  lcd_puts(10,  80, "Init Memory Card...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  80, "Init Memory Card...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   fs_mount();
 
   //init ethernet
-  lcd_puts(10,  90, "Init Ethernet...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  90, "Init Ethernet...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   eth_init();
 
   //load settings
-  lcd_puts(10, 100, "Load Settings...", SMALLFONT, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10, 100, "Load Settings...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   settings_read();
 
   //set clock
-  menu_popup("NTP: Get Time...");
+  menu_drawpopup("NTP: Get Time...");
 #if defined(DEBUG)
   settime(0);
 #else
@@ -562,7 +560,7 @@ int main()
 #endif
 
   //advertise UPnP device
-  menu_popup("SSDP: Advertise...");
+  menu_drawpopup("SSDP: Advertise...");
   ssdp_advertise();
 
   //cpu high speed

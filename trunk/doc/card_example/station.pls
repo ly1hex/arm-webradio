@@ -1,5 +1,5 @@
 [playlist]
-numberofentries=15
+numberofentries=14
 
 file1=http://62.26.4.172:8010/
 title1=Project reloaded
@@ -40,8 +40,5 @@ title12=OGG Stream on 20
 file13=http://67.228.177.254:80/ny_nyfd
 title13=NY Fire Dep.
 
-file14=http://74.200.85.149:80/eham
-title14=LiveATC
-
-file15=http://194.88.2.71:8010/eham
-title15=LiveATC Moved
+file14=http://79.99.69.130:80/kpsp
+title14=LiveATC KPSP

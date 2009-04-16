@@ -81,6 +81,10 @@ void ntp_udpapp(unsigned int index)
     time  = swap32(rx_ntp->trn_ts);
     time -= 2208988800UL; //seconds: 1900-1970
     time += eth_timediff();
+    if(eth_summer()) //summer time
+    {
+      time += 3600; //add one hour
+    }
     ntp_time = time;
   }
 

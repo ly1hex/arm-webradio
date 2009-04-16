@@ -20,6 +20,7 @@
 
 //----- PROTOTYPES -----
 void                                   station_calcbuf(unsigned int br);
+void                                   station_close(void);
 unsigned int                           station_open(unsigned int item);
 void                                   station_service(void);
 void                                   station_closeitem(void);

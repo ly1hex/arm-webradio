@@ -3,35 +3,28 @@
 
 
 //----- DEFINES -----
-#define DEFAULT_BGCOLOR                RGB(  0,  0,  0) //background
-#define DEFAULT_FGCOLOR                RGB(255,255, 50) //foreground
-#define DEFAULT_SELCOLOR               RGB(255,255,255) //selection
-#define DEFAULT_EDGECOLOR              RGB(120,120,100) //edges
-#define DEFAULT_SBCOLOR                RGB(255,255,255) //standby
+#define DEFAULT_BGCOLOR                RGB(255,255,255) //background
+#define DEFAULT_FGCOLOR                RGB(  0,  0,  0) //foreground
+#define DEFAULT_SELCOLOR               RGB(255,  0,  0) //selection
+#define DEFAULT_EDGECOLOR              RGB(  0,144,240) //edges
 
 #define MENU_LINES                     (8)  //lines
-#define MENU_LINEHEIGHT                (16) //pixel
+#define MENU_LINEHEIGHT                (15) //pixel
 
-#define SMALLFONT                      (0)
-#define NORMALFONT                     (1)
-#define TIMEFONT                       (2)
-
-#define MENU_TOP                       (40)
-#define MENU_TEXTX                     (60)
-#define MENU_TEXTY                     (85)
-#define MENU_MIDDLEITEM                ((LCD_WIDTH/2)-(32/2))
-#define MENU_RIGHTITEM                 (LCD_WIDTH-32)
-
-#define MENU_PLAY                      (0)
-#define MENU_UPDATE                    (1)
-#define MENU_ERROR                     (2)
-#define MENU_BACK                      (3)
+#define MENU_NOP                       (0)
+#define MENU_PLAY                      (1)
+#define MENU_UPDATE                    (2)
+#define MENU_ERROR                     (3)
+#define MENU_BACK                      (4)
 #define MENU_BACKTXT                   "<< back <<"
 
 #define MENU_STATE_STOP                (0)
 #define MENU_STATE_BUF                 (1)
 #define MENU_STATE_PLAY                (2)
 
+#define CTRL_BUTTON                    (0)
+#define CTRL_CHECKBOX                  (1)
+#define CTRL_INPUT                     (2)
 
 
 typedef struct
@@ -47,6 +40,21 @@ typedef struct
 } MAINMENUITEM;
 
 
+typedef struct
+{
+  unsigned int type; //button, checkbox, input
+  unsigned int x1;
+  unsigned int y1;
+  unsigned int x2;
+  unsigned int y2;
+  char *val;        //value
+  unsigned int len; //chars
+  unsigned int sel; //control selected
+  unsigned int p1;  //button: - | checkbox: checked | input: first
+  unsigned int p2;  //button: - | checkbox: -       | input: sel
+} CONTROL;
+
+
 //----- PROTOTYPES -----
 unsigned int                           menu_openfile(char *file);
 unsigned int                           menu_sw(void);
@@ -55,18 +63,38 @@ void                                   menu_up(void);
 void                                   menu_down(void);
 void                                   menu_steps(int steps);
 void                                   menu_service(unsigned int draw);
-void                                   menu_popup(char *s);
-void                                   menu_drawsub(unsigned int redraw);
-void                                   menu_drawmain(unsigned int redraw);
+
+void                                   menu_alarm(void);
+
+void                                   menu_drawwndsub(unsigned int redraw);
+
+void                                   menu_drawwndmain(unsigned int redraw);
+
 void                                   menu_drawclock(void);
 void                                   menu_drawdate(void);
 void                                   menu_drawvol(void);
 void                                   menu_drawstatus(void);
-void                                   menu_setinfo(unsigned int status, const char *info);
-void                                   menu_drawinfo(unsigned int redraw);
-void                                   menu_drawbg(void);
-void                                   menu_update(unsigned int redraw);
-void                                   menu_setcolors(unsigned int bg, unsigned int fg, unsigned int sel, unsigned int edge);
+void                                   menu_setinfo(const char *info);
+void                                   menu_setname(const char *name);
+void                                   menu_setstatus(unsigned int status);
+void                                   menu_drawwndinfo(unsigned int redraw);
+
+void                                   menu_drawwnd(unsigned int redraw);
+
+void                                   menu_drawctrl(CONTROL *ctrl);
+void                                   menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigned int x, unsigned int y, unsigned int len, char *value);
+void                                   menu_drawdlg(const char *title, const char *msg);
+void                                   menu_drawpopup(const char *msg);
+
+void                                   menu_setedgecolor(unsigned int color);
+void                                   menu_setselcolor(unsigned int color);
+void                                   menu_setfgcolor(unsigned int color);
+void                                   menu_setbgcolor(unsigned int color);
+unsigned int                           menu_edgecolor(void);
+unsigned int                           menu_selcolor(void);
+unsigned int                           menu_fgcolor(void);
+unsigned int                           menu_bgcolor(void);
+
 void                                   menu_init(void);
 
 

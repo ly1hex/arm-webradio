@@ -41,6 +41,7 @@ const unsigned char INDEX_HTM[] =
   "  dns:    $DNS\r\n" \
   "  ntp:    $NTP\r\n" \
   "  tdiff:  $TDIFF sec\r\n" \
+  "  summer: $SUMMER\r\n" \
   " upnp\r\n" \
   "  uuid:   $UPNP_UUID\r\n" \
   "  port:   $UPNP_PORT\r\n" \
@@ -355,12 +356,13 @@ const HTTPFILE httpfiles[HTTPFILES] =
 };
 
 
-#define F_NR     (0)
-#define F_STR    (1)
-#define F_MAC    (2)
-#define F_IP     (3)
-#define F_ONOFF  (4)
-#define HTTPVARS (14)
+#define F_NONE   (0)
+#define F_NR     (1)
+#define F_STR    (2)
+#define F_MAC    (3)
+#define F_IP     (4)
+#define F_ONOFF  (5)
+#define HTTPVARS (15)
 const HTTPVAR httpvars[HTTPVARS] =
 {
   {"ONTIME",    F_NR,    (void*)getontime},
@@ -375,6 +377,7 @@ const HTTPVAR httpvars[HTTPVARS] =
   {"DNS",       F_IP,    (void*)eth_dns},
   {"NTP",       F_IP,    (void*)eth_ntp},
   {"TDIFF",     F_NR,    (void*)eth_timediff},
+  {"SUMMER",    F_ONOFF, (void*)eth_summer},
   {"UPNP_UUID", F_STR,   (void*)upnp_uuid},
   {"UPNP_PORT", F_NR,    (void*)upnp_port}
 };
@@ -392,7 +395,7 @@ unsigned int http_printf(char *dst, unsigned int format, ...)
       itoa(va_arg(ap, long), dst, 10);
       break;
     case F_STR:
-      strcpy(dst, va_arg(ap, char *));
+      strcpy(dst, va_arg(ap, char*));
       break;
     case F_MAC:
       strcpy(dst, mactoa(va_arg(ap, MAC_Addr)));

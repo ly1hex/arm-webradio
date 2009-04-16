@@ -23,6 +23,9 @@
 #define LCD_PWMMIN                     (5)     // 5 % (1...100%)
 #define LCD_PWMSTANDBY                 (10)    //10 % (1...100%)
 
+//StandBy
+#define STANDBY_TIME                   (3*60)  //standby after x seconds
+
 //SSI Speed: LCD, SD, F-RAM, VS
 #define DEFAULT_SSISPEED               (8000000) //8 MHz
 #define DEFAULT_SSILOWSPEED            (2000000) //2 MHz (init and standby)
@@ -116,7 +119,7 @@ void                                   ssi_defaultspeed(unsigned long speed);
 void                                   pwm_led(unsigned int power);
 
 int                                    ir_cmd(void);
-void                                   ir_showdata(void);
+int                                    ir_rawdata(void);
 void                                   ir_timer(void);
 void                                   ir_edge(void);
 unsigned int                           ir_addr(void);

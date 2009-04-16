@@ -39,7 +39,7 @@ unsigned int alarm_getfile(char *dst, unsigned int nr)
   char entry[16];
 
   sprintf(entry, "ALARMFILE%i", nr);
-  if(ini_getentry(SETTINGS_FILE, entry, dst, MAX_FILE-1))
+  if(ini_getentry(SETTINGS_FILE, entry, dst, MAX_ADDR-1))
   {
     return 1;
   }
@@ -88,7 +88,7 @@ unsigned int alarm_gettimes(void)
 void alarm_load(void)
 {
   unsigned int i, items;
-  char data[MAX_NAME], *s, c1, c2;
+  char data[MAX_NAME], *ptr, c1, c2;
 
   //reset all alarm times
   memset(alarmtimes, 0, sizeof(alarmtimes));
@@ -102,22 +102,22 @@ void alarm_load(void)
   for(i=0; i<items; i++)
   {
     alarm_gettime(i+1, data);
-    s = data;
-    if(*s != '!') //alarm on
+    ptr = data;
+    if(*ptr != '!') //alarm on
     {
       alarmtimes[i].on = 1;
     }
-    while(!isdigit(*s)){ s++; }; //skip non digits
-    alarmtimes[i].h = atoi(s); //get hour
-    while(isdigit(*s)){ s++; };
-    while(!isdigit(*s)){ s++; };
-    alarmtimes[i].m = atoi(s); //get minute
-    while(isdigit(*s)){ s++; };
-    while(!isalpha(*s)){ s++; };
-    while(*s) //get days
+    while(!isdigit(*ptr)){ ptr++; }; //skip non digits
+    alarmtimes[i].h = atoi(ptr); //get hour
+    while(isdigit(*ptr)) { ptr++; };
+    while(!isdigit(*ptr)){ ptr++; };
+    alarmtimes[i].m = atoi(ptr); //get minute
+    while(isdigit(*ptr)) { ptr++; };
+    while(!isalpha(*ptr)){ ptr++; };
+    while(*ptr) //get days
     {
-      c1 = toupper(*s++);
-      c2 = toupper(*s++);
+      c1 = toupper(*ptr++);
+      c2 = toupper(*ptr++);
       if((c1 == 0)   || (c2 == 0))  { break; }
       if((c1 == 'S') && (c2 == 'U')){ alarmtimes[i].wdays |= (1<<0); } //Sunday
       if((c1 == 'M') && (c2 == 'O')){ alarmtimes[i].wdays |= (1<<1); } //Monday
@@ -161,7 +161,7 @@ void alarm_getitem(unsigned int item, char *name)
     item--;
     if(alarmtimes[item].on)
     {
-      sprintf(name, "%02i:%02i ", alarmtimes[item].h, alarmtimes[item].m);
+      sprintf(name, " %02i:%02i ", alarmtimes[item].h, alarmtimes[item].m);
     }
     else
     {

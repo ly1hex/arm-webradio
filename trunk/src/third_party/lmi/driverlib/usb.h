@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -46,7 +46,7 @@ extern "C"
 // are returned from USBIntStatus().
 //
 //*****************************************************************************
-#define USB_INT_ALL             0xFF000E0F  // All Interrupt sources
+#define USB_INT_ALL             0xFF010E0F  // All Interrupt sources
 #define USB_INT_STATUS          0xFF000000  // Status Interrupts
 #define USB_INT_VBUS_ERR        0x80000000  // VBUS Error
 #define USB_INT_SESSION_START   0x40000000  // Session Start Detected
@@ -307,6 +307,11 @@ extern void USBDevEndpointStatusClear(unsigned long ulBase,
                                       unsigned long ulFlags);
 extern unsigned long USBEndpointDataAvail(unsigned long ulBase,
                                           unsigned long ulEndpoint);
+extern void USBEndpointDMAEnable(unsigned long ulBase, unsigned long ulEndpoint,
+                                 unsigned long ulFlags);
+extern void USBEndpointDMADisable(unsigned long ulBase,
+                                  unsigned long ulEndpoint,
+                                  unsigned long ulFlags);
 extern long USBEndpointDataGet(unsigned long ulBase, unsigned long ulEndpoint,
                                unsigned char *pucData, unsigned long *pulSize);
 extern long USBEndpointDataPut(unsigned long ulBase, unsigned long ulEndpoint,
