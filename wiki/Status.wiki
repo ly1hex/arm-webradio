@@ -13,14 +13,14 @@
 || HTTP Server                           || working ||
 || UPnP Device                           || working ||
 || *FAT Stack* ||
-|| ELM ChaN's FatFs                      || working ||
+|| ELM ChaN's FatFs with LFN             || working ||
 || *Functions* ||
 || Play Shoutcast/Icecast streams        || working ||
 || Play RTSP streams                     || - ||
 || Play from SMB/CIFS Shares             || - ||
 || Play from Memory Card                 || working ||
 || Load Settings from Memory Card        || working ||
-|| Change Settings via Menu              || - ||
+|| Change Settings via Menu              || working  ||
 || Change Settings via HTTP              || - ||
 || Control via HTTP                      || - ||
 || Control via UPnP                      || Volume control works ||
