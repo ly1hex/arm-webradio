@@ -34,6 +34,9 @@
           <file Name="ff.c" file_name="third_party/fatfs/ff.c"/>
           <file Name="ff.h" file_name="third_party/fatfs/ff.h"/>
           <file Name="integer.h" file_name="third_party/fatfs/integer.h"/>
+          <folder Name="unicode">
+            <file Name="ccsbcs.c" file_name="third_party/fatfs/unicode/ccsbcs.c"/>
+          </folder>
         </folder>
         <file Name="readme.txt" file_name="third_party/readme.txt"/>
         <configuration Name="THUMB Flash Debug" gcc_optimization_level="Level 3"/>
@@ -165,6 +168,8 @@
       <configuration Name="THUMB RAM Release" build_debug_information="No" gcc_optimization_level="Level 3"/>
       <file Name="tools.h" file_name="tools.h"/>
       <file Name="tools.c" file_name="tools.c"/>
+      <file Name="menu_dlg.c" file_name="menu_dlg.c"/>
+      <file Name="menu_dlg.h" file_name="menu_dlg.h"/>
     </folder>
     <folder Name="System Files">
       <file Name="thumb_crt0.s" file_name="$(StudioDir)/source/thumb_crt0.s"/>
@@ -175,10 +180,10 @@
       <configuration Name="THUMB RAM Release" gcc_optimization_level="Level 1"/>
       <configuration Name="THUMB RAM Debug" gcc_optimization_level="Level 1"/>
     </folder>
-    <configuration Name="THUMB Flash Release" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="512" build_debug_information="Yes" build_quietly="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" link_IOLibraryName="target" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml" linker_printf_fmt_level="int" linker_scanf_fmt_level="int"/>
-    <configuration Name="THUMB Flash Debug" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="512" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
-    <configuration Name="THUMB RAM Debug" arm_linker_heap_size="128" arm_linker_stack_size="512" build_debug_information="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
-    <configuration Name="THUMB RAM Release" arm_linker_heap_size="128" arm_linker_stack_size="512" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
+    <configuration Name="THUMB Flash Release" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_debug_information="Yes" build_quietly="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" link_IOLibraryName="target" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml" linker_printf_fmt_level="int" linker_scanf_fmt_level="int"/>
+    <configuration Name="THUMB Flash Debug" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
+    <configuration Name="THUMB RAM Debug" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_debug_information="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
+    <configuration Name="THUMB RAM Release" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
     <configuration Name="THUMB" arm_linker_heap_size="256" arm_linker_stack_size="256" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi"/>
   </project>
   <configuration Name="THUMB Flash Debug" arm_architecture="v7M" arm_core_type="Cortex-M3" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" inherited_configurations="THUMB;Flash;Debug"/>

@@ -25,6 +25,9 @@ unsigned int station_bufmin=0, station_bufplay=0, station_bufstart=0;
 
 void station_calcbuf(unsigned int br) //bitrate kbit/s
 {
+  char tmp[8];
+  unsigned int len;
+
   if((br >= 64) || (br == 0)) //bitrate >= 64
   {
     station_bufmin   = STATION_BUFMIN;
@@ -36,6 +39,31 @@ void station_calcbuf(unsigned int br) //bitrate kbit/s
     station_bufmin   = br/8*512;
     station_bufplay  = station_bufmin*4;
     station_bufstart = station_bufmin*6;
+  }
+
+  if((br >= 8) && (br <= 320))
+  {
+    len = sprintf(tmp, " [%i]", br);
+    if((len+strlen(gbuf.station.name)) < MAX_NAME)
+    {
+      strcat(gbuf.station.name, tmp);
+    }
+  }
+
+  return;
+}
+
+
+void station_close(void)
+{
+  if(station_status != STATION_CLOSED)
+  {
+    shoutcast_close();
+    vs_stop();
+    station_status = STATION_CLOSED;
+    menu_setstatus(MENU_STATE_STOP);
+    menu_setinfo("");
+    DEBUGOUT("Station: closed\n");
   }
 
   return;
@@ -55,10 +83,10 @@ unsigned int station_open(unsigned int item)
     return STATION_CLOSED;
   }
 
-  station_getitem(item, gbuf.menu.info);
+  station_getitem(item, gbuf.menu.name);
+  menu_setinfo("");
 
-  menu_setinfo(MENU_STATE_STOP, "");
-  menu_popup("Open Station...");
+  menu_drawpopup("Open Station...");
   DEBUGOUT("Station: %i %s\n", station_try, gbuf.station.addr);
 
   vs_start();
@@ -74,13 +102,13 @@ unsigned int station_open(unsigned int item)
     if(r == SHOUTCAST_OPENED)
     {
       station_timeout = getontime()+STATION_TIMEOUT;
-      menu_setinfo(MENU_STATE_BUF, "");
+      menu_setstatus(MENU_STATE_BUF);
       r = STATION_OPENED;
     }
     else if((r == SHOUTCAST_ERROR) ||
             (r == SHOUTCAST_SERVERFULL))
     {
-      station_closeitem();
+      station_closeitem(); //also clears addr
       r = STATION_CLOSED;
     }
     else
@@ -107,7 +135,7 @@ void station_service(void)
       {
         station_status = STATION_BUFFER;
         vs_pause();
-        menu_setinfo(MENU_STATE_BUF, "");
+        menu_setstatus(MENU_STATE_BUF);
         DEBUGOUT("Station: buffer\n");
       }
       else
@@ -119,9 +147,9 @@ void station_service(void)
     case STATION_BUFFER:
       if(vsbuf_len() > station_bufplay)
       {
-        menu_setinfo(MENU_STATE_PLAY, "");
         station_status = STATION_OPENED;
         vs_play();
+        menu_setstatus(MENU_STATE_PLAY);
         DEBUGOUT("Station: play\n");
       }
       if(getdeltatime(station_timeout) > 0)
@@ -133,19 +161,19 @@ void station_service(void)
     case STATION_OPEN:
       if(vsbuf_len() > station_bufstart)
       {
-        menu_setinfo(MENU_STATE_PLAY, "");
         station_status = STATION_OPENED;
         vs_play();
+        menu_setstatus(MENU_STATE_PLAY);
         DEBUGOUT("Station: play\n");
       }
       if(getdeltatime(station_timeout) > 0)
       {
-        station_closeitem();
+        station_close();
         if(station_try)
         {
           station_try--;
           station_open(station_item);
-          menu_update(1);
+          menu_drawwnd(1);
         }
       }
       break;
@@ -160,14 +188,8 @@ void station_service(void)
 
 void station_closeitem(void)
 {
-  if(station_status != STATION_CLOSED)
-  {
-    shoutcast_close();
-    vs_stop();
-    station_status = STATION_CLOSED;
-    menu_setinfo(MENU_STATE_STOP, "");
-    DEBUGOUT("Station: closed\n");
-  }
+  station_close();
+  station_init();
 
   return;
 }
@@ -255,8 +277,11 @@ void station_init(void)
   station_try      = STATION_TRY;
   station_calcbuf(0);
 
+  gbuf.card.name[0] = 0;
   gbuf.card.info[0] = 0;
   gbuf.card.file[0] = 0;
+
+  menu_setstatus(MENU_STATE_STOP);
 
   return;
 }

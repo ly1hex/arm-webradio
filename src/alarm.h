@@ -7,6 +7,7 @@
 #define ALARM_FILE                     "ALARM.INI"
 #define ALARM_FILEITEMS                (3)
 
+
 typedef struct
 {
   unsigned int wdays;  //Bit0=Sunday, Bit1=Monday, Bit2=Tueday...

@@ -25,15 +25,15 @@
 
 
 //----- PROTOTYPES -----
-unsigned int                           ini_getentry(const char *filename, const char *entry, char *value, unsigned int len);
-
-unsigned int                           fs_isdir(char *path, unsigned int item);
-void                                   fs_getitemtag(char *path, unsigned int item, char *name);
-void                                   fs_getitem(char *path, unsigned int item, char *name);
-unsigned int                           fs_items(char *path);
+unsigned int                           fs_isdir(const char *path, unsigned int item);
+void                                   fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int len);
+void                                   fs_getitem(const char *path, unsigned int item, char *dst, unsigned int len);
+unsigned int                           fs_items(const char *path);
 unsigned int                           fs_checkitem(FILINFO *finfo);
 void                                   fs_unmount(void);
 void                                   fs_mount(void);
 
+unsigned int                           ini_getentry(const char *filename, const char *entry, char *value, unsigned int len);
+unsigned int                           ini_setentry(const char *filename, const char *entry, const char *value);
 
 #endif //_MMC_H_

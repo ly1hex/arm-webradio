@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4201 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1995,6 +1995,97 @@ USBFIFOConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
                                         2)) << 3;
         *pulFIFOSize = USBIndexRead(ulBase, ulEndpoint >> 4,
                                     (unsigned long)USB_O_RXFIFOSZ, 1);
+    }
+}
+
+//*****************************************************************************
+//
+//! Enable DMA on a given endpoint.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulEndpoint is the endpoint to access.
+//! \param ulFlags specifies which direction and what mode to use when enabling
+//! DMA.
+//!
+//! This function will enable DMA on a given endpoint and set the mode according
+//! to the values in the \e ulFlags parameter.  The \e ulFlags parameter should
+//! have \b USB_EP_DEV_IN or \b USB_EP_DEV_OUT set.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBEndpointDMAEnable(unsigned long ulBase, unsigned long ulEndpoint,
+                     unsigned long ulFlags)
+{
+    //
+    // See if the transmit DMA is being enabled.
+    //
+    if(ulFlags & USB_EP_DEV_IN)
+    {
+        //
+        // Enable DMA on this end point.
+        //
+        HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_TXCSRH1) |=
+            USB_TXCSRH1_DMAEN;
+    }
+
+    //
+    // See if the receive DMA is being enabled.
+    //
+    if(ulFlags & USB_EP_DEV_OUT)
+    {
+        //
+        // Enable DMA on this end point.
+        //
+        HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_RXCSRH1) |=
+            USB_RXCSRH1_DMAEN;
+    }
+}
+
+//*****************************************************************************
+//
+//! Disable DMA on a given endpoint.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulEndpoint is the endpoint to access.
+//! \param ulFlags specifies which direction to disable.
+//!
+//! This function will disable DMA on a given end point to allow non-DMA
+//! USB transactions to generate interrupts normally.  The ulFlags should be
+//! \b USB_EP_DEV_IN or \b USB_EP_DEV_OUT all other bits are ignored.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBEndpointDMADisable(unsigned long ulBase, unsigned long ulEndpoint,
+                      unsigned long ulFlags)
+{
+    //
+    // If this was a reques to disable DMA on the IN portion of the end point
+    // then handle it.
+    //
+    if(ulFlags & USB_EP_DEV_IN)
+    {
+        //
+        // Just disable DMA leave the mode setting.
+        //
+        HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_TXCSRH1) &=
+            ~USB_TXCSRH1_DMAEN;
+    }
+
+    //
+    // If this was a request to disable DMA on the OUT portion of the end point
+    // then handle it.
+    //
+    if(ulFlags & USB_EP_DEV_OUT)
+    {
+        //
+        // Just disable DMA leave the mode setting.
+        //
+        HWREGB(ulBase + EP_OFFSET(ulEndpoint) + USB_O_RXCSRH1) &=
+            ~USB_RXCSRH1_DMAEN;
     }
 }
 

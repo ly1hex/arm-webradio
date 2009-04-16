@@ -95,7 +95,7 @@ unsigned int dhcp_getcfg(void)
   IP_Addr ip;
   unsigned int index;
 
-  menu_popup("DHCP: Discover...");
+  menu_drawpopup("DHCP: Discover...");
 
   ip = eth_ip(); //save current device ip
   eth_setip(0UL); //set device ip to zero
@@ -244,7 +244,7 @@ void dhcp_udpapp(unsigned int index)
           }
           dhcp_request(index, DHCP_MSG_REQUEST);
           dhcp_status = DHCP_REQUEST;
-          menu_popup("DHCP: Request...");
+          menu_drawpopup("DHCP: Request...");
         }
         break;
 
@@ -254,7 +254,7 @@ void dhcp_udpapp(unsigned int index)
            (rx_dhcp->options[2] == DHCP_MSG_ACK))          //DHCP Ack
         {
           dhcp_status = DHCP_ACK;
-          menu_popup("DHCP: Ack");
+          menu_drawpopup("DHCP: Ack");
         }
         break;
     }

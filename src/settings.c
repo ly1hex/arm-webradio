@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
+#include <ctype.h>
 #include "third_party/fatfs/ff.h"
 #include "third_party/fatfs/diskio.h"
 #include "tools.h"
@@ -14,8 +16,62 @@
 #include "eth/utils.h"
 #include "eth/dhcp.h"
 #include "menu.h"
+#include "menu_dlg.h"
 #include "alarm.h"
 #include "settings.h"
+
+
+#define F_NONE        (0) //-
+#define F_NR          (1) //p1-p2
+#define F_STR         (2) //p1=max len
+#define F_MAC         (3) //-
+#define F_IP          (4) //-
+#define F_ONOFF       (5) //-
+#define F_COLOR       (7) //-
+#define F_OR          (8) //p1 or p2
+#define F_RUN         (9) //-
+#define F_TIME        (10) //-
+#define F_INFO        (11) //-
+#define SETTINGSITEMS (35)
+const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
+{
+  //name               ini-entry     format        p1     p2 set-func
+  {"Info...",           "",           F_INFO,       0,     0, 0},
+  {"PlayMode ",         "PLAYMODE",   F_NONE,       0,     0, 0},
+  {"Volume   ",         "VOLUME",     F_NR,         0,   100, (void*)vs_setvolume},
+  {"AutoStart",         "AUTOSTART",  F_STR,        0,     0, 0},
+  {"--- Alarm ---",     "",           F_NONE,       0,     0, 0},
+  {"Vol  ",             "ALARMVOL",   F_NR,         0,   100, 0},
+  {"File1",             "ALARMFILE1", F_STR,        0,     0, 0},
+  {"File2",             "ALARMFILE2", F_STR,        0,     0, 0},
+  {"File3",             "ALARMFILE3", F_STR,        0,     0, 0},
+  {"--- Audio ---",     "",           F_NONE,       0,     0, 0},
+  {"Bass Freq   Hz",    "BASSFREQ",   F_NR,        20,   150, (void*)vs_setbassfreq},
+  {"Bass Amp    dB",    "BASSAMP",    F_NR,         0,    15, (void*)vs_setbassamp},
+  {"Treble Freq Hz",    "TREBLEFREQ", F_NR,      1000, 15000, (void*)vs_settreblefreq},
+  {"Treble Amp  dB",    "TREBLEAMP",  F_NR,        -8,     7, (void*)vs_settrebleamp},
+  {"VS",                "VS",         F_OR,      1033,  1053, (void*)vs_init},
+  {"--- Ethernet ---",  "",           F_NONE,       0,     0, 0},
+  {"Name",              "NAME",       F_STR,       15,     0, (void*)eth_setname},
+  {"MAC",               "MAC",        F_MAC,        0,     0, 0}, //(void*)eth_setmac},
+  {"DHCP",              "DHCP",       F_ONOFF,      0,     0, (void*)eth_setdhcp},
+  {"IP  ",              "IP",         F_IP,         0,     0, (void*)eth_setip},
+  {"Mask",              "NETMASK",    F_IP,         0,     0, (void*)eth_setnetmask},
+  {"Rout",              "ROUTER",     F_IP,         0,     0, (void*)eth_setrouter},
+  {"DNS ",              "DNS",        F_IP,         0,     0, (void*)eth_setdns},
+  {"NTP ",              "NTP",        F_IP,         0,     0, (void*)eth_setntp},
+  {"Time Diff  ",       "TIMEDIFF",   F_NR,    -43200, 43200, (void*)eth_settimediff},
+  {"Summer Time",       "SUMMER",     F_ONOFF,      0,     0, (void*)eth_setsummer},
+  {"Get Time from NTP", "",           F_TIME,       0,     0, 0},
+  {"--- IR ---",        "",           F_NONE,       0,     0, 0},
+  {"IR Addr",           "IR",         F_NR,         0,    31, (void*)ir_setaddr},
+  {"Show raw IR Data",  "",           F_RUN,        0,     0, (void*)dlg_rawir},
+  {"--- Colors ---",    "",           F_NONE,       0,     0, 0},
+  {"BG  ",              "COLORBG",    F_COLOR,      0,     0, (void*)menu_setbgcolor},
+  {"FG  ",              "COLORFG",    F_COLOR,      0,     0, (void*)menu_setfgcolor},
+  {"Sel ",              "COLORSEL",   F_COLOR,      0,     0, (void*)menu_setselcolor},
+  {"Edge",              "COLOREDGE",  F_COLOR,      0,     0, (void*)menu_setedgecolor}
+};
 
 
 #define INI_BUFLEN (64)
@@ -41,7 +97,11 @@ void settings_read(void)
   {
     edge = atorgb(buf);
   }
-  menu_setcolors(bg, fg, sel, edge);
+
+  menu_setbgcolor(bg);
+  menu_setfgcolor(fg);
+  menu_setselcolor(sel);
+  menu_setedgecolor(edge);
 
   //alarm times
   alarm_load();
@@ -94,14 +154,11 @@ void settings_read(void)
   }
   if(ini_getentry(SETTINGS_FILE, "DHCP", buf, INI_BUFLEN-1))
   {
-    if(atoi(buf))
-    {
-      eth_setdhcp(1);
-    }
+    eth_setdhcp((atoi(buf))?1:0);
   }
   else
   {
-    eth_setdhcp(1);
+    eth_setdhcp(DEFAULT_DHCP);
   }
   if(eth_ip() == 0UL)
   {
@@ -166,6 +223,14 @@ void settings_read(void)
   {
     eth_settimediff(DEFAULT_TIMEDIFF);
   }
+  if(ini_getentry(SETTINGS_FILE, "SUMMER", buf, INI_BUFLEN-1))
+  {
+    eth_setsummer((atoi(buf))?1:0);
+  }
+  else
+  {
+    eth_setsummer(DEFAULT_SUMMER);
+  }
 
   return;
 }
@@ -173,148 +238,114 @@ void settings_read(void)
 
 unsigned int settings_openitem(unsigned int item)
 {
-  if(item == 0)
+  char value[INI_BUFLEN];
+  char buf[MAX_ADDR];
+  unsigned int save=0;
+
+  if(item == 0) //back
   {
     return MENU_BACK;
   }
-  else if(item == 7)
+  else
   {
-    ir_showdata();
+    item--;
+    ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, value, INI_BUFLEN-1);
+    switch(settingsmenu[item].format)
+    {
+      case F_NR:  //p1-p2
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          settingsmenu[item].set((void*)(int)atoi(buf));
+        }
+        break;
+      case F_STR: //p1=max len
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          settingsmenu[item].set(buf);
+        }
+        break;
+      case F_MAC:
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          //settingsmenu[item].set((void*)(int)(MAC_Addr)atomac(buf));
+        }
+        break;
+      case F_IP:
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          settingsmenu[item].set((void*)(int)(IP_Addr)atoip(buf));
+        }
+        break;
+      case F_ONOFF:
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          settingsmenu[item].set((void*)(int)atoi(buf));
+        }
+        break;
+      case F_COLOR:
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          settingsmenu[item].set((void*)(unsigned int)atorgb(buf));
+        }
+        break;
+      case F_OR:  //p1 or p2
+        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
+        if(save && settingsmenu[item].set)
+        {
+          settingsmenu[item].set((void*)(int)atoi(buf));
+        }
+        break;
+      case F_RUN:
+        if(settingsmenu[item].set)
+        {
+          settingsmenu[item].set(0);
+        }
+        break;
+      case F_TIME:
+        settime(ntp_gettime());
+        break;
+      case F_INFO:
+        dlg_msg("Info", APPNAME" v"APPVERSION""APPRELEASE_SYM"\n\nBuilt on\n"__DATE__" "__TIME__);
+        break;
+
+    }
+    if(save)
+    {
+      ini_setentry(SETTINGS_FILE, settingsmenu[item].ini, buf);
+    }
+
   }
 
-  return MENU_UPDATE;
+  return MENU_NOP;
 }
 
 
-/*
-General
-  Play Mode
-  Time
-  AutoStart
-IR
-  IR Addr
-  Show raw IR data
-Alarm
-  Vol
-  File
-Audio
-  Volume
-  Bass Freq
-  Bass Amp
-  Treble Freq
-  Treble Amp
-Ethernet
-  Name
-  MAC
-  DHCP on/off
-  IP
-  NetMask
-  Router
-  DNS
-  NTP
-  TimeDiff
-*/
-
 void settings_getitem(unsigned int item, char *name)
 {
-  char tmp[MAX_FILE];
+  char buf[INI_BUFLEN];
 
-  if(item == 0)
+  if(item == 0) //back
   {
     strcpy(name, "<< back <<");
   }
   else
   {
-    switch(item)
+    item--;
+    if((settingsmenu[item].ini[0] != 0) &&
+       (settingsmenu[item].format != F_NONE))
     {
-      case 1:
-        strcpy(name, "--- General ---");
-        break;
-      case 2:
-        strcpy(name, "Play Mode");
-        break;
-      case 3:
-        strcpy(name, "Time");
-        break;
-      case 4:
-        ini_getentry(SETTINGS_FILE, "AUTOSTART", tmp, MAX_FILE-1);
-        snprintf(name, MAX_NAME-1, "AutoStart %s", tmp);
-        break;
-      case 5:
-        strcpy(name, "--- IR ---");
-        break;
-      case 6:
-        sprintf(name, "IR Addr %i", ir_addr());
-        break;
-      case 7:
-        sprintf(name, "Show raw IR data");
-        break;
-      case 8:
-        strcpy(name, "--- Alarm ---");
-        break;
-      case 9:
-        sprintf(name, "Vol %i", alarm_getvol());
-        break;
-      case 10:
-        alarm_getfile(tmp, 1);
-        snprintf(name, MAX_NAME-1, "File1 %s", tmp);
-        break;
-      case 11:
-        alarm_getfile(tmp, 2);
-        snprintf(name, MAX_NAME-1, "File2 %s", tmp);
-        break;
-      case 12:
-        alarm_getfile(tmp, 3);
-        snprintf(name, MAX_NAME-1, "File3 %s", tmp);
-        break;
-      case 13:
-        strcpy(name, "--- Audio ---");
-        break;
-      case 14:
-        sprintf(name, "Volume %i", vs_volume());
-        break;
-      case 15:
-        sprintf(name, "Bass Freq %i Hz", vs_bassfreq());
-        break;
-      case 16:
-        sprintf(name, "Bass Amp %i dB", vs_bassamp());
-        break;
-      case 17:
-        sprintf(name, "Treble Freq %i Hz", vs_treblefreq());
-        break;
-      case 18:
-        sprintf(name, "Treble Amp %i dB", vs_trebleamp());
-        break;
-      case 19:
-        strcpy(name, "--- Ethernet ---");
-        break;
-      case 20:
-        sprintf(name, "Name %s", eth_name());
-        break;
-      case 21:
-        sprintf(name, "MAC %s", mactoa(eth_mac()));
-        break;
-      case 22:
-        sprintf(name, "DHCP %i", eth_dhcp());
-        break;
-      case 23:
-        sprintf(name, "IP %s", iptoa(eth_ip()));
-        break;
-      case 24:
-        sprintf(name, "NM %s", iptoa(eth_netmask()));
-        break;
-      case 25:
-        sprintf(name, "ROUT %s", iptoa(eth_router()));
-        break;
-      case 26:
-        sprintf(name, "DNS %s", iptoa(eth_dns()));
-        break;
-      case 27:
-        sprintf(name, "NTP %s", iptoa(eth_ntp()));
-        break;
-      case 28:
-        sprintf(name, "Time Diff %i", eth_timediff());
-        break;
+      ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, buf, INI_BUFLEN-1);
+      snprintf(name, MAX_NAME-1, "%s %s", settingsmenu[item].name, buf);
+    }
+    else
+    {
+      strcpy(name, settingsmenu[item].name);
     }
   }
 
@@ -324,5 +355,5 @@ void settings_getitem(unsigned int item, char *name)
 
 unsigned int settings_items(void)
 {
-  return 28+1;
+  return SETTINGSITEMS+1;
 }

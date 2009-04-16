@@ -217,7 +217,7 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
           if(i == 200) //200 OK
           {
             parse_header = 1;
-            menu_popup("Station: OK");
+            menu_drawpopup("Station: OK");
           }
           else
           {
@@ -227,24 +227,23 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
               case 302: //302 Moved Temporarily
               case 303: //303 See Other
                 shoutcast_status = SHOUTCAST_ERROR;
-                menu_popup("Station: Addr moved");
+                menu_drawpopup("Station: Addr moved");
                 break;
               case 400: //400 Server full
                 shoutcast_status = SHOUTCAST_SERVERFULL;
-                menu_popup("Station: Server full");
+                menu_drawpopup("Station: Server full");
                 break;
               case 404: //404 Resource not found
                 shoutcast_status = SHOUTCAST_ERROR;
-                menu_popup("Station: Not found");
-                delay_ms(1000);
+                menu_drawpopup("Station: Not found");
                 break;
               case 500: //500 Internal Server Error
                 shoutcast_status = SHOUTCAST_ERROR;
-                menu_popup("Station: Server error");
+                menu_drawpopup("Station: Server error");
                 break;
               default: //Error
                 shoutcast_status = SHOUTCAST_ERROR;
-                menu_popup("Station: Error");
+                menu_drawpopup("Station: Error");
                 break;
             }
             parse_header = 0;
@@ -276,7 +275,7 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
             }
             station_calcbuf(i);
           }
-          http_getparam(gbuf.menu.info, MAX_INFOTXT-1, rx, "ICY-NAME:"); //get stream name
+          http_getparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-NAME:"); //get stream name
           for(; rx_len!=0; rx_len--, rx++)
           {
             if((rx[0] == '\r') && (rx[1] == '\n') && (rx[2] == '\r') && (rx[3] == '\n'))

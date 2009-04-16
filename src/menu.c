@@ -8,6 +8,9 @@
 #include "tools.h"
 #include "main.h"
 #include "io.h"
+#include "lcd/font_8x8.h"
+#include "lcd/font_8x12.h"
+#include "lcd/font_clock.h"
 #include "lcd/img.h"
 #include "lcd.h"
 #include "mmc.h"
@@ -25,69 +28,70 @@
 #define SUB_CARD     (2)
 #define SUB_ALARM    (3)
 #define SUB_SETTINGS (4)
-#define SUB_BACK     (5)
-//#define SUB_STANDBY  (6)
+//#define SUB_BACK     (5)
+#define SUB_STANDBY  (5)
 #define MAINITEMS    (6)
 const MAINMENUITEM mainmenu[MAINITEMS] =
 {
-  {"Station ", {&img_station[0][0],  &img_station[1][0],  &img_station[2][0]},  station_init, station_items,  station_getitem,  station_openitem,  station_closeitem, station_service},
-  {" Share  ", {&img_share[0][0],    &img_share[1][0],    &img_share[2][0]},    share_init,   share_items,    share_getitem,    share_openitem,    share_closeitem,   share_service},
-  {"  Card  ", {&img_card[0][0],     &img_card[1][0],     &img_card[2][0]},     card_init,    card_items,     card_getitem,     card_openitem,     card_closeitem,    card_service},
-  {" Alarm  ", {&img_clock[0][0],    &img_clock[1][0],    &img_clock[2][0]},    alarm_init,   alarm_items,    alarm_getitem,    alarm_openitem,    alarm_closeitem,   0},
+  {"Station",  {&img_station[0][0],  &img_station[1][0],  &img_station[2][0]},  station_init, station_items,  station_getitem,  station_openitem,  station_closeitem, station_service},
+  {"Share",    {&img_share[0][0],    &img_share[1][0],    &img_share[2][0]},    share_init,   share_items,    share_getitem,    share_openitem,    share_closeitem,   share_service},
+  {"Card",     {&img_card[0][0],     &img_card[1][0],     &img_card[2][0]},     card_init,    card_items,     card_getitem,     card_openitem,     card_closeitem,    card_service},
+  {"Alarm",    {&img_clock[0][0],    &img_clock[1][0],    &img_clock[2][0]},    alarm_init,   alarm_items,    alarm_getitem,    alarm_openitem,    alarm_closeitem,   0},
   {"Settings", {&img_settings[0][0], &img_settings[1][0], &img_settings[2][0]}, 0,            settings_items, settings_getitem, settings_openitem, 0,                 0},
-//  {"  Back  ", {&img_back[0][0],     &img_back[1][0],     &img_back[2][0]},     0,            0,              0,                0,                 0,                 0},
-  {"Standby ", {&img_power[0][0],    &img_power[1][0],    &img_power[2][0]},    0,            0,              0,                standby,           0,                 0},
+//  {"Back",     {&img_back[0][0],     &img_back[1][0],     &img_back[2][0]},     0,            0,              0,                0,                 0,                 0},
+  {"Standby",  {&img_power[0][0],    &img_power[1][0],    &img_power[2][0]},    0,            0,              0,                standby,           0,                 0},
 };
 
 #define MODE_INFO (0) //normal screen
 #define MODE_MAIN (1) //animated main menu
 #define MODE_SUB  (2) //list menu
 unsigned int menu_mode=0, menu_sub=0, menu_items=0, menu_first=0, menu_last=0, menu_sel=0, menu_lastsel=0;
-unsigned int menu_status=0;
+unsigned int menu_status=0, menu_standbytimer=0;
 unsigned int bgcolor=0, fgcolor=0, selcolor=0, edgecolor=0;
 
 
 unsigned int menu_openfile(char *file)
 {
-  unsigned int r=0, nr;
+  unsigned int ret=0, nr;
+  char tmp[MAX_ADDR];
 
   if(file[0])
   {
+    strcpy(tmp, file);
+
     if(mainmenu[menu_sub].close)
     {
       mainmenu[menu_sub].close();
     }
 
-    if(isdigit(file[0])) //station number
+    if(isdigit(tmp[0])) //station number
     {
-      nr       = atoi(file);
       menu_sub = SUB_STATION;
       mainmenu[menu_sub].init();
-      if(station_open(nr) == STATION_OPENED)
+      if(station_open(atoi(tmp)) == STATION_OPENED)
       {
-        r = 1;
+        ret = 1;
       }
     }
     else //path to card file
     {
       menu_sub = SUB_CARD;
-      if(file != gbuf.card.file)
+      mainmenu[menu_sub].init();
+      if(card_openfile(tmp) == MENU_PLAY)
       {
-        mainmenu[menu_sub].init();
-      }
-      if(card_openfile(file) == MENU_PLAY)
-      {
-        r = 1;
+        ret = 1;
       }
     }
-    menu_items = 1;
-    menu_first = 0;
-    menu_last  = 0;
-    menu_sel   = 0;
-    menu_update(1);
+    menu_mode    = MODE_INFO;
+    menu_items   = 1;
+    menu_first   = 0;
+    menu_last    = 0;
+    menu_sel     = 0;
+    menu_lastsel = 0;
+    menu_drawwnd(1);
   }
 
-  return r;
+  return ret;
 }
 
 
@@ -96,14 +100,14 @@ unsigned int menu_sw(void)
   switch(menu_mode)
   {
     case MODE_INFO:
-      if(menu_items == 0)
+      if(menu_items == 0) //main
       {
         menu_mode    = MODE_MAIN;
         menu_items   = 0;
         menu_sel     = menu_sub;
-        menu_lastsel = (menu_sel==(MAINITEMS-1))?0:(menu_sel+1);
+        menu_lastsel = menu_sel;
       }
-      else
+      else                //sub
       {
         if(mainmenu[menu_sub].close)
         {
@@ -116,12 +120,13 @@ unsigned int menu_sw(void)
           menu_first   = menu_sel;
           menu_last    = (menu_items >= MENU_LINES)?(MENU_LINES-1):(menu_items-1);
           menu_sel     = 0;
+          menu_lastsel = 0;
         }
       }
       break;
 
     case MODE_MAIN:
-      if(mainmenu[menu_sel].items)
+      if(mainmenu[menu_sel].items) //sub
       {
         menu_mode  = MODE_SUB;
         menu_sub   = menu_sel;
@@ -133,8 +138,9 @@ unsigned int menu_sw(void)
         menu_first   = 0;
         menu_last    = (menu_items >= MENU_LINES)?(MENU_LINES-1):(menu_items-1);
         menu_sel     = 0;
+        menu_lastsel = 0;
       }
-      else
+      else                         //open item
       {
         if(mainmenu[menu_sel].open) //open and stay in main mode
         {
@@ -154,21 +160,24 @@ unsigned int menu_sw(void)
       {
         switch(mainmenu[menu_sub].open(menu_sel))
         {
-          case MENU_BACK:
-            menu_mode    = MODE_MAIN;
-            menu_items   = 0;
-            menu_sel     = menu_sub;
-            menu_lastsel = (menu_sel==(MAINITEMS-1))?0:(menu_sel+1);
+          case MENU_NOP:
             break;
           case MENU_PLAY:
             menu_mode = MODE_INFO;
             break;
           case MENU_UPDATE:
           case MENU_ERROR:
-            menu_items = mainmenu[menu_sub].items();
-            menu_first = 0;
-            menu_last  = (menu_items>=MENU_LINES)?(MENU_LINES-1):(menu_items-1);
-            menu_sel   = 0;
+            menu_items   = mainmenu[menu_sub].items();
+            menu_first   = 0;
+            menu_last    = (menu_items>=MENU_LINES)?(MENU_LINES-1):(menu_items-1);
+            menu_sel     = 0;
+            menu_lastsel = 0;
+            break;
+          case MENU_BACK:
+            menu_mode    = MODE_MAIN;
+            menu_items   = 0;
+            menu_sel     = menu_sub;
+            menu_lastsel = menu_sel;
             break;
         }
       }
@@ -186,14 +195,17 @@ unsigned int menu_swlong(void)
     case MODE_INFO:
 //standby
       break;
+
     case MODE_MAIN:
       menu_mode  = MODE_INFO;
       menu_items = 0;
       break;
+
     case MODE_SUB:
       menu_mode    = MODE_MAIN;
+      menu_items   = 0;
       menu_sel     = menu_sub;
-      menu_lastsel = (menu_sub==MAINITEMS-1)?0:menu_sub+1;
+      menu_lastsel = menu_sel;
       break;
   }
 
@@ -219,7 +231,7 @@ void menu_up(void)
       {
         menu_sel = 0;
       }
-      menu_drawmain(0);
+      menu_drawwndmain(0);
       break;
 
     case MODE_SUB:
@@ -258,7 +270,7 @@ void menu_down(void)
       {
         menu_sel = (MAINITEMS-1);
       }
-      menu_drawmain(0);
+      menu_drawwndmain(0);
       break;
 
     case MODE_SUB:
@@ -325,6 +337,7 @@ void menu_service(unsigned int draw)
 
   menu_steps(keys_steps());
 
+  //rotary encoder
   switch(keys_sw())
   {
     case SW_PRESSED:
@@ -335,35 +348,30 @@ void menu_service(unsigned int draw)
       break;
   }
 
+  //ir remote control
   switch(ir_cmd())
   {
     case SW_VOL_P:
-      if(menu_mode == MODE_INFO)
+      switch(menu_mode)
       {
-        vs_setvolume(vs_volume()+4);
-        menu_drawvol();
-      }
-      else if(menu_mode == MODE_SUB)
-      {
-        menu_steps(+MENU_LINES);
+        case MODE_INFO: vs_setvolume(vs_volume()+4); menu_drawvol();                      break;
+        case MODE_MAIN: menu_steps(+1);                                                   break;
+        case MODE_SUB:  menu_steps(+MENU_LINES);                                          break;
       }
       break;
     case SW_VOL_M:
-      if(menu_mode == MODE_INFO)
+      switch(menu_mode)
       {
-        vs_setvolume(vs_volume()-4);
-        menu_drawvol();
-      }
-      else if(menu_mode == MODE_SUB)
-      {
-        menu_steps(-MENU_LINES);
+        case MODE_INFO: vs_setvolume((vs_volume()<=4)?0:(vs_volume()-4)); menu_drawvol(); break;
+        case MODE_MAIN: menu_steps(-1);                                                   break;
+        case MODE_SUB:  menu_steps(-MENU_LINES);                                          break;
       }
       break;
     case SW_UP:
       menu_steps(-1);
       break;
     case SW_DOWN:
-      menu_steps(1);
+      menu_steps(+1);
       break;
     case SW_ENTER:
       redraw |= menu_sw();
@@ -378,18 +386,31 @@ void menu_service(unsigned int draw)
       break;
   }
 
-  menu_update(redraw);
+  menu_drawwnd(redraw);
 
-  if((redraw == 0) && (menu_mode == MODE_INFO))
+  if(redraw == 0)
   {
     if(draw & SEC_CHANGED)
     {
+      if(menu_status == MENU_STATE_STOP)
+      {
+        if(++menu_standbytimer > STANDBY_TIME)
+        {
+          menu_standbytimer = 0;
+          standby(0);
+          menu_drawwnd(1);
+        }
+      }
       menu_drawclock();
     }
     if(draw & DAY_CHANGED)
     {
       menu_drawdate();
     }
+  }
+  else
+  {
+    menu_standbytimer = 0;
   }
 
   if(mainmenu[menu_sub].service)
@@ -416,9 +437,7 @@ void menu_alarm(void)
   //open alarm file
   if(menu_status == MENU_STATE_STOP)
   {
-    menu_mode = MODE_INFO;
-    menu_update(1);
-    menu_popup("Alarm");
+    menu_drawpopup("Alarm");
     for(i=1; i<=ALARM_FILEITEMS; i++) //open alarm file
     {
       if(alarm_getfile(gbuf.menu.file, i))
@@ -429,30 +448,17 @@ void menu_alarm(void)
         }
       }
     }
-    menu_items   = mainmenu[menu_sub].items();
-    menu_first   = 0;
-    menu_last    = (menu_items >= MENU_LINES)?(MENU_LINES-1):(menu_items-1);
-    menu_update(1);
   }
 
   return;
 }
 
 
-void menu_popup(char *s)
+#define ITEM_LEFT (0)
+#define ITEM_TOP  (11)
+void menu_drawwndsub(unsigned int redraw)
 {
-  lcd_rectedge(4, (LCD_HEIGHT/2)-11, LCD_WIDTH-1-4, (LCD_HEIGHT/2)+11, edgecolor);
-  lcd_rect(5, (LCD_HEIGHT/2)-10, LCD_WIDTH-1-5, (LCD_HEIGHT/2)+10, fgcolor);
-  lcd_puts(10, (LCD_HEIGHT/2)- 4, s, SMALLFONT, bgcolor, fgcolor);
-
-  return;
-}
-
-
-#define ITEM_LEFTTOP (2)
-void menu_drawsub(unsigned int redraw)
-{
-  unsigned int i, x;
+  unsigned int i, x, y;
   static unsigned int last_first=0;
   char tmp[MAX_NAME];
 
@@ -465,12 +471,12 @@ void menu_drawsub(unsigned int redraw)
   }
 
   //clear last selection
-  i = (menu_lastsel-last_first)*MENU_LINEHEIGHT;
-  lcd_rectedge(0, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, bgcolor);
+  i = ITEM_TOP + ((menu_lastsel-last_first)*MENU_LINEHEIGHT);
+  lcd_rectedge(ITEM_LEFT, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, bgcolor);
 
   //selection
-  i = (menu_sel-menu_first)*MENU_LINEHEIGHT;
-  lcd_rectedge(0, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, selcolor);
+  i = ITEM_TOP + ((menu_sel-menu_first)*MENU_LINEHEIGHT);
+  lcd_rectedge(ITEM_LEFT, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, selcolor);
 
   //draw items
   if((menu_first != last_first) || redraw)
@@ -479,17 +485,18 @@ void menu_drawsub(unsigned int redraw)
     for(i=0; (i < MENU_LINES) && ((menu_first+i) < menu_items); i++)
     {
       mainmenu[menu_sub].get(menu_first+i, tmp);
-      x = lcd_puts(ITEM_LEFTTOP, ITEM_LEFTTOP+(i*MENU_LINEHEIGHT), tmp, NORMALFONT, fgcolor, bgcolor);
+      x = lcd_puts(ITEM_LEFT+2, ITEM_TOP+2+(i*MENU_LINEHEIGHT), tmp, NORMALFONT, fgcolor, bgcolor);
       if(x < (LCD_WIDTH-5))
       {
-        lcd_rect(x, i*MENU_LINEHEIGHT+1, LCD_WIDTH-5-1, (i*MENU_LINEHEIGHT)+MENU_LINEHEIGHT-1, bgcolor);
+        y = ITEM_TOP+2+(i*MENU_LINEHEIGHT);
+        lcd_rect(x, y, LCD_WIDTH-5-1, y+12-1, bgcolor); //font height = 12
       }
     }
   }
 
   //scrollbar
-  i = (menu_sel*(LCD_HEIGHT-1-8))/(menu_items-1);
-  lcd_rect(LCD_WIDTH-4, 0, LCD_WIDTH-1, LCD_HEIGHT-1, edgecolor);
+  i = ITEM_TOP+((menu_sel*(LCD_HEIGHT-1-8-ITEM_TOP)) / (menu_items-1));
+  lcd_rect(LCD_WIDTH-4, ITEM_TOP, LCD_WIDTH-1, LCD_HEIGHT-1, edgecolor);
   lcd_rect(LCD_WIDTH-4, i, LCD_WIDTH-1, i+8, fgcolor);
 
   menu_lastsel = menu_sel;
@@ -498,7 +505,11 @@ void menu_drawsub(unsigned int redraw)
 }
 
 
-void menu_drawmain(unsigned int redraw)
+#define IMG_TOP    (45)
+#define IMG_LEFT   (0)
+#define IMG_MIDDLE ((LCD_WIDTH/2)-(32/2))
+#define IMG_RIGHT  (LCD_WIDTH-32)
+void menu_drawwndmain(unsigned int redraw)
 {
   int x[4], add;
   unsigned int state[4], item[4];
@@ -511,10 +522,17 @@ void menu_drawmain(unsigned int redraw)
       return;
     }
   }
+  else
+  {
+    if(menu_sel == menu_lastsel)
+    {
+      menu_lastsel = (menu_sel==(MAINITEMS-1))?0:(menu_sel+1);
+    }
+  }
 
-  x[0]     = 0;
-  x[1]     = MENU_MIDDLEITEM;
-  x[2]     = MENU_RIGHTITEM;
+  x[0]     = IMG_LEFT;
+  x[1]     = IMG_MIDDLE;
+  x[2]     = IMG_RIGHT;
   state[0] = 2;
   state[1] = 0;
   state[2] = 2;
@@ -523,34 +541,48 @@ void menu_drawmain(unsigned int redraw)
   item[1] = menu_lastsel;
 
   if(menu_lastsel == 0)
+  {
     item[0] = MAINITEMS-1;
+  }
   else
+  {
     item[0] = menu_lastsel-1;
+  }
 
   if(menu_lastsel == (MAINITEMS-1))
+  {
     item[2] = 0;
+  }
   else
+  {
     item[2] = menu_lastsel+1;
+  }
 
   if(((menu_sel > menu_lastsel) && ((menu_sel-menu_lastsel) == 1)) ||
-    ((menu_sel == 0) && ((menu_lastsel == (MAINITEMS-1))) ))            //move ->
+     ((menu_sel == 0) && ((menu_lastsel == (MAINITEMS-1))) ))          //move ->
   {
     if(item[2] == (MAINITEMS-1))
+    {
       item[3] = 0;
+    }
     else
+    {
       item[3] = item[2]+1;
-
-    x[3] = MENU_RIGHTITEM+MENU_MIDDLEITEM;
+    }
+    x[3] = IMG_RIGHT+IMG_MIDDLE;
     add  = -2;
   }
-  else                                                                  //move <-
+  else                                                                 //move <-
   {
     if(item[0] == 0)
+    {
       item[3] = MAINITEMS-1;
+    }
     else
+    {
       item[3] = item[0]-1;
-
-    x[3] = -MENU_MIDDLEITEM;
+    }
+    x[3] = -IMG_MIDDLE;
     add  = +2;
   }
 
@@ -562,35 +594,20 @@ void menu_drawmain(unsigned int redraw)
       x[i] += add;
       switch(x[i])
       {
-        case MENU_MIDDLEITEM/3:
-          state[i]=2;
-          break;
-        case MENU_MIDDLEITEM/2:
-          state[i]=1;
-          break;
-        case MENU_MIDDLEITEM-10:
-          state[i]=0;
-          break;
-        case MENU_MIDDLEITEM:
-          state[i]=0;
-          stop=1;
-          break;
-        case MENU_MIDDLEITEM+10:
-          state[i]=0;
-          break;
-        case MENU_MIDDLEITEM+(MENU_MIDDLEITEM/3):
-          state[i]=1;
-          break;
-        case MENU_MIDDLEITEM+(MENU_MIDDLEITEM/2):
-          state[i]=2;
-          break;
+        case IMG_MIDDLE/3:              state[i]=2;         break;
+        case IMG_MIDDLE/2:              state[i]=1;         break;
+        case IMG_MIDDLE-10:             state[i]=0;         break;
+        case IMG_MIDDLE:                state[i]=0; stop=1; break;
+        case IMG_MIDDLE+10:             state[i]=0;         break;
+        case IMG_RIGHT-(IMG_MIDDLE/2):  state[i]=1;         break;
+        case IMG_RIGHT-(IMG_MIDDLE/3):  state[i]=2;         break;
       }
-
-      lcd_img32(x[i], MENU_TOP, mainmenu[item[i]].img[state[i]], fgcolor, bgcolor);
+      lcd_img32(x[i], IMG_TOP, mainmenu[item[i]].img[state[i]], fgcolor, bgcolor);
     }
   }
 
-  lcd_putline(MENU_TEXTX, MENU_TEXTY, mainmenu[menu_sel].name, NORMALFONT, fgcolor, bgcolor);
+  i = (LCD_WIDTH/2)-(strlen(mainmenu[menu_sel].name)*NORMALFONT_WIDTH/2);
+  lcd_putline(i, IMG_TOP+32+15, mainmenu[menu_sel].name, NORMALFONT, fgcolor, bgcolor);
 
   menu_lastsel = menu_sel;
 
@@ -600,7 +617,10 @@ void menu_drawmain(unsigned int redraw)
 
 void menu_drawclock(void)
 {
-  lcd_puts(25, 100, getclock(), TIMEFONT, fgcolor, bgcolor);
+  if(menu_mode == MODE_INFO)
+  {
+    lcd_puts(25, 108, getclock(), TIMEFONT, bgcolor, fgcolor);
+  }
 
   return;
 }
@@ -608,7 +628,10 @@ void menu_drawclock(void)
 
 void menu_drawdate(void)
 {
-  lcd_puts(37, 85, getdate(), SMALLFONT, edgecolor, bgcolor);
+  if(menu_mode == MODE_INFO)
+  {
+    lcd_puts(37, 90, getdate(), NORMALFONT, bgcolor, fgcolor);
+  }
 
   return;
 }
@@ -620,9 +643,9 @@ void menu_drawvol(void)
 
   if(menu_mode == MODE_INFO)
   {
-    x = (vs_volume()/2);
-    lcd_rect(LCD_WIDTH-1-5-50,   2, LCD_WIDTH-1-5-50+x, 8, fgcolor);
-    lcd_rect(LCD_WIDTH-1-5-50+x, 2, LCD_WIDTH-1-5,      8, bgcolor);
+    x = (vs_volume()/4); //100/4 = 25
+    lcd_rect(LCD_WIDTH-1-5-25,   2, LCD_WIDTH-1-5-25+x, 8, fgcolor);
+    lcd_rect(LCD_WIDTH-1-5-25+x, 2, LCD_WIDTH-1-5,      8, bgcolor);
   }
 
   return;
@@ -636,13 +659,13 @@ void menu_drawstatus(void)
     switch(menu_status)
     {
       case MENU_STATE_STOP:
-        lcd_putc(90, 2, 0xFE, SMALLFONT, bgcolor, edgecolor);
+        lcd_putc(LCD_WIDTH-1-5-40, 1, 0xFE, SMALLFONT, bgcolor, edgecolor);
         break;
       case MENU_STATE_BUF:
-        lcd_putc(90, 2, 0xFD, SMALLFONT, bgcolor, edgecolor);
+        lcd_putc(LCD_WIDTH-1-5-40, 1, 0xFD, SMALLFONT, bgcolor, edgecolor);
         break;
       case MENU_STATE_PLAY:
-        lcd_putc(90, 2, 0xFC, SMALLFONT, bgcolor, edgecolor);
+        lcd_putc(LCD_WIDTH-1-5-40, 1, 0xFC, SMALLFONT, bgcolor, edgecolor);
         break;
     }
   }
@@ -651,26 +674,38 @@ void menu_drawstatus(void)
 }
 
 
-void menu_setinfo(unsigned int status, const char *info)
+void menu_setinfo(const char *info)
+{
+  DEBUGOUT("Menu: info: %s\n", info);
+
+  strncpy(gbuf.menu.info, info, MAX_INFO-1);
+  menu_drawwndinfo(1);
+
+  return;
+}
+
+
+void menu_setname(const char *name)
+{
+  DEBUGOUT("Menu: name: %s\n", name);
+
+  strncpy(gbuf.menu.name, name, MAX_NAME-1);
+  menu_drawwndinfo(1);
+
+  return;
+}
+
+
+void menu_setstatus(unsigned int status)
 {
   menu_status = status;
   menu_drawstatus();
 
-  if(*info)
-  {
-    strncpy(gbuf.menu.info, info, MAX_INFOTXT-1);
-    DEBUGOUT("Menu: info: %s\n", info);
-    if(menu_mode == MODE_INFO)
-    {
-      menu_drawinfo(1);
-    }
-  }
-
   return;
 }
 
 
-void menu_drawinfo(unsigned int redraw)
+void menu_drawwndinfo(unsigned int redraw)
 {
   if(redraw == 0)
   {
@@ -682,78 +717,193 @@ void menu_drawinfo(unsigned int redraw)
   menu_drawdate();
   menu_drawclock();
 
-  lcd_putline(5, 30, gbuf.menu.file, NORMALFONT, fgcolor, bgcolor);
-  lcd_putline(5, 60, gbuf.menu.info, NORMALFONT, fgcolor, bgcolor);
-
-  return;
-}
-
-
-void menu_drawbg(void)
-{
-  lcd_clear(bgcolor);
-
-  switch(menu_mode)
+  if(menu_mode == MODE_INFO)
   {
-    case MODE_INFO:
-      lcd_rect(0, 0, LCD_WIDTH-1, 10, edgecolor);
-      lcd_puts( 5,   2, APPNAME, SMALLFONT, bgcolor, edgecolor);
-      lcd_puts( 5,  20, "Play:", SMALLFONT, edgecolor, bgcolor);
-      lcd_puts( 5,  50, "Info:", SMALLFONT, edgecolor, bgcolor);
-      break;
-    case MODE_MAIN:
-      break;
-    case MODE_SUB:
-      break;
+    lcd_putline(5, 18, gbuf.menu.name, NORMALFONT, fgcolor, bgcolor);
+    lcd_putlinebr(5, 40, gbuf.menu.info, SMALLFONT, fgcolor, bgcolor);
   }
-
   return;
 }
 
 
-void menu_update(unsigned int redraw)
+void menu_drawwnd(unsigned int redraw)
 {
+  unsigned int i;
+
+  //draw background
   if(redraw)
   {
-    menu_drawbg();
+    //title bar
+    lcd_rect(0, 0, LCD_WIDTH-1, 10, edgecolor);
+
+    //text background
+    lcd_rect(0, 11, LCD_WIDTH-1, LCD_HEIGHT-1, bgcolor);
+
+    //text
+    switch(menu_mode)
+    {
+      case MODE_INFO:
+        lcd_puts( 4,   2, APPNAME, SMALLFONT, bgcolor, edgecolor);
+        lcd_rect(0, 86, LCD_WIDTH-1, LCD_HEIGHT-1, fgcolor);
+        lcd_line(0, 35,  LCD_WIDTH-1, 35, edgecolor);
+        break;
+      case MODE_MAIN:
+        lcd_puts( 4,   2, APPNAME, SMALLFONT, bgcolor, edgecolor);
+        break;
+      case MODE_SUB:
+        if(gbuf.menu.file[0])
+        {
+          for(i=0; (strlen(gbuf.menu.file+i)*SMALLFONT_WIDTH+5) > (LCD_WIDTH-1); i++);
+          lcd_puts( 4,   2, gbuf.menu.file+i, SMALLFONT, bgcolor, edgecolor);
+        }
+        else
+        {
+          lcd_puts( 4,   2, mainmenu[menu_sub].name, SMALLFONT, bgcolor, edgecolor);
+        }
+        break;
+    }
   }
 
+  //draw text, controls...
   switch(menu_mode)
   {
-    case MODE_INFO: menu_drawinfo(redraw); break;
-    case MODE_MAIN: menu_drawmain(redraw); break;
-    case MODE_SUB:  menu_drawsub(redraw);  break;
+    case MODE_INFO: menu_drawwndinfo(redraw); break;
+    case MODE_MAIN: menu_drawwndmain(redraw); break;
+    case MODE_SUB:  menu_drawwndsub(redraw);  break;
   }
 
   return;
 }
 
 
-void menu_setcolors(unsigned int bg, unsigned int fg, unsigned int sel, unsigned int edge)
+void menu_drawctrl(CONTROL *ctrl)
 {
-  bgcolor   = bg;
-  fgcolor   = fg;
-  selcolor  = sel;
-  edgecolor = edge;
+  unsigned int i, x;
+  char *ptr;
+
+  switch(ctrl->type)
+  {
+    case CTRL_BUTTON:
+      lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+      lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, edgecolor);
+      break;
+
+    case CTRL_CHECKBOX:
+      lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+      if(ctrl->p1) //checked
+      {
+        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, selcolor, edgecolor);
+      }
+      else
+      {
+        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, edgecolor);
+      }
+      break;
+
+    case CTRL_INPUT:
+      ptr = ctrl->val + ctrl->p1;
+      for(i=0, x=ctrl->x1+2; (i<ctrl->len) && *ptr; i++)
+      {
+        if((ctrl->p1+i) == ctrl->p2)
+        {
+          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, edgecolor);
+        }
+        else
+        {
+          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, bgcolor);
+        }
+      }
+      lcd_rect(x, ctrl->y1+2, ctrl->x2-2, ctrl->y2-2, bgcolor);
+      break;
+  }
+
+  if(ctrl->sel)
+  {
+    lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+  }
+  else
+  {
+    lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+  }
 
   return;
 }
+
+
+void menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigned int x, unsigned int y, unsigned int len, char *value)
+{
+  if(len == 0)
+  {
+    len = strlen(value);
+  }
+
+  memset(ctrl, 0, sizeof(CONTROL));
+
+  ctrl->type = type;
+  ctrl->x1   = x;
+  ctrl->y1   = y;
+  ctrl->x2   = x + 3 + (NORMALFONT_WIDTH*len);
+  ctrl->y2   = y + 3 + NORMALFONT_HEIGHT;
+  ctrl->val  = value;
+  ctrl->len  = len;
+  ctrl->sel  = sel;
+
+  menu_drawctrl(ctrl);
+
+  return;
+}
+
+
+void menu_drawdlg(const char *title, const char *msg)
+{
+  lcd_rect(0, 0, LCD_WIDTH-1, NORMALFONT_HEIGHT+2, edgecolor);
+  lcd_puts(2, 1, title, NORMALFONT, bgcolor, edgecolor);
+
+  lcd_rect(0, NORMALFONT_HEIGHT+2, LCD_WIDTH-1, LCD_HEIGHT-1, bgcolor);
+  lcd_putlinebr(2, 20, msg, NORMALFONT, fgcolor, bgcolor);
+
+  return;
+}
+
+
+void menu_drawpopup(const char *msg)
+{
+  lcd_rectedge(4, (LCD_HEIGHT/2)-11, LCD_WIDTH-1-4, (LCD_HEIGHT/2)+11, edgecolor);
+  lcd_rect(5, (LCD_HEIGHT/2)-10, LCD_WIDTH-1-5, (LCD_HEIGHT/2)+10, fgcolor);
+  lcd_puts(10, (LCD_HEIGHT/2)- 4, msg, SMALLFONT, bgcolor, fgcolor);
+
+  return;
+}
+
+
+void menu_setedgecolor(unsigned int c) { edgecolor = c; }
+void menu_setselcolor(unsigned int c)  { selcolor  = c; }
+void menu_setfgcolor(unsigned int c)   { fgcolor   = c; }
+void menu_setbgcolor(unsigned int c)   { bgcolor   = c; }
+
+
+unsigned int menu_edgecolor(void)      { return edgecolor; }
+unsigned int menu_selcolor(void)       { return selcolor; }
+unsigned int menu_fgcolor(void)        { return fgcolor; }
+unsigned int menu_bgcolor(void)        { return bgcolor; }
 
 
 void menu_init(void)
 {
   DEBUGOUT("Menu: init\n");
 
+  gbuf.menu.name[0]             = 0;
+  gbuf.menu.name[MAX_NAME-1]    = 0;
   gbuf.menu.info[0]             = 0;
-  gbuf.menu.info[MAX_INFOTXT-1] = 0;
+  gbuf.menu.info[MAX_INFO-1]    = 0;
   gbuf.menu.file[0]             = 0;
-  gbuf.menu.file[MAX_FILE-1]    = 0;
+  gbuf.menu.file[MAX_ADDR-1]    = 0;
 
-  menu_setinfo(MENU_STATE_STOP, " ");
-  menu_update(1);
+  menu_setstatus(MENU_STATE_STOP);
+  menu_drawwnd(1);
 
   //auto start
-  if(ini_getentry(SETTINGS_FILE, "AUTOSTART", gbuf.menu.file, MAX_FILE-1))
+  if(ini_getentry(SETTINGS_FILE, "AUTOSTART", gbuf.menu.file, MAX_ADDR-1))
   {
     menu_openfile(gbuf.menu.file);
   }

@@ -2,7 +2,6 @@
 #include "../third_party/lmi/inc/hw_types.h"
 #include "../third_party/lmi/inc/hw_memmap.h"
 #include "../third_party/lmi/driverlib/gpio.h"
-#include "../third_party/lmi/driverlib/interrupt.h"
 #include "../main.h"
 #include "../io.h"
 #include "../lcd.h"

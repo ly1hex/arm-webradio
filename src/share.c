@@ -75,6 +75,7 @@ void share_init(void)
 {
   DEBUGOUT("Share: init\n");
 
+  gbuf.card.name[0] = 0;
   gbuf.card.info[0] = 0;
   gbuf.card.file[0] = 0;
 

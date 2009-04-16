@@ -4,12 +4,14 @@
 
 //----- DEFINES -----
 #define DEFAULT_MAC                    "00-01-23-45-67-89"
+#define DEFAULT_DHCP                   (1)
 #define DEFAULT_IP                     "192.168.000.50"
 #define DEFAULT_NETMASK                "255.255.255.000"
 #define DEFAULT_ROUTER                 "192.168.000.001"
 #define DEFAULT_DNS                    "192.168.000.001"
 #define DEFAULT_NTP                    "078.046.194.189" //078.046.194.189 = 0.de.pool.ntp.org
 #define DEFAULT_TIMEDIFF               (3600) //seconds (3600sec = 1h = GMT+1)
+#define DEFAULT_SUMMER                 (0)    //summer time on
 
 #define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
 #define ETH_TIMEOUT                    (8)                  //seconds (ARP request, DHCP request...)
@@ -61,6 +63,7 @@ typedef struct
   IP_Addr  dns;
   IP_Addr  ntp;
   int      timediff; //Time Diff to GMT
+  int      summer;   //summer time
   char     name[16]; //NetBios Name
 } Device;
 
@@ -229,7 +232,9 @@ void                                   eth_timerservice(void);
 void                                   eth_service(void);
 
 void                                   eth_setname(char *name);
-void                                   eth_settimediff(int timediff);
+void                                   eth_setsummer(int on);
+void                                   eth_settimediffh(int hours);  //hours
+void                                   eth_settimediff(int seconds); //seconds
 void                                   eth_setntp(IP_Addr ntp);
 void                                   eth_setdns(IP_Addr dns);
 void                                   eth_setdhcp(int on);
@@ -239,7 +244,9 @@ void                                   eth_setip(IP_Addr ip);
 void                                   eth_setmac(MAC_Addr mac);
 
 char*                                  eth_name(void);
-int                                    eth_timediff(void);
+int                                    eth_summer(void);
+int                                    eth_timediffh(void); //hours
+int                                    eth_timediff(void);  //seconds
 IP_Addr                                eth_ntp(void);
 IP_Addr                                eth_dns(void);
 int                                    eth_dhcp(void);

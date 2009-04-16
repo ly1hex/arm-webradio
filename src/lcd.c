@@ -17,7 +17,7 @@
 #include "lcd/font_clock.h"
 
 
-void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bg_color)
+void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
 {
   int i, start_x, start_y, end_x, end_y;
   unsigned long *ptr, data, mask, start_bit, end_bit;
@@ -73,7 +73,7 @@ data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<
       }
       else
       {
-        lcd_draw(bg_color);
+        lcd_draw(bgcolor);
       }
     }
   }
@@ -83,13 +83,64 @@ data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<
 }
 
 
-void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bg_color)
+void lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor)
 {
-  unsigned int last_x=x;
+  unsigned int start_x=x, font_height;
+  char c;
+
+  switch(font)
+  {
+    case SMALLFONT:  font_height=SMALLFONT_HEIGHT-1;  break;
+    case NORMALFONT: font_height=NORMALFONT_HEIGHT-1; break;
+    case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
+  }
+
+  lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
 
   while(*s)
   {
-    x = lcd_putc(x, y, *s++, font, color, bg_color);
+    c = *s++;
+    if(c == '\n') //new line
+    {
+      lcd_rect(x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
+      x  = start_x;
+      y += font_height+2;
+      lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+      continue;
+    }
+
+    x = lcd_putc(x, y, c, font, color, bgcolor);
+
+    if(x >= LCD_WIDTH) //new line
+    {
+      lcd_rect(x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
+      x  = start_x;
+      y += font_height+2;
+      lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+      x = lcd_putc(x, y, c, font, color, bgcolor);
+    }
+  }
+
+  return;
+}
+
+
+void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor)
+{
+  unsigned int last_x=x, font_height;
+
+  switch(font)
+  {
+    case SMALLFONT:  font_height=SMALLFONT_HEIGHT-1;  break;
+    case NORMALFONT: font_height=NORMALFONT_HEIGHT-1; break;
+    case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
+  }
+
+  lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+
+  while(*s)
+  {
+    x = lcd_putc(x, y, *s++, font, color, bgcolor);
     if(x >= LCD_WIDTH)
     {
       break;
@@ -97,24 +148,17 @@ void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigne
     last_x = x;
   }
 
-  switch(font)
-  {
-    case 1: font=FONT1_HEIGHT; break;
-    case 2: font=FONT2_HEIGHT; break;
-    case 3: font=FONT3_HEIGHT; break;
-  }
-
-  lcd_rect(last_x, y, (LCD_WIDTH-1), (y+font)-1, bg_color);
+  lcd_rect(last_x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
 
   return;
 }
 
 
-unsigned int lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bg_color)
+unsigned int lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor)
 {
   while(*s)
   {
-    x = lcd_putc(x, y, *s++, font, color, bg_color);
+    x = lcd_putc(x, y, *s++, font, color, bgcolor);
     if(x >= LCD_WIDTH)
     {
       break;
@@ -125,30 +169,30 @@ unsigned int lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, un
 }
 
 
-unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned int font, unsigned int color, unsigned int bg_color)
+unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned int font, unsigned int color, unsigned int bgcolor)
 {
   unsigned int ret, width, height, size;
   unsigned long *ptr, data, mask;
 
   switch(font)
   {
-    case 0:
-      c     -= FONT1_START;
-      ptr    = (unsigned long*)&font1[c*(FONT1_WIDTH*FONT1_HEIGHT/8)];
-      width  = FONT1_WIDTH;
-      height = FONT1_HEIGHT;
+    case SMALLFONT:
+      c     -= SMALLFONT_START;
+      ptr    = (unsigned long*)&SMALLFONT_NAME[c*(SMALLFONT_WIDTH*SMALLFONT_HEIGHT/8)];
+      width  = SMALLFONT_WIDTH;
+      height = SMALLFONT_HEIGHT;
       break;
-    case 1:
-      c     -= FONT2_START;
-      ptr    = (unsigned long*)&font2[c*(FONT2_WIDTH*FONT2_HEIGHT/8)];
-      width  = FONT2_WIDTH;
-      height = FONT2_HEIGHT;
+    case NORMALFONT:
+      c     -= NORMALFONT_START;
+      ptr    = (unsigned long*)&NORMALFONT_NAME[c*(NORMALFONT_WIDTH*NORMALFONT_HEIGHT/8)];
+      width  = NORMALFONT_WIDTH;
+      height = NORMALFONT_HEIGHT;
       break;
-    case 2:
-      c     -= FONT3_START;
-      ptr    = (unsigned long*)&font3[c*(FONT3_WIDTH*FONT3_HEIGHT/8)];
-      width  = FONT3_WIDTH;
-      height = FONT3_HEIGHT;
+    case TIMEFONT:
+      c     -= TIMEFONT_START;
+      ptr    = (unsigned long*)&TIMEFONT_NAME[c*(TIMEFONT_WIDTH*TIMEFONT_HEIGHT/8)];
+      width  = TIMEFONT_WIDTH;
+      height = TIMEFONT_HEIGHT;
       break;
   }
 
@@ -174,7 +218,7 @@ data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<
       }
       else
       {
-        lcd_draw(bg_color);
+        lcd_draw(bgcolor);
       }
     }
   }
@@ -219,7 +263,7 @@ void lcd_rectedge(unsigned int start_x, unsigned int start_y, unsigned int end_x
 
 void lcd_line(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color)
 {
-  unsigned int x, y, dx, dy, xinc, xinc_e, yinc, yinc_e, eadd, esub, steps;
+  int x, y, dx, dy, xinc, xinc_e, yinc, yinc_e, eadd, esub, steps;
   int e;
 
   if((start_x == end_x) ||
@@ -251,7 +295,7 @@ void lcd_line(unsigned int start_x, unsigned int start_y, unsigned int end_x, un
     else                // "/"
     {
       x   = start_x;
-      y   = end_y;
+      y   = start_y;
       dx  = end_x   - start_x;
       dy  = start_y - end_y;
       xinc = +1;
@@ -272,8 +316,8 @@ void lcd_line(unsigned int start_x, unsigned int start_y, unsigned int end_x, un
       eadd   = dy;
       esub   = dx;
       xinc_e = xinc;
-      xinc   = 0;
       yinc_e = 0;
+      xinc   = 0;
       steps  = dy;
     }
 

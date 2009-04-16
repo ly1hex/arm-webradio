@@ -7,23 +7,29 @@
 //# define DEBUG
 #endif
 
+//Debug settings
 #if defined(DEBUG)
-# define DEBUGOUT                       debugout //debugout menu_debug
+# define DEBUGOUT                       debugout //debugout
 # define DEBUGBAUD                      115200
 #else
-# define DEBUGOUT                       //debugout menu_debug
+# define DEBUGOUT                       //nothing
 #endif
 
+//Application settings
 #define APPNAME                        "WebRadio" //max 15 characters
 #define APPVERSION                     "0.01"
 //#define APPRELEASE                     //Release version
+#if defined(APPRELEASE)
+# define APPRELEASE_SYM ""
+#else
+# define APPRELEASE_SYM "*"
+#endif
 
 //Max characters
-#define MAX_NAME                       (32)  // 31 chars + zero (min 32)  "Test Station"
-#define MAX_INFOTXT                    (64)  // 63 chars + zero (min 32)  "Station info"
+#define MAX_NAME                       (32)  // 31 chars + zero (min 32)  "Station Name"
+#define MAX_INFO                       (64)  // 63 chars + zero (min 32)  "Station info"
 #define MAX_URL                        (64)  // 63 chars + zero           "/stream.mp3"
-#define MAX_ADDR                       (128) //127 chars + zero           "http://192.168.0.100/stream.mp3"
-#define MAX_FILE                       (128) //127 chars + zero (min 128) "/test/abc/xyz.mp3"
+#define MAX_ADDR                       (256) //255 chars + zero           "http://192.168.0.100/stream.mp3" or "/test/abc/xyz.mp3"
 
 #define SEC_CHANGED                    (1<<0)
 #define MIN_CHANGED                    (1<<1)

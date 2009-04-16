@@ -6,6 +6,17 @@
 #define SETTINGS_FILE                  "SETTINGS.INI"
 
 
+typedef struct
+{
+  const char *name; //name
+  const char *ini; //name
+  const int format; //format
+  const int p1; //param 1
+  const int p2; //param 2
+  void(*set)(void*);
+} SETTINGSMENU;
+
+
 //----- PROTOTYPES -----
 void                                   settings_read(void);
 unsigned int                           settings_openitem(unsigned int item);

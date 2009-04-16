@@ -7,6 +7,40 @@
 #include "tools.h"
 
 
+char* strrmvspace(char *dst, const char *src)
+{
+  unsigned int i;
+
+  //at start
+  for(i=0; isspace(src[i]); i++);
+  strcpy(dst, &src[i]);
+
+  //at end
+  i=strlen(dst)-1;
+  for(i=strlen(dst)-1; isspace(dst[i]); i--)
+  {
+    dst[i] = 0;
+  }
+
+  return dst;
+}
+
+
+char* strtoupper(char *dst, const char *src)
+{
+  char c;
+
+  while(*src)
+  {
+    c    = *src++;
+    *dst++ = toupper(c);
+  }
+  *dst = 0;
+
+  return dst;
+}
+
+
 int strstrk(char *dst, const char *src, const char *key) //key = "first\0second\third\0\0"
 {
   int fnd=0;

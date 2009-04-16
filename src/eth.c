@@ -905,7 +905,7 @@ void eth_service(void)
     case ETH_TYPE_IP:
       if((rx_ip->dst_ip == dev.ip)       || /*dst = dev*/
          (rx_ip->dst_ip == 0xFFFFFFFFUL) || /*dst = broadcast*/
-         (((rx_ip->dst_ip&dev.netmask) == (dev.ip&dev.netmask)) &&  ((rx_ip->dst_ip&(!dev.netmask)) == (!dev.netmask))) || /*dst = broadcast local*/
+         (((rx_ip->dst_ip&dev.netmask) == (dev.ip&dev.netmask)) && ((rx_ip->dst_ip&(~dev.netmask)) == (~dev.netmask))) || /*dst = broadcast local*/
          (dev.ip == 0UL)) /*dev = 0 (during DHCP)*/
       {
         switch(rx_ip->proto)
@@ -958,8 +958,9 @@ void eth_setname(char *name) //set NB & UPnP name (upper case)
   return;
 }
 
-
-void eth_settimediff(int timediff)     { dev.timediff = timediff; }
+void eth_setsummer(int on)             { dev.summer   = on; }
+void eth_settimediffh(int hours)       { dev.timediff = hours*3600; }
+void eth_settimediff(int seconds)      { dev.timediff = seconds; }
 void eth_setntp(IP_Addr ntp)           { dev.ntp      = ntp; }
 void eth_setdns(IP_Addr dns)           { dev.dns      = dns; }
 void eth_setdhcp(int on)               { dev.dhcp     = on; if(on){dhcp_getcfg();} }
@@ -970,6 +971,8 @@ void eth_setmac(MAC_Addr mac)          { dev.mac      = mac; ethernet_setmac(mac
 
 
 char*    eth_name(void)                { return dev.name; }
+int      eth_summer(void)              { return dev.summer; }
+int      eth_timediffh(void)           { return dev.timediff/3600; }
 int      eth_timediff(void)            { return dev.timediff; }
 IP_Addr  eth_ntp(void)                 { return dev.ntp; }
 IP_Addr  eth_dns(void)                 { return dev.dns; }
