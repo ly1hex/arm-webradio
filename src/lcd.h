@@ -22,6 +22,9 @@
 #define LCD_WIDTH                      (176)
 #define LCD_HEIGHT                     (132)
 #define RGB(r,g,b)                     (((r&0xF8)<<8)|((g&0xFC)<<3)|((b&0xF8)>>3)) //5 red | 6 green | 5 blue
+#define GET_RED(x)                     ((x>>8)&0xF8) //5 red
+#define GET_GREEN(x)                   ((x>>3)&0xFC) //6 green
+#define GET_BLUE(x)                    ((x<<3)&0xF8) //5 blue
 
 
 //----- PROTOTYPES -----

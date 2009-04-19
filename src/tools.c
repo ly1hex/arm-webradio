@@ -7,6 +7,23 @@
 #include "tools.h"
 
 
+void strshrinkpath(char *path)
+{
+  unsigned int i;
+
+  for(i=strlen(path); i!=0; i--)
+  {
+    if(path[i] == '/')
+    {
+      break;
+    }
+  }
+  path[i] = 0;
+
+  return;
+}
+
+
 char* strrmvspace(char *dst, const char *src)
 {
   unsigned int i;

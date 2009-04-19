@@ -36,4 +36,5 @@ void                                   fs_mount(void);
 unsigned int                           ini_getentry(const char *filename, const char *entry, char *value, unsigned int len);
 unsigned int                           ini_setentry(const char *filename, const char *entry, const char *value);
 
+
 #endif //_MMC_H_

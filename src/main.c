@@ -367,7 +367,7 @@ unsigned int standby(unsigned int param)
           {
             settime(sec_time);
           }
-          if(alarm_check(&time))
+          if(alarm_check(&time) == 0)
           {
             alarm = 1;
           }
@@ -496,7 +496,7 @@ int main()
   #endif
   DEBUGOUT("\n---\n");
   DEBUGOUT(APPNAME" v"APPVERSION""APPRELEASE_SYM" ("__DATE__" "__TIME__")\n");
-  DEBUGOUT("Hardware: "LM3S_NAME"@%iMHz, "LCD_NAME"\n", SysCtlClockGet()/1000000);
+  DEBUGOUT("Hardware: "LM3S_NAME", "LCD_NAME"\n");
 
   //init lcd
   lcd_init();
@@ -507,52 +507,53 @@ int main()
   lcd_puts(30,   3, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_rect( 0, 118, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, 121, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_puts(10,  20, __DATE__" "__TIME__, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(10,  35, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(15,  45, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(15,  30, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   if(r)
   {
-    i = lcd_puts(10,  60, "Reset: ", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+    i = lcd_puts(10,  45, "Reset:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     if(r & SYSCTL_CAUSE_LDO)
     {
-      i = lcd_puts(i, 60, "LDO", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 45, "LDO", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_SW)
     {
-      i = lcd_puts(i, 60, "SW", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 45, "SW", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_WDOG)
     {
-      i = lcd_puts(i, 60, "WD", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 45, "WD", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_BOR)
     {
-      i = lcd_puts(i, 60, "BOR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 45, "BOR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_POR)
     {
-      i = lcd_puts(i, 60, "POR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 45, "POR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
     if(r & SYSCTL_CAUSE_EXT)
     {
-      i = lcd_puts(i, 60, "EXT", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
+      i = lcd_puts(i, 45, "EXT", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
   }
 
+  i = 60;
+
   //init mmc & mount filesystem
-  lcd_puts(10,  80, "Init Memory Card...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  i, "Init Memory Card...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   fs_mount();
 
   //init ethernet
-  lcd_puts(10,  90, "Init Ethernet...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  i, "Init Ethernet...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   eth_init();
 
   //load settings
-  lcd_puts(10, 100, "Load Settings...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10, i, "Load Settings...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   settings_read();
 
   //set clock
-  menu_drawpopup("NTP: Get Time...");
+  lcd_puts(10, i, "NTP: Get Time...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
 #if defined(DEBUG)
   settime(0);
 #else
@@ -560,7 +561,7 @@ int main()
 #endif
 
   //advertise UPnP device
-  menu_drawpopup("SSDP: Advertise...");
+  lcd_puts(10, 100, "SSDP: Advertise...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   ssdp_advertise();
 
   //cpu high speed
@@ -589,7 +590,7 @@ int main()
             draw |= DAY_CHANGED;
             settime(sec_time);
           }
-          if(alarm_check(&time))
+          if(alarm_check(&time) == 0)
           {
             DEBUGOUT("Ready...\n");
             menu_alarm();

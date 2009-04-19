@@ -52,7 +52,7 @@ void share_getitem(unsigned int item, char *name)
   else
   {
     sprintf(entry, "TITLE%i", item);
-    ini_getentry(SHARE_FILE, entry, name, MAX_NAME-1);
+    ini_getentry(SHARE_FILE, entry, name, MAX_NAME);
   }
 
   return;
@@ -62,7 +62,7 @@ unsigned int share_items(void)
 {
   char entry[16];
 
-  if(ini_getentry(SHARE_FILE, "NUMBEROFENTRIES", entry, 16-1))
+  if(ini_getentry(SHARE_FILE, "NUMBEROFENTRIES", entry, 16) == 0)
   {
     return atoi(entry)+1;
   }

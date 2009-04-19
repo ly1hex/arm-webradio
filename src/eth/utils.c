@@ -108,11 +108,11 @@ unsigned int http_getparam(char *dst, size_t dst_len, const char *src, const cha
         *dst++ = *src++;
       }
       *dst = 0;
-      return 1;
+      return 0;
     }
   }
 
-  return 0;
+  return 1;
 }
 
 

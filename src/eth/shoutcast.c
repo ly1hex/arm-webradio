@@ -256,11 +256,9 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
         //search http header end
         if(parse_header == 1) //get http header
         {
-          char tmp[8];
-          if(http_getparam(tmp, 8-1, rx, "ICY-BR:")) //stream bitrate
+          if(http_getparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-BR:") == 0) //get stream bitrate
           {
-            tmp[8-1] = 0;
-            i = atoi(tmp);
+            i = atoi(gbuf.menu.info);
             if(i >= 128) //bitrate >= 128
             {
               skip = 64; //skip first 64 frames
