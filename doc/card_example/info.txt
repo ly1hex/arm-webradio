@@ -3,7 +3,7 @@ Files on the memory card
 
 settings.ini
 ------------
-INI-File with settings.
+  INI-File with settings:
 
   PlayMode       Play mode (for future use)
   AutoStart      Auto start file (Station item number or path to Card file)
@@ -17,7 +17,7 @@ INI-File with settings.
   Router         Router IP (xxx.xxx.xxx.xxx)
   DNS            DNS IP (xxx.xxx.xxx.xxx)
   NTP            NTP IP (xxx.xxx.xxx.xxx)
-  TimeDiff       Time difference to GMT in seconds (3600s = 1h = GMT+1)
+  TimeDiff       Time difference to GMT in seconds (3600 = 1h = GMT+1)
   Summer         Summer time (0=off, 1=on)
 
   Volume         Default Volume (0...100 %)
@@ -37,31 +37,35 @@ INI-File with settings.
   ColorSel       Selection color: Red,Green,Blue (xxx,xxx,xxx)
   ColorEdge      Edge color: Red,Green,Blue (xxx,xxx,xxx)
 
+
 station.pls
 -----------
-PLS-File with radio streams:
+  PLS-File with radio streams:
 
-file1=Stream Address
-title1=Stream Name
-...
+  [playlist]
+  numberofentries=1
+  file1=Stream Address (http://xxx.xxx.xxx.xxx:port/url)
+  title1=Stream Name
 
 
 share.pls
 ---------
-PLS-File with network shares:
+  PLS-File with network shares:
 
-file1=Share Address
-title1=Share Name
-...
+  [playlist]
+  numberofentries=1
+  file1=Share Address (proto://user:password@xxx.xxx.xxx.xxx/url)
+  title1=Share Name
 
 
 alarm.ini
 ---------
-INI-File with alarm times:
+  INI-File with alarm times:
 
-time1=08:00:SuMoTuWeThFrSa
-time2=!09:00:Tu
-...
+  [alarm]
+  time1= 08:00:MoTuWeThFrSaSu
+  time2=!09:00:Tu
+  time3= 12:34:Mo
 
-A "!" at the beginning shows that the alarm is off.
-Su=Sunday, Mo=Monday, Tu=Tuesday, We=Wednesday, Th=Thursday, Fr=Friday, Sa=Saturday
+  A "!" at the beginning shows that the alarm is off.
+  Su=Sunday, Mo=Monday, Tu=Tuesday, We=Wednesday, Th=Thursday, Fr=Friday, Sa=Saturday
