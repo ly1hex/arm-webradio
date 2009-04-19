@@ -43,11 +43,9 @@ void station_calcbuf(unsigned int br) //bitrate kbit/s
 
   if((br >= 8) && (br <= 320))
   {
-    len = sprintf(tmp, " [%i]", br);
-    if((len+strlen(gbuf.station.name)) < MAX_NAME)
-    {
-      strcat(gbuf.station.name, tmp);
-    }
+    len = strlen(gbuf.station.name);
+    sprintf(tmp, " [%i]", br);
+    strncat(gbuf.station.name, tmp, MAX_NAME-1-len);
   }
 
   return;
@@ -78,7 +76,7 @@ unsigned int station_open(unsigned int item)
   unsigned int port;
   char url[MAX_URL];
 
-  if(station_getitemaddr(item, gbuf.station.addr) == 0)
+  if(station_getitemaddr(item, gbuf.station.addr) != 0)
   {
     return STATION_CLOSED;
   }
@@ -208,13 +206,9 @@ unsigned int station_openitem(unsigned int item)
     {
       return MENU_PLAY;
     }
-    else
-    {
-      return MENU_ERROR;
-    }
   }
 
-  return MENU_UPDATE;
+  return MENU_ERROR;
 }
 
 
@@ -227,13 +221,13 @@ unsigned int station_getitemaddr(unsigned int item, char *addr)
   if(item)
   {
     sprintf(entry, "FILE%i", item);
-    if(ini_getentry(STATION_FILE, entry, addr, MAX_ADDR-1))
+    if(ini_getentry(STATION_FILE, entry, addr, MAX_ADDR) == 0)
     {
-      return 1;
+      return 0;
     }
   }
 
-  return 0;
+  return 1;
 }
 
 
@@ -248,7 +242,7 @@ void station_getitem(unsigned int item, char *name)
   else
   {
     sprintf(entry, "TITLE%i", item);
-    ini_getentry(STATION_FILE, entry, name, MAX_NAME-1);
+    ini_getentry(STATION_FILE, entry, name, MAX_NAME);
   }
 
   return;
@@ -259,7 +253,7 @@ unsigned int station_items(void)
 {
   char entry[16];
 
-  if(ini_getentry(STATION_FILE, "NUMBEROFENTRIES", entry, 16-1))
+  if(ini_getentry(STATION_FILE, "NUMBEROFENTRIES", entry, 16) == 0)
   {
     return atoi(entry)+1;
   }

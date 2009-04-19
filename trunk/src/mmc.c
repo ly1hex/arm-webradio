@@ -552,13 +552,13 @@ unsigned int fs_isdir(const char *path, unsigned int item)
   {
     while((f_readdir(&dir, &finfo) == FR_OK) && finfo.fname[0])
     {
-      if(fs_checkitem(&finfo))
+      if(fs_checkitem(&finfo) == 0)
       {
         if(item == i)
         {
           if(finfo.fattrib & AM_DIR)
           {
-            return 1;
+            return 0;
           }
           break;
         }
@@ -567,7 +567,7 @@ unsigned int fs_isdir(const char *path, unsigned int item)
     }
   }
 
-  return 0;
+  return 1;
 }
 
 
@@ -584,12 +584,11 @@ offset len
 */
 void fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int len)
 {
-  //char tmp[MAX_ADDR];
-  //unsigned int rd;
+  char tmp[MAX_ADDR];
+  unsigned int rd;
 
   fs_getitem(path, item, dst, len);
 
-/*
   if(dst[0] == '/') //directory
   {
     return;
@@ -603,7 +602,6 @@ void fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int 
     strcpy(tmp, path);
     strcat(tmp, "/");
     strcat(tmp, dst);
-
     if(f_open(&file, tmp, FA_OPEN_EXISTING | FA_READ) == FR_OK)
     {
       if(f_lseek(&file, file.fsize-128) == FR_OK)
@@ -616,14 +614,14 @@ void fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int 
              (tmp[2] == 'G'))
           {
             strncpy(dst, tmp+3, 30);
-            name[30] = 0;
+            dst[30] = 0;
           }
         }
       }
       f_close(&file);
     }
   }
-*/
+
   return;
 }
 
@@ -646,7 +644,7 @@ void fs_getitem(const char *path, unsigned int item, char *dst, unsigned int len
   {
     while((f_readdir(&dir, &finfo) == FR_OK) && finfo.fname[0])
     {
-      if(fs_checkitem(&finfo))
+      if(fs_checkitem(&finfo) == 0)
       {
         if(item == i)
         {
@@ -697,7 +695,7 @@ unsigned int fs_items(const char *path)
   {
     while((f_readdir(&dir, &finfo) == FR_OK) && finfo.fname[0])
     {
-      if(fs_checkitem(&finfo))
+      if(fs_checkitem(&finfo) == 0)
       {
         i++;
       }
@@ -717,7 +715,7 @@ unsigned int fs_checkitem(FILINFO *finfo)
   {
     if(finfo->fattrib & AM_DIR) //directory
     {
-      return 1;
+      return 0;
     }
     else //file
     {
@@ -734,13 +732,13 @@ unsigned int fs_checkitem(FILINFO *finfo)
            ((c1 == 'W') && (c2 == 'A') && (c3 == 'V')) || //WAV
            ((c1 == 'W') && (c2 == 'M') && (c3 == 'A')))   //WMA
         {
-          return 1;
+          return 0;
         }
       }
     }
   }
 
-  return 0;
+  return 1;
 }
 
 
@@ -812,7 +810,7 @@ unsigned int ini_searchentry(const char *filename, const char *entry)
             {
               break;
             }
-            if((c == '\r') || (c == '\n'))
+            else if((c == '\r') || (c == '\n'))
             {
               break;
             }
@@ -841,66 +839,81 @@ unsigned int ini_searchentry(const char *filename, const char *entry)
 unsigned int ini_getentry(const char *filename, const char *entry, char *value, unsigned int len) //entry in upper case
 {
   FRESULT res;
-  unsigned int i, entry_len, found=0, rd;
+  unsigned int i, entry_len, found, rd;
   char c, *ptr;
 
   ptr  = value;
   *ptr = 0;
 
   found = ini_searchentry(filename, entry);
-  if(found)
+  if(found == 0)
   {
-    res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ);
-    if(res != FR_OK)
-    {
-      return 0;
-    }
+    return 1;
+  }
 
-    f_lseek(&file, found);
-  
-    do
+  res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ);
+  if(res != FR_OK)
+  {
+    return 1;
+  }
+  res = f_lseek(&file, found);
+  if(res != FR_OK)
+  {
+    return 1;
+  }
+
+  //read value
+  if(len)
+  {
+    len--; //null at end
+    while(len)
     {
       res = f_read(&file, &c, 1, &rd);
       if((res != FR_OK) || (rd != 1))
       {
         break;
       }
-  
-      if((c == '\r') || (c == '\n'))
+      else if((c == '\r') || (c == '\n'))
       {
         break;
       }
       else
       {
         *ptr++ = c;
+        len--;
       }
-    }while(--len);
+    }
     *ptr = 0;
-  
-    f_close(&file);
-
-    strrmvspace(value, value);
   }
 
-  return found;
+  f_close(&file);
+
+  //remove space at start and end
+  strrmvspace(value, value);
+
+  return 0;
 }
 
 
 unsigned int ini_setentry(const char *filename, const char *entry, const char *value)
 {
   FRESULT res;
-  unsigned int i, len, dif, found=0, rd;
+  unsigned int i, len, dif, found, rd;
   char c, buf[MAX_ADDR];
 
   found = ini_searchentry(filename, entry);
-  if(found)
+  if(found) //entry found
   {
     res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
     if(res != FR_OK)
     {
-      return 0;
+      return 1;
     }
-    f_lseek(&file, found);
+    res = f_lseek(&file, found);
+    if(res != FR_OK)
+    {
+      return 1;
+    }
 
     //calc current value size
     for(i=0; i<MAX_ADDR; i++)
@@ -916,7 +929,7 @@ unsigned int ini_setentry(const char *filename, const char *entry, const char *v
       }
     }
 
-    len = strlen(value); //new value
+    len = strlen(value); //new value len
     if(i == len) //same size
     {
       f_lseek(&file, found);
@@ -932,7 +945,7 @@ unsigned int ini_setentry(const char *filename, const char *entry, const char *v
       for(i=file.fptr; (i+dif)<file.fsize; i++)
       {
         f_lseek(&file, i+dif);
-        f_read(&file, &c, 1, &rd);
+        res = f_read(&file, &c, 1, &rd);
         if((res != FR_OK) || (rd != 1))
         {
           break;
@@ -950,7 +963,7 @@ unsigned int ini_setentry(const char *filename, const char *entry, const char *v
       for(i=file.fsize-1; len!=0; i--, len--)
       {
         f_lseek(&file, i);
-        f_read(&file, &c, 1, &rd);
+        res = f_read(&file, &c, 1, &rd);
         if((res != FR_OK) || (rd != 1))
         {
           break;
@@ -969,9 +982,13 @@ unsigned int ini_setentry(const char *filename, const char *entry, const char *v
     res = f_open(&file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
     if(res != FR_OK)
     {
-      return 0;
+      return 1;
     }
-    f_lseek(&file, file.fsize);
+    res = f_lseek(&file, file.fsize);
+    if(res != FR_OK)
+    {
+      return 1;
+    }
     f_puts(entry, &file);
     f_puts("=", &file);
     f_puts(value, &file);
@@ -979,5 +996,5 @@ unsigned int ini_setentry(const char *filename, const char *entry, const char *v
     f_close(&file);
   }
 
-  return 1;
+  return 0;
 }

@@ -34,7 +34,7 @@ void ssdp_advertise(void)
   index = udp_open(UDP_ENTRIES, MULTICAST_MAC(SSDP_MULTICAST), SSDP_MULTICAST, SSDP_PORT, SSDP_PORT, 0, len);
   udp_close(index);
 
-  DEBUGOUT("Eth: SSDP advertise\n");
+  DEBUGOUT("SSDP: advertise\n");
 
   return;
 }

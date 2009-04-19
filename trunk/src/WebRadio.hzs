@@ -38,13 +38,11 @@
   <ProjectSessionItem path="WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio;Source Files" name="unnamed" />
-  <ProjectSessionItem path="WebRadio;WebRadio;Source Files;eth" name="unnamed" />
  </MemoryUsageWindow>
  <Project>
   <ProjectSessionItem path="WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio;Source Files" name="unnamed" />
-  <ProjectSessionItem path="WebRadio;WebRadio;Source Files;eth" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -75,7 +73,7 @@
   <Watches active="0" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\readme.txt" y="0" path="D:\projects\WebRadio\svn\trunk\src\readme.txt" left="0" selected="1" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\readme.txt" y="31" path="D:\projects\WebRadio\svn\trunk\src\readme.txt" left="0" selected="1" name="unnamed" top="0" />
  </Files>
  <ARMCrossStudioWindow activeProject="WebRadio" autoConnectTarget="/USB CrossConnect for ARM" debugSearchFileMap="" fileDialogInitialDirectory="D:\projects\WebRadio\svn\trunk\src" fileDialogDefaultFilter="*" autoConnectCapabilities="1919" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>

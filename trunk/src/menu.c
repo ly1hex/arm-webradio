@@ -14,12 +14,15 @@
 #include "lcd/img.h"
 #include "lcd.h"
 #include "mmc.h"
+#include "eth.h"
+#include "eth/utils.h"
 #include "station.h"
 #include "share.h"
 #include "card.h"
 #include "alarm.h"
 #include "settings.h"
 #include "buffer.h"
+#include "menu_dlg.h"
 #include "menu.h"
 
 
@@ -33,16 +36,16 @@
 #define MAINITEMS    (6)
 const MAINMENUITEM mainmenu[MAINITEMS] =
 {
-  {"Station",  {&img_station[0][0],  &img_station[1][0],  &img_station[2][0]},  station_init, station_items,  station_getitem,  station_openitem,  station_closeitem, station_service},
-  {"Share",    {&img_share[0][0],    &img_share[1][0],    &img_share[2][0]},    share_init,   share_items,    share_getitem,    share_openitem,    share_closeitem,   share_service},
-  {"Card",     {&img_card[0][0],     &img_card[1][0],     &img_card[2][0]},     card_init,    card_items,     card_getitem,     card_openitem,     card_closeitem,    card_service},
-  {"Alarm",    {&img_clock[0][0],    &img_clock[1][0],    &img_clock[2][0]},    alarm_init,   alarm_items,    alarm_getitem,    alarm_openitem,    alarm_closeitem,   0},
-  {"Settings", {&img_settings[0][0], &img_settings[1][0], &img_settings[2][0]}, 0,            settings_items, settings_getitem, settings_openitem, 0,                 0},
-//  {"Back",     {&img_back[0][0],     &img_back[1][0],     &img_back[2][0]},     0,            0,              0,                0,                 0,                 0},
-  {"Standby",  {&img_power[0][0],    &img_power[1][0],    &img_power[2][0]},    0,            0,              0,                standby,           0,                 0},
+  {"Station",  {&img_station[0][0],  &img_station[1][0],  &img_station[2][0]},  station_init,  station_items,  station_getitem,  station_openitem,  station_closeitem, station_service},
+  {"Share",    {&img_share[0][0],    &img_share[1][0],    &img_share[2][0]},    share_init,    share_items,    share_getitem,    share_openitem,    share_closeitem,   share_service},
+  {"Card",     {&img_card[0][0],     &img_card[1][0],     &img_card[2][0]},     card_init,     card_items,     card_getitem,     card_openitem,     card_closeitem,    card_service},
+  {"Alarm",    {&img_clock[0][0],    &img_clock[1][0],    &img_clock[2][0]},    alarm_init,    alarm_items,    alarm_getitem,    alarm_openitem,    0,                 0},
+  {"Settings", {&img_settings[0][0], &img_settings[1][0], &img_settings[2][0]}, settings_init, settings_items, settings_getitem, settings_openitem, 0,                 0},
+//  {"Back",     {&img_back[0][0],     &img_back[1][0],     &img_back[2][0]},     0,             0,              0,                0,                 0,                 0},
+  {"Standby",  {&img_power[0][0],    &img_power[1][0],    &img_power[2][0]},    0,             0,              0,                standby,           0,                 0},
 };
 
-#define MODE_INFO (0) //normal screen
+#define MODE_INFO (0) //normal info screen
 #define MODE_MAIN (1) //animated main menu
 #define MODE_SUB  (2) //list menu
 unsigned int menu_mode=0, menu_sub=0, menu_items=0, menu_first=0, menu_last=0, menu_sel=0, menu_lastsel=0;
@@ -52,44 +55,48 @@ unsigned int bgcolor=0, fgcolor=0, selcolor=0, edgecolor=0;
 
 unsigned int menu_openfile(char *file)
 {
-  unsigned int ret=0, nr;
+  unsigned int ret, nr;
   char tmp[MAX_ADDR];
 
-  if(file[0])
+  if(file[0] == 0)
   {
-    strcpy(tmp, file);
-
-    if(mainmenu[menu_sub].close)
-    {
-      mainmenu[menu_sub].close();
-    }
-
-    if(isdigit(tmp[0])) //station number
-    {
-      menu_sub = SUB_STATION;
-      mainmenu[menu_sub].init();
-      if(station_open(atoi(tmp)) == STATION_OPENED)
-      {
-        ret = 1;
-      }
-    }
-    else //path to card file
-    {
-      menu_sub = SUB_CARD;
-      mainmenu[menu_sub].init();
-      if(card_openfile(tmp) == MENU_PLAY)
-      {
-        ret = 1;
-      }
-    }
-    menu_mode    = MODE_INFO;
-    menu_items   = 1;
-    menu_first   = 0;
-    menu_last    = 0;
-    menu_sel     = 0;
-    menu_lastsel = 0;
-    menu_drawwnd(1);
+    return 1;
   }
+
+  strncpy(tmp, file, MAX_ADDR-1);
+  tmp[MAX_ADDR-1] = 0;
+
+  if(mainmenu[menu_sub].close)
+  {
+    mainmenu[menu_sub].close();
+  }
+
+  ret = 1;
+  if(isdigit(tmp[0])) //station number
+  {
+    menu_sub = SUB_STATION;
+    mainmenu[menu_sub].init();
+    if(station_open(atoi(tmp)) == STATION_OPENED)
+    {
+      ret = 0;
+    }
+  }
+  else //path to card file
+  {
+    menu_sub = SUB_CARD;
+    mainmenu[menu_sub].init();
+    if(card_openfile(tmp) == MENU_PLAY)
+    {
+      ret = 0;
+    }
+  }
+  menu_mode    = MODE_INFO;
+  menu_items   = 1;
+  menu_first   = 0;
+  menu_last    = 0;
+  menu_sel     = 0;
+  menu_lastsel = 0;
+  menu_drawwnd(1);
 
   return ret;
 }
@@ -193,7 +200,6 @@ unsigned int menu_swlong(void)
   switch(menu_mode)
   {
     case MODE_INFO:
-//standby
       break;
 
     case MODE_MAIN:
@@ -386,10 +392,9 @@ void menu_service(unsigned int draw)
       break;
   }
 
-  menu_drawwnd(redraw);
-
   if(redraw == 0)
   {
+    menu_drawwnd(0);
     if(draw & SEC_CHANGED)
     {
       if(menu_status == MENU_STATE_STOP)
@@ -410,6 +415,7 @@ void menu_service(unsigned int draw)
   }
   else
   {
+    menu_drawwnd(1);
     menu_standbytimer = 0;
   }
 
@@ -440,9 +446,9 @@ void menu_alarm(void)
     menu_drawpopup("Alarm");
     for(i=1; i<=ALARM_FILEITEMS; i++) //open alarm file
     {
-      if(alarm_getfile(gbuf.menu.file, i))
+      if(alarm_getfile(gbuf.menu.file, i) == 0)
       {
-        if(menu_openfile(gbuf.menu.file))
+        if(menu_openfile(gbuf.menu.file) == 0)
         {
           break;
         }
@@ -783,9 +789,22 @@ void menu_drawctrl(CONTROL *ctrl)
 
   switch(ctrl->type)
   {
+    case CTRL_TEXT:
+      x = lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, bgcolor);
+      lcd_rect(x, ctrl->y1+2, ctrl->x2-2, ctrl->y2-2, bgcolor);
+      break;
+
     case CTRL_BUTTON:
       lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
       lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, edgecolor);
+      if(ctrl->sel)
+      {
+        lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+      }
+      else
+      {
+        lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+      }
       break;
 
     case CTRL_CHECKBOX:
@@ -796,7 +815,15 @@ void menu_drawctrl(CONTROL *ctrl)
       }
       else
       {
-        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, edgecolor);
+        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, bgcolor, edgecolor);
+      }
+      if(ctrl->sel)
+      {
+        lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+      }
+      else
+      {
+        lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
       }
       break;
 
@@ -804,7 +831,11 @@ void menu_drawctrl(CONTROL *ctrl)
       ptr = ctrl->val + ctrl->p1;
       for(i=0, x=ctrl->x1+2; (i<ctrl->len) && *ptr; i++)
       {
-        if((ctrl->p1+i) == ctrl->p2)
+        if(ctrl->sel && (ctrl->p2 == 0xFFFF)) //select all
+        {
+          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, edgecolor);
+        }
+        else if(ctrl->sel && ((ctrl->p1+i) == ctrl->p2))
         {
           x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, edgecolor);
         }
@@ -814,30 +845,45 @@ void menu_drawctrl(CONTROL *ctrl)
         }
       }
       lcd_rect(x, ctrl->y1+2, ctrl->x2-2, ctrl->y2-2, bgcolor);
+      if(ctrl->sel)
+      {
+        lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+      }
+      else
+      {
+        lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+      }
       break;
-  }
-
-  if(ctrl->sel)
-  {
-    lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
-  }
-  else
-  {
-    lcd_rectedge(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
   }
 
   return;
 }
 
 
-void menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigned int x, unsigned int y, unsigned int len, char *value)
+void menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigned int x, unsigned int y, unsigned int p, char *value)
 {
+  unsigned int len=0;
+
+  memset(ctrl, 0, sizeof(CONTROL));
+
+  switch(type)
+  {
+    case CTRL_TEXT:
+      break;
+    case CTRL_BUTTON:
+      break;
+    case CTRL_CHECKBOX:
+      ctrl->p1 = (p!=0)?1:0;
+      break;
+    case CTRL_INPUT:
+      len = p;
+      break;
+  }
+
   if(len == 0)
   {
     len = strlen(value);
   }
-
-  memset(ctrl, 0, sizeof(CONTROL));
 
   ctrl->type = type;
   ctrl->x1   = x;
@@ -900,10 +946,11 @@ void menu_init(void)
   gbuf.menu.file[MAX_ADDR-1]    = 0;
 
   menu_setstatus(MENU_STATE_STOP);
+  menu_setname("Hello, World!");
   menu_drawwnd(1);
 
   //auto start
-  if(ini_getentry(SETTINGS_FILE, "AUTOSTART", gbuf.menu.file, MAX_ADDR-1))
+  if(ini_getentry(SETTINGS_FILE, "AUTOSTART", gbuf.menu.file, MAX_ADDR) == 0)
   {
     menu_openfile(gbuf.menu.file);
   }

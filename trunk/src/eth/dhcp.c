@@ -142,6 +142,7 @@ unsigned int dhcp_getcfg(void)
 
   if(dhcp_status == DHCP_ACK) //DHCP request sucessful
   {
+    menu_drawpopup("DHCP: OK");
     eth_setip(dhcp_ip);
     if(dhcp_netmask != 0UL)
     {
@@ -159,14 +160,16 @@ unsigned int dhcp_getcfg(void)
     {
       eth_setntp(dhcp_ntp);
     }
-    return 1;
+    return 0;
   }
+
+  menu_drawpopup("DHCP: Error");
 
   dhcp_status = DHCP_CLOSED;
 
   eth_setip(ip); //set last ip
 
-  return 0;
+  return 1;
 }
 
 

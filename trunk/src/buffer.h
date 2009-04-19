@@ -4,8 +4,7 @@
 
 //----- DEFINES -----
 #define VS_BUFSIZE                     (55000) //bytes (vs buffer)
-
-#define CARD_READBUF                   (512)
+#define CARD_READBUF                   (512)   //bytes
 
 
 typedef union

@@ -66,23 +66,6 @@ void card_service(void)
 }
 
 
-void shrink_path(char *path)
-{
-  unsigned int i;
-
-  for(i=strlen(path); i!=0; i--)
-  {
-    if(path[i] == '/')
-    {
-      break;
-    }
-  }
-  path[i] = 0;
-
-  return;
-}
-
-
 void card_closeitem(void)
 {
   if(card_status != CARD_CLOSED)
@@ -90,7 +73,7 @@ void card_closeitem(void)
     card_status = CARD_CLOSED;
     vs_stop();
     f_close(&gbuf.card.fsrc);
-    shrink_path(gbuf.card.file);
+    strshrinkpath(gbuf.card.file);
     menu_setstatus(MENU_STATE_STOP);
     menu_setinfo("");
     DEBUGOUT("Card: closed\n");
@@ -104,7 +87,7 @@ unsigned int card_openfile(const char *file)
 {
   if(file != gbuf.card.file)
   {
-    strcpy(gbuf.card.file, file);
+    strncpy(gbuf.card.file, file, MAX_ADDR-1);
   }
 
   if(f_open(&gbuf.card.fsrc, gbuf.card.file, FA_OPEN_EXISTING | FA_READ) == FR_OK)
@@ -124,6 +107,7 @@ unsigned int card_openfile(const char *file)
 unsigned int card_openitem(unsigned int item)
 {
   char tmp[MAX_ADDR];
+  unsigned int len;
 
   if(item == 0) //back
   {
@@ -133,24 +117,26 @@ unsigned int card_openitem(unsigned int item)
     }
     else //up dir
     {
-      shrink_path(gbuf.card.file);
+      strshrinkpath(gbuf.card.file);
     }
   }
   else
   {
     item--;
-    if(fs_isdir(gbuf.card.file, item)) //open dir
+    if(fs_isdir(gbuf.card.file, item) == 0) //open dir
     {
       fs_getitem(gbuf.card.file, item, tmp, MAX_ADDR);
-      strcat(gbuf.card.file, tmp);
+      len = strlen(gbuf.card.file);
+      strncat(gbuf.card.file, tmp, MAX_ADDR-1-len);
     }
     else //play item
     {
-      fs_getitemtag(gbuf.card.file, item, gbuf.menu.name, MAX_NAME);
-      menu_setinfo("");
+      fs_getitem(gbuf.card.file, item, gbuf.menu.name, MAX_NAME);
+      fs_getitemtag(gbuf.card.file, item, gbuf.menu.info, MAX_INFO);
       fs_getitem(gbuf.card.file, item, tmp, MAX_ADDR);
-      strcat(gbuf.card.file, "/");
-      strcat(gbuf.card.file, tmp);
+      len = strlen(gbuf.card.file);
+      strncat(gbuf.card.file, "/", MAX_ADDR-1-len);
+      strncat(gbuf.card.file, tmp, MAX_ADDR-1-len-1);
       DEBUGOUT("Card: %s\n", gbuf.card.file);
       if(f_open(&gbuf.card.fsrc, gbuf.card.file, FA_OPEN_EXISTING | FA_READ) == FR_OK)
       {
@@ -161,7 +147,7 @@ unsigned int card_openitem(unsigned int item)
       }
       else
       {
-        shrink_path(gbuf.card.file);
+        strshrinkpath(gbuf.card.file);
         return MENU_ERROR;
       }
     }
@@ -179,7 +165,7 @@ void card_getitem(unsigned int item, char *name)
   }
   else
   {
-    fs_getitemtag(gbuf.card.file, item-1, name, MAX_NAME);
+    fs_getitem(gbuf.card.file, item-1, name, MAX_NAME); //fs_getitemtag
   }
 
   return;

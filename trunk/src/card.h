@@ -11,7 +11,6 @@
 
 //----- PROTOTYPES -----
 void                                   card_service(void);
-void                                   shrink_path(char *path);
 void                                   card_closeitem(void);
 unsigned int                           card_openfile(const char *file);
 unsigned int                           card_openitem(unsigned int item);

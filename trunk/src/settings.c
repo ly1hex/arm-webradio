@@ -15,62 +15,62 @@
 #include "eth.h"
 #include "eth/utils.h"
 #include "eth/dhcp.h"
+#include "alarm.h"
 #include "menu.h"
 #include "menu_dlg.h"
-#include "alarm.h"
+#include "buffer.h"
 #include "settings.h"
 
 
 #define F_NONE        (0) //-
 #define F_NR          (1) //p1-p2
-#define F_STR         (2) //p1=max len
-#define F_MAC         (3) //-
-#define F_IP          (4) //-
-#define F_ONOFF       (5) //-
-#define F_COLOR       (7) //-
-#define F_OR          (8) //p1 or p2
-#define F_RUN         (9) //-
-#define F_TIME        (10) //-
-#define F_INFO        (11) //-
+#define F_OR          (2) //p1 or p2
+#define F_STR         (3) //p1=max len
+#define F_MAC         (4) //-
+#define F_IP          (5) //-
+#define F_RGB         (6) //-
+#define F_RUN         (7) //-
+#define F_TIME        (8) //-
+#define F_INFO        (10) //-
 #define SETTINGSITEMS (35)
 const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
 {
-  //name               ini-entry     format        p1     p2 set-func
-  {"Info...",           "",           F_INFO,       0,     0, 0},
-  {"PlayMode ",         "PLAYMODE",   F_NONE,       0,     0, 0},
-  {"Volume   ",         "VOLUME",     F_NR,         0,   100, (void*)vs_setvolume},
-  {"AutoStart",         "AUTOSTART",  F_STR,        0,     0, 0},
-  {"--- Alarm ---",     "",           F_NONE,       0,     0, 0},
-  {"Vol  ",             "ALARMVOL",   F_NR,         0,   100, 0},
-  {"File1",             "ALARMFILE1", F_STR,        0,     0, 0},
-  {"File2",             "ALARMFILE2", F_STR,        0,     0, 0},
-  {"File3",             "ALARMFILE3", F_STR,        0,     0, 0},
-  {"--- Audio ---",     "",           F_NONE,       0,     0, 0},
-  {"Bass Freq   Hz",    "BASSFREQ",   F_NR,        20,   150, (void*)vs_setbassfreq},
-  {"Bass Amp    dB",    "BASSAMP",    F_NR,         0,    15, (void*)vs_setbassamp},
-  {"Treble Freq Hz",    "TREBLEFREQ", F_NR,      1000, 15000, (void*)vs_settreblefreq},
-  {"Treble Amp  dB",    "TREBLEAMP",  F_NR,        -8,     7, (void*)vs_settrebleamp},
-  {"VS",                "VS",         F_OR,      1033,  1053, (void*)vs_init},
-  {"--- Ethernet ---",  "",           F_NONE,       0,     0, 0},
-  {"Name",              "NAME",       F_STR,       15,     0, (void*)eth_setname},
-  {"MAC",               "MAC",        F_MAC,        0,     0, 0}, //(void*)eth_setmac},
-  {"DHCP",              "DHCP",       F_ONOFF,      0,     0, (void*)eth_setdhcp},
-  {"IP  ",              "IP",         F_IP,         0,     0, (void*)eth_setip},
-  {"Mask",              "NETMASK",    F_IP,         0,     0, (void*)eth_setnetmask},
-  {"Rout",              "ROUTER",     F_IP,         0,     0, (void*)eth_setrouter},
-  {"DNS ",              "DNS",        F_IP,         0,     0, (void*)eth_setdns},
-  {"NTP ",              "NTP",        F_IP,         0,     0, (void*)eth_setntp},
-  {"Time Diff  ",       "TIMEDIFF",   F_NR,    -43200, 43200, (void*)eth_settimediff},
-  {"Summer Time",       "SUMMER",     F_ONOFF,      0,     0, (void*)eth_setsummer},
-  {"Get Time from NTP", "",           F_TIME,       0,     0, 0},
-  {"--- IR ---",        "",           F_NONE,       0,     0, 0},
-  {"IR Addr",           "IR",         F_NR,         0,    31, (void*)ir_setaddr},
-  {"Show raw IR Data",  "",           F_RUN,        0,     0, (void*)dlg_rawir},
-  {"--- Colors ---",    "",           F_NONE,       0,     0, 0},
-  {"BG  ",              "COLORBG",    F_COLOR,      0,     0, (void*)menu_setbgcolor},
-  {"FG  ",              "COLORFG",    F_COLOR,      0,     0, (void*)menu_setfgcolor},
-  {"Sel ",              "COLORSEL",   F_COLOR,      0,     0, (void*)menu_setselcolor},
-  {"Edge",              "COLOREDGE",  F_COLOR,      0,     0, (void*)menu_setedgecolor}
+  //name               ini-entry     format        p1     p2    p3  set-func
+  {"Info...",           "",           F_INFO,       0,     0,    0, 0},
+  {"PlayMode ",         "PLAYMODE",   F_NONE,       0,     0,    0, 0},
+  {"Volume   ",         "VOLUME",     F_NR,         0,   100,    1, (void*)vs_setvolume},
+  {"AutoStart",         "AUTOSTART",  F_STR,        0,     0,    0, 0},
+  {"--- Alarm ---",     "",           F_NONE,       0,     0,    0, 0},
+  {"Vol  ",             "ALARMVOL",   F_NR,         0,   100,    1, 0},
+  {"File1",             "ALARMFILE1", F_STR,        0,     0,    0, 0},
+  {"File2",             "ALARMFILE2", F_STR,        0,     0,    0, 0},
+  {"File3",             "ALARMFILE3", F_STR,        0,     0,    0, 0},
+  {"--- Audio ---",     "",           F_NONE,       0,     0,    0, 0},
+  {"Bass-Freq Hz  ",    "BASSFREQ",   F_NR,        20,   150,   10, (void*)vs_setbassfreq},
+  {"Bass-Amp dB   ",    "BASSAMP",    F_NR,         0,    15,    1, (void*)vs_setbassamp},
+  {"Treble-Freq Hz",    "TREBLEFREQ", F_NR,      1000, 15000, 1000, (void*)vs_settreblefreq},
+  {"Treble-Amp  dB",    "TREBLEAMP",  F_NR,        -8,     7,    1, (void*)vs_settrebleamp},
+  {"VS",                "VS",         F_OR,      1033,  1053,    0, (void*)vs_init},
+  {"--- Ethernet ---",  "",           F_NONE,       0,     0,    0, 0},
+  {"Name",              "NAME",       F_STR,       15,     0,    0, (void*)eth_setname},
+  {"MAC",               "MAC",        F_MAC,        0,     0,    0, 0}, //(void*)eth_setmac},
+  {"DHCP",              "DHCP",       F_OR,         0,     1,    0, (void*)eth_setdhcp},
+  {"IP  ",              "IP",         F_IP,         0,     0,    0, (void*)eth_setip},
+  {"Mask",              "NETMASK",    F_IP,         0,     0,    0, (void*)eth_setnetmask},
+  {"Rout",              "ROUTER",     F_IP,         0,     0,    0, (void*)eth_setrouter},
+  {"DNS ",              "DNS",        F_IP,         0,     0,    0, (void*)eth_setdns},
+  {"NTP ",              "NTP",        F_IP,         0,     0,    0, (void*)eth_setntp},
+  {"Time-Diff sec",     "TIMEDIFF",   F_NR,    -43200, 43200, 3600, (void*)eth_settimediff},
+  {"Summer-Time  ",     "SUMMER",     F_OR,         0,     1,    0, (void*)eth_setsummer},
+  {"Get Time from NTP", "",           F_TIME,       0,     0,    0, 0},
+  {"--- IR ---",        "",           F_NONE,       0,     0,    0, 0},
+  {"IR Addr",           "IR",         F_NR,         0,    31,    1, (void*)ir_setaddr},
+  {"Show raw IR Data",  "",           F_RUN,        0,     0,    0, (void*)dlg_rawir},
+  {"--- Colors ---",    "",           F_NONE,       0,     0,    0, 0},
+  {"BG  ",              "COLORBG",    F_RGB,        0,     0,    0, (void*)menu_setbgcolor},
+  {"FG  ",              "COLORFG",    F_RGB,        0,     0,    0, (void*)menu_setfgcolor},
+  {"Sel ",              "COLORSEL",   F_RGB,        0,     0,    0, (void*)menu_setselcolor},
+  {"Edge",              "COLOREDGE",  F_RGB,        0,     0,    0, (void*)menu_setedgecolor}
 };
 
 
@@ -81,19 +81,19 @@ void settings_read(void)
   unsigned int bg=DEFAULT_BGCOLOR, fg=DEFAULT_FGCOLOR, sel=DEFAULT_SELCOLOR, edge=DEFAULT_EDGECOLOR;
 
   //colors
-  if(ini_getentry(SETTINGS_FILE, "COLORBG", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "COLORBG", buf, INI_BUFLEN) == 0)
   {
     bg = atorgb(buf);
   }
-  if(ini_getentry(SETTINGS_FILE, "COLORFG", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "COLORFG", buf, INI_BUFLEN) == 0)
   {
     fg = atorgb(buf);
   }
-  if(ini_getentry(SETTINGS_FILE, "COLORSEL", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "COLORSEL", buf, INI_BUFLEN) == 0)
   {
     sel = atorgb(buf);
   }
-  if(ini_getentry(SETTINGS_FILE, "COLOREDGE", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "COLOREDGE", buf, INI_BUFLEN) == 0)
   {
     edge = atorgb(buf);
   }
@@ -107,14 +107,14 @@ void settings_read(void)
   alarm_load();
 
   //ir
-  if(ini_getentry(SETTINGS_FILE, "IR", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "IR", buf, INI_BUFLEN) == 0)
   {
     ir_setaddr(atoi(buf));
   }
   ir_init();
 
   //vs
-  if(ini_getentry(SETTINGS_FILE, "VS", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "VS", buf, INI_BUFLEN) == 0)
   {
     vs_init(atoi(buf));
   }
@@ -122,37 +122,37 @@ void settings_read(void)
   {
     vs_init(DEFAULT_VS);
   }
-  if(ini_getentry(SETTINGS_FILE, "VOLUME", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "VOLUME", buf, INI_BUFLEN) == 0)
   {
     vs_setvolume(atoi(buf));
   }
-  if(ini_getentry(SETTINGS_FILE, "BASSFREQ", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "BASSFREQ", buf, INI_BUFLEN) == 0)
   {
     vs_setbassfreq(atoi(buf));
   }
-  if(ini_getentry(SETTINGS_FILE, "BASSAMP", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "BASSAMP", buf, INI_BUFLEN) == 0)
   {
     vs_setbassamp(atoi(buf));
   }
-  if(ini_getentry(SETTINGS_FILE, "TREBLEFREQ", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "TREBLEFREQ", buf, INI_BUFLEN) == 0)
   {
     vs_settreblefreq(atoi(buf));
   }
-  if(ini_getentry(SETTINGS_FILE, "TREBLEAMP", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "TREBLEAMP", buf, INI_BUFLEN) == 0)
   {
     vs_settrebleamp(atoi(buf));
   }
 
   //ethernet
-  if(ini_getentry(SETTINGS_FILE, "NAME", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "NAME", buf, INI_BUFLEN) == 0)
   {
     eth_setname(buf);
   }
-  if(ini_getentry(SETTINGS_FILE, "MAC", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "MAC", buf, INI_BUFLEN) == 0)
   {
     eth_setmac(atomac(buf));
   }
-  if(ini_getentry(SETTINGS_FILE, "DHCP", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "DHCP", buf, INI_BUFLEN) == 0)
   {
     eth_setdhcp((atoi(buf))?1:0);
   }
@@ -162,7 +162,7 @@ void settings_read(void)
   }
   if(eth_ip() == 0UL)
   {
-    if(ini_getentry(SETTINGS_FILE, "IP", buf, INI_BUFLEN-1))
+    if(ini_getentry(SETTINGS_FILE, "IP", buf, INI_BUFLEN) == 0)
     {
       eth_setip(atoip(buf));
     }
@@ -173,7 +173,7 @@ void settings_read(void)
   }
   if(eth_netmask() == 0UL)
   {
-    if(ini_getentry(SETTINGS_FILE, "NETMASK", buf, INI_BUFLEN-1))
+    if(ini_getentry(SETTINGS_FILE, "NETMASK", buf, INI_BUFLEN) == 0)
     {
       eth_setnetmask(atoip(buf));
     }
@@ -184,7 +184,7 @@ void settings_read(void)
   }
   if(eth_router() == 0UL)
   {
-    if(ini_getentry(SETTINGS_FILE, "ROUTER", buf, INI_BUFLEN-1))
+    if(ini_getentry(SETTINGS_FILE, "ROUTER", buf, INI_BUFLEN) == 0)
     {
       eth_setrouter(atoip(buf));
     }
@@ -195,7 +195,7 @@ void settings_read(void)
   }
   if(eth_dns() == 0UL)
   {
-    if(ini_getentry(SETTINGS_FILE, "DNS", buf, INI_BUFLEN-1))
+    if(ini_getentry(SETTINGS_FILE, "DNS", buf, INI_BUFLEN) == 0)
     {
       eth_setdns(atoip(buf));
     }
@@ -206,7 +206,7 @@ void settings_read(void)
   }
   if(eth_ntp() == 0UL)
   {
-    if(ini_getentry(SETTINGS_FILE, "NTP", buf, INI_BUFLEN-1))
+    if(ini_getentry(SETTINGS_FILE, "NTP", buf, INI_BUFLEN) == 0)
     {
       eth_setntp(atoip(buf));
     }
@@ -215,7 +215,7 @@ void settings_read(void)
       eth_setntp(atoip(DEFAULT_NTP));
     }
   }
-  if(ini_getentry(SETTINGS_FILE, "TIMEDIFF", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "TIMEDIFF", buf, INI_BUFLEN) == 0)
   {
     eth_settimediff(atoi(buf));
   }
@@ -223,7 +223,7 @@ void settings_read(void)
   {
     eth_settimediff(DEFAULT_TIMEDIFF);
   }
-  if(ini_getentry(SETTINGS_FILE, "SUMMER", buf, INI_BUFLEN-1))
+  if(ini_getentry(SETTINGS_FILE, "SUMMER", buf, INI_BUFLEN) == 0)
   {
     eth_setsummer((atoi(buf))?1:0);
   }
@@ -240,7 +240,9 @@ unsigned int settings_openitem(unsigned int item)
 {
   char value[INI_BUFLEN];
   char buf[MAX_ADDR];
-  unsigned int save=0;
+  unsigned int abort=1;
+  int i;
+  IP_Addr ip;
 
   if(item == 0) //back
   {
@@ -249,73 +251,101 @@ unsigned int settings_openitem(unsigned int item)
   else
   {
     item--;
-    ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, value, INI_BUFLEN-1);
+    ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, value, INI_BUFLEN);
+    buf[0] = 0;
     switch(settingsmenu[item].format)
     {
       case F_NR:  //p1-p2
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
+        i = atoi(value);
+        abort = dlg_nr(settingsmenu[item].name, &i, settingsmenu[item].p1, settingsmenu[item].p2, settingsmenu[item].p3);
+        if(abort == 0)
         {
-          settingsmenu[item].set((void*)(int)atoi(buf));
+          itoa(i, buf, 10);
+          if(settingsmenu[item].set)
+          {
+            settingsmenu[item].set((void*)(int)i);
+          }
         }
         break;
+
       case F_STR: //p1=max len
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
+        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
+        if(abort == 0)
         {
-          settingsmenu[item].set(buf);
+          if(settingsmenu[item].set)
+          {
+            settingsmenu[item].set(buf);
+          }
         }
         break;
+
       case F_MAC:
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
+        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
+        if(abort == 0)
         {
-          //settingsmenu[item].set((void*)(int)(MAC_Addr)atomac(buf));
+          if(settingsmenu[item].set)
+          {
+            //settingsmenu[item].set((void*)(MAC_Addr)atomac(buf));
+          }
         }
         break;
+
       case F_IP:
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
+        ip = atoip(value);
+        abort = dlg_ip(settingsmenu[item].name, &ip);
+        if(abort == 0)
         {
-          settingsmenu[item].set((void*)(int)(IP_Addr)atoip(buf));
+          strcpy(buf, iptoa(ip));
+          if(settingsmenu[item].set)
+          {
+            settingsmenu[item].set((void*)(IP_Addr)ip);
+          }
         }
         break;
-      case F_ONOFF:
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
+
+      case F_RGB:
+        i = atorgb(value);
+        abort = dlg_rgb(settingsmenu[item].name, &i);
+        if(abort == 0)
         {
-          settingsmenu[item].set((void*)(int)atoi(buf));
+          sprintf(buf, "%03i,%03i,%03i", GET_RED(i), GET_GREEN(i), GET_BLUE(i));
+          if(settingsmenu[item].set)
+          {
+            settingsmenu[item].set((void*)(unsigned int)i);
+          }
         }
         break;
-      case F_COLOR:
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
-        {
-          settingsmenu[item].set((void*)(unsigned int)atorgb(buf));
-        }
-        break;
+
       case F_OR:  //p1 or p2
-        save = dlg_str(settingsmenu[item].name, value, buf, MAX_ADDR);
-        if(save && settingsmenu[item].set)
+        i = atoi(value);
+        abort = dlg_or(settingsmenu[item].name, &i, settingsmenu[item].p1, settingsmenu[item].p2);
+        if(abort == 0)
         {
-          settingsmenu[item].set((void*)(int)atoi(buf));
+          itoa(i, buf, 10);
+          if(settingsmenu[item].set)
+          {
+            settingsmenu[item].set((void*)(int)i);
+          }
         }
         break;
+
       case F_RUN:
         if(settingsmenu[item].set)
         {
           settingsmenu[item].set(0);
         }
         break;
+
       case F_TIME:
+        menu_drawpopup("Get time...");
         settime(ntp_gettime());
         break;
+
       case F_INFO:
         dlg_msg("Info", APPNAME" v"APPVERSION""APPRELEASE_SYM"\n\nBuilt on\n"__DATE__" "__TIME__);
         break;
-
     }
-    if(save)
+    if(abort == 0)
     {
       ini_setentry(SETTINGS_FILE, settingsmenu[item].ini, buf);
     }
@@ -332,7 +362,7 @@ void settings_getitem(unsigned int item, char *name)
 
   if(item == 0) //back
   {
-    strcpy(name, "<< back <<");
+    strcpy(name, MENU_BACKTXT);
   }
   else
   {
@@ -340,8 +370,15 @@ void settings_getitem(unsigned int item, char *name)
     if((settingsmenu[item].ini[0] != 0) &&
        (settingsmenu[item].format != F_NONE))
     {
-      ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, buf, INI_BUFLEN-1);
-      snprintf(name, MAX_NAME-1, "%s %s", settingsmenu[item].name, buf);
+      if(ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, buf, INI_BUFLEN) == 0)
+      {
+        snprintf(name, MAX_NAME-1, "%s %s", settingsmenu[item].name, buf);
+        name[MAX_NAME-1] = 0;
+      }
+      else
+      {
+        strcpy(name, settingsmenu[item].name);
+      }
     }
     else
     {
@@ -356,4 +393,16 @@ void settings_getitem(unsigned int item, char *name)
 unsigned int settings_items(void)
 {
   return SETTINGSITEMS+1;
+}
+
+
+void settings_init(void)
+{
+  DEBUGOUT("Settings: init\n");
+
+  gbuf.card.name[0] = 0;
+  gbuf.card.info[0] = 0;
+  gbuf.card.file[0] = 0;
+
+  return;
 }

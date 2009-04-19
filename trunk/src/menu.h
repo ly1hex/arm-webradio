@@ -22,9 +22,10 @@
 #define MENU_STATE_BUF                 (1)
 #define MENU_STATE_PLAY                (2)
 
-#define CTRL_BUTTON                    (0)
-#define CTRL_CHECKBOX                  (1)
-#define CTRL_INPUT                     (2)
+#define CTRL_TEXT                      (0)
+#define CTRL_BUTTON                    (1)
+#define CTRL_CHECKBOX                  (2)
+#define CTRL_INPUT                     (3)
 
 
 typedef struct
@@ -49,9 +50,9 @@ typedef struct
   unsigned int y2;
   char *val;        //value
   unsigned int len; //chars
-  unsigned int sel; //control selected
-  unsigned int p1;  //button: - | checkbox: checked | input: first
-  unsigned int p2;  //button: - | checkbox: -       | input: sel
+  unsigned int sel; //control active/selected
+  unsigned int p1;  //text: - | button: - | checkbox: checked | input: first
+  unsigned int p2;  //text: - | button: - | checkbox: -       | input: sel (0xffff = select all)
 } CONTROL;
 
 
@@ -82,7 +83,7 @@ void                                   menu_drawwndinfo(unsigned int redraw);
 void                                   menu_drawwnd(unsigned int redraw);
 
 void                                   menu_drawctrl(CONTROL *ctrl);
-void                                   menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigned int x, unsigned int y, unsigned int len, char *value);
+void                                   menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigned int x, unsigned int y, unsigned int p, char *value);
 void                                   menu_drawdlg(const char *title, const char *msg);
 void                                   menu_drawpopup(const char *msg);
 
