@@ -54,7 +54,7 @@ PLS-File with network shares:
 {{{
 [playlist]
 numberofentries=1
-file1=Share Address
+file1=Share Address (proto://user:password@xxx.xxx.xxx.xxx/url)
 title1=Share Name
 }}}
 
@@ -63,9 +63,9 @@ title1=Share Name
 INI-File with alarm times:
 {{{
 [alarm]
-numberofentries=2
-time1=08:00:SuMoTuWeThFrSa
+time1= 08:00:MoTuWeThFrSaSu
 time2=!09:00:Tu
+time3= 12:34:Mo
 }}}
 A "!" at the beginning shows that the alarm is off.
 
