@@ -159,6 +159,8 @@
         <file Name="shoutcast.h" file_name="eth/shoutcast.h"/>
         <file Name="http_files.c" file_name="eth/http_files.c"/>
         <file Name="http_files.h" file_name="eth/http_files.h"/>
+        <file Name="dns.c" file_name="eth/dns.c"/>
+        <file Name="dns.h" file_name="eth/dns.h"/>
       </folder>
       <file Name="alarm.c" file_name="alarm.c"/>
       <file Name="alarm.h" file_name="alarm.h"/>

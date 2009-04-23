@@ -4,6 +4,7 @@
 
 //----- DEFINES -----
 #define SHOUTCAST_PORT                 (1000)
+
 #define SHOUTCAST_TIMEOUT              (10) //s
 
 #define SHOUTCAST_TRY                  (3)    //times
@@ -20,7 +21,7 @@
 //----- PROTOTYPES -----
 unsigned int                           shoutcast_getstatus(void);
 void                                   shoutcast_close(void);
-unsigned int                           shoutcast_open(IP_Addr ip, unsigned int port, char *url);
+unsigned int                           shoutcast_open(IP_Addr ip, unsigned int port, char *file);
 void                                   shoutcast_putogg(const unsigned char *s, unsigned int len);
 void                                   shoutcast_putdata(const unsigned char *s, unsigned int len);
 unsigned int                           shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);

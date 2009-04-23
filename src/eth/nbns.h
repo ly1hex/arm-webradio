@@ -12,7 +12,7 @@
 typedef struct __attribute__((packed))
 {
   unsigned int     len       :   8; // 8bit Len: 32
-  uint8_t          name[33];        //33byte name + null
+  uint8_t          name[33];        //33byte Name + null
   unsigned int     type      :  16; //16bit Type
   unsigned int     clas      :  16; //16bit Class
 } NBNS_Question;
@@ -24,7 +24,7 @@ typedef struct __attribute__((packed))
 typedef struct __attribute__((packed))
 {
   unsigned int     len       :   8; // 8bit Len: 32
-  uint8_t          name[33];        //33byte name + null
+  uint8_t          name[33];        //33byte Name + null
   unsigned int     type      :  16; //16bit Type
   unsigned int     clas      :  16; //16bit Class
   unsigned long    ttl       :  32; //32bit Time to live
@@ -61,7 +61,7 @@ typedef struct __attribute__((packed))
 
 //----- PROTOTYPES -----
 void                                   nbns_reply(unsigned int index, unsigned int id);
-void                                   nbns_udpapp(unsigned int index);
+void                                   nbns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_NBNS_H_

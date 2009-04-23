@@ -151,15 +151,16 @@ unsigned long generate_id(void)
 }
 
 
-//http://user:password@192.168.0.1/abc
-void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned int *port, char *url)
+//proto://user:password@xxx.xxx.xxx.xxx/abc
+//proto://user:password@domain/abc
+void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned int *port, char *file)
 {
   if(proto){ *proto = 0; }
   if(user) { *user  = 0; }
   if(pwrd) { *pwrd  = 0; }
   if(ip)   { *ip    = 0; }
   if(port) { *port  = 0; }
-  if(url)  { *url++ = '/'; *url = 0; }
+  if(file) { *file++ = '/'; *file = 0; }
 
   while(*s && (*s==' ')){ s++; } //skip spaces
 
@@ -254,16 +255,16 @@ void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned
     while(isdigit(*s)){ s++; }; //skip port
   }
 
-  //get url
+  //get file
   if(*s == '/')
   {
     s++; //skip "/"
     while(*s && !isspace(*s))
     {
-      if(url)
+      if(file)
       {
-        *url++ = *s;
-        *url   = 0;
+        *file++ = *s;
+        *file   = 0;
       }
       s++;
     }
@@ -340,7 +341,7 @@ IP_Addr atoip(char *s)
   }
   else //get ip -> dns resolve
   {
-//    ip = dns_getip(s);
+    ip = dns_getip(s);
   }
 
   return ip;

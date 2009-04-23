@@ -367,7 +367,7 @@ unsigned int standby(unsigned int param)
           {
             settime(sec_time);
           }
-          if(alarm_check(&time) == 0)
+          if(alarm_check(&time))
           {
             alarm = 1;
           }
@@ -590,7 +590,7 @@ int main()
             draw |= DAY_CHANGED;
             settime(sec_time);
           }
-          if(alarm_check(&time) == 0)
+          if(alarm_check(&time))
           {
             DEBUGOUT("Ready...\n");
             menu_alarm();

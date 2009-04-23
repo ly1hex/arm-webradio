@@ -12,7 +12,7 @@
 
 //----- PROTOTYPES -----
 void                                   ssdp_advertise(void);
-void                                   ssdp_udpapp(unsigned int index);
+void                                   ssdp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_SSDP_H_

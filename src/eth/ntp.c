@@ -67,14 +67,14 @@ unsigned long ntp_gettime(void)
 }
 
 
-void ntp_udpapp(unsigned int index)
+void ntp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   NTP_Header *rx_ntp;
   unsigned long time;
 
   DEBUGOUT("NTP: UDP app\n");
   
-  rx_ntp = (NTP_Header*) &eth_rxbuf[NTP_OFFSET];
+  rx_ntp = (NTP_Header*) rx;
 
   if((rx_ntp->flags&0x07) == 4) //Mode=4 -> Server
   {

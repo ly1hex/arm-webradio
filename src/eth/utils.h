@@ -35,7 +35,7 @@ unsigned int                           http_getresponse(const char *src);
 
 unsigned long                          generate_id(void);
 
-void                                   atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned int *port, char *url);
+void                                   atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned int *port, char *file);
 char*                                  mactoa(MAC_Addr mac_addr);
 MAC_Addr                               atomac(char *s);
 char*                                  iptoa(IP_Addr ip_addr);

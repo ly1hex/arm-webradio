@@ -173,22 +173,22 @@ unsigned int dhcp_getcfg(void)
 }
 
 
-void dhcp_udpapp(unsigned int index)
+void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   DHCP_Header *rx_dhcp;
   unsigned char *ptr, c, len;
 
   DEBUGOUT("DHCP: UDP app\n");
 
-  rx_dhcp = (DHCP_Header*) &eth_rxbuf[DHCP_OFFSET];
+  rx_dhcp = (DHCP_Header*) rx;
 
-  if((rx_dhcp->op              == DHCP_OP_REPLAY) &&
-     (rx_dhcp->htype           == DHCP_HTYPE_ETH) &&
-     (rx_dhcp->hlen            == DHCP_HLEN_MAC)  &&
-     (swap32(rx_dhcp->xid)     == dhcp_id)        &&
-     (rx_dhcp->yiaddr          != 0UL)            &&
-     (rx_dhcp->chaddr.mac      == eth_mac())      &&
-     (swap32(rx_dhcp->mcookie) == DHCP_MCOOKIE))
+  if((rx_dhcp->op              == DHCP_OP_REPLAY)  &&
+     (rx_dhcp->htype           == DHCP_HTYPE_ETH)  &&
+     (rx_dhcp->hlen            == DHCP_HLEN_MAC)   &&
+     (rx_dhcp->xid             == swap32(dhcp_id)) &&
+     (rx_dhcp->yiaddr          != 0UL)             &&
+     (rx_dhcp->chaddr.mac      == eth_mac())       &&
+     (rx_dhcp->mcookie         == SWAP32(DHCP_MCOOKIE)))
   {
     switch(dhcp_status)
     {

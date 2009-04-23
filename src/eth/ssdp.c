@@ -40,13 +40,13 @@ void ssdp_advertise(void)
 }
 
 
-void ssdp_udpapp(unsigned int index)
+void ssdp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   char *ssdp;
 
   DEBUGOUT("SSDP: UDP app\n");
 
-  ssdp = (char*) &eth_rxbuf[SSDP_OFFSET];
+  ssdp = (char*) rx;
 
   if(strncmpi(ssdp, "M-SEARCH *", 10) == 0)
   {

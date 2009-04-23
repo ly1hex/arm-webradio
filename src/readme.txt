@@ -22,6 +22,7 @@ History
          2009  v0.02  Automatic standby
                       LFN support
                       Change settings in the Menu
+                      DNS client
 
   Mar 16 2009  v0.01  First release
 
