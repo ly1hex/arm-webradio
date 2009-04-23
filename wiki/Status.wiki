@@ -8,7 +8,7 @@
 || *Ethernet Stack* ||
 || Protocols                             || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
 || DHCP Client                           || working ||
-|| DNS Client                            || - ||
+|| DNS Client                            || working ||
 || NTP Client                            || working ||
 || HTTP Server                           || working ||
 || UPnP Device                           || working ||
