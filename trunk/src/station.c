@@ -74,7 +74,7 @@ unsigned int station_open(unsigned int item)
   char proto[8];
   IP_Addr ip;
   unsigned int port;
-  char url[MAX_URL];
+  char file[MAX_URLFILE];
 
   if(station_getitemaddr(item, gbuf.station.addr) != 0)
   {
@@ -93,10 +93,10 @@ unsigned int station_open(unsigned int item)
   station_status  = STATION_OPEN;
   station_timeout = getontime()+STATION_TIMEOUT;
 
-  atoaddr(gbuf.station.addr, proto, 0, 0, &ip, &port, url);
+  atoaddr(gbuf.station.addr, proto, 0, 0, &ip, &port, file);
   if(strcmp(proto, "http") == 0)
   {
-    r = shoutcast_open(ip, port, url);
+    r = shoutcast_open(ip, port, file);
     if(r == SHOUTCAST_OPENED)
     {
       station_timeout = getontime()+STATION_TIMEOUT;

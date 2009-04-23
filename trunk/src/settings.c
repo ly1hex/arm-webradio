@@ -244,6 +244,9 @@ unsigned int settings_openitem(unsigned int item)
   int i;
   IP_Addr ip;
 
+  buf[0]          = 0;
+  buf[MAX_ADDR-1] = 0;
+
   if(item == 0) //back
   {
     return MENU_BACK;
@@ -342,7 +345,21 @@ unsigned int settings_openitem(unsigned int item)
         break;
 
       case F_INFO:
-        dlg_msg("Info", APPNAME" v"APPVERSION""APPRELEASE_SYM"\n\nBuilt on\n"__DATE__" "__TIME__);
+        snprintf(buf, MAX_ADDR-1, __DATE__" "__TIME__"\n"
+                                  "\n"
+                                  "MAC %s\n"
+                                  "IP   %i.%i.%i.%i\n"
+                                  "Mask %i.%i.%i.%i\n"
+                                  "Rout %i.%i.%i.%i\n"
+                                  "DNS  %i.%i.%i.%i\n"
+                                  "NTP  %i.%i.%i.%i",
+                 mactoa(eth_mac()),
+                 (eth_ip()     >>0)&0xFF, (eth_ip()     >>8)&0xFF, (eth_ip()     >>16)&0xFF, (eth_ip()     >>24)&0xFF,
+                 (eth_netmask()>>0)&0xFF, (eth_netmask()>>8)&0xFF, (eth_netmask()>>16)&0xFF, (eth_netmask()>>24)&0xFF,
+                 (eth_router() >>0)&0xFF, (eth_router() >>8)&0xFF, (eth_router() >>16)&0xFF, (eth_router() >>24)&0xFF,
+                 (eth_dns()    >>0)&0xFF, (eth_dns()    >>8)&0xFF, (eth_dns()    >>16)&0xFF, (eth_dns()    >>24)&0xFF,
+                 (eth_ntp()    >>0)&0xFF, (eth_ntp()    >>8)&0xFF, (eth_ntp()    >>16)&0xFF, (eth_ntp()    >>24)&0xFF);
+        dlg_msg(APPNAME" v"APPVERSION""APPRELEASE_SYM, buf);
         break;
     }
     if(abort == 0)

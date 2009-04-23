@@ -26,11 +26,11 @@ unsigned int alarm_check(TIME *time)
   {
     if(alarmtimes[i].on && (alarmtimes[i].wdays & wday) && (alarmtimes[i].h == h) && (alarmtimes[i].m == m))
     {
-      return 0;
+      return 1;
     }
   }
 
-  return 1;
+  return 0;
 }
 
 

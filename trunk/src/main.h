@@ -28,7 +28,7 @@
 //Max characters
 #define MAX_NAME                       (32)  // 31 chars + zero (min 32)  "Station Name"
 #define MAX_INFO                       (128) //127 chars + zero (min 32)  "Station info"
-#define MAX_URL                        (64)  // 63 chars + zero           "/stream.mp3"
+#define MAX_URLFILE                    (64)  // 63 chars + zero           "/stream.mp3"
 #define MAX_ADDR                       (256) //255 chars + zero           "http://192.168.0.100/stream.mp3" or "/test/abc/xyz.mp3"
 
 #define SEC_CHANGED                    (1<<0)

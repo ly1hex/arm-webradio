@@ -9,6 +9,7 @@
 #include "eth.h"
 #include "eth/utils.h"
 #include "eth/dhcp.h"
+#include "eth/dns.h"
 #include "eth/http.h"
 #include "eth/nbns.h"
 #include "eth/ntp.h"
@@ -86,25 +87,32 @@ void udp_send(unsigned int index, unsigned int len)
 
 void udp_app(unsigned int index)
 {
+  UDP_Header *rx_udp;
+  unsigned int len;
+
+  rx_udp = (UDP_Header*) &eth_rxbuf[UDP_OFFSET];
+
+  len = swap16(rx_udp->len) - UDP_HEADERLEN;
+
   switch(udp_table[index].local_port)
   {
     case DHCPCLIENT_PORT:
       if(udp_table[index].port == DHCPSERVER_PORT)
       {
-        dhcp_udpapp(index);
+        dhcp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       }
       break;
-//      case DNS_PORT:
-//        dns_udpapp(index);
-      break;
-    case NTP_PORT:
-      ntp_udpapp(index);
+    case DNS_PORT:
+      dns_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       break;
     case NBNS_PORT:
-      nbns_udpapp(index);
+      nbns_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+      break;
+    case NTP_PORT:
+      ntp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       break;
     case SSDP_PORT:
-      ssdp_udpapp(index);
+      ssdp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       break;
   }
 
@@ -125,9 +133,9 @@ void udp_service(void)
 
   for(index=0; index<UDP_ENTRIES; index++) //look for table index
   {
-    if((rx_ip->src_ip            == udp_table[index].ip)   &&
-       (swap16(rx_udp->src_port) == udp_table[index].port) &&
-       (swap16(rx_udp->dst_port) == udp_table[index].local_port))
+    if((rx_ip->src_ip    == udp_table[index].ip)   &&
+       (rx_udp->src_port == swap16(udp_table[index].port)) &&
+       (rx_udp->dst_port == swap16(udp_table[index].local_port)))
     {
       break;
     }
@@ -263,8 +271,8 @@ void tcp_app(unsigned int index)
 
   rx_ip  = (IP_Header*)  &eth_rxbuf[IP_OFFSET];
   rx_tcp = (TCP_Header*) &eth_rxbuf[TCP_OFFSET];
-  hd_len = (rx_ip->hd_len*4)+(rx_tcp->len*4);
-  len    = swap16(rx_ip->len)-hd_len;
+  hd_len = (rx_ip->hd_len*4) + (rx_tcp->len*4);
+  len    = swap16(rx_ip->len) - hd_len;
 
   switch(tcp_table[index].local_port)
   {
@@ -298,9 +306,9 @@ void tcp_service(void)
 
   for(index=0; index<TCP_ENTRIES; index++) //look for table index
   {
-    if((rx_ip->src_ip            == tcp_table[index].ip)   &&
-       (swap16(rx_tcp->src_port) == tcp_table[index].port) &&
-       (swap16(rx_tcp->dst_port) == tcp_table[index].local_port))
+    if((rx_ip->src_ip    == tcp_table[index].ip)   &&
+       (rx_tcp->src_port == swap16(tcp_table[index].port)) &&
+       (rx_tcp->dst_port == swap16(tcp_table[index].local_port)))
     {
       break;
     }

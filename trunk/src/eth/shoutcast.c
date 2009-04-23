@@ -16,7 +16,7 @@
 
 volatile unsigned int shoutcast_status=SHOUTCAST_CLOSED;
 IP_Addr shoutcast_ip=0;
-char *shoutcast_url;
+char *shoutcast_file;
 
 
 unsigned int shoutcast_getstatus(void)
@@ -36,7 +36,7 @@ void shoutcast_close(void)
 }
 
 
-unsigned int shoutcast_open(IP_Addr ip, unsigned int port, char *url)
+unsigned int shoutcast_open(IP_Addr ip, unsigned int port, char *file)
 {
   long timeout;
   unsigned int index, trying;
@@ -50,7 +50,7 @@ unsigned int shoutcast_open(IP_Addr ip, unsigned int port, char *url)
 
   shoutcast_status = SHOUTCAST_OPEN;
   shoutcast_ip     = ip;
-  shoutcast_url    = url;
+  shoutcast_file   = file;
 
   index   = TCP_ENTRIES;
   index   = tcp_open(index, mac, ip, port, SHOUTCAST_PORT);
@@ -383,7 +383,7 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
                            "User-Agent: "APPNAME"\r\n"
                            "Icy-MetaData: 0\r\n"
                            "Connection: Keep-Alive\r\n"
-                           "\r\n", shoutcast_url, ((shoutcast_ip>>0)&0xff), ((shoutcast_ip>>8)&0xff), ((shoutcast_ip>>16)&0xff), ((shoutcast_ip>>24)&0xff));
+                           "\r\n", shoutcast_file, ((shoutcast_ip>>0)&0xff), ((shoutcast_ip>>8)&0xff), ((shoutcast_ip>>16)&0xff), ((shoutcast_ip>>24)&0xff));
       shoutcast_status = SHOUTCAST_HEADER;
       parse_header     = 0;
       skip             = 32; //default skip

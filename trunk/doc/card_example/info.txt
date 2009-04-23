@@ -44,7 +44,7 @@ station.pls
 
   [playlist]
   numberofentries=1
-  file1=Stream Address (http://xxx.xxx.xxx.xxx:port/url)
+  file1=Stream Address (proto://domain:port/filepathname)
   title1=Stream Name
 
 
@@ -54,7 +54,7 @@ share.pls
 
   [playlist]
   numberofentries=1
-  file1=Share Address (proto://user:password@xxx.xxx.xxx.xxx/url)
+  file1=Share Address (proto://user:password@domain/filepathname)
   title1=Share Name
 
 

@@ -45,7 +45,7 @@ void nbns_reply(unsigned int index, unsigned int id)
 }
 
 
-void nbns_udpapp(unsigned int index)
+void nbns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   NBNS_Header *rx_nbns;
   unsigned int type;
@@ -53,17 +53,19 @@ void nbns_udpapp(unsigned int index)
 
   DEBUGOUT("NBNS: UDP app\n");
 
-  rx_nbns = (NBNS_Header*) &eth_rxbuf[NBNS_OFFSET];
+  rx_nbns = (NBNS_Header*) rx;
 
   if(((swap16(rx_nbns->flags_op)&NBNS_FLAG_RESPONSE) == 0) &&
      ((swap16(rx_nbns->flags_op)&NBNS_OPMASK)        == 0) &&
-      (swap16(rx_nbns->qdcount)      == 1)                 &&
-      (rx_nbns->data.qd.len          == 32)                &&
-      (swap16(rx_nbns->data.qd.type) == NBNSQ_TYPE_NB)     &&
-      (swap16(rx_nbns->data.qd.clas) == NBNSQ_CLASS_IN))
+      (rx_nbns->qdcount      == SWAP16(1))                 &&
+      (rx_nbns->data.qd.len  == 32)                        &&
+      (rx_nbns->data.qd.type == SWAP16(NBNSQ_TYPE_NB))     &&
+      (rx_nbns->data.qd.clas == SWAP16(NBNSQ_CLASS_IN)))
   {
     type = nbns_decode(name, rx_nbns->data.an.name);
+
     DEBUGOUT("Eth: NBNS %i %s\n", type, name);
+
     if(type == 0x00) //0x00 = Workstation
     {
       if(strcmp(name, eth_name()) == 0)
