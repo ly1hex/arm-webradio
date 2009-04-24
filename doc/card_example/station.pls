@@ -1,5 +1,5 @@
 [playlist]
-numberofentries=14
+numberofentries=12
 
 file1=http://62.26.4.172:8010/
 title1=Project reloaded
