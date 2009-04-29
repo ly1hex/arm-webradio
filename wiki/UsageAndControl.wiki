@@ -5,7 +5,7 @@
 || Long press   || Back/Abort     ||
 
 
-== IR remote control ==
+== IR remote control (RC5) ==
 || *Button*     || *Function*     ||
 || 2x Power     || Standby on/off ||
 || Volume +/-   || Volume control and in menu scroll page up/down ||
