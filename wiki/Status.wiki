@@ -4,7 +4,7 @@
 || IR Receiver (RC5)                     || working ||
 || SD-Card                               || working ||
 || VS1033/VS1053                         || working ||
-|| F-RAM (currently not needed)          || - ||
+|| F-RAM (currently not needed)          || -       ||
 || *Ethernet Stack* ||
 || Protocols                             || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
 || DHCP Client                           || working ||
@@ -16,13 +16,13 @@
 || ELM ChaN's FatFs with LFN             || working ||
 || *Functions* ||
 || Play Shoutcast/Icecast streams        || working ||
-|| Play RTSP streams                     || - ||
-|| Play from SMB/CIFS Shares             || - ||
+|| Play RTSP streams                     || -       ||
+|| Play from SMB/CIFS Shares             || -       ||
 || Play from Memory Card                 || working ||
 || Load Settings from Memory Card        || working ||
-|| Change Settings via Menu              || working  ||
-|| Change Settings via HTTP              || - ||
-|| Control via HTTP                      || - ||
+|| Change Settings via Menu              || working ||
+|| Change Settings via HTTP              || -       ||
+|| Control via HTTP                      || -       ||
 || Control via UPnP                      || Volume control works ||
 || Alarm Clock                           || working ||
-|| Bootloader                            || - ||
+|| Bootloader                            || -       ||
