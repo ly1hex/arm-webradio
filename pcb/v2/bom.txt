@@ -51,7 +51,7 @@ BOM
   EXP_C2   100nF          C0603
   FM       Ramtron FM25x  SO8 (optional)
   FM_C1    100nF          C0603
-  FM_R1    47k            R0603
+  FM_R1    47k            R0603 (optional)
   FUSE     1A             R1206
   JTAG                    MA10-2
   L1       100uH          L-PIS4728
