@@ -79,7 +79,7 @@ BOM
   SD       microSD        Molex microSD 492250821
   SD_C1    100nF          C0603
   SD_C2    2uF            C0603
-  SD_C3    4uF            C0805
+  SD_C3    2uF            C0805
   SD_Q1    P-CHN*         SOT23
   SD_R1    47k            R0603
   SD_R2    47k            R0603
