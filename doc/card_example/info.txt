@@ -25,7 +25,6 @@ settings.ini
   BassAmp        Bass enhancemanent (0...15 dB)
   TrebleFreq     Treble limit freqency (1000...15000 Hz)
   TrebleAmp      Treble control (-8...7 dB)
-  VS             VLSI VS1033 or VS1053 (1033 or 1053)
 
   AlarmVol       Alarm volume
   AlarmFile1     Alarm file 1 (Station item number or path to Card file)
@@ -42,30 +41,30 @@ station.pls
 -----------
   PLS-File with radio streams:
 
-  [playlist]
-  numberofentries=1
-  file1=Stream Address (proto://domain:port/filepathname)
-  title1=Stream Name
+  [PLAYLIST]
+  NUMBEROFENTRIES=1
+  FILE1=Stream Address (proto://domain:port/filepathname)
+  TITLE1=Stream Name
 
 
 share.pls
 ---------
   PLS-File with network shares:
 
-  [playlist]
-  numberofentries=1
-  file1=Share Address (proto://user:password@domain/filepathname)
-  title1=Share Name
+  [PLAYLIST]
+  NUMBEROFENTRIES=1
+  FILE1=Share Address (proto://user:password@domain/filepathname)
+  TITLE1=Share Name
 
 
 alarm.ini
 ---------
   INI-File with alarm times:
 
-  [alarm]
-  time1= 08:00:MoTuWeThFrSaSu
-  time2=!09:00:Tu
-  time3= 12:34:Mo
+  [PLAYLIST]
+  TIME1= 08:00:MoTuWeThFrSaSu
+  TIME2=!09:00:Tu
+  TIME3= 12:34:Mo
 
   A "!" at the beginning shows that the alarm is off.
   Su=Sunday, Mo=Monday, Tu=Tuesday, We=Wednesday, Th=Thursday, Fr=Friday, Sa=Saturday
