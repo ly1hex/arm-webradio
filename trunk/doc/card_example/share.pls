@@ -1,7 +1,8 @@
-[playlist]
-numberofentries=2
-file1=smb://user:password@192.168.0.1/test
-title1=Music on test
+[PLAYLIST]
+NUMBEROFENTRIES=2
 
-file2=smb://user:password@192.168.0.1/abc
-title2=Music on abc
+FILE1=smb://user:password@192.168.0.1/test
+TITLE1=Music on test
+
+FILE2=smb://user:password@192.168.0.1/abc
+TITLE2=Music on abc
