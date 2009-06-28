@@ -16,12 +16,12 @@
 || ELM ChaN's FatFs with LFN             || working ||
 || *Functions* ||
 || Play Shoutcast/Icecast streams        || working ||
-|| Play RTSP streams                     || -       ||
+|| Play RTSP streams                     || 50%     ||
 || Play from SMB/CIFS Shares             || -       ||
 || Play from Memory Card                 || working ||
 || Load Settings from Memory Card        || working ||
 || Change Settings via Menu              || working ||
-|| Change Settings via HTTP              || -       ||
+|| Change Settings via HTTP              || working  ||
 || Control via HTTP                      || -       ||
 || Control via UPnP                      || Volume control works ||
 || Alarm Clock                           || working ||
