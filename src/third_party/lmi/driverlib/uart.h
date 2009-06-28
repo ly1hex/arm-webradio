@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -52,6 +52,10 @@ extern "C"
 #define UART_INT_RT             0x040       // Receive Timeout Interrupt Mask
 #define UART_INT_TX             0x020       // Transmit Interrupt Mask
 #define UART_INT_RX             0x010       // Receive Interrupt Mask
+#define UART_INT_DSR            0x008       // DSR Modem Interrupt Mask
+#define UART_INT_DCD            0x004       // DCD Modem Interrupt Mask
+#define UART_INT_CTS            0x002       // CTS Modem Interrupt Mask
+#define UART_INT_RI             0x001       // RI Modem Interrupt Mask
 
 //*****************************************************************************
 //
@@ -122,6 +126,44 @@ extern "C"
 
 //*****************************************************************************
 //
+// Values that can be passed to UARTHandshakeOutputsSet() or returned from
+// UARTHandshakeOutputGet().
+//
+//*****************************************************************************
+#define UART_OUTPUT_RTS         0x00000800
+#define UART_OUTPUT_DTR         0x00000400
+
+//*****************************************************************************
+//
+// Values that can be returned from UARTHandshakeInputsGet().
+//
+//*****************************************************************************
+#define UART_INPUT_RI           0x00000100
+#define UART_INPUT_DCD          0x00000004
+#define UART_INPUT_DSR          0x00000002
+#define UART_INPUT_CTS          0x00000001
+
+//*****************************************************************************
+//
+// Values that can be passed to UARTFlowControl() or returned from
+// UARTFlowControlGet().
+//
+//*****************************************************************************
+#define UART_FLOWCONTROL_TX     0x00008000
+#define UART_FLOWCONTROL_RX     0x00004000
+#define UART_FLOWCONTROL_NONE   0x00000000
+
+//*****************************************************************************
+//
+// Values that can be passed to UARTTxIntModeSet() or returned from
+// UARTTxIntModeGet().
+//
+//*****************************************************************************
+#define UART_TXINT_MODE_FIFO    0x00000000
+#define UART_TXINT_MODE_EOT     0x00000010
+
+//*****************************************************************************
+//
 // API Function prototypes
 //
 //*****************************************************************************
@@ -161,6 +203,18 @@ extern void UARTDMAEnable(unsigned long ulBase, unsigned long ulDMAFlags);
 extern void UARTDMADisable(unsigned long ulBase, unsigned long ulDMAFlags);
 extern unsigned long UARTRxErrorGet(unsigned long ulBase);
 extern void UARTRxErrorClear(unsigned long ulBase);
+extern void UARTSmartCardEnable(unsigned long ulBase);
+extern void UARTSmartCardDisable(unsigned long ulBase);
+extern void UARTModemControlSet(unsigned long ulBase,
+                                unsigned long ulControl);
+extern void UARTModemControlClear(unsigned long ulBase,
+                                  unsigned long ulControl);
+extern unsigned long UARTModemControlGet(unsigned long ulBase);
+extern unsigned long UARTModemStatusGet(unsigned long ulBase);
+extern void UARTFlowControlSet(unsigned long ulBase, unsigned long ulMode);
+extern unsigned long UARTFlowControlGet(unsigned long ulBase);
+extern void UARTTxIntModeSet(unsigned long ulBase, unsigned long ulMode);
+extern unsigned long UARTTxIntModeGet(unsigned long ulBase);
 
 //*****************************************************************************
 //

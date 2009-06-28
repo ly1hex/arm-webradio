@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -198,7 +198,6 @@ typedef struct
     //! The valid values for this setting range from 1 to 1023.
     //
     unsigned int uQuantumPrescaler;
-
 }
 tCANBitClkParms;
 
@@ -405,6 +404,9 @@ tCANStatusCtrl;
 //*****************************************************************************
 extern void CANBitTimingGet(unsigned long ulBase, tCANBitClkParms *pClkParms);
 extern void CANBitTimingSet(unsigned long ulBase, tCANBitClkParms *pClkParms);
+extern unsigned long CANBitRateSet(unsigned long ulBase,
+                                   unsigned long ulSourceClock,
+                                   unsigned long ulBitRate);
 extern void CANDisable(unsigned long ulBase);
 extern void CANEnable(unsigned long ulBase);
 extern tBoolean CANErrCntrGet(unsigned long ulBase, unsigned long *pulRxCount,

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -17,7 +18,7 @@ unsigned int ntp_request(unsigned int index)
   MAC_Addr mac;
   NTP_Header *tx_ntp;
 
-  mac = arp_getmac(eth_ntp());
+  mac = arp_getmac(eth_getntp());
 
   tx_ntp = (NTP_Header*) &eth_txbuf[NTP_OFFSET];
 
@@ -25,7 +26,7 @@ unsigned int ntp_request(unsigned int index)
 
   tx_ntp->flags = (0<<6)|(1<<3)|(3<<0); //LI=0 | VN=1 | Mode=3 -> Client
 
-  index = udp_open(index, mac, eth_ntp(), NTP_PORT, NTP_PORT, 0, NTP_HEADERLEN);
+  index = udp_open(index, mac, eth_getntp(), NTP_PORT, NTP_PORT, 0, NTP_HEADERLEN);
 
   return index;
 }
@@ -80,8 +81,8 @@ void ntp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len
   {
     time  = swap32(rx_ntp->trn_ts);
     time -= 2208988800UL; //seconds: 1900-1970
-    time += eth_timediff();
-    if(eth_summer()) //summer time
+    time += eth_gettimediff();
+    if(eth_getsummer()) //summer time
     {
       time += 3600; //add one hour
     }

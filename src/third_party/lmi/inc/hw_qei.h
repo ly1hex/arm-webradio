@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Firmware Development Package.
+// This is part of revision 4694 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -50,6 +50,8 @@
 // The following are defines for the bit fields in the QEI_CTL register.
 //
 //*****************************************************************************
+#define QEI_CTL_FILTCNT_M       0x000F0000  // Input Filter Pre-Scale Count.
+#define QEI_CTL_FILTEN          0x00002000  // Enable Input Filter.
 #define QEI_CTL_STALLEN         0x00001000  // Stall enable
 #define QEI_CTL_INVI            0x00000800  // Invert Index input
 #define QEI_CTL_INVB            0x00000400  // Invert PhB input
@@ -69,6 +71,7 @@
 #define QEI_CTL_SIGMODE         0x00000004  // Encoder signaling mode
 #define QEI_CTL_SWAP            0x00000002  // Swap input signals
 #define QEI_CTL_ENABLE          0x00000001  // QEI enable
+#define QEI_CTL_FILTCNT_S       16
 
 //*****************************************************************************
 //

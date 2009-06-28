@@ -24,14 +24,23 @@
 
 
 //----- PROTOTYPES -----
+
+unsigned int                           base64_test(char c);
+unsigned int                           base64_decode(unsigned char *dst, const unsigned char *src, unsigned int len);
+
 unsigned int                           uuid_test(char *uuid);
 void                                   uuid_generate(char *uuid);
 
 unsigned int                           nbns_decode(char *dst, char *src);
 void                                   nbns_encode(char *dst, char *src, unsigned int type);
 
-unsigned int                           http_getparam(char *dst, size_t dst_len, const char *src, const char *param);
-unsigned int                           http_getresponse(const char *src);
+unsigned int                           url_decode(char *dst, const char *src, unsigned int len);
+
+char*                                  http_skiphd(char *src, unsigned int *len);
+unsigned int                           http_hdparamcontentlen(const char *src);
+unsigned long                          http_hdparamul(const char *src, const char *param);
+unsigned int                           http_hdparam(char *dst, size_t dst_len, const char *src, const char *param);
+unsigned int                           http_response(const char *src);
 
 unsigned long                          generate_id(void);
 

@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -91,7 +91,7 @@ ADCIntRegister(unsigned long ulBase, unsigned long ulSequenceNum,
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -135,7 +135,7 @@ ADCIntUnregister(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -172,7 +172,7 @@ ADCIntDisable(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -201,7 +201,7 @@ ADCIntEnable(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -238,7 +238,7 @@ ADCIntStatus(unsigned long ulBase, unsigned long ulSequenceNum,
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -284,7 +284,7 @@ ADCIntClear(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arugments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -312,7 +312,7 @@ ADCSequenceEnable(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arugments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -340,7 +340,7 @@ ADCSequenceDisable(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arugments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -409,7 +409,7 @@ ADCSequenceConfigure(unsigned long ulBase, unsigned long ulSequenceNum,
     //
     // Check the arugments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
     ASSERT((ulTrigger == ADC_TRIGGER_PROCESSOR) ||
            (ulTrigger == ADC_TRIGGER_COMP0) ||
@@ -491,7 +491,7 @@ ADCSequenceStepConfigure(unsigned long ulBase, unsigned long ulSequenceNum,
     //
     // Check the arugments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
     ASSERT(((ulSequenceNum == 0) && (ulStep < 8)) ||
            ((ulSequenceNum == 1) && (ulStep < 4)) ||
@@ -544,7 +544,7 @@ ADCSequenceOverflow(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -573,7 +573,7 @@ ADCSequenceOverflowClear(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -602,7 +602,7 @@ ADCSequenceUnderflow(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -631,7 +631,7 @@ ADCSequenceUnderflowClear(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -667,7 +667,7 @@ ADCSequenceDataGet(unsigned long ulBase, unsigned long ulSequenceNum,
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -717,7 +717,7 @@ ADCProcessorTrigger(unsigned long ulBase, unsigned long ulSequenceNum)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 4);
 
     //
@@ -759,7 +759,7 @@ ADCSoftwareOversampleConfigure(unsigned long ulBase,
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 3);
     ASSERT(((ulFactor == 2) || (ulFactor == 4) || (ulFactor == 8)) &&
            ((ulSequenceNum == 0) || (ulFactor != 8)));
@@ -803,7 +803,7 @@ ADCSoftwareOversampleStepConfigure(unsigned long ulBase,
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 3);
     ASSERT(((ulSequenceNum == 0) &&
             (ulStep < (8 >> g_pucOversampleFactor[ulSequenceNum]))) ||
@@ -881,7 +881,7 @@ ADCSoftwareOversampleDataGet(unsigned long ulBase, unsigned long ulSequenceNum,
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(ulSequenceNum < 3);
     ASSERT(((ulSequenceNum == 0) &&
             (ulCount < (8 >> g_pucOversampleFactor[ulSequenceNum]))) ||
@@ -953,7 +953,7 @@ ADCHardwareOversampleConfigure(unsigned long ulBase, unsigned long ulFactor)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == ADC_BASE);
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
     ASSERT(((ulFactor == 0) || (ulFactor == 2) || (ulFactor == 4) ||
            (ulFactor == 8) || (ulFactor == 16) || (ulFactor == 32) ||
            (ulFactor == 64)));

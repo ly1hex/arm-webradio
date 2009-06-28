@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -15,9 +16,9 @@ void ssdp_advertise(void)
   unsigned int index, len;
   char *ssdp;
 
-  if(uuid_test(upnp_uuid()) == 0)
+  if(uuid_test(upnp_getuuid()) == 0)
   {
-    uuid_generate(upnp_uuid());
+    uuid_generate(upnp_getuuid());
   }
 
   ssdp = (char*) &eth_txbuf[SSDP_OFFSET];
@@ -29,7 +30,7 @@ void ssdp_advertise(void)
                       "NT: upnp:rootdevice\r\n"
                       "USN: uuid:%s::upnp:rootdevice\r\n"
                       "NTS: ssdp:alive\r\n"
-                      "Server: "APPNAME"/"APPVERSION" UPnP/1.0 %s\r\n\r\n", ((SSDP_MULTICAST>>0)&0xff), ((SSDP_MULTICAST>>8)&0xff), ((SSDP_MULTICAST>>16)&0xff), ((SSDP_MULTICAST>>24)&0xff), SSDP_PORT, ((eth_ip()>>0)&0xff), ((eth_ip()>>8)&0xff), ((eth_ip()>>16)&0xff), ((eth_ip()>>24)&0xff), UPNP_PORT, upnp_uuid(), eth_name());
+                      "Server: "APPNAME"/"APPVERSION" UPnP/1.0 %s\r\n\r\n", ((SSDP_MULTICAST>>0)&0xff), ((SSDP_MULTICAST>>8)&0xff), ((SSDP_MULTICAST>>16)&0xff), ((SSDP_MULTICAST>>24)&0xff), SSDP_PORT, ((eth_getip()>>0)&0xff), ((eth_getip()>>8)&0xff), ((eth_getip()>>16)&0xff), ((eth_getip()>>24)&0xff), UPNP_PORT, upnp_getuuid(), eth_getname());
 
   index = udp_open(UDP_ENTRIES, MULTICAST_MAC(SSDP_MULTICAST), SSDP_MULTICAST, SSDP_PORT, SSDP_PORT, 0, len);
   udp_close(index);

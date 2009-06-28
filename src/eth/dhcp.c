@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -35,7 +36,7 @@ unsigned int dhcp_request(unsigned int index, unsigned int msg)
   tx_dhcp->htype        = DHCP_HTYPE_ETH;
   tx_dhcp->hlen         = DHCP_HLEN_MAC;
   tx_dhcp->xid          = swap32(dhcp_id);
-  tx_dhcp->chaddr.mac   = eth_mac();
+  tx_dhcp->chaddr.mac   = eth_getmac();
   tx_dhcp->mcookie      = SWAP32(DHCP_MCOOKIE);
 
   tx_dhcp->options[i++] = DHCP_OPTION_MSGTYPE; 
@@ -51,12 +52,12 @@ unsigned int dhcp_request(unsigned int index, unsigned int msg)
 
   tx_dhcp->options[i++] = DHCP_OPTION_CLIENTID;
   tx_dhcp->options[i++] = 6; //Len
-  tx_dhcp->options[i++] = (eth_mac()>> 0)&0xff;
-  tx_dhcp->options[i++] = (eth_mac()>> 8)&0xff;
-  tx_dhcp->options[i++] = (eth_mac()>>16)&0xff;
-  tx_dhcp->options[i++] = (eth_mac()>>24)&0xff;
-  tx_dhcp->options[i++] = (eth_mac()>>32)&0xff;
-  tx_dhcp->options[i++] = (eth_mac()>>40)&0xff;
+  tx_dhcp->options[i++] = (eth_getmac()>> 0)&0xff;
+  tx_dhcp->options[i++] = (eth_getmac()>> 8)&0xff;
+  tx_dhcp->options[i++] = (eth_getmac()>>16)&0xff;
+  tx_dhcp->options[i++] = (eth_getmac()>>24)&0xff;
+  tx_dhcp->options[i++] = (eth_getmac()>>32)&0xff;
+  tx_dhcp->options[i++] = (eth_getmac()>>40)&0xff;
 
   if(msg == DHCP_MSG_REQUEST)
   {
@@ -76,8 +77,8 @@ unsigned int dhcp_request(unsigned int index, unsigned int msg)
   }
 
   tx_dhcp->options[i++] = DHCP_OPTION_HOSTNAME; //Host Name
-  tx_dhcp->options[i++] = strlen(eth_name()); //Len
-  i += sprintf(&tx_dhcp->options[i], "%s", eth_name()); //Name
+  tx_dhcp->options[i++] = strlen(eth_getname()); //Len
+  i += sprintf(&tx_dhcp->options[i], "%s", eth_getname()); //Name
 
   tx_dhcp->options[i++] = 0xff; //END Option
   tx_dhcp->options[i++] = 0x00;
@@ -95,12 +96,11 @@ unsigned int dhcp_getcfg(void)
   IP_Addr ip;
   unsigned int index;
 
-  menu_drawpopup("DHCP: Discover...");
-
-  ip = eth_ip(); //save current device ip
+  ip = eth_getip(); //save current device ip
   eth_setip(0UL); //set device ip to zero
 
   dhcp_status    = DHCP_DISCOVER;
+  dhcp_timeout   = getontime()+DHCP_TIMEOUT;
   dhcp_id        = generate_id();
   dhcp_server    = 0UL;
   dhcp_ip        = 0UL;
@@ -140,9 +140,8 @@ unsigned int dhcp_getcfg(void)
 
   udp_close(index);
 
-  if(dhcp_status == DHCP_ACK) //DHCP request sucessful
+  if(dhcp_status == DHCP_ACK) //DHCP request successful
   {
-    menu_drawpopup("DHCP: OK");
     eth_setip(dhcp_ip);
     if(dhcp_netmask != 0UL)
     {
@@ -162,8 +161,6 @@ unsigned int dhcp_getcfg(void)
     }
     return 0;
   }
-
-  menu_drawpopup("DHCP: Error");
 
   dhcp_status = DHCP_CLOSED;
 
@@ -187,7 +184,7 @@ void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
      (rx_dhcp->hlen            == DHCP_HLEN_MAC)   &&
      (rx_dhcp->xid             == swap32(dhcp_id)) &&
      (rx_dhcp->yiaddr          != 0UL)             &&
-     (rx_dhcp->chaddr.mac      == eth_mac())       &&
+     (rx_dhcp->chaddr.mac      == eth_getmac())       &&
      (rx_dhcp->mcookie         == SWAP32(DHCP_MCOOKIE)))
   {
     switch(dhcp_status)
@@ -247,7 +244,6 @@ void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
           }
           dhcp_request(index, DHCP_MSG_REQUEST);
           dhcp_status = DHCP_REQUEST;
-          menu_drawpopup("DHCP: Request...");
         }
         break;
 
@@ -257,7 +253,6 @@ void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
            (rx_dhcp->options[2] == DHCP_MSG_ACK))          //DHCP Ack
         {
           dhcp_status = DHCP_ACK;
-          menu_drawpopup("DHCP: Ack");
         }
         break;
     }

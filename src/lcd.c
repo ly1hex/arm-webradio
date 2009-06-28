@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "third_party/lmi/inc/hw_types.h"
-#include "third_party/lmi/inc/hw_memmap.h"
-#include "third_party/lmi/driverlib/gpio.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"

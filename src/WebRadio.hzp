@@ -1,9 +1,9 @@
 <!DOCTYPE CrossStudio_Project_File>
-<solution Name="WebRadio" version="1">
+<solution Name="WebRadio" version="2">
   <project Name="WebRadio">
-    <configuration Name="Common" Target="LM3S6950" arm_architecture="v7M" arm_core_type="Cortex-M3" arm_linker_fiq_stack_size="0" arm_linker_heap_size="128" arm_linker_irq_stack_size="0" arm_linker_stack_size="128" arm_simulator_memory_simulation_filename="$(StudioDir)/targets/Luminary_LM3S/LM3SSimulatorMemory.dll" arm_simulator_memory_simulation_parameter="0x40000;0x10000" arm_target_debug_interface_type="ADIv5" arm_target_flash_loader_type="LIBMEM RPC Loader" c_user_include_directories="" linker_additional_files="" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml" linker_output_format="bin" project_directory="" project_type="Executable" property_groups_file_path="$(StudioDir)/targets/Luminary_LM3S/propertyGroups.xml"/>
-    <configuration Name="Flash" Placement="Flash" arm_target_flash_loader_file_path="$(StudioDir)/targets/Luminary_LM3S/Release/Loader.elf" linker_section_placement_file="$(StudioDir)/targets/Luminary_LM3S/flash_placement.xml" target_reset_script="FLASHReset()"/>
-    <configuration Name="RAM" Placement="RAM" linker_section_placement_file="$(StudioDir)/targets/Luminary_LM3S/ram_placement.xml" target_reset_script="RAMReset()"/>
+    <configuration Name="Common" Target="LM3S6950" arm_architecture="v7M" arm_core_type="Cortex-M3" arm_linker_fiq_stack_size="0" arm_linker_heap_size="128" arm_linker_irq_stack_size="0" arm_linker_stack_size="128" arm_simulator_memory_simulation_filename="$(TargetsDir)/Luminary_LM3S/LM3SSimulatorMemory.dll" arm_simulator_memory_simulation_parameter="0x40000;0x10000" arm_target_debug_interface_type="ADIv5" arm_target_flash_loader_type="LIBMEM RPC Loader" c_user_include_directories="" linker_additional_files="" linker_memory_map_file="$(TargetsDir)/Luminary_LM3S/LM3S6950_MemoryMap.xml" linker_output_format="bin" project_directory="" project_type="Executable" property_groups_file_path="$(TargetsDir)/Luminary_LM3S/propertyGroups.xml"/>
+    <configuration Name="Flash" Placement="Flash" arm_target_flash_loader_file_path="$(TargetsDir)/Luminary_LM3S/Release/Loader.elf" linker_section_placement_file="$(TargetsDir)/Luminary_LM3S/flash_placement.xml" target_reset_script="FLASHReset()"/>
+    <configuration Name="RAM" Placement="RAM" linker_section_placement_file="$(TargetsDir)/Luminary_LM3S/ram_placement.xml" target_reset_script="RAMReset()"/>
     <folder Name="Source Files">
       <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc"/>
       <file Name="main.c" file_name="main.c"/>
@@ -34,14 +34,43 @@
           <file Name="ff.c" file_name="third_party/fatfs/ff.c"/>
           <file Name="ff.h" file_name="third_party/fatfs/ff.h"/>
           <file Name="integer.h" file_name="third_party/fatfs/integer.h"/>
-          <folder Name="unicode">
-            <file Name="ccsbcs.c" file_name="third_party/fatfs/unicode/ccsbcs.c"/>
+          <folder Name="option">
+            <file Name="ccsbcs.c" file_name="third_party/fatfs/option/ccsbcs.c"/>
           </folder>
         </folder>
         <file Name="readme.txt" file_name="third_party/readme.txt"/>
         <configuration Name="THUMB Flash Debug" gcc_optimization_level="Level 3"/>
         <configuration Name="THUMB RAM Debug" gcc_optimization_level="Level 3"/>
         <folder Name="lmi">
+          <folder Name="inc">
+            <file Name="asmdefs.h" file_name="third_party/lmi/inc/asmdefs.h"/>
+            <file Name="hw_adc.h" file_name="third_party/lmi/inc/hw_adc.h"/>
+            <file Name="hw_can.h" file_name="third_party/lmi/inc/hw_can.h"/>
+            <file Name="hw_comp.h" file_name="third_party/lmi/inc/hw_comp.h"/>
+            <file Name="hw_epi.h" file_name="third_party/lmi/inc/hw_epi.h"/>
+            <file Name="hw_ethernet.h" file_name="third_party/lmi/inc/hw_ethernet.h"/>
+            <file Name="hw_flash.h" file_name="third_party/lmi/inc/hw_flash.h"/>
+            <file Name="hw_gpio.h" file_name="third_party/lmi/inc/hw_gpio.h"/>
+            <file Name="hw_hibernate.h" file_name="third_party/lmi/inc/hw_hibernate.h"/>
+            <file Name="hw_i2c.h" file_name="third_party/lmi/inc/hw_i2c.h"/>
+            <file Name="hw_i2s.h" file_name="third_party/lmi/inc/hw_i2s.h"/>
+            <file Name="hw_ints.h" file_name="third_party/lmi/inc/hw_ints.h"/>
+            <file Name="hw_memmap.h" file_name="third_party/lmi/inc/hw_memmap.h"/>
+            <file Name="hw_nvic.h" file_name="third_party/lmi/inc/hw_nvic.h"/>
+            <file Name="hw_pwm.h" file_name="third_party/lmi/inc/hw_pwm.h"/>
+            <file Name="hw_qei.h" file_name="third_party/lmi/inc/hw_qei.h"/>
+            <file Name="hw_ssi.h" file_name="third_party/lmi/inc/hw_ssi.h"/>
+            <file Name="hw_sysctl.h" file_name="third_party/lmi/inc/hw_sysctl.h"/>
+            <file Name="hw_timer.h" file_name="third_party/lmi/inc/hw_timer.h"/>
+            <file Name="hw_types.h" file_name="third_party/lmi/inc/hw_types.h"/>
+            <file Name="hw_uart.h" file_name="third_party/lmi/inc/hw_uart.h"/>
+            <file Name="hw_udma.h" file_name="third_party/lmi/inc/hw_udma.h"/>
+            <file Name="hw_usb.h" file_name="third_party/lmi/inc/hw_usb.h"/>
+            <file Name="hw_watchdog.h" file_name="third_party/lmi/inc/hw_watchdog.h"/>
+            <file Name="lm3s6950.h" file_name="third_party/lmi/inc/lm3s6950.h"/>
+          </folder>
+          <file Name="EULA.txt" file_name="third_party/lmi/EULA.txt"/>
+          <file Name="license.html" file_name="third_party/lmi/license.html"/>
           <folder Name="driverlib">
             <file Name="adc.c" file_name="third_party/lmi/driverlib/adc.c"/>
             <file Name="adc.h" file_name="third_party/lmi/driverlib/adc.h"/>
@@ -52,6 +81,8 @@
             <file Name="cpu.c" file_name="third_party/lmi/driverlib/cpu.c"/>
             <file Name="cpu.h" file_name="third_party/lmi/driverlib/cpu.h"/>
             <file Name="debug.h" file_name="third_party/lmi/driverlib/debug.h"/>
+            <file Name="epi.c" file_name="third_party/lmi/driverlib/epi.c"/>
+            <file Name="epi.h" file_name="third_party/lmi/driverlib/epi.h"/>
             <file Name="ethernet.c" file_name="third_party/lmi/driverlib/ethernet.c"/>
             <file Name="ethernet.h" file_name="third_party/lmi/driverlib/ethernet.h"/>
             <file Name="flash.c" file_name="third_party/lmi/driverlib/flash.c"/>
@@ -62,6 +93,8 @@
             <file Name="hibernate.h" file_name="third_party/lmi/driverlib/hibernate.h"/>
             <file Name="i2c.c" file_name="third_party/lmi/driverlib/i2c.c"/>
             <file Name="i2c.h" file_name="third_party/lmi/driverlib/i2c.h"/>
+            <file Name="i2s.c" file_name="third_party/lmi/driverlib/i2s.c"/>
+            <file Name="i2s.h" file_name="third_party/lmi/driverlib/i2s.h"/>
             <file Name="interrupt.c" file_name="third_party/lmi/driverlib/interrupt.c"/>
             <file Name="interrupt.h" file_name="third_party/lmi/driverlib/interrupt.h"/>
             <file Name="mpu.c" file_name="third_party/lmi/driverlib/mpu.c"/>
@@ -90,33 +123,6 @@
             <file Name="watchdog.c" file_name="third_party/lmi/driverlib/watchdog.c"/>
             <file Name="watchdog.h" file_name="third_party/lmi/driverlib/watchdog.h"/>
           </folder>
-          <folder Name="inc">
-            <file Name="asmdefs.h" file_name="third_party/lmi/inc/asmdefs.h"/>
-            <file Name="hw_adc.h" file_name="third_party/lmi/inc/hw_adc.h"/>
-            <file Name="hw_can.h" file_name="third_party/lmi/inc/hw_can.h"/>
-            <file Name="hw_comp.h" file_name="third_party/lmi/inc/hw_comp.h"/>
-            <file Name="hw_ethernet.h" file_name="third_party/lmi/inc/hw_ethernet.h"/>
-            <file Name="hw_flash.h" file_name="third_party/lmi/inc/hw_flash.h"/>
-            <file Name="hw_gpio.h" file_name="third_party/lmi/inc/hw_gpio.h"/>
-            <file Name="hw_hibernate.h" file_name="third_party/lmi/inc/hw_hibernate.h"/>
-            <file Name="hw_i2c.h" file_name="third_party/lmi/inc/hw_i2c.h"/>
-            <file Name="hw_ints.h" file_name="third_party/lmi/inc/hw_ints.h"/>
-            <file Name="hw_memmap.h" file_name="third_party/lmi/inc/hw_memmap.h"/>
-            <file Name="hw_nvic.h" file_name="third_party/lmi/inc/hw_nvic.h"/>
-            <file Name="hw_pwm.h" file_name="third_party/lmi/inc/hw_pwm.h"/>
-            <file Name="hw_qei.h" file_name="third_party/lmi/inc/hw_qei.h"/>
-            <file Name="hw_ssi.h" file_name="third_party/lmi/inc/hw_ssi.h"/>
-            <file Name="hw_sysctl.h" file_name="third_party/lmi/inc/hw_sysctl.h"/>
-            <file Name="hw_timer.h" file_name="third_party/lmi/inc/hw_timer.h"/>
-            <file Name="hw_types.h" file_name="third_party/lmi/inc/hw_types.h"/>
-            <file Name="hw_uart.h" file_name="third_party/lmi/inc/hw_uart.h"/>
-            <file Name="hw_udma.h" file_name="third_party/lmi/inc/hw_udma.h"/>
-            <file Name="hw_usb.h" file_name="third_party/lmi/inc/hw_usb.h"/>
-            <file Name="hw_watchdog.h" file_name="third_party/lmi/inc/hw_watchdog.h"/>
-            <file Name="lm3s6950.h" file_name="third_party/lmi/inc/lm3s6950.h"/>
-          </folder>
-          <file Name="EULA.txt" file_name="third_party/lmi/EULA.txt"/>
-          <file Name="license.html" file_name="third_party/lmi/license.html"/>
         </folder>
       </folder>
       <file Name="license.txt" file_name="license.txt"/>
@@ -161,6 +167,8 @@
         <file Name="http_files.h" file_name="eth/http_files.h"/>
         <file Name="dns.c" file_name="eth/dns.c"/>
         <file Name="dns.h" file_name="eth/dns.h"/>
+        <file Name="rtsp.h" file_name="eth/rtsp.h"/>
+        <file Name="rtsp.c" file_name="eth/rtsp.c"/>
       </folder>
       <file Name="alarm.c" file_name="alarm.c"/>
       <file Name="alarm.h" file_name="alarm.h"/>
@@ -172,20 +180,24 @@
       <file Name="tools.c" file_name="tools.c"/>
       <file Name="menu_dlg.c" file_name="menu_dlg.c"/>
       <file Name="menu_dlg.h" file_name="menu_dlg.h"/>
+      <file file_name="mmc_io.h"/>
+      <file file_name="mmc_io.c"/>
+      <file file_name="vs_patch.c"/>
+      <file file_name="vs_patch.h"/>
     </folder>
     <folder Name="System Files">
       <file Name="thumb_crt0.s" file_name="$(StudioDir)/source/thumb_crt0.s"/>
-      <file Name="LM3S_Startup.s" file_name="$(StudioDir)/targets/Luminary_LM3S/LM3S_Startup.s"/>
-      <file Name="LM3S_Target.js" file_name="$(StudioDir)/targets/Luminary_LM3S/LM3S_Target.js">
+      <file Name="LM3S_Startup.s" file_name="$(TargetsDir)/Luminary_LM3S/LM3S_Startup.s"/>
+      <file Name="LM3S_Target.js" file_name="$(TargetsDir)/Luminary_LM3S/LM3S_Target.js">
         <configuration Name="Common" file_type="Reset Script"/>
       </file>
       <configuration Name="THUMB RAM Release" gcc_optimization_level="Level 1"/>
       <configuration Name="THUMB RAM Debug" gcc_optimization_level="Level 1"/>
     </folder>
-    <configuration Name="THUMB Flash Release" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_debug_information="Yes" build_quietly="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" link_IOLibraryName="target" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml" linker_printf_fmt_level="int" linker_scanf_fmt_level="int"/>
-    <configuration Name="THUMB Flash Debug" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
-    <configuration Name="THUMB RAM Debug" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_debug_information="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
-    <configuration Name="THUMB RAM Release" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" linker_memory_map_file="$(StudioDir)/targets/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
+    <configuration Name="THUMB Flash Release" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_debug_information="Yes" build_quietly="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" link_IOLibraryName="target" linker_memory_map_file="$(TargetsDir)/Luminary_LM3S/LM3S6950_MemoryMap.xml" linker_printf_fmt_level="int" linker_scanf_fmt_level="int"/>
+    <configuration Name="THUMB Flash Debug" arm_instruction_set="Thumb" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(TargetsDir)/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
+    <configuration Name="THUMB RAM Debug" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_debug_information="Yes" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="None" linker_memory_map_file="$(TargetsDir)/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
+    <configuration Name="THUMB RAM Release" arm_linker_heap_size="128" arm_linker_stack_size="1024" build_remove_unused_symbols="Yes" build_treat_warnings_as_errors="Yes" c_additional_options="" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi" gcc_optimization_level="Level 3" linker_memory_map_file="$(TargetsDir)/Luminary_LM3S/LM3S6950_MemoryMap.xml"/>
     <configuration Name="THUMB" arm_linker_heap_size="256" arm_linker_stack_size="256" c_system_include_directories="$(StudioDir)/include;$(PackagesDir)/include;$(ProjectDir)/third_party/lmi"/>
   </project>
   <configuration Name="THUMB Flash Debug" arm_architecture="v7M" arm_core_type="Cortex-M3" c_additional_options="" c_preprocessor_definitions="gcc;PART_LM3S6950" inherited_configurations="THUMB;Flash;Debug"/>

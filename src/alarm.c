@@ -5,10 +5,12 @@
 #include <ctype.h>
 #include "tools.h"
 #include "main.h"
-#include "io.h"
-#include "menu.h"
+#include "mmc.h"
+#include "eth.h"
 #include "settings.h"
 #include "alarm.h"
+#include "menu.h"
+#include "menu_dlg.h"
 
 
 ALARMTIME alarmtimes[ALARMTIMES];
@@ -91,38 +93,14 @@ unsigned int alarm_settime(unsigned int item, ALARMTIME *time)
 
 unsigned int alarm_gettime(unsigned int item, ALARMTIME *time)
 {
-  char entry[16], buf[MAX_NAME], *ptr, c1, c2;
+  char entry[16], buf[MAX_NAME];
 
   memset(time, 0, sizeof(ALARMTIME));
 
   sprintf(entry, "TIME%i", item);
   if(ini_getentry(ALARM_FILE, entry, buf, MAX_NAME) == 0)
   {
-    ptr = buf;
-    if(*ptr != '!') //alarm on
-    {
-      time->on = 1;
-    }
-    while(!isdigit(*ptr)){ ptr++; }; //skip non digits
-    time->h = atoi(ptr);             //get hour
-    while(isdigit(*ptr)) { ptr++; }; //skip numbers
-    while(!isdigit(*ptr)){ ptr++; }; //skip non numbers
-    time->m = atoi(ptr);             //get min
-    while(isdigit(*ptr)) { ptr++; }; //skip numbers
-    while(!isalpha(*ptr)){ ptr++; }; //skip non numbers
-    while(*ptr) //get days
-    {
-      c1 = toupper(*ptr++);
-      c2 = toupper(*ptr++);
-      if((c1 == 0)   || (c2 == 0))  { break; }
-      if((c1 == 'S') && (c2 == 'U')){ time->wdays |= (1<<0); } //Sunday
-      if((c1 == 'M') && (c2 == 'O')){ time->wdays |= (1<<1); } //Monday
-      if((c1 == 'T') && (c2 == 'U')){ time->wdays |= (1<<2); } //Tuesday
-      if((c1 == 'W') && (c2 == 'E')){ time->wdays |= (1<<3); } //Wednesday
-      if((c1 == 'T') && (c2 == 'H')){ time->wdays |= (1<<4); } //Thursday
-      if((c1 == 'F') && (c2 == 'R')){ time->wdays |= (1<<5); } //Friday
-      if((c1 == 'S') && (c2 == 'A')){ time->wdays |= (1<<6); } //Saturday
-    }
+    alarm_parsetime(buf, time);
     return 0;
   }
 
@@ -130,10 +108,60 @@ unsigned int alarm_gettime(unsigned int item, ALARMTIME *time)
 }
 
 
+unsigned int alarm_parsetime(const char *src, ALARMTIME *time)
+{
+  char c1, c2;
+
+  memset(time, 0, sizeof(ALARMTIME));
+
+  if(strlen(src) >= 5)
+  {
+    while(*src == ' '){ src++; } //skip spaces
+    if(*src != '!') //alarm on
+    {
+      time->on = 1;
+    }
+    else
+    {
+      time->on = 0;
+    }
+    while(!isdigit(*src)){ src++; }; //skip non digits
+    time->h = atoi(src);             //get hour
+    while(isdigit(*src)) { src++; }; //skip digits
+    while(!isdigit(*src)){ src++; }; //skip non digits
+    time->m = atoi(src);             //get min
+    while(isdigit(*src)) { src++; }; //skip digits
+    while(!isalpha(*src)){ src++; }; //skip non alpha
+    time->wdays = 0;
+    while(*src) //get days
+    {
+      c1 = toupper(*src++);
+      c2 = toupper(*src++);
+      if((c1 == 0) || !isalpha(c1) ||
+         (c2 == 0) || !isalpha(c2))
+      {
+        break;
+      }
+      else
+      {
+        if((c1 == 'S') && (c2 == 'U')){ time->wdays |= (1<<0); } //Sunday
+        if((c1 == 'M') && (c2 == 'O')){ time->wdays |= (1<<1); } //Monday
+        if((c1 == 'T') && (c2 == 'U')){ time->wdays |= (1<<2); } //Tuesday
+        if((c1 == 'W') && (c2 == 'E')){ time->wdays |= (1<<3); } //Wednesday
+        if((c1 == 'T') && (c2 == 'H')){ time->wdays |= (1<<4); } //Thursday
+        if((c1 == 'F') && (c2 == 'R')){ time->wdays |= (1<<5); } //Friday
+        if((c1 == 'S') && (c2 == 'A')){ time->wdays |= (1<<6); } //Saturday
+      }
+    }
+  }
+
+  return 0;
+}
+
+
 void alarm_load(void)
 {
   unsigned int i;
-  char data[MAX_NAME], *ptr, c1, c2;
 
   //reset all alarm times
   memset(alarmtimes, 0, sizeof(alarmtimes));
@@ -153,7 +181,7 @@ unsigned int alarm_openitem(unsigned int item)
   {
     return MENU_BACK;
   }
-  else
+  else if(item <= ALARMTIMES)
   {
     if(dlg_alarmtime(&alarmtimes[item-1]) == 0) //time modified -> save to ini
     {
@@ -174,7 +202,7 @@ void alarm_getitem(unsigned int item, char *name)
   {
     strcpy(name, MENU_BACKTXT);
   }
-  else
+  else if(item <= ALARMTIMES)
   {
     item--;
     if(alarmtimes[item].on)

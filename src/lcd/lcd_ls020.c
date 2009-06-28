@@ -1,7 +1,9 @@
 #include <stdint.h>
+#include <stdlib.h>
 #include "../third_party/lmi/inc/hw_types.h"
 #include "../third_party/lmi/inc/hw_memmap.h"
 #include "../third_party/lmi/driverlib/gpio.h"
+#include "../tools.h"
 #include "../main.h"
 #include "../io.h"
 #include "../lcd.h"
@@ -11,7 +13,7 @@
 #if defined(LS020)
 
 
-inline void lcd_draw(unsigned int color)
+void lcd_draw(unsigned int color)
 {
   ssi_write(color>>8);
   ssi_write(color);
@@ -20,7 +22,7 @@ inline void lcd_draw(unsigned int color)
 }
 
 
-inline void lcd_drawstop(void)
+void lcd_drawstop(void)
 {
   ssi_wait();
   LCD_CS_DISABLE();
@@ -29,7 +31,7 @@ inline void lcd_drawstop(void)
 }
 
 
-inline void lcd_drawstart(void)
+void lcd_drawstart(void)
 {
   LCD_RS_ENABLE(); //data
   LCD_CS_ENABLE();
@@ -38,7 +40,7 @@ inline void lcd_drawstart(void)
 }
 
 
-inline void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y)
+void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y)
 {
   //set area
   lcd_cmd(0xEF, 0x90);
@@ -61,7 +63,7 @@ inline void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int en
 }
 
 
-inline void lcd_cursor(unsigned int x, unsigned int y)
+void lcd_cursor(unsigned int x, unsigned int y)
 {
   //lcd_cmd(0xEF, 0x90);
 #if defined(LCD_MIRROR)
@@ -76,7 +78,7 @@ inline void lcd_cursor(unsigned int x, unsigned int y)
 }
 
 
-inline void lcd_cmd(unsigned int reg, unsigned int param)
+void lcd_cmd(unsigned int reg, unsigned int param)
 {
   LCD_RS_DISABLE(); //cmd
   LCD_CS_ENABLE();
@@ -89,7 +91,7 @@ inline void lcd_cmd(unsigned int reg, unsigned int param)
 }
 
 
-inline void lcd_data(unsigned int c)
+void lcd_data(unsigned int c)
 {
   LCD_RS_ENABLE(); //data
   LCD_CS_ENABLE();
@@ -156,12 +158,11 @@ void lcd_reset(void)
   delay_ms(10);
 
   //display options
-#if defined(LCD_MIRROR)
   lcd_cmd(0xEF, 0x90);
+#if defined(LCD_MIRROR)
   lcd_cmd(0x01, 0x80); //x1->x2, y2->y1
   lcd_cmd(0x05, 0x04); //0x04=rotate, 0x00=normal
 #else
-  lcd_cmd(0xEF, 0x90);
   lcd_cmd(0x01, 0x40); //x2->x1, y1->y2
   lcd_cmd(0x05, 0x04); //0x04=rotate, 0x00=normal
 #endif

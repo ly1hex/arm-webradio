@@ -57,8 +57,8 @@ unsigned int dns_request(unsigned int index, const char *domain)
 
   len += 5;
 
-  mac = arp_getmac(eth_dns());
-  index = udp_open(index, mac, eth_dns(), DNS_PORT, DNS_PORT, 0, DNS_HEADERLEN+len);
+  mac = arp_getmac(eth_getdns());
+  index = udp_open(index, mac, eth_getdns(), DNS_PORT, DNS_PORT, 0, DNS_HEADERLEN+len);
 
   return index;
 }

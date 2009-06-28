@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
-#include "io.h"
+#include "mmc.h"
+#include "vs.h"
 #include "eth.h"
 #include "eth/utils.h"
+#include "eth/rtsp.h"
 #include "eth/shoutcast.h"
-#include "vs.h"
 #include "menu.h"
 #include "buffer.h"
 #include "station.h"
@@ -23,12 +24,12 @@ unsigned int station_try=0;
 unsigned int station_bufmin=0, station_bufplay=0, station_bufstart=0;
 
 
-void station_calcbuf(unsigned int br) //bitrate kbit/s
+void station_setbitrate(unsigned int bitrate) //bitrate kbit/s
 {
   char tmp[8];
   unsigned int len;
 
-  if((br >= 64) || (br == 0)) //bitrate >= 64
+  if((bitrate >= 64) || (bitrate == 0)) //bitrate >= 64
   {
     station_bufmin   = STATION_BUFMIN;
     station_bufplay  = STATION_BUFPLAY;
@@ -36,16 +37,14 @@ void station_calcbuf(unsigned int br) //bitrate kbit/s
   }
   else
   {
-    station_bufmin   = br/8*512;
+    station_bufmin   = bitrate/8*512;
     station_bufplay  = station_bufmin*4;
     station_bufstart = station_bufmin*6;
   }
 
-  if((br >= 8) && (br <= 320))
+  if((bitrate >= 8) && (bitrate <= 320))
   {
-    len = strlen(gbuf.station.name);
-    sprintf(tmp, " [%i]", br);
-    strncat(gbuf.station.name, tmp, MAX_NAME-1-len);
+    menu_setbitrate(bitrate);
   }
 
   return;
@@ -57,6 +56,7 @@ void station_close(void)
   if(station_status != STATION_CLOSED)
   {
     shoutcast_close();
+    rtsp_close();
     vs_stop();
     station_status = STATION_CLOSED;
     menu_setstatus(MENU_STATE_STOP);
@@ -72,9 +72,6 @@ unsigned int station_open(unsigned int item)
 {
   unsigned int r=STATION_CLOSED;
   char proto[8];
-  IP_Addr ip;
-  unsigned int port;
-  char file[MAX_URLFILE];
 
   if(station_getitemaddr(item, gbuf.station.addr) != 0)
   {
@@ -87,16 +84,22 @@ unsigned int station_open(unsigned int item)
   menu_drawpopup("Open Station...");
   DEBUGOUT("Station: %i %s\n", station_try, gbuf.station.addr);
 
-  vs_start();
+  atoaddr(gbuf.station.addr, proto, 0, 0, &gbuf.station.ip, &gbuf.station.port, gbuf.station.file);
+  gbuf.station.mac = arp_getmac(gbuf.station.ip);
+  if(gbuf.station.mac == 0)
+  {
+    return STATION_CLOSED;
+  }
 
   station_item    = item;
   station_status  = STATION_OPEN;
   station_timeout = getontime()+STATION_TIMEOUT;
 
-  atoaddr(gbuf.station.addr, proto, 0, 0, &ip, &port, file);
+  vs_start();
+
   if(strcmp(proto, "http") == 0)
   {
-    r = shoutcast_open(ip, port, file);
+    r = shoutcast_open();
     if(r == SHOUTCAST_OPENED)
     {
       station_timeout = getontime()+STATION_TIMEOUT;
@@ -116,7 +119,22 @@ unsigned int station_open(unsigned int item)
   }
   else if(strcmp(proto, "rtsp") == 0)
   {
-    r = STATION_CLOSED;
+    r = rtsp_open();
+    if(r == RTSP_OPENED)
+    {
+      station_timeout = getontime()+STATION_TIMEOUT;
+      menu_setstatus(MENU_STATE_BUF);
+      r = STATION_OPENED;
+    }
+    else if(r == RTSP_ERROR)
+    {
+      station_closeitem(); //also clears addr
+      r = STATION_CLOSED;
+    }
+    else
+    {
+      r = STATION_OPEN;
+    }
   }
 
   return r;
@@ -212,6 +230,105 @@ unsigned int station_openitem(unsigned int item)
 }
 
 
+void station_delitem(unsigned int item)
+{
+  unsigned int i, items;
+  char entry[16], newentry[16];
+
+  //delete entry
+  sprintf(entry, "FILE%i", item);
+  i  = ini_delentry(STATION_FILE, entry);
+  sprintf(entry, "TITLE%i", item);
+  i |= ini_delentry(STATION_FILE, entry);
+
+  //rename other entries
+  for(items=(station_items()-1); (i == 0) && (item<items); item++)
+  {
+    sprintf(entry, "FILE%i", item+1);
+    sprintf(newentry, "FILE%i", item);
+    i |= ini_renentry(STATION_FILE, entry, newentry);
+    sprintf(entry, "TITLE%i", item+1);
+    sprintf(newentry, "TITLE%i", item);
+    i |= ini_renentry(STATION_FILE, entry, newentry);
+  }
+
+  if(i == 0)
+  {
+    //set items
+    station_setitems(station_items()-2);
+  }
+
+  return;
+}
+
+
+void station_moveitem(unsigned int item, unsigned direction)
+{
+  char entry[16], newentry[16];
+
+  if(direction)
+  {
+    if(item > 1)
+    {
+      sprintf(entry, "FILE%i", item);
+      ini_renentry(STATION_FILE, entry, "FILEXX");
+      sprintf(entry, "TITLE%i", item);
+      ini_renentry(STATION_FILE, entry, "TITLEXX");
+
+      sprintf(entry, "FILE%i", item-1);
+      sprintf(newentry, "FILE%i", item);
+      ini_renentry(STATION_FILE, entry, newentry);
+      sprintf(entry, "TITLE%i", item-1);
+      sprintf(newentry, "TITLE%i", item);
+      ini_renentry(STATION_FILE, entry, newentry);
+
+      sprintf(newentry, "FILE%i", item-1);
+      ini_renentry(STATION_FILE, "FILEXX", newentry);
+      sprintf(newentry, "TITLE%i", item-1);
+      ini_renentry(STATION_FILE, "TITLEXX", newentry);
+    }
+  }
+  else
+  {
+    if(item < (station_items()-1))
+    {
+      sprintf(entry, "FILE%i", item);
+      ini_renentry(STATION_FILE, entry, "FILEXX");
+      sprintf(entry, "TITLE%i", item);
+      ini_renentry(STATION_FILE, entry, "TITLEXX");
+
+      sprintf(entry, "FILE%i", item+1);
+      sprintf(newentry, "FILE%i", item);
+      ini_renentry(STATION_FILE, entry, newentry);
+      sprintf(entry, "TITLE%i", item+1);
+      sprintf(newentry, "TITLE%i", item);
+      ini_renentry(STATION_FILE, entry, newentry);
+
+      sprintf(newentry, "FILE%i", item+1);
+      ini_renentry(STATION_FILE, "FILEXX", newentry);
+      sprintf(newentry, "TITLE%i", item+1);
+      ini_renentry(STATION_FILE, "TITLEXX", newentry);
+    }
+  }
+
+  return;
+}
+
+
+void station_setitemaddr(unsigned int item, const char *addr)
+{
+  char entry[16];
+
+  if(item)
+  {
+    sprintf(entry, "FILE%i", item);
+    ini_setentry(STATION_FILE, entry, addr);
+  }
+
+  return;
+}
+
+
 unsigned int station_getitemaddr(unsigned int item, char *addr)
 {
   char entry[16];
@@ -228,6 +345,20 @@ unsigned int station_getitemaddr(unsigned int item, char *addr)
   }
 
   return 1;
+}
+
+
+void station_setitem(unsigned int item, const char *name)
+{
+  char entry[16];
+
+  if(item)
+  {
+    sprintf(entry, "TITLE%i", item);
+    ini_setentry(STATION_FILE, entry, name);
+  }
+
+  return;
 }
 
 
@@ -249,13 +380,24 @@ void station_getitem(unsigned int item, char *name)
 }
 
 
+void station_setitems(unsigned int items)
+{
+  char value[16];
+
+  sprintf(value, "%i", items);
+  ini_setentry(STATION_FILE, "NUMBEROFENTRIES", value);
+
+  return;
+}
+
+
 unsigned int station_items(void)
 {
-  char entry[16];
+  char value[16];
 
-  if(ini_getentry(STATION_FILE, "NUMBEROFENTRIES", entry, 16) == 0)
+  if(ini_getentry(STATION_FILE, "NUMBEROFENTRIES", value, 16) == 0)
   {
-    return atoi(entry)+1;
+    return atoi(value)+1; //add first entry ("<< back <<")
   }
 
   return 1;
@@ -269,7 +411,7 @@ void station_init(void)
   station_item     = 0;
   station_status   = STATION_CLOSED;
   station_try      = STATION_TRY;
-  station_calcbuf(0);
+  station_setbitrate(0);
 
   gbuf.card.name[0] = 0;
   gbuf.card.info[0] = 0;

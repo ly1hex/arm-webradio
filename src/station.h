@@ -19,14 +19,21 @@
 
 
 //----- PROTOTYPES -----
-void                                   station_calcbuf(unsigned int br);
+void                                   station_setbitrate(unsigned int bitrate);
 void                                   station_close(void);
 unsigned int                           station_open(unsigned int item);
 void                                   station_service(void);
 void                                   station_closeitem(void);
 unsigned int                           station_openitem(unsigned int item);
+
+
+void                                   station_delitem(unsigned int item);
+void                                   station_moveitem(unsigned int item, unsigned direction);
+void                                   station_setitemaddr(unsigned int item, const char *addr);
 unsigned int                           station_getitemaddr(unsigned int item, char *addr);
+void                                   station_setitem(unsigned int item, const char *name);
 void                                   station_getitem(unsigned int item, char *name);
+void                                   station_setitems(unsigned int items);
 unsigned int                           station_items(void);
 void                                   station_init(void);
 

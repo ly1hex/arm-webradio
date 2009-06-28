@@ -1,4 +1,4 @@
-FatFs/Tiny-FatFs Module Source Files R0.07                  (C)ChaN, 2009
+FatFs Module Source Files R0.07c                        (C)ChaN, 2009
 
 
 FILES
@@ -8,7 +8,7 @@ FILES
   diskio.h   Common include file for FatFs and disk I/O module.
   diskio.c   Skeleton of low level disk I/O module.
   integer.h  Alternative type definitions for integer variables.
-  unicode    OEM-Unicode bidirectional conversion function.
+  option     Optional external functions.
 
   Low level disk I/O module is not included in this archive because the FatFs
   module is only a generic file system layer and not depend on any specific
@@ -19,10 +19,16 @@ FILES
 
 AGREEMENTS
 
-  The FatFs module is a free software and there is no warranty.
-  The FatFs module is opened for education, reserch and development.
-  There is no restriction on use. You can use it for personal, non-profit or
-  commercial use under your responsibility.
+ FatFs module is an open source software to implement FAT file system to
+ small embedded systems. This is a free software and is opened for education,
+ research and commercial developments under license policy of following trems.
+
+  Copyright (C) 2009, ChaN, all right reserved.
+
+ * The FatFs module is a free software and there is NO WARRANTY.
+ * No restriction on use. You can use, modify and redistribute it for
+   personal, non-profit or commercial product UNDER YOUR RESPONSIBILITY.
+ * Redistributions of source code must retain the above copyright notice.
 
 
 
@@ -85,3 +91,14 @@ REVISION HISTORY
                        Added rewind option to f_readdir().
                        Changed result code of critical errors.
                        Renamed string functions to avoid name collision.
+
+  Apr 14, 2009, R0.07a Separated out OS dependent code on reentrant cfg.
+                       Added multiple sector size support.
+
+  Jun 21, 2009, R0.07c Fixed f_unlink() may return FR_OK on error.
+                       Fixed wrong cache control in f_lseek().
+                       Added relative path feature.
+                       Added f_chdir().
+                       Added f_chdrive().
+                       Added proper case conversion to extended char.
+

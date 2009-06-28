@@ -83,7 +83,7 @@ FRESULT f_open (
 
 <div class="para">
 <h4>Description</h4>
-<p>The created file object is used for subsequent calls to refer to the file. When close an open file object, use <a href="close.html">f_close</a> function. If modified file is not closed, the file may be collapsed.</p>
+<p>The created file object is used for subsequent calls to refer to the file. When close an open file object, use <a href="close.html">f_close</a> function. If the modified file is not closed, the file may be collapsed.</p>
 <p>Before using any file function, a work area (file system object) must be given to the logical drive with <a href="mount.html">f_mount</a> function. All file functions can work after this procedure.</p>
 <p>The mode flags, <tt>FA_WRITE, FA_CREATE_ALWAYS, FA_CREATE_NEW, FA_OPEN_ALWAYS</tt>, are not available in read-only configuration.</p>
 </div>
@@ -92,7 +92,7 @@ FRESULT f_open (
 <div class="para">
 <h4>Example (File Copy)</h4>
 <pre>
-void main ()
+void main (void)
 {
     FATFS fs;            // Work area (file system object) for logical drive
     FIL fsrc, fdst;      // file objects

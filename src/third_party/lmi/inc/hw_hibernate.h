@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Firmware Development Package.
+// This is part of revision 4694 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -88,6 +88,7 @@
 //
 //*****************************************************************************
 #define HIB_CTL_WRC             0x80000000  // Write Complete/Capable.
+#define HIB_CTL_VDD3ON          0x00000100  // VDD Powered.
 #define HIB_CTL_VABORT          0x00000080  // low bat abort
 #define HIB_CTL_CLK32EN         0x00000040  // enable clock/oscillator
 #define HIB_CTL_LOWBATEN        0x00000020  // enable low battery detect

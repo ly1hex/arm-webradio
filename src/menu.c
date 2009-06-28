@@ -8,12 +8,13 @@
 #include "tools.h"
 #include "main.h"
 #include "io.h"
+#include "lcd.h"
 #include "lcd/font_8x8.h"
 #include "lcd/font_8x12.h"
 #include "lcd/font_clock.h"
 #include "lcd/img.h"
-#include "lcd.h"
 #include "mmc.h"
+#include "vs.h"
 #include "eth.h"
 #include "eth/utils.h"
 #include "station.h"
@@ -31,9 +32,9 @@
 #define SUB_CARD     (2)
 #define SUB_ALARM    (3)
 #define SUB_SETTINGS (4)
-//#define SUB_BACK     (5)
-#define SUB_STANDBY  (5)
-#define MAINITEMS    (6)
+#define SUB_BACK     (5)
+#define SUB_STANDBY  (6)
+#define MAINITEMS    (7)
 const MAINMENUITEM mainmenu[MAINITEMS] =
 {
   {"Station",  {&img_station[0][0],  &img_station[1][0],  &img_station[2][0]},  station_init,  station_items,  station_getitem,  station_openitem,  station_closeitem, station_service},
@@ -41,7 +42,7 @@ const MAINMENUITEM mainmenu[MAINITEMS] =
   {"Card",     {&img_card[0][0],     &img_card[1][0],     &img_card[2][0]},     card_init,     card_items,     card_getitem,     card_openitem,     card_closeitem,    card_service},
   {"Alarm",    {&img_clock[0][0],    &img_clock[1][0],    &img_clock[2][0]},    alarm_init,    alarm_items,    alarm_getitem,    alarm_openitem,    0,                 0},
   {"Settings", {&img_settings[0][0], &img_settings[1][0], &img_settings[2][0]}, settings_init, settings_items, settings_getitem, settings_openitem, 0,                 0},
-//  {"Back",     {&img_back[0][0],     &img_back[1][0],     &img_back[2][0]},     0,             0,              0,                0,                 0,                 0},
+  {"Back",     {&img_back[0][0],     &img_back[1][0],     &img_back[2][0]},     0,             0,              0,                0,                 0,                 0},
   {"Standby",  {&img_power[0][0],    &img_power[1][0],    &img_power[2][0]},    0,             0,              0,                standby,           0,                 0},
 };
 
@@ -49,7 +50,7 @@ const MAINMENUITEM mainmenu[MAINITEMS] =
 #define MODE_MAIN (1) //animated main menu
 #define MODE_SUB  (2) //list menu
 unsigned int menu_mode=0, menu_sub=0, menu_items=0, menu_first=0, menu_last=0, menu_sel=0, menu_lastsel=0;
-unsigned int menu_status=0, menu_standbytimer=0;
+unsigned int menu_status=0, menu_format=0, menu_bitrate=0, menu_standbytimer=0;
 unsigned int bgcolor=0, fgcolor=0, selcolor=0, edgecolor=0;
 
 
@@ -224,7 +225,7 @@ void menu_up(void)
   switch(menu_mode)
   {
     case MODE_INFO:
-      vs_setvolume(vs_volume()+2);
+      vs_setvolume(vs_getvolume()+2);
       menu_drawvol();
       break;
 
@@ -263,7 +264,7 @@ void menu_down(void)
   switch(menu_mode)
   {
     case MODE_INFO:
-      vs_setvolume(vs_volume()-2);
+      vs_setvolume(vs_getvolume()-2);
       menu_drawvol();
       break;
 
@@ -303,7 +304,7 @@ void menu_steps(int steps)
   {
     if(menu_mode == MODE_INFO)
     {
-      vs_setvolume(vs_volume()+steps);
+      vs_setvolume(vs_getvolume()+steps);
       menu_drawvol();
     }
     else
@@ -360,17 +361,17 @@ void menu_service(unsigned int draw)
     case SW_VOL_P:
       switch(menu_mode)
       {
-        case MODE_INFO: vs_setvolume(vs_volume()+4); menu_drawvol();                      break;
-        case MODE_MAIN: menu_steps(+1);                                                   break;
-        case MODE_SUB:  menu_steps(+MENU_LINES);                                          break;
+        case MODE_INFO: vs_setvolume(vs_getvolume()+4); menu_drawvol();                         break;
+        case MODE_MAIN: menu_steps(+1);                                                         break;
+        case MODE_SUB:  menu_steps(+MENU_LINES);                                                break;
       }
       break;
     case SW_VOL_M:
       switch(menu_mode)
       {
-        case MODE_INFO: vs_setvolume((vs_volume()<=4)?0:(vs_volume()-4)); menu_drawvol(); break;
-        case MODE_MAIN: menu_steps(-1);                                                   break;
-        case MODE_SUB:  menu_steps(-MENU_LINES);                                          break;
+        case MODE_INFO: vs_setvolume((vs_getvolume()<=4)?0:(vs_getvolume()-4)); menu_drawvol(); break;
+        case MODE_MAIN: menu_steps(-1);                                                         break;
+        case MODE_SUB:  menu_steps(-MENU_LINES);                                                break;
       }
       break;
     case SW_UP:
@@ -649,7 +650,7 @@ void menu_drawvol(void)
 
   if(menu_mode == MODE_INFO)
   {
-    x = (vs_volume()/4); //100/4 = 25
+    x = (vs_getvolume()/4); //100/4 = 25
     lcd_rect(LCD_WIDTH-1-5-25,   2, LCD_WIDTH-1-5-25+x, 8, fgcolor);
     lcd_rect(LCD_WIDTH-1-5-25+x, 2, LCD_WIDTH-1-5,      8, bgcolor);
   }
@@ -660,20 +661,39 @@ void menu_drawvol(void)
 
 void menu_drawstatus(void)
 {
+  char c, buf[8];
+
   if(menu_mode == MODE_INFO)
   {
     switch(menu_status)
     {
-      case MENU_STATE_STOP:
-        lcd_putc(LCD_WIDTH-1-5-40, 1, 0xFE, SMALLFONT, bgcolor, edgecolor);
-        break;
-      case MENU_STATE_BUF:
-        lcd_putc(LCD_WIDTH-1-5-40, 1, 0xFD, SMALLFONT, bgcolor, edgecolor);
-        break;
-      case MENU_STATE_PLAY:
-        lcd_putc(LCD_WIDTH-1-5-40, 1, 0xFC, SMALLFONT, bgcolor, edgecolor);
-        break;
+      case MENU_STATE_STOP: c = 0xFE; break;
+      case MENU_STATE_BUF:  c = 0xFD; break;
+      case MENU_STATE_PLAY: c = 0xFC; break;
+      default:              c = ' ';  break;
     }
+    lcd_putc(LCD_WIDTH-1-5-38, 1, c, SMALLFONT, bgcolor, edgecolor);
+
+    switch(menu_format)
+    {
+      case FORMAT_WAV: strcpy(buf, "WAV"); break;
+      case FORMAT_MP3: strcpy(buf, "MP3"); break;
+      case FORMAT_AAC: strcpy(buf, "AAC"); break;
+      case FORMAT_OGG: strcpy(buf, "OGG"); break;
+      case FORMAT_WMA: strcpy(buf, "WMA"); break;
+      default:              strcpy(buf, "   ");  break;
+    }
+    lcd_puts(LCD_WIDTH-1-5-65, 2, buf, SMALLFONT, bgcolor, edgecolor);
+
+    if(menu_bitrate)
+    {
+      itoa(menu_bitrate, buf, 10);
+    }
+    else
+    {
+      strcpy(buf, "   ");
+    }
+    lcd_puts(LCD_WIDTH-1-5-93, 2, buf, SMALLFONT, bgcolor, edgecolor);
   }
 
   return;
@@ -702,9 +722,34 @@ void menu_setname(const char *name)
 }
 
 
+void menu_setbitrate(unsigned int bitrate)
+{
+  menu_bitrate = bitrate;
+  menu_drawstatus();
+
+  return;
+}
+
+
+void menu_setformat(unsigned int format)
+{
+  menu_format = format;
+  menu_drawstatus();
+
+  return;
+}
+
+
 void menu_setstatus(unsigned int status)
 {
   menu_status = status;
+
+  if(status == MENU_STATE_STOP)
+  {
+    menu_format  = FORMAT_UNKNOWN;
+    menu_bitrate = 0;
+  }
+
   menu_drawstatus();
 
   return;
@@ -749,22 +794,22 @@ void menu_drawwnd(unsigned int redraw)
     switch(menu_mode)
     {
       case MODE_INFO:
-        lcd_puts( 4,   2, APPNAME, SMALLFONT, bgcolor, edgecolor);
+        lcd_puts(4,  2, APPNAME, SMALLFONT, bgcolor, edgecolor);
         lcd_rect(0, 86, LCD_WIDTH-1, LCD_HEIGHT-1, fgcolor);
         lcd_line(0, 35,  LCD_WIDTH-1, 35, edgecolor);
         break;
       case MODE_MAIN:
-        lcd_puts( 4,   2, APPNAME, SMALLFONT, bgcolor, edgecolor);
+        lcd_puts( 4, 2, APPNAME, SMALLFONT, bgcolor, edgecolor);
         break;
       case MODE_SUB:
         if(gbuf.menu.file[0])
         {
           for(i=0; (strlen(gbuf.menu.file+i)*SMALLFONT_WIDTH+5) > (LCD_WIDTH-1); i++);
-          lcd_puts( 4,   2, gbuf.menu.file+i, SMALLFONT, bgcolor, edgecolor);
+          lcd_puts(4, 2, gbuf.menu.file+i, SMALLFONT, bgcolor, edgecolor);
         }
         else
         {
-          lcd_puts( 4,   2, mainmenu[menu_sub].name, SMALLFONT, bgcolor, edgecolor);
+          lcd_puts(4, 2, mainmenu[menu_sub].name, SMALLFONT, bgcolor, edgecolor);
         }
         break;
     }
@@ -928,10 +973,10 @@ void menu_setfgcolor(unsigned int c)   { fgcolor   = c; }
 void menu_setbgcolor(unsigned int c)   { bgcolor   = c; }
 
 
-unsigned int menu_edgecolor(void)      { return edgecolor; }
-unsigned int menu_selcolor(void)       { return selcolor; }
-unsigned int menu_fgcolor(void)        { return fgcolor; }
-unsigned int menu_bgcolor(void)        { return bgcolor; }
+unsigned int menu_getedgecolor(void)   { return edgecolor; }
+unsigned int menu_getselcolor(void)    { return selcolor;  }
+unsigned int menu_getfgcolor(void)     { return fgcolor;   }
+unsigned int menu_getbgcolor(void)     { return bgcolor;   }
 
 
 void menu_init(void)

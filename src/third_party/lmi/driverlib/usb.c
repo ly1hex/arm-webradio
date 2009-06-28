@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -426,6 +426,19 @@ USBIntStatus(unsigned long ulBase)
         HWREGB(ulBase + USB_O_EPCISC) |= USB_EPCISC_PF;
     }
 
+    if(HWREG(USB0_BASE + USB_O_IDVISC) & USB_IDVRIS_ID)
+    {
+        //
+        // Indicate a id detection was detected.
+        //
+        ulStatus |= USB_INT_MODE_DETECT;
+
+        //
+        // Clear the id detection interrupt.
+        //
+        HWREG(USB0_BASE + USB_O_IDVISC) |= USB_IDVRIS_ID;
+    }
+
     //
     // Return the combined interrupt status.
     //
@@ -495,6 +508,14 @@ USBIntDisable(unsigned long ulBase, unsigned long ulFlags)
     if(ulFlags & USB_INT_POWER_FAULT)
     {
         HWREG(ulBase + USB_O_EPCIM) = 0;
+    }
+
+    //
+    // Disable the ID pin detect interrupt.
+    //
+    if(ulFlags & USB_INT_MODE_DETECT)
+    {
+        HWREG(USB0_BASE + USB_O_IDVIM) = 0;
     }
 }
 
@@ -568,6 +589,14 @@ USBIntEnable(unsigned long ulBase, unsigned long ulFlags)
     if(ulFlags & USB_INT_POWER_FAULT)
     {
         HWREG(ulBase + USB_O_EPCIM) = USB_EPCIM_PF;
+    }
+
+    //
+    // Enable the ID pin detect interrupt.
+    //
+    if(ulFlags & USB_INT_MODE_DETECT)
+    {
+        HWREG(USB0_BASE + USB_O_IDVIM) = USB_IDVIM_ID;
     }
 }
 
@@ -725,7 +754,13 @@ USBEndpointStatus(unsigned long ulBase, unsigned long ulEndpoint)
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Get the TX portion of the endpoint status.
@@ -770,7 +805,13 @@ USBHostEndpointStatusClear(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Clear the specified flags for the endpoint.
@@ -813,7 +854,13 @@ USBDevEndpointStatusClear(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // If this is endpoint 0 then the bits have different meaning and map into
@@ -897,7 +944,13 @@ USBHostEndpointDataToggle(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // The data toggle defaults to DATA0.
@@ -987,8 +1040,14 @@ USBEndpointDataToggleClear(unsigned long ulBase, unsigned long ulEndpoint,
     // Check the arguments.
     //
     ASSERT(ulBase == USB0_BASE);
-    ASSERT((ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+    ASSERT((ulEndpoint == USB_EP_1) || (ulEndpoint == USB_EP_2) ||
+           (ulEndpoint == USB_EP_3) || (ulEndpoint == USB_EP_4) ||
+           (ulEndpoint == USB_EP_5) || (ulEndpoint == USB_EP_6) ||
+           (ulEndpoint == USB_EP_7) || (ulEndpoint == USB_EP_8) ||
+           (ulEndpoint == USB_EP_9) || (ulEndpoint == USB_EP_10) ||
+           (ulEndpoint == USB_EP_11) || (ulEndpoint == USB_EP_12) ||
+           (ulEndpoint == USB_EP_13) || (ulEndpoint == USB_EP_14) ||
+           (ulEndpoint == USB_EP_15));
 
     //
     // See if the transmit or receive data toggle should be cleared.
@@ -1034,7 +1093,13 @@ USBDevEndpointStall(unsigned long ulBase, unsigned long ulEndpoint,
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulFlags & ~(USB_EP_DEV_IN | USB_EP_DEV_OUT)) == 0)
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Determine how to stall this endpoint.
@@ -1094,7 +1159,13 @@ USBDevEndpointStallClear(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
     ASSERT((ulFlags & ~(USB_EP_DEV_IN | USB_EP_DEV_OUT)) == 0)
 
     //
@@ -1334,7 +1405,13 @@ USBHostEndpointConfig(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
     ASSERT(ulNAKPollInterval <= MAX_NAK_LIMIT);
 
     //
@@ -1579,7 +1656,13 @@ USBDevEndpointConfig(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_1) || (ulEndpoint == USB_EP_2) ||
-           (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_3) || (ulEndpoint == USB_EP_4) ||
+           (ulEndpoint == USB_EP_5) || (ulEndpoint == USB_EP_6) ||
+           (ulEndpoint == USB_EP_7) || (ulEndpoint == USB_EP_8) ||
+           (ulEndpoint == USB_EP_9) || (ulEndpoint == USB_EP_10) ||
+           (ulEndpoint == USB_EP_11) || (ulEndpoint == USB_EP_12) ||
+           (ulEndpoint == USB_EP_13) || (ulEndpoint == USB_EP_14) ||
+           (ulEndpoint == USB_EP_15));
 
     //
     // Determine if a transmit or receive endpoint is being configured.
@@ -1730,7 +1813,13 @@ USBDevEndpointConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
     ASSERT(ulBase == USB0_BASE);
     ASSERT(pulMaxPacketSize && pulFlags);
     ASSERT((ulEndpoint == USB_EP_1) || (ulEndpoint == USB_EP_2) ||
-           (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_3) || (ulEndpoint == USB_EP_4) ||
+           (ulEndpoint == USB_EP_5) || (ulEndpoint == USB_EP_6) ||
+           (ulEndpoint == USB_EP_7) || (ulEndpoint == USB_EP_8) ||
+           (ulEndpoint == USB_EP_9) || (ulEndpoint == USB_EP_10) ||
+           (ulEndpoint == USB_EP_11) || (ulEndpoint == USB_EP_12) ||
+           (ulEndpoint == USB_EP_13) || (ulEndpoint == USB_EP_14) ||
+           (ulEndpoint == USB_EP_15));
 
     //
     // Determine if a transmit or receive endpoint is being queried.
@@ -1910,7 +1999,13 @@ USBFIFOConfigSet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_1) || (ulEndpoint == USB_EP_2) ||
-           (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_3) || (ulEndpoint == USB_EP_4) ||
+           (ulEndpoint == USB_EP_5) || (ulEndpoint == USB_EP_6) ||
+           (ulEndpoint == USB_EP_7) || (ulEndpoint == USB_EP_8) ||
+           (ulEndpoint == USB_EP_9) || (ulEndpoint == USB_EP_10) ||
+           (ulEndpoint == USB_EP_11) || (ulEndpoint == USB_EP_12) ||
+           (ulEndpoint == USB_EP_13) || (ulEndpoint == USB_EP_14) ||
+           (ulEndpoint == USB_EP_15));
 
     //
     // See if the transmit or receive FIFO is being configured.
@@ -1968,7 +2063,13 @@ USBFIFOConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_1) || (ulEndpoint == USB_EP_2) ||
-           (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_3) || (ulEndpoint == USB_EP_4) ||
+           (ulEndpoint == USB_EP_5) || (ulEndpoint == USB_EP_6) ||
+           (ulEndpoint == USB_EP_7) || (ulEndpoint == USB_EP_8) ||
+           (ulEndpoint == USB_EP_9) || (ulEndpoint == USB_EP_10) ||
+           (ulEndpoint == USB_EP_11) || (ulEndpoint == USB_EP_12) ||
+           (ulEndpoint == USB_EP_13) || (ulEndpoint == USB_EP_14) ||
+           (ulEndpoint == USB_EP_15));
 
     //
     // See if the transmit or receive FIFO is being configured.
@@ -2115,7 +2216,13 @@ USBEndpointDataAvail(unsigned long ulBase, unsigned long ulEndpoint)
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Get the address of the receive status register to use, based on the
@@ -2178,7 +2285,13 @@ USBEndpointDataGet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Get the address of the receive status register to use, based on the
@@ -2276,7 +2389,13 @@ USBDevEndpointDataAck(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Determine which endpoint is being acked.
@@ -2324,7 +2443,13 @@ USBHostEndpointDataAck(unsigned long ulBase, unsigned long ulEndpoint)
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Clear RxPktRdy.
@@ -2372,7 +2497,13 @@ USBEndpointDataPut(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Get the bit position of TxPktRdy based on the endpoint.
@@ -2449,7 +2580,13 @@ USBEndpointDataSend(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Get the bit position of TxPktRdy based on the endpoint.
@@ -2507,7 +2644,13 @@ USBFIFOFlush(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Endpoint zero has a different register set for FIFO flushing.
@@ -2587,7 +2730,13 @@ USBHostRequestIN(unsigned long ulBase, unsigned long ulEndpoint)
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // Endpoint zero uses a different offset than the other endpoints.
@@ -2666,7 +2815,13 @@ USBHostAddrSet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // See if the transmit or receive address should be set.
@@ -2713,7 +2868,13 @@ USBHostAddrGet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // See if the transmit or receive address should be returned.
@@ -2761,7 +2922,13 @@ USBHostHubAddrSet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // See if the hub transmit or receive address is being set.
@@ -2809,7 +2976,13 @@ USBHostHubAddrGet(unsigned long ulBase, unsigned long ulEndpoint,
     //
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulEndpoint == USB_EP_0) || (ulEndpoint == USB_EP_1) ||
-           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3));
+           (ulEndpoint == USB_EP_2) || (ulEndpoint == USB_EP_3) ||
+           (ulEndpoint == USB_EP_4) || (ulEndpoint == USB_EP_5) ||
+           (ulEndpoint == USB_EP_6) || (ulEndpoint == USB_EP_7) ||
+           (ulEndpoint == USB_EP_8) || (ulEndpoint == USB_EP_9) ||
+           (ulEndpoint == USB_EP_10) || (ulEndpoint == USB_EP_11) ||
+           (ulEndpoint == USB_EP_12) || (ulEndpoint == USB_EP_13) ||
+           (ulEndpoint == USB_EP_14) || (ulEndpoint == USB_EP_15));
 
     //
     // See if the hub transmit or receive address should be returned.
@@ -3084,6 +3257,173 @@ USBFIFOAddrGet(unsigned long ulBase, unsigned long ulEndpoint)
     // Return the FIFO address for this endpoint.
     //
     return(ulBase + USB_O_FIFO0 + (ulEndpoint >> 2));
+}
+
+//*****************************************************************************
+//
+//! Returns the current operating mode of the controller.
+//!
+//! \param ulBase specifies the USB module base address.
+//!
+//! This function returns the current operating mode on USB controllers with
+//! OTG or Dual mode functionality.
+//!
+//! For OTG controllers:
+//!
+//! The function will return on of the following values on OTG controllers:
+//! \b USB_OTG_MODE_ASIDE_HOST, \b USB_OTG_MODE_ASIDE_DEV,
+//! \b USB_OTG_MODE_BSIDE_HOST, \b USB_OTG_MODE_BSIDE_DEV,
+//! \b USB_OTG_MODE_NONE.
+//!
+//! \b USB_OTG_MODE_ASIDE_HOST indicates that the controller is in host mode
+//! on the A-side of the cable.
+//!
+//! \b USB_OTG_MODE_ASIDE_DEV indicates that the controller is in device mode
+//! on the A-side of the cable.
+//!
+//! \b USB_OTG_MODE_BSIDE_HOST indicates that the controller is in host mode
+//! on the B-side of the cable.
+//!
+//! \b USB_OTG_MODE_BSIDE_DEV indicates that the controller is in device mode
+//! on the B-side of the cable.  If and OTG session request is started with no
+//! cable in place this is the default mode for the controller.
+//!
+//! \b USB_OTG_MODE_NONE indicates that the controller is not attempting to
+//! determine its role in the system.
+//!
+//! For Dual Mode controllers:
+//!
+//! The function will return on of the following values:
+//! \b USB_DUAL_MODE_HOST, \b USB_DUAL_MODE_DEVICE, or
+//! \b USB_DUAL_MODE_NONE.
+//!
+//! \b USB_DUAL_MODE_HOST indicates that the controller is acting as a host.
+//!
+//! \b USB_DUAL_MODE_DEVICE indicates that the controller acting as a device.
+//!
+//! \b USB_DUAL_MODE_NONE indicates that the controller is not active as
+//! either a host or device.
+//!
+//! \return Returns \b USB_OTG_MODE_ASIDE_HOST, \b USB_OTG_MODE_ASIDE_DEV,
+//! \b USB_OTG_MODE_BSIDE_HOST, \b USB_OTG_MODE_BSIDE_DEV,
+//! \b USB_OTG_MODE_NONE, \b USB_DUAL_MODE_HOST, \b USB_DUAL_MODE_DEVICE, or
+//! \b USB_DUAL_MODE_NONE.
+//
+//*****************************************************************************
+unsigned long
+USBModeGet(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // Checks the current mode in the USB_O_DEVCTL and returns the current
+    // mode.
+    //
+    // USB_OTG_MODE_ASIDE_HOST:  USB_DEVCTL_HOST | USB_DEVCTL_SESSION
+    // USB_OTG_MODE_ASIDE_DEV:   USB_DEVCTL_SESSION
+    // USB_OTG_MODE_BSIDE_HOST:  USB_DEVCTL_DEV | USB_DEVCTL_SESSION |
+    //                           USB_DEVCTL_HOST
+    // USB_OTG_MODE_BSIDE_DEV:   USB_DEVCTL_DEV | USB_DEVCTL_SESSION
+    // USB_OTG_MODE_NONE:        USB_DEVCTL_DEV
+    //
+    return(HWREGB(ulBase + USB_O_DEVCTL) &
+           (USB_DEVCTL_DEV | USB_DEVCTL_HOST | USB_DEVCTL_SESSION |
+            USB_DEVCTL_VBUS_M));
+}
+
+//*****************************************************************************
+//
+//! Sets the DMA channel to use for a given endpoint.
+//!
+//! \param ulBase specifies the USB module base address.
+//! \param ulEndpoint specifies which endpoint's FIFO address to return.
+//! \param ulChannel specifies which DMA channel to use for which endpoint.
+//!
+//! This function is used to configure which DMA channel to use with a given
+//! endpoint.  Receive DMA channels can only be used with receive endpoints
+//! and transmit DMA channels can only be used with transmit endpoints.  This
+//! allows the 3 receive and 3 transmit DMA channels to be mapped to any
+//! endpoint other than 0.  The values that should be passed into the \e
+//! ulChannel value are the UDMA_CHANNEL_USBEP* values defined in udma.h.
+//!
+//! \note This function only has an effect on microcontrollers that have the
+//! ability to change the DMA channel for an endpoint.  Calling this function
+//! on other devices will have no effect.
+//!
+//! \return None.
+//!
+//*****************************************************************************
+void
+USBEndpointDMAChannel(unsigned long ulBase, unsigned long ulEndpoint,
+                      unsigned long ulChannel)
+{
+    unsigned long ulMask;
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+    ASSERT((ulEndpoint == USB_EP_1) || (ulEndpoint == USB_EP_2) ||
+           (ulEndpoint == USB_EP_3) || (ulEndpoint == USB_EP_4) ||
+           (ulEndpoint == USB_EP_5) || (ulEndpoint == USB_EP_6) ||
+           (ulEndpoint == USB_EP_7) || (ulEndpoint == USB_EP_8) ||
+           (ulEndpoint == USB_EP_9) || (ulEndpoint == USB_EP_10) ||
+           (ulEndpoint == USB_EP_11) || (ulEndpoint == USB_EP_12) ||
+           (ulEndpoint == USB_EP_13) || (ulEndpoint == USB_EP_14) ||
+           (ulEndpoint == USB_EP_15));
+    ASSERT(ulChannel <= UDMA_CHANNEL_USBEP3TX);
+
+    //
+    // The input select mask needs to be shifted into the correct position
+    // based on the channel.
+    //
+    ulMask = 0xf << (ulChannel * 4);
+
+    //
+    // Clear out the current selection for the channel.
+    //
+    ulMask = HWREG(ulBase + USB_O_EPS) & (~ulMask);
+
+    //
+    // The input select is now shifted into the correct position based on the
+    // channel.
+    //
+    ulMask |= (USB_EP_TO_INDEX(ulEndpoint)) << (ulChannel * 4);
+
+    //
+    // Write the value out to the register.
+    //
+    HWREG(ulBase + USB_O_EPS) = ulMask;
+}
+
+//*****************************************************************************
+//
+//! Change the mode of the USB controller to host.
+//!
+//! \param ulBase specifies the USB module base address.
+//!
+//! This function changes the mode of the USB controller to host mode.  This
+//! is only valid on microcontrollers that have the host and device
+//! capabilities and not the OTG capabilities.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+USBHostMode(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(ulBase == USB0_BASE);
+
+    //
+    // Set the USB controller mode to host.
+    //
+    HWREGB(ulBase + USB_O_GPCS) &= ~(USB_GPCS_DEVMOD);
 }
 
 //*****************************************************************************

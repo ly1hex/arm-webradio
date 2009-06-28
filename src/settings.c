@@ -5,7 +5,6 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -15,6 +14,7 @@
 #include "eth.h"
 #include "eth/utils.h"
 #include "eth/dhcp.h"
+#include "eth/ntp.h"
 #include "alarm.h"
 #include "menu.h"
 #include "menu_dlg.h"
@@ -22,20 +22,9 @@
 #include "settings.h"
 
 
-#define F_NONE        (0) //-
-#define F_NR          (1) //p1-p2
-#define F_OR          (2) //p1 or p2
-#define F_STR         (3) //p1=max len
-#define F_MAC         (4) //-
-#define F_IP          (5) //-
-#define F_RGB         (6) //-
-#define F_RUN         (7) //-
-#define F_TIME        (8) //-
-#define F_INFO        (10) //-
-#define SETTINGSITEMS (35)
 const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
 {
-  //name               ini-entry     format        p1     p2    p3  set-func
+  //name                ini-entry     format        p1     p2    p3  set-func
   {"Info...",           "",           F_INFO,       0,     0,    0, 0},
   {"PlayMode ",         "PLAYMODE",   F_NONE,       0,     0,    0, 0},
   {"Volume   ",         "VOLUME",     F_NR,         0,   100,    1, (void*)vs_setvolume},
@@ -49,8 +38,7 @@ const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
   {"Bass-Freq Hz  ",    "BASSFREQ",   F_NR,        20,   150,   10, (void*)vs_setbassfreq},
   {"Bass-Amp dB   ",    "BASSAMP",    F_NR,         0,    15,    1, (void*)vs_setbassamp},
   {"Treble-Freq Hz",    "TREBLEFREQ", F_NR,      1000, 15000, 1000, (void*)vs_settreblefreq},
-  {"Treble-Amp  dB",    "TREBLEAMP",  F_NR,        -8,     7,    1, (void*)vs_settrebleamp},
-  {"VS",                "VS",         F_OR,      1033,  1053,    0, (void*)vs_init},
+  {"Treble-Amp dB ",    "TREBLEAMP",  F_NR,        -8,     7,    1, (void*)vs_settrebleamp},
   {"--- Ethernet ---",  "",           F_NONE,       0,     0,    0, 0},
   {"Name",              "NAME",       F_STR,       15,     0,    0, (void*)eth_setname},
   {"MAC",               "MAC",        F_MAC,        0,     0,    0, 0}, //(void*)eth_setmac},
@@ -97,7 +85,6 @@ void settings_read(void)
   {
     edge = atorgb(buf);
   }
-
   menu_setbgcolor(bg);
   menu_setfgcolor(fg);
   menu_setselcolor(sel);
@@ -113,15 +100,8 @@ void settings_read(void)
   }
   ir_init();
 
-  //vs
-  if(ini_getentry(SETTINGS_FILE, "VS", buf, INI_BUFLEN) == 0)
-  {
-    vs_init(atoi(buf));
-  }
-  else
-  {
-    vs_init(DEFAULT_VS);
-  }
+  //audio: vs
+  vs_init();
   if(ini_getentry(SETTINGS_FILE, "VOLUME", buf, INI_BUFLEN) == 0)
   {
     vs_setvolume(atoi(buf));
@@ -154,13 +134,30 @@ void settings_read(void)
   }
   if(ini_getentry(SETTINGS_FILE, "DHCP", buf, INI_BUFLEN) == 0)
   {
-    eth_setdhcp((atoi(buf))?1:0);
+    if(atoi(buf))
+    {
+      menu_drawpopup("DHCP...");
+      if(eth_setdhcp(1) == 0)
+      {
+        menu_drawpopup("DHCP...OK");
+      }
+    }
+    else
+    {
+      eth_setdhcp(0);
+    }
   }
   else
   {
-    eth_setdhcp(DEFAULT_DHCP);
+#if DEFAULT_DHCP != 0
+    menu_drawpopup("DHCP...");
+#endif
+    if(eth_setdhcp(DEFAULT_DHCP) == 0)
+    {
+      menu_drawpopup("DHCP...OK");
+    }
   }
-  if(eth_ip() == 0UL)
+  if(eth_getip() == 0UL)
   {
     if(ini_getentry(SETTINGS_FILE, "IP", buf, INI_BUFLEN) == 0)
     {
@@ -171,7 +168,7 @@ void settings_read(void)
       eth_setip(atoip(DEFAULT_IP));
     }
   }
-  if(eth_netmask() == 0UL)
+  if(eth_getnetmask() == 0UL)
   {
     if(ini_getentry(SETTINGS_FILE, "NETMASK", buf, INI_BUFLEN) == 0)
     {
@@ -182,7 +179,7 @@ void settings_read(void)
       eth_setnetmask(atoip(DEFAULT_NETMASK));
     }
   }
-  if(eth_router() == 0UL)
+  if(eth_getrouter() == 0UL)
   {
     if(ini_getentry(SETTINGS_FILE, "ROUTER", buf, INI_BUFLEN) == 0)
     {
@@ -193,7 +190,7 @@ void settings_read(void)
       eth_setrouter(atoip(DEFAULT_ROUTER));
     }
   }
-  if(eth_dns() == 0UL)
+  if(eth_getdns() == 0UL)
   {
     if(ini_getentry(SETTINGS_FILE, "DNS", buf, INI_BUFLEN) == 0)
     {
@@ -204,7 +201,7 @@ void settings_read(void)
       eth_setdns(atoip(DEFAULT_DNS));
     }
   }
-  if(eth_ntp() == 0UL)
+  if(eth_getntp() == 0UL)
   {
     if(ini_getentry(SETTINGS_FILE, "NTP", buf, INI_BUFLEN) == 0)
     {
@@ -242,7 +239,9 @@ unsigned int settings_openitem(unsigned int item)
   char buf[MAX_ADDR];
   unsigned int abort=1;
   int i;
+  MAC_Addr mac;
   IP_Addr ip;
+  unsigned int rgb;
 
   buf[0]          = 0;
   buf[MAX_ADDR-1] = 0;
@@ -264,58 +263,7 @@ unsigned int settings_openitem(unsigned int item)
         if(abort == 0)
         {
           itoa(i, buf, 10);
-          if(settingsmenu[item].set)
-          {
-            settingsmenu[item].set((void*)(int)i);
-          }
-        }
-        break;
-
-      case F_STR: //p1=max len
-        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
-        if(abort == 0)
-        {
-          if(settingsmenu[item].set)
-          {
-            settingsmenu[item].set(buf);
-          }
-        }
-        break;
-
-      case F_MAC:
-        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
-        if(abort == 0)
-        {
-          if(settingsmenu[item].set)
-          {
-            //settingsmenu[item].set((void*)(MAC_Addr)atomac(buf));
-          }
-        }
-        break;
-
-      case F_IP:
-        ip = atoip(value);
-        abort = dlg_ip(settingsmenu[item].name, &ip);
-        if(abort == 0)
-        {
-          strcpy(buf, iptoa(ip));
-          if(settingsmenu[item].set)
-          {
-            settingsmenu[item].set((void*)(IP_Addr)ip);
-          }
-        }
-        break;
-
-      case F_RGB:
-        i = atorgb(value);
-        abort = dlg_rgb(settingsmenu[item].name, &i);
-        if(abort == 0)
-        {
-          sprintf(buf, "%03i,%03i,%03i", GET_RED(i), GET_GREEN(i), GET_BLUE(i));
-          if(settingsmenu[item].set)
-          {
-            settingsmenu[item].set((void*)(unsigned int)i);
-          }
+          if(settingsmenu[item].set){ settingsmenu[item].set((void*)(int)i); }
         }
         break;
 
@@ -325,18 +273,49 @@ unsigned int settings_openitem(unsigned int item)
         if(abort == 0)
         {
           itoa(i, buf, 10);
-          if(settingsmenu[item].set)
-          {
-            settingsmenu[item].set((void*)(int)i);
-          }
+          if(settingsmenu[item].set){ settingsmenu[item].set((void*)(int)i); }
+        }
+        break;
+
+      case F_STR: //p1=max len
+        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
+        if(abort == 0)
+        {
+          if(settingsmenu[item].set){ settingsmenu[item].set(buf); }
+        }
+        break;
+
+      case F_MAC:
+        mac = atomac(value);
+        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
+        if(abort == 0)
+        {
+          //if(settingsmenu[item].set){ settingsmenu[item].set((void*)(MAC_Addr)atomac(buf)); }
+        }
+        break;
+
+      case F_IP:
+        ip = atoip(value);
+        abort = dlg_ip(settingsmenu[item].name, &ip);
+        if(abort == 0)
+        {
+          strcpy(buf, iptoa(ip));
+          if(settingsmenu[item].set){ settingsmenu[item].set((void*)(IP_Addr)ip); }
+        }
+        break;
+
+      case F_RGB:
+        rgb = atorgb(value);
+        abort = dlg_rgb(settingsmenu[item].name, &rgb);
+        if(abort == 0)
+        {
+          sprintf(buf, "%03i,%03i,%03i", GET_RED(rgb), GET_GREEN(rgb), GET_BLUE(rgb));
+          if(settingsmenu[item].set){ settingsmenu[item].set((void*)(unsigned int)rgb); }
         }
         break;
 
       case F_RUN:
-        if(settingsmenu[item].set)
-        {
-          settingsmenu[item].set(0);
-        }
+        if(settingsmenu[item].set){ settingsmenu[item].set(0); }
         break;
 
       case F_TIME:
@@ -353,12 +332,12 @@ unsigned int settings_openitem(unsigned int item)
                                   "Rout %i.%i.%i.%i\n"
                                   "DNS  %i.%i.%i.%i\n"
                                   "NTP  %i.%i.%i.%i",
-                 mactoa(eth_mac()),
-                 (eth_ip()     >>0)&0xFF, (eth_ip()     >>8)&0xFF, (eth_ip()     >>16)&0xFF, (eth_ip()     >>24)&0xFF,
-                 (eth_netmask()>>0)&0xFF, (eth_netmask()>>8)&0xFF, (eth_netmask()>>16)&0xFF, (eth_netmask()>>24)&0xFF,
-                 (eth_router() >>0)&0xFF, (eth_router() >>8)&0xFF, (eth_router() >>16)&0xFF, (eth_router() >>24)&0xFF,
-                 (eth_dns()    >>0)&0xFF, (eth_dns()    >>8)&0xFF, (eth_dns()    >>16)&0xFF, (eth_dns()    >>24)&0xFF,
-                 (eth_ntp()    >>0)&0xFF, (eth_ntp()    >>8)&0xFF, (eth_ntp()    >>16)&0xFF, (eth_ntp()    >>24)&0xFF);
+                 mactoa(eth_getmac()),
+                 (eth_getip()     >>0)&0xFF, (eth_getip()     >>8)&0xFF, (eth_getip()     >>16)&0xFF, (eth_getip()     >>24)&0xFF,
+                 (eth_getnetmask()>>0)&0xFF, (eth_getnetmask()>>8)&0xFF, (eth_getnetmask()>>16)&0xFF, (eth_getnetmask()>>24)&0xFF,
+                 (eth_getrouter() >>0)&0xFF, (eth_getrouter() >>8)&0xFF, (eth_getrouter() >>16)&0xFF, (eth_getrouter() >>24)&0xFF,
+                 (eth_getdns()    >>0)&0xFF, (eth_getdns()    >>8)&0xFF, (eth_getdns()    >>16)&0xFF, (eth_getdns()    >>24)&0xFF,
+                 (eth_getntp()    >>0)&0xFF, (eth_getntp()    >>8)&0xFF, (eth_getntp()    >>16)&0xFF, (eth_getntp()    >>24)&0xFF);
         dlg_msg(APPNAME" v"APPVERSION""APPRELEASE_SYM, buf);
         break;
     }

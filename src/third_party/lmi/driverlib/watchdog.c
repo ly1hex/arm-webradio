@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -58,7 +58,7 @@ WatchdogRunning(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // See if the watchdog timer module is enabled, and return.
@@ -88,7 +88,7 @@ WatchdogEnable(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Enable the watchdog timer module.
@@ -119,7 +119,7 @@ WatchdogResetEnable(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Enable the watchdog reset.
@@ -150,7 +150,7 @@ WatchdogResetDisable(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Disable the watchdog reset.
@@ -175,7 +175,7 @@ WatchdogLock(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Lock out watchdog register writes.  Writing anything to the WDT_O_LOCK
@@ -201,7 +201,7 @@ WatchdogUnlock(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Unlock watchdog register writes.
@@ -227,7 +227,7 @@ WatchdogLockState(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Get the lock state.
@@ -262,7 +262,7 @@ WatchdogReloadSet(unsigned long ulBase, unsigned long ulLoadVal)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Set the load register.
@@ -290,7 +290,7 @@ WatchdogReloadGet(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Get the load register.
@@ -315,7 +315,7 @@ WatchdogValueGet(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Get the current watchdog timer register value.
@@ -349,7 +349,7 @@ WatchdogIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Register the interrupt handler.
@@ -385,7 +385,7 @@ WatchdogIntUnregister(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Disable the interrupt.
@@ -420,7 +420,7 @@ WatchdogIntEnable(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Enable the watchdog interrupt.
@@ -450,7 +450,7 @@ WatchdogIntStatus(unsigned long ulBase, tBoolean bMasked)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Return either the interrupt status or the raw interrupt status as
@@ -493,7 +493,7 @@ WatchdogIntClear(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Clear the interrupt source.
@@ -524,7 +524,7 @@ WatchdogStallEnable(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Enable timer stalling.
@@ -551,7 +551,7 @@ WatchdogStallDisable(unsigned long ulBase)
     //
     // Check the arguments.
     //
-    ASSERT(ulBase == WATCHDOG_BASE);
+    ASSERT((ulBase == WATCHDOG0_BASE) || (ulBase == WATCHDOG1_BASE));
 
     //
     // Disable timer stalling.

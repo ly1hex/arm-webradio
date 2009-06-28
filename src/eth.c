@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "third_party/fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -13,9 +14,11 @@
 #include "eth/http.h"
 #include "eth/nbns.h"
 #include "eth/ntp.h"
+#include "eth/rtsp.h"
 #include "eth/shoutcast.h"
 #include "eth/ssdp.h"
 #include "eth/upnp.h"
+#include "buffer.h"
 
 
 Device dev;
@@ -87,9 +90,11 @@ void udp_send(unsigned int index, unsigned int len)
 
 void udp_app(unsigned int index)
 {
+  IP_Header *rx_ip;
   UDP_Header *rx_udp;
   unsigned int len;
 
+  rx_ip  = (IP_Header*)  &eth_rxbuf[IP_OFFSET];
   rx_udp = (UDP_Header*) &eth_rxbuf[UDP_OFFSET];
 
   len = swap16(rx_udp->len) - UDP_HEADERLEN;
@@ -97,22 +102,32 @@ void udp_app(unsigned int index)
   switch(udp_table[index].local_port)
   {
     case DHCPCLIENT_PORT:
-      if(udp_table[index].port == DHCPSERVER_PORT)
+      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask) ||
+         (dev.ip == 0UL)) //local net only
       {
-        dhcp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+        if(udp_table[index].port == DHCPSERVER_PORT)
+        {
+          dhcp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+        }
       }
       break;
     case DNS_PORT:
       dns_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       break;
     case NBNS_PORT:
-      nbns_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
+      {
+        nbns_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+      }
       break;
     case NTP_PORT:
       ntp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       break;
     case SSDP_PORT:
-      ssdp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
+      {
+        ssdp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
+      }
       break;
   }
 
@@ -133,7 +148,8 @@ void udp_service(void)
 
   for(index=0; index<UDP_ENTRIES; index++) //look for table index
   {
-    if((rx_ip->src_ip    == udp_table[index].ip)   &&
+    if((udp_table[index].status != UDP_CLOSED)             &&
+       (rx_ip->src_ip    == udp_table[index].ip)           &&
        (rx_udp->src_port == swap16(udp_table[index].port)) &&
        (rx_udp->dst_port == swap16(udp_table[index].local_port)))
     {
@@ -161,7 +177,7 @@ void udp_service(void)
     }
     else
     {
-      DEBUGOUT("Eth: UDP new\n");
+      DEBUGOUT("Eth: (%i) UDP new %i -> %i (local)\n", index, swap16(rx_udp->src_port), swap16(rx_udp->dst_port));
       udp_table[index].mac        = rx_eth->src_mac;
       udp_table[index].ip         = rx_ip->src_ip;
       udp_table[index].port       = swap16(rx_udp->src_port);
@@ -192,7 +208,8 @@ void tcp_close(unsigned int index)
 {
   if(index < TCP_ENTRIES)
   {
-    tcp_table[index].status = TCP_CLOSE;
+    tcp_table[index].status  = TCP_CLOSE;
+    tcp_table[index].flags  |= TCP_FLAG_FIN;
   }
 
   return;
@@ -246,7 +263,6 @@ unsigned int tcp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsi
   return index;
 }
 
-
 void tcp_send(unsigned int index, unsigned int len, unsigned int options)
 {
   if(index < TCP_ENTRIES)
@@ -256,7 +272,7 @@ void tcp_send(unsigned int index, unsigned int len, unsigned int options)
     make_tcp_header(index, len, options);
     ethernet_put(eth_txbuf, ETH_HEADERLEN+IP_HEADERLEN+TCP_HEADERLEN+len);
 
-    tcp_table[index].seqnum += len;
+    tcp_table[index].seqnum += len-options;
   }
 
   return;
@@ -276,14 +292,27 @@ void tcp_app(unsigned int index)
 
   switch(tcp_table[index].local_port)
   {
-    case SHOUTCAST_PORT:
-      len = shoutcast_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
+    case SHOUTCAST_CLIENTPORT1:
+    case SHOUTCAST_CLIENTPORT2:
+    case SHOUTCAST_CLIENTPORT3:
+      shoutcast_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
+      break;
+    case RTSP_CLIENTPORT1:
+    case RTSP_CLIENTPORT2:
+    case RTSP_CLIENTPORT3:
+      rtsp_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
       break;
     case HTTP_SERVERPORT:
-      len = http_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
+      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
+      {
+        http_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
+      }
       break;
     case UPNP_PORT:
-      len = upnp_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
+      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
+      {
+        upnp_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
+      }
       break;
   }
 
@@ -295,7 +324,7 @@ void tcp_service(void)
 {
   ETH_Header *rx_eth;
   IP_Header *rx_ip;
-  TCP_Header *rx_tcp;
+  TCP_Header *rx_tcp, *tx_tcp;
   unsigned int index, len, hd_len;
 
   rx_ip  = (IP_Header*)  &eth_rxbuf[IP_OFFSET];
@@ -306,7 +335,8 @@ void tcp_service(void)
 
   for(index=0; index<TCP_ENTRIES; index++) //look for table index
   {
-    if((rx_ip->src_ip    == tcp_table[index].ip)   &&
+    if((tcp_table[index].status != TCP_CLOSED)             &&
+       (rx_ip->src_ip    == tcp_table[index].ip)           &&
        (rx_tcp->src_port == swap16(tcp_table[index].port)) &&
        (rx_tcp->dst_port == swap16(tcp_table[index].local_port)))
     {
@@ -320,17 +350,36 @@ void tcp_service(void)
     switch(tcp_table[index].status)
     {
       case TCP_OPENED: //start app
-        if(rx_tcp->flags & TCP_FLAG_RST) //abort connection
+        if(rx_tcp->flags&TCP_FLAG_RST) //abort connection
         {
           tcp_table[index].status = TCP_CLOSED;
+          DEBUGOUT("Eth: (%i) TCP_OPENED -> RST -> TCP_CLOSED\n", index);
         }
-        else if(rx_tcp->flags & TCP_FLAG_FIN) //close connection
+        else if(rx_tcp->flags&TCP_FLAG_FIN) //close connection
         {
-          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+1;
-          tcp_table[index].flags  = TCP_FLAG_FIN|TCP_FLAG_ACK;
-          tcp_table[index].status = TCP_FIN;
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len+1;
+          tcp_table[index].flags  = TCP_FLAG_ACK;
           tcp_send(index, 0, 0);
+          tcp_table[index].status = TCP_FIN;
+          DEBUGOUT("Eth: (%i) TCP_OPENED -> FIN -> send ACK -> TCP_FIN\n", index);
+        }
+        else if(rx_tcp->flags&TCP_FLAG_SYN) //open connection
+        {
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len+1;
+          tcp_table[index].flags  = TCP_FLAG_SYN|TCP_FLAG_ACK;
+#if defined(TCP_MSS)
+          tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
+          tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
+          tx_tcp->options[1] = 0x04; //len  = 4 bytes
+          tx_tcp->options[2] = (SWAP16((ETH_MTUSIZE-40))>>0)&0xff;
+          tx_tcp->options[3] = (SWAP16((ETH_MTUSIZE-40))>>8)&0xff;
+          tcp_send(index, 4, 4);
+#else
+          tcp_send(index, 0, 0);
+#endif
           tcp_table[index].seqnum++;
+          tcp_table[index].status = TCP_OPENED;
+          DEBUGOUT("Eth: (%i) TCP_OPENED -> SYN -> send SYN+ACK -> TCP_OPENED\n", index);
         }
         else
         {
@@ -344,7 +393,7 @@ void tcp_service(void)
               tcp_table[index].flags  = TCP_FLAG_ACK;
               tcp_send(index, 0, 0);
               tcp_table[index].acknum = ack;
-              DEBUGOUT("Eth: TCP seq<ack\n");
+              DEBUGOUT("Eth: (%i) TCP_OPENED seq<ack\n", index);
             }
             else                                                 //frame lost -> send last ack
             {
@@ -357,7 +406,7 @@ void tcp_service(void)
                 tcp_table[index].flags = TCP_FLAG_ACK;
                 tcp_send(index, 0, 0);
               }
-              DEBUGOUT("Eth: TCP seq>ack\n");
+              DEBUGOUT("Eth: (%i) TCP_OPENED seq>ack\n", index);
             }
           }
           else
@@ -371,13 +420,16 @@ void tcp_service(void)
         break;
 
       case TCP_OPEN: //wait for SYN && ACK -> sent ACK
-        if((rx_tcp->flags & TCP_FLAG_RST) || (rx_tcp->flags & TCP_FLAG_FIN))
+        if((rx_tcp->flags&TCP_FLAG_RST) || (rx_tcp->flags&TCP_FLAG_FIN))
         {
           tcp_table[index].status = TCP_CLOSED;
+          DEBUGOUT("Eth: (%i) TCP_OPEN -> RST|FIN -> TCP_CLOSED\n", index);
         }
-        else if((rx_tcp->flags&TCP_FLAG_SYN) && (rx_tcp->flags&TCP_FLAG_ACK)) //i am client -> ACK
+        else if((rx_tcp->flags&TCP_FLAG_SYN) && 
+                (rx_tcp->flags&TCP_FLAG_ACK)) //i am client -> ACK
         {
-          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+1;
+          DEBUGOUT("Eth: (%i) TCP_OPEN -> SYN+ACK -> send ACK -> TCP_OPENED\n", index);
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len+1;
           tcp_table[index].seqnum = swap32(rx_tcp->acknum);
           tcp_table[index].flags  = TCP_FLAG_ACK;
           tcp_table[index].status = TCP_OPENED;
@@ -386,11 +438,12 @@ void tcp_service(void)
         }
         else
         {
+          DEBUGOUT("Eth: (%i) TCP_OPEN -> send RST -> TCP_CLOSED\n", index);
           tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len;
           tcp_table[index].seqnum = swap32(rx_tcp->acknum);
           tcp_table[index].flags  = TCP_FLAG_RST;
-          tcp_table[index].status = TCP_CLOSED;
           tcp_send(index, 0, 0);
+          tcp_table[index].status = TCP_CLOSED;
         }
         break;
 
@@ -398,37 +451,59 @@ void tcp_service(void)
         tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len;
         tcp_table[index].seqnum = swap32(rx_tcp->acknum);
         tcp_table[index].flags  = TCP_FLAG_RST;
-        tcp_table[index].status = TCP_CLOSED;
         tcp_send(index, 0, 0);
+        tcp_table[index].status = TCP_CLOSED;
+        DEBUGOUT("Eth: (%i) TCP_ABORT -> send RST -> TCP_CLOSED\n", index);
         break;
 
       case TCP_CLOSE: //sent FIN
-        if(rx_tcp->flags&TCP_FLAG_FIN)
+        if(rx_tcp->flags&TCP_FLAG_RST)
         {
-          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+1;
-          tcp_table[index].seqnum = swap32(rx_tcp->acknum);
-          tcp_table[index].flags  = TCP_FLAG_ACK;
           tcp_table[index].status = TCP_CLOSED;
-          tcp_send(index, 0, 0);
+          DEBUGOUT("Eth: (%i) TCP_CLOSE -> RST -> TCP_CLOSED\n", index);
         }
-        else
+        else if(rx_tcp->flags&TCP_FLAG_FIN)
         {
-          tcp_table[index].acknum = swap32(rx_tcp->seqnum);
-          tcp_table[index].seqnum = swap32(rx_tcp->acknum);
-          tcp_table[index].flags  = TCP_FLAG_FIN|TCP_FLAG_ACK;
-          tcp_table[index].status = TCP_FIN;
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len+1;
+          tcp_table[index].flags  = TCP_FLAG_ACK;
           tcp_send(index, 0, 0);
+          tcp_table[index].status = TCP_FIN;
+          DEBUGOUT("Eth: (%i) TCP_CLOSE -> FIN -> send ACK -> TCP_FIN\n", index);
+        }
+        else //I am closing -> send FIN && ACK
+        {
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len;
+          tcp_table[index].flags  = TCP_FLAG_FIN|TCP_FLAG_ACK;
+          tcp_send(index, 0, 0);
+          tcp_table[index].seqnum++;
+          tcp_table[index].status = TCP_FIN;
+          DEBUGOUT("Eth: (%i) TCP_CLOSE -> send FIN+ACK -> TCP_FIN\n", index);
         }
         break;
 
-      case TCP_FIN: //wait for FIN && ACK -> sent ACK
-        if(rx_tcp->flags&TCP_FLAG_FIN)
+      case TCP_FIN: //wait for FIN -> sent ACK
+        if(rx_tcp->flags&TCP_FLAG_RST)
         {
-          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+1;
-          tcp_table[index].seqnum = swap32(rx_tcp->acknum);
-          tcp_table[index].flags  = TCP_FLAG_ACK;
           tcp_table[index].status = TCP_CLOSED;
+          DEBUGOUT("Eth: (%i) TCP_FIN -> RST -> TCP_CLOSED\n", index);
+        }
+        else if((rx_tcp->flags&TCP_FLAG_ACK) && 
+                (tcp_table[index].flags&TCP_FLAG_FIN)) //I am closing -> send FIN && ACK
+        {
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len;
+          tcp_table[index].flags  = TCP_FLAG_FIN|TCP_FLAG_ACK;
           tcp_send(index, 0, 0);
+          tcp_table[index].seqnum++;
+          tcp_table[index].status = TCP_CLOSED;
+          DEBUGOUT("Eth: (%i) TCP_FIN -> ACK -> send FIN+ACK -> TCP_CLOSED\n", index);
+        }
+        else if(rx_tcp->flags&TCP_FLAG_FIN)
+        {
+          tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len+1;
+          tcp_table[index].flags  = TCP_FLAG_ACK;
+          tcp_send(index, 0, 0);
+          tcp_table[index].status = TCP_CLOSED;
+          DEBUGOUT("Eth: (%i) TCP_FIN -> FIN -> send ACK -> TCP_CLOSED\n", index);
         }
         break;
     }
@@ -448,51 +523,60 @@ void tcp_service(void)
     {
       DEBUGOUT("Eth: TCP table full\n");
     }
-    else if(rx_tcp->flags == TCP_FLAG_SYN) //i am server -> SYN+ACK
+    else if(rx_tcp->flags&TCP_FLAG_SYN) //i am server -> SYN+ACK
     {
       tcp_table[index].mac        = rx_eth->src_mac;
       tcp_table[index].ip         = rx_ip->src_ip;
       tcp_table[index].port       = swap16(rx_tcp->src_port);
       tcp_table[index].local_port = swap16(rx_tcp->dst_port);
-      tcp_table[index].acknum     = swap32(rx_tcp->seqnum)+1;
+      tcp_table[index].acknum     = swap32(rx_tcp->seqnum)+len+1;
       tcp_table[index].seqnum     = swap32(generate_id()); //1UL;
       tcp_table[index].flags      = TCP_FLAG_SYN|TCP_FLAG_ACK;
       tcp_table[index].status     = TCP_OPENED;
       tcp_table[index].time       = 0;
       tcp_table[index].error      = 0;
+#if defined(TCP_MSS)
+      tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
+      tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
+      tx_tcp->options[1] = 0x04; //len  = 4 bytes
+      tx_tcp->options[2] = (SWAP16((ETH_MTUSIZE-40))>>0)&0xff;
+      tx_tcp->options[3] = (SWAP16((ETH_MTUSIZE-40))>>8)&0xff;
+      tcp_send(index, 4, 4);
+#else
       tcp_send(index, 0, 0);
+#endif
       tcp_table[index].seqnum++;
-      DEBUGOUT("Eth: TCP new: server\n");
+      DEBUGOUT("Eth: (%i) TCP new: %i -> %i\n", index, tcp_table[index].port, tcp_table[index].local_port);
     }
-    else if(rx_tcp->flags&TCP_FLAG_FIN) //close connetion
+    /*else if(rx_tcp->flags&TCP_FLAG_FIN) //close connetion
     {
       tcp_table[index].mac        = rx_eth->src_mac;
       tcp_table[index].ip         = rx_ip->src_ip;
       tcp_table[index].port       = swap16(rx_tcp->src_port);
       tcp_table[index].local_port = swap16(rx_tcp->dst_port);
-      tcp_table[index].acknum     = swap32(rx_tcp->seqnum)+1;
+      tcp_table[index].acknum     = swap32(rx_tcp->seqnum)+len+1;
       tcp_table[index].seqnum     = swap32(rx_tcp->acknum);
       tcp_table[index].flags      = TCP_FLAG_FIN|TCP_FLAG_ACK;
       tcp_table[index].status     = TCP_CLOSED;
       tcp_table[index].time       = 0;
       tcp_table[index].error      = 0;
       tcp_send(index, 0, 0);
-      DEBUGOUT("Eth: TCP new: close\n");
-    }
+      DEBUGOUT("Eth: (%i) TCP new close: %i -> %i\n", index, tcp_table[index].port, tcp_table[index].local_port);
+    }*/
     else  //abort connetion
     {
       tcp_table[index].mac        = rx_eth->src_mac;
       tcp_table[index].ip         = rx_ip->src_ip;
       tcp_table[index].port       = swap16(rx_tcp->src_port);
       tcp_table[index].local_port = swap16(rx_tcp->dst_port);
-      tcp_table[index].acknum     = swap32(rx_tcp->seqnum)+1;
+      tcp_table[index].acknum     = swap32(rx_tcp->seqnum)+len+1;
       tcp_table[index].seqnum     = swap32(rx_tcp->acknum);
-      tcp_table[index].flags      = TCP_FLAG_RST;
+      tcp_table[index].flags      = TCP_FLAG_RST|TCP_FLAG_ACK;
       tcp_table[index].status     = TCP_CLOSED;
       tcp_table[index].time       = 0;
       tcp_table[index].error      = 0;
       tcp_send(index, 0, 0);
-      DEBUGOUT("Eth: TCP new: abort\n");
+      DEBUGOUT("Eth: (%i) TCP new abort: %i -> %i\n", index, tcp_table[index].port, tcp_table[index].local_port);
     }
   }
 
@@ -684,7 +768,7 @@ void make_tcp_header(unsigned int index, unsigned int len, unsigned int options)
   tx_tcp->reserved = 0x00;
   tx_tcp->flags    = tcp_table[index].flags;
 
-  if(tcp_table[index].local_port == SHOUTCAST_PORT) //shoutcast stream
+  if(tcp_table[index].local_port > 1000) //station stream
   {
     unsigned int free = vsbuf_free();
     if     (free > (TCP_WINDOW*2)){ tx_tcp->window = SWAP16(TCP_WINDOW/1);  }
@@ -829,16 +913,16 @@ void eth_timerservice(void) //called every second
       }
       else
       {
+        tcp_table[index].time = 0;
         switch(tcp_table[index].status)
         {
           case TCP_OPENED: //send last ack
             tcp_table[index].flags = TCP_FLAG_ACK;
-            tcp_table[index].time  = 0;
             tcp_send(index, 0, 0);
+            DEBUGOUT("Eth: (%i) TCP_OPENED (timer)\n", index);
             break;
           case TCP_OPEN: //send syn
             tcp_table[index].flags = TCP_FLAG_SYN;
-            tcp_table[index].time  = 0;
 #if defined(TCP_MSS)
             tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
             tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
@@ -849,19 +933,26 @@ void eth_timerservice(void) //called every second
 #else
             tcp_send(index, 0, 0);
 #endif
+            DEBUGOUT("Eth: (%i) TCP_OPEN (timer)\n", index);
             break;
           case TCP_ABORT: //close connection
             tcp_table[index].flags  = TCP_FLAG_RST;
-            tcp_table[index].status = TCP_CLOSED;
             tcp_send(index, 0, 0);
+            tcp_table[index].status = TCP_CLOSED;
+            DEBUGOUT("Eth: (%i) TCP_ABORT (timer)\n", index);
             break;
           case TCP_CLOSE: //send fin
-            tcp_table[index].flags = TCP_FLAG_FIN;
-            tcp_table[index].time  = 0;
+            tcp_table[index].flags  = TCP_FLAG_FIN|TCP_FLAG_ACK;
             tcp_send(index, 0, 0);
+            tcp_table[index].seqnum++;
+            tcp_table[index].flags  = TCP_FLAG_RST;
+            tcp_send(index, 0, 0);
+            tcp_table[index].status = TCP_CLOSED;
+            DEBUGOUT("Eth: (%i) TCP_CLOSE (timer)\n", index);
             break;
           case TCP_FIN:
             tcp_table[index].status = TCP_CLOSED;
+            DEBUGOUT("Eth: (%i) TCP_FIN (timer)\n", index);
             break;
         }
       }
@@ -966,29 +1057,31 @@ void eth_setname(char *name) //set NB & UPnP name (upper case)
   return;
 }
 
-void eth_setsummer(int on)             { dev.summer   = on; }
-void eth_settimediffh(int hours)       { dev.timediff = hours*3600; }
-void eth_settimediff(int seconds)      { dev.timediff = seconds; }
-void eth_setntp(IP_Addr ntp)           { dev.ntp      = ntp; }
-void eth_setdns(IP_Addr dns)           { dev.dns      = dns; }
-void eth_setdhcp(int on)               { dev.dhcp     = on; if(on){dhcp_getcfg();} }
-void eth_setrouter(IP_Addr r)          { dev.router   = r; }
-void eth_setnetmask(IP_Addr nm)        { dev.netmask  = nm; }
-void eth_setip(IP_Addr ip)             { dev.ip       = ip; }
-void eth_setmac(MAC_Addr mac)          { dev.mac      = mac; ethernet_setmac(mac); }
+void         eth_setsummer(int on)          { dev.summer   = on; }
+void         eth_settimediffh(int hours)    { dev.timediff = hours*3600; }
+void         eth_settimediff(int seconds)   { dev.timediff = seconds; }
+void         eth_setntp(IP_Addr ntp)        { dev.ntp      = ntp; }
+void         eth_setdns(IP_Addr dns)        { dev.dns      = dns; }
+unsigned int eth_setdhcp(int on)            { dev.dhcp     = on; 
+                                              if(on){ return dhcp_getcfg(); }
+                                              else  { return 1; } }
+void         eth_setrouter(IP_Addr r)       { dev.router   = r; }
+void         eth_setnetmask(IP_Addr nm)     { dev.netmask  = nm; }
+void         eth_setip(IP_Addr ip)          { dev.ip       = ip; }
+void         eth_setmac(MAC_Addr mac)       { dev.mac      = mac; ethernet_setmac(mac); }
 
 
-char*    eth_name(void)                { return dev.name; }
-int      eth_summer(void)              { return dev.summer; }
-int      eth_timediffh(void)           { return dev.timediff/3600; }
-int      eth_timediff(void)            { return dev.timediff; }
-IP_Addr  eth_ntp(void)                 { return dev.ntp; }
-IP_Addr  eth_dns(void)                 { return dev.dns; }
-int      eth_dhcp(void)                { return dev.dhcp; }
-IP_Addr  eth_router(void)              { return dev.router; }
-IP_Addr  eth_netmask(void)             { return dev.netmask; }
-IP_Addr  eth_ip(void)                  { return dev.ip; }
-MAC_Addr eth_mac(void)                 { return dev.mac; }
+char*        eth_getname(void)              { return dev.name; }
+int          eth_getsummer(void)            { return dev.summer; }
+int          eth_gettimediffh(void)         { return dev.timediff/3600; }
+int          eth_gettimediff(void)          { return dev.timediff; }
+IP_Addr      eth_getntp(void)               { return dev.ntp; }
+IP_Addr      eth_getdns(void)               { return dev.dns; }
+int          eth_getdhcp(void)              { return dev.dhcp; }
+IP_Addr      eth_getrouter(void)            { return dev.router; }
+IP_Addr      eth_getnetmask(void)           { return dev.netmask; }
+IP_Addr      eth_getip(void)                { return dev.ip; }
+MAC_Addr     eth_getmac(void)               { return dev.mac; }
 
 
 void eth_init(void)

@@ -28,15 +28,22 @@ char* strrmvspace(char *dst, const char *src)
 {
   unsigned int i;
 
-  //at start
-  for(i=0; isspace(src[i]); i++);
-  strcpy(dst, &src[i]);
-
-  //at end
-  i=strlen(dst)-1;
-  for(i=strlen(dst)-1; isspace(dst[i]); i--)
+  if(*src == 0)
   {
-    dst[i] = 0;
+    *dst = 0;
+  }
+  else
+  {
+    //at start
+    for(i=0; isspace(src[i]); i++);
+    strcpy(dst, &src[i]);
+  
+    //at end
+    i=strlen(dst)-1;
+    for(i=strlen(dst)-1; isspace(dst[i]); i--)
+    {
+      dst[i] = 0;
+    }
   }
 
   return dst;
@@ -152,7 +159,7 @@ int strncmpi(const char *s1, const char *s2, size_t n)
 }
 
 
-unsigned long uitoa(unsigned long n, char *str)
+void uitoa(unsigned long n, char *str)
 {
   char *ptr, c;
 
@@ -179,9 +186,9 @@ unsigned long uitoa(unsigned long n, char *str)
 }
 
 
-unsigned int atoui_hex(const char *s)
+unsigned long atoui_hex(const char *s)
 {
-  unsigned int value=0;
+  unsigned long value=0;
 
   if(!s)
   {
@@ -213,9 +220,9 @@ unsigned int atoui_hex(const char *s)
 }
 
 
-unsigned int atoui(const char *s)
+unsigned long atoui(const char *s)
 {
-  unsigned int value=0;
+  unsigned long value=0;
 
   if(!s)
   {

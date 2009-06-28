@@ -3,9 +3,9 @@
 
 
 //----- DEFINES -----
-#define DEFAULT_MAC                    "00-01-23-45-67-89"
+#define DEFAULT_MAC                    "00:01:23:45:67:89"
 #define DEFAULT_DHCP                   (1)
-#define DEFAULT_IP                     "192.168.000.50"
+#define DEFAULT_IP                     "192.168.000.050"
 #define DEFAULT_NETMASK                "255.255.255.000"
 #define DEFAULT_ROUTER                 "192.168.000.001"
 #define DEFAULT_DNS                    "192.168.000.001"
@@ -13,13 +13,13 @@
 #define DEFAULT_TIMEDIFF               (3600) //seconds (3600sec = 1h = GMT+1)
 #define DEFAULT_SUMMER                 (0)    //summer time on
 
-#define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
-#define ETH_TIMEOUT                    (8)                  //seconds (ARP request, DHCP request...)
-#define ETH_USE_DSCP                                        //use Differentiated Services Code Point (QoS -> DSCP)
+#define ETH_MTUSIZE                    (1500) //1500 bytes (rx and tx buffer)
+#define ETH_TIMEOUT                    (10) //seconds (ARP request, DHCP request, DNS request...)
+#define ETH_USE_DSCP                   //use Differentiated Services Code Point (QoS -> DSCP)
 
 #define TCP_MSS                        (ETH_MTUSIZE-ETH_HEADERLEN-IP_HEADERLEN-TCP_HEADERLEN) //Maximum Segment Size
 #define TCP_WINDOW                     (2048-256) //window size (ARM has 2kByte Rx FIFO for up to 31 frames)
-#define TCP_ENTRIES                    (5) //max TCP Table Entries
+#define TCP_ENTRIES                    (10) //max TCP Table Entries
 #define TCP_TIMEOUT                    (2) //seconds
 #define TCP_MAXERROR                   (3) //try x times
 #define TCP_CLOSED                     (0)
@@ -59,11 +59,11 @@ typedef struct
   IP_Addr  ip;
   IP_Addr  netmask;
   IP_Addr  router;
-  int      dhcp; //0 -> DHCP
+  int      dhcp;     //0 = DHCP off
   IP_Addr  dns;
   IP_Addr  ntp;
-  int      timediff; //Time Diff to GMT
-  int      summer;   //summer time
+  int      timediff; //Time Diff to GMT in seconds
+  int      summer;   //Summer Time
   char     name[16]; //NetBios Name
 } Device;
 
@@ -175,7 +175,7 @@ typedef struct __attribute__((packed))
   unsigned int     dst_port  : 16; //16bit Dst Port
   unsigned long    seqnum    : 32; //32bit Seqence Nubmer
   unsigned long    acknum    : 32; //32bit Acknowledgment Number
-  unsigned int     reserved  :  4; // 4bit reserved
+  unsigned int     reserved  :  4; // 4bit Reserved
   unsigned int     len       :  4; // 4bit Header Len in 32bit Steps
   unsigned int     flags     :  8; // 8bit Flags
   unsigned int     window    : 16; //16bit Window (max. 64Kbyte)
@@ -237,23 +237,23 @@ void                                   eth_settimediffh(int hours);  //hours
 void                                   eth_settimediff(int seconds); //seconds
 void                                   eth_setntp(IP_Addr ntp);
 void                                   eth_setdns(IP_Addr dns);
-void                                   eth_setdhcp(int on);
+unsigned int                           eth_setdhcp(int on);
 void                                   eth_setrouter(IP_Addr r);
 void                                   eth_setnetmask(IP_Addr nm);
 void                                   eth_setip(IP_Addr ip);
 void                                   eth_setmac(MAC_Addr mac);
 
-char*                                  eth_name(void);
-int                                    eth_summer(void);
-int                                    eth_timediffh(void); //hours
-int                                    eth_timediff(void);  //seconds
-IP_Addr                                eth_ntp(void);
-IP_Addr                                eth_dns(void);
-int                                    eth_dhcp(void);
-IP_Addr                                eth_router(void);
-IP_Addr                                eth_netmask(void);
-IP_Addr                                eth_ip(void);
-MAC_Addr                               eth_mac(void);
+char*                                  eth_getname(void);
+int                                    eth_getsummer(void);
+int                                    eth_gettimediffh(void); //hours
+int                                    eth_gettimediff(void);  //seconds
+IP_Addr                                eth_getntp(void);
+IP_Addr                                eth_getdns(void);
+int                                    eth_getdhcp(void);
+IP_Addr                                eth_getrouter(void);
+IP_Addr                                eth_getnetmask(void);
+IP_Addr                                eth_getip(void);
+MAC_Addr                               eth_getmac(void);
 
 void                                   eth_init(void);
 

@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -999,6 +999,165 @@ uDMAChannelModeGet(unsigned long ulChannel)
     // Return the mode to the caller.
     //
     return(ulControl);
+}
+
+//*****************************************************************************
+//
+//! Select the secondary peripheral for a set of uDMA channels.
+//!
+//! \param ulSecPeriphs is the logical or of the uDMA channels for which to
+//! use the secondary peripheral, instead of the default peripheral.
+//!
+//! This function is used to select the secondary peripheral assignment for
+//! a set of uDMA channels.  By selecting the secondary peripheral assignment
+//! for a channel, the default peripheral assignment is no longer available
+//! for that channel.
+//!
+//! The parameter \e ulSecPeriphs can be the logical OR of any of the
+//! following macros.  If one of the macros below is in the list passed
+//! to this function, then the secondary peripheral (marked as \b _SEC_)
+//! will be selected.
+//!
+//! - \b UDMA_DEF_USBEP1RX_SEC_UART2RX
+//! - \b UDMA_DEF_USBEP1TX_SEC_UART2TX
+//! - \b UDMA_DEF_USBEP2RX_SEC_TMR3A
+//! - \b UDMA_DEF_USBEP2TX_SEC_TMR3B
+//! - \b UDMA_DEF_USBEP3RX_SEC_TMR2A
+//! - \b UDMA_DEF_USBEP3TX_SEC_TMR2B
+//! - \b UDMA_DEF_ETH0RX_SEC_TMR2A
+//! - \b UDMA_DEF_ETH0TX_SEC_TMR2B
+//! - \b UDMA_DEF_UART0RX_SEC_UART1RX
+//! - \b UDMA_DEF_UART0TX_SEC_UART1TX
+//! - \b UDMA_DEF_SSI0RX_SEC_SSI1RX
+//! - \b UDMA_DEF_SSI0TX_SEC_SSI1TX
+//! - \b UDMA_DEF_RESERVED_SEC_UART2RX
+//! - \b UDMA_DEF_RESERVED_SEC_UART2TX
+//! - \b UDMA_DEF_ADC00_SEC_TMR2A
+//! - \b UDMA_DEF_ADC01_SEC_TMR2B
+//! - \b UDMA_DEF_ADC02_SEC_RESERVED
+//! - \b UDMA_DEF_ADC03_SEC_RESERVED
+//! - \b UDMA_DEF_TMR0A_SEC_TMR1A
+//! - \b UDMA_DEF_TMR0B_SEC_TMR1B
+//! - \b UDMA_DEF_TMR1A_SEC_GPIORX
+//! - \b UDMA_DEF_TMR1B_SEC_GPIOTX
+//! - \b UDMA_DEF_UART1RX_SEC_RESERVED
+//! - \b UDMA_DEF_UART1TX_SEC_RESERVED
+//! - \b UDMA_DEF_SSI1RX_SEC_ADC10
+//! - \b UDMA_DEF_SSI1TX_SEC_ADC11
+//! - \b UDMA_DEF_RESERVED_SEC_ADC12
+//! - \b UDMA_DEF_RESERVED_SEC_ADC13
+//! - \b UDMA_DEF_I2S0RX_SEC_RESERVED
+//! - \b UDMA_DEF_I2S0TX_SEC_RESERVED
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+uDMAChannelSelectSecondary(unsigned long ulSecPeriphs)
+{
+    //
+    // Select the secondary peripheral for the specified channels.
+    //
+    HWREG(UDMA_CHALT) |= ulSecPeriphs;
+}
+
+//*****************************************************************************
+//
+//! Select the default peripheral for a set of uDMA channels.
+//!
+//! \param ulDefPeriphs is the logical or of the uDMA channels for which to
+//! use the default peripheral, instead of the secondary peripheral.
+//!
+//! This function is used to select the default peripheral assignment for
+//! a set of uDMA channels.
+//!
+//! The parameter \e ulDefPeriphs can be the logical OR of any of the
+//! following macros.  If one of the macros below is in the list passed
+//! to this function, then the default peripheral (marked as \b _DEF_)
+//! will be selected.
+//!
+//! - \b UDMA_DEF_USBEP1RX_SEC_UART2RX
+//! - \b UDMA_DEF_USBEP1TX_SEC_UART2TX
+//! - \b UDMA_DEF_USBEP2RX_SEC_TMR3A
+//! - \b UDMA_DEF_USBEP2TX_SEC_TMR3B
+//! - \b UDMA_DEF_USBEP3RX_SEC_TMR2A
+//! - \b UDMA_DEF_USBEP3TX_SEC_TMR2B
+//! - \b UDMA_DEF_ETH0RX_SEC_TMR2A
+//! - \b UDMA_DEF_ETH0TX_SEC_TMR2B
+//! - \b UDMA_DEF_UART0RX_SEC_UART1RX
+//! - \b UDMA_DEF_UART0TX_SEC_UART1TX
+//! - \b UDMA_DEF_SSI0RX_SEC_SSI1RX
+//! - \b UDMA_DEF_SSI0TX_SEC_SSI1TX
+//! - \b UDMA_DEF_RESERVED_SEC_UART2RX
+//! - \b UDMA_DEF_RESERVED_SEC_UART2TX
+//! - \b UDMA_DEF_ADC00_SEC_TMR2A
+//! - \b UDMA_DEF_ADC01_SEC_TMR2B
+//! - \b UDMA_DEF_ADC02_SEC_RESERVED
+//! - \b UDMA_DEF_ADC03_SEC_RESERVED
+//! - \b UDMA_DEF_TMR0A_SEC_TMR1A
+//! - \b UDMA_DEF_TMR0B_SEC_TMR1B
+//! - \b UDMA_DEF_TMR1A_SEC_GPIORX
+//! - \b UDMA_DEF_TMR1B_SEC_GPIOTX
+//! - \b UDMA_DEF_UART1RX_SEC_RESERVED
+//! - \b UDMA_DEF_UART1TX_SEC_RESERVED
+//! - \b UDMA_DEF_SSI1RX_SEC_ADC10
+//! - \b UDMA_DEF_SSI1TX_SEC_ADC11
+//! - \b UDMA_DEF_RESERVED_SEC_ADC12
+//! - \b UDMA_DEF_RESERVED_SEC_ADC13
+//! - \b UDMA_DEF_I2S0RX_SEC_RESERVED
+//! - \b UDMA_DEF_I2S0TX_SEC_RESERVED
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
+{
+    //
+    // Select the default peripheral for the specified channels.
+    //
+    HWREG(UDMA_CHALT) &= ~ulDefPeriphs;
+}
+
+//*****************************************************************************
+//
+//! Gets the uDMA controller channel interrupt status.
+//!
+//! This function is used to get the interrupt status of the uDMA controller.
+//! The returned value is a 32-bit bit mask that indicates which channels are
+//! requesting an interrupt.  This function can be used from within an
+//! interrupt handler to determine or confirm which uDMA channel has requested
+//! an interrupt.
+//!
+//! \return Returns a 32-bit mask which indicates requesting uDMA channels.
+//! There is a bit for each channel, and a 1 in a bit indicates that channel
+//! is requesting an interrupt.  Multiple bits can be set.
+//
+//*****************************************************************************
+unsigned long
+uDMAIntStatus(void)
+{
+    return(HWREG(UDMA_CHIS));
+}
+
+//*****************************************************************************
+//
+//! Clears uDMA interrupt status.
+//!
+//! \param ulChanMask is a 32-bit mask with one bit for each uDMA channel.
+//!
+//! Clears bits in the uDMA interrupt status register according to which bits
+//! are set in \e ulChanMask.  There is one bit for each channel.  If a a bit
+//! is set in \e ulChanMask, then that corresponding channel's interrupt
+//! status will be cleared (if it was set).
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+uDMAIntClear(unsigned long ulChanMask)
+{
+    HWREG(UDMA_CHIS) = ulChanMask;
 }
 
 //*****************************************************************************

@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include "../tools.h"
 #include "../main.h"
+#include "../vs.h"
 #include "../eth.h"
 #include "../menu.h"
 #include "utils.h"
@@ -14,34 +15,35 @@
 
 
 #define CONTROL_ACTION_RESP "" \
- "<?xml version='1.0'?>\r\n" \
- "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>\r\n" \
- "  <s:Body>\r\n" \
- "    <u:%sResponse xmlns:u='urn:schemas-upnp-org:service:REMOTE:1'>\r\n" \
- "      <%s>%s</%s>\r\n" \
- "    </u:%sResponse>\r\n" \
- "  </s:Body>\r\n" \
- "</s:Envelope>\r\n"
+  "<?xml version='1.0'?>\r\n" \
+  "<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/' s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'>\r\n" \
+  "  <s:Body>\r\n" \
+  "    <u:%sResponse xmlns:u='urn:schemas-upnp-org:service:REMOTE:1'>\r\n" \
+  "      <%s>%s</%s>\r\n" \
+  "    </u:%sResponse>\r\n" \
+  "  </s:Body>\r\n" \
+  "</s:Envelope>\r\n" \
+  "\r\n"
 
 
 char upnp_id[20+1] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //uuid: xxxx-xx-xx-xx-xxxxxx
 
 
-unsigned int upnp_port(void)
+unsigned int upnp_getport(void)
 {
   return UPNP_PORT;
 }
 
 
-char *upnp_uuid(void)
+char *upnp_getuuid(void)
 {
   return upnp_id;
 }
 
 
-unsigned int upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
-  unsigned int tx_len=0;
+  unsigned int tx_len;
   const char *s;
   char tmp[16];
 
@@ -49,12 +51,11 @@ unsigned int upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned i
 
   if(rx_len)
   {
-
     if(strncmpi(rx, "GET ", 4) == 0)
     {
       rx     += 4;
       rx_len -= 4;
-      tx_len  = http_getfile(tx, rx);
+      http_sendfile(index, rx, tx);
     }
     else if(strncmpi(rx, "POST /control", 13) == 0)
     {
@@ -66,32 +67,35 @@ unsigned int upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned i
       {
         s += 9;
   
-        tx_len  = sprintf(tx, HTTP_XML_HEADER);
-        tx += tx_len;
-  
+        tx_len = sprintf(tx, HTTP_XML_HEADER"\r\n\r\n");
+        tx    += tx_len;
         if(strncmpi(s, "SETVOLUME", 7) == 0)
         {
           strstrk(tmp, rx, "<s:Envelope\0<s:Body\0<u:SETVOLUME\0<VOLUME>\0\0");
           vs_setvolume(atoi(tmp));
-          menu_drawvol();
-          sprintf(tmp, "%i", vs_volume());
+          sprintf(tmp, "%i", vs_getvolume());
           tx_len += sprintf(tx, CONTROL_ACTION_RESP, "SETVOLUME", "VOLUME", tmp, "VOLUME", "SETVOLUME");
         }
         else if(strncmpi(s, "GETVOLUME", 7) == 0)
         {
-          sprintf(tmp, "%i", vs_volume());
+          sprintf(tmp, "%i", vs_getvolume());
           tx_len += sprintf(tx, CONTROL_ACTION_RESP, "GETVOLUME", "VOLUME", tmp, "VOLUME", "GETVOLUME");
         }
+        tcp_send(index, tx_len, 0);
+        tcp_close(index);
       }
     }
     else
     {
       tx_len = sprintf(tx, HTTP_400_HEADER);
+      tcp_send(index, tx_len, 0);
+      tcp_close(index);
     }
-
-    tcp_send(index, tx_len, 0);
-    tcp_close(index);
+  }
+  else
+  {
+    http_sendfile(index, 0, tx);
   }
 
-  return tx_len;
+  return;
 }

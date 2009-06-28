@@ -6,7 +6,70 @@
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
+#include "dns.h"
 #include "utils.h"
+
+
+unsigned int base64_test(char c)
+{
+  const char table[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  unsigned int i;
+
+  for(i=0; i<64; i++)
+  {
+    if(table[i] == c)
+    {
+      return i+1;
+    }
+  }
+
+  return 0;
+}
+
+
+unsigned int base64_decode(unsigned char *dst, const unsigned char *src, unsigned int len)
+{
+  unsigned int i, pos=0, written=0;
+  unsigned char c, buf[4];
+
+  //skip none-base64 characters
+  while((base64_test(*src) == 0) && (pos<len)){ src++; pos++; }
+
+  //decode data
+  while(1)
+  {
+    for(i=0; (i<4) && (pos<len); src++, pos++)
+    {
+      c = base64_test(*src);
+      if(c)
+      {
+        buf[i++] = c-1;
+      }
+      else if(*src == '=')
+      {
+        buf[i++] = 0;
+      }
+      else
+      {
+        break;
+      }
+    }
+
+    if(i == 4)
+    {
+      *dst++ =  (buf[0]       << 2) | ((buf[1]&0x30) >> 4);
+      *dst++ = ((buf[1]&0x0F) << 4) | ((buf[2]&0x3C) >> 2);
+      *dst++ = ((buf[2]&0x03) << 6) |   buf[3];
+      written += 3;
+    }
+    else
+    {
+      break;
+    }
+  }
+
+  return written;
+}
 
 
 unsigned int uuid_test(char *uuid) //uuid: xxxx-xx-xx-xx-xxxxxx
@@ -90,24 +153,125 @@ void nbns_encode(char *dst, char *src, unsigned int type)
 }
 
 
-unsigned int http_getparam(char *dst, size_t dst_len, const char *src, const char *param)
+unsigned int url_decode(char *dst, const char *src, unsigned int len)
 {
+  unsigned int i;
+  char c, *ptr, buf[4]={0,0,0,0};
+
+  ptr = dst; //save dst
+
+  for(i=0; i<len;)
+  {
+    c = *src++; i++;
+    if((c == 0)    || 
+       (c == '&')  ||
+       (c == ' ')  ||
+       (c == '\n') ||
+       (c == '\r'))
+    {
+      break;
+    }
+    else if(c == '%')
+    {
+      buf[0] = *src++; i++;
+      buf[1] = *src++; i++;
+      *dst++ = (unsigned char)atoui_hex(buf);
+    }
+    else if(c == '+')
+    {
+      *dst++ = ' ';
+    }
+    else
+    {
+      *dst++ = c;
+    }
+  }
+
+  *dst = 0;
+
+  //remove space at start and end of string
+  strrmvspace(ptr, ptr);
+
+  return i;
+}
+
+
+char* http_skiphd(char *src, unsigned int *len)
+{
+  unsigned int i;
+ 
+  for(i=*len; i!=0; i--, src++)
+  {
+    if(i >= 4)
+    {
+      if((src[0] == '\r') && (src[1] == '\n') && (src[2] == '\r') && (src[3] == '\n'))
+      {
+        src += 4;
+        i   -= 4;
+        break;
+      }
+    }
+  }
+
+  *len = i;
+
+  return src;
+}
+
+
+unsigned int http_hdparamcontentlen(const char *src)
+{
+  char buf[16];
+  unsigned int i;
+
+  if(http_hdparam(buf, 16-1, src, "CONTENT-LENGTH:") == 0)
+  {
+    for(i=0; buf[i] && !isdigit(buf[i]); i++);//skip non-digits
+    return atoi(&buf[i]);
+  }
+
+  return 0;
+}
+
+
+unsigned long http_hdparamul(const char *src, const char *param)
+{
+  char buf[16];
+  unsigned int i;
+
+  if(http_hdparam(buf, 16-1, src, param) == 0)
+  {
+    for(i=0; buf[i] && !isdigit(buf[i]); i++);//skip non-digits
+    return atoui(&buf[i]);
+  }
+
+  return 0;
+}
+
+
+unsigned int http_hdparam(char *dst, size_t dst_len, const char *src, const char *param)
+{
+  char *ptr;
+
+  ptr = dst; //save dst
+
   src = strstri(src, param);
   if(src)
   {
     src += strlen(param);
-    while(*src && (*src==' ')){ src++; } //skip spaces
-    if(*src && !isspace(*src))
+    for(; dst_len!=0; dst_len--)
     {
-      for(; dst_len!=0; dst_len--)
+      if((*src==0) || (*src=='\n') || (*src=='\r'))
       {
-        if((*src==0) || (*src=='\n') || (*src=='\r'))
-        {
-          break;
-        }
-        *dst++ = *src++;
+        break;
       }
-      *dst = 0;
+      *dst++ = *src++;
+    }
+    *dst = 0;
+    //remove space at start and end of string
+    strrmvspace(ptr, ptr);
+    if(strlen(ptr))
+    {
       return 0;
     }
   }
@@ -116,16 +280,18 @@ unsigned int http_getparam(char *dst, size_t dst_len, const char *src, const cha
 }
 
 
-unsigned int http_getresponse(const char *src)
+unsigned int http_response(const char *src)
 {
-  unsigned int search = 16;
+  unsigned int search=16;
+
+  while((*src==' ') && search){ src++; search--; } //skip spaces
 
   if((strncmpi(src, "ICY", 3)  == 0) ||
      (strncmpi(src, "HTTP", 4) == 0) ||
      (strncmpi(src, "RTSP", 4) == 0))
   {
     while(*src && (*src!=' ') && search){ src++; search--; } //skip proto name
-    while(*src && (*src==' ') && search){ src++; search--; } //skip spaces
+    while(        (*src==' ') && search){ src++; search--; } //skip spaces
     if(search)
     {
       return atoi(src);
@@ -142,17 +308,17 @@ unsigned long generate_id(void)
 
   if(getmstime()&0x01)
   {
-    return eth_mac()+rand();
+    return eth_getmac()+rand();
   }
   else
   {
-    return eth_mac()-rand();
+    return eth_getmac()-rand();
   }
 }
 
 
-//proto://user:password@xxx.xxx.xxx.xxx/abc
-//proto://user:password@domain/abc
+//proto://user:password@xxx.xxx.xxx.xxx:port/file
+//proto://user:password@domain:port/file
 void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned int *port, char *file)
 {
   if(proto){ *proto = 0; }
@@ -162,7 +328,7 @@ void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned
   if(port) { *port  = 0; }
   if(file) { *file++ = '/'; *file = 0; }
 
-  while(*s && (*s==' ')){ s++; } //skip spaces
+  while(*s==' '){ s++; } //skip spaces
 
   //get proto
   if(strncmpi(s, "ftp://", 6) == 0)
@@ -180,7 +346,6 @@ void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned
     {
       strcpy(proto, "http");
     }
-    *port = 80;
   }
   else if(strncmpi(s, "mms://", 6) == 0)
   {
@@ -190,6 +355,14 @@ void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned
       strcpy(proto, "mms");
     }
   }
+  else if(strncmpi(s, "nfs://", 6) == 0)
+  {
+    s += 6;
+    if(proto)
+    {
+      strcpy(proto, "nfs");
+    }
+  }
   else if(strncmpi(s, "rtsp://", 7) == 0)
   {
     s += 7;
@@ -197,7 +370,6 @@ void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned
     {
       strcpy(proto, "rtsp");
     }
-    *port = 554;
   }
   else if(strncmpi(s, "smb://", 6) == 0)
   {
