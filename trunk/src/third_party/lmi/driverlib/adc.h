@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -74,6 +74,14 @@ extern "C"
 #define ADC_CTL_CH5             0x00000005  // Input channel 5
 #define ADC_CTL_CH6             0x00000006  // Input channel 6
 #define ADC_CTL_CH7             0x00000007  // Input channel 7
+#define ADC_CTL_CH8             0x00000008  // Input channel 8
+#define ADC_CTL_CH9             0x00000009  // Input channel 9
+#define ADC_CTL_CH10            0x0000000A  // Input channel 10
+#define ADC_CTL_CH11            0x0000000B  // Input channel 11
+#define ADC_CTL_CH12            0x0000000C  // Input channel 12
+#define ADC_CTL_CH13            0x0000000D  // Input channel 13
+#define ADC_CTL_CH14            0x0000000E  // Input channel 14
+#define ADC_CTL_CH15            0x0000000F  // Input channel 15
 
 //*****************************************************************************
 //

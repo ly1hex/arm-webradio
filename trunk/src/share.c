@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
-#include "io.h"
-#include "eth.h"
-#include "eth/utils.h"
+#include "mmc.h"
+#include "vs.h"
 #include "menu.h"
+#include "eth.h"
 #include "buffer.h"
 #include "share.h"
 
@@ -75,9 +75,9 @@ void share_init(void)
 {
   DEBUGOUT("Share: init\n");
 
-  gbuf.card.name[0] = 0;
-  gbuf.card.info[0] = 0;
-  gbuf.card.file[0] = 0;
+  gbuf.share.name[0] = 0;
+  gbuf.share.info[0] = 0;
+  gbuf.share.file[0] = 0;
 
   return;
 }

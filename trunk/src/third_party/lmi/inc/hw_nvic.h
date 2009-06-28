@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Firmware Development Package.
+// This is part of revision 4694 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -60,6 +60,8 @@
 #define NVIC_PRI9               0xE000E424  // IRQ 36 to 39 Priority Register
 #define NVIC_PRI10              0xE000E428  // IRQ 40 to 43 Priority Register
 #define NVIC_PRI11              0xE000E42C  // IRQ 44 to 47 Priority Register
+#define NVIC_PRI12              0xE000E430  // IRQ 48 to 51 Priority Register
+#define NVIC_PRI13              0xE000E434  // IRQ 52 to 55 Priority Register
 #define NVIC_CPUID              0xE000ED00  // CPUID Base Register
 #define NVIC_INT_CTRL           0xE000ED04  // Interrupt Control State Register
 #define NVIC_VTABLE             0xE000ED08  // Vector Table Offset Register

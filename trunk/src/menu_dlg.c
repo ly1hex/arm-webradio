@@ -5,7 +5,6 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -736,7 +735,7 @@ unsigned int dlg_rawir(unsigned int i)
 
   menu_drawdlg("Raw IR Data", "Press a key on the\nremote control...");
 
-  curr_addr = ir_addr();
+  curr_addr = ir_getaddr();
   ir_setaddr(IR_ALLADDR);
 
   do

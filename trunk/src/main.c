@@ -17,17 +17,21 @@
 #include "third_party/lmi/driverlib/gpio.h"
 #include "third_party/lmi/driverlib/interrupt.h"
 #include "third_party/lmi/driverlib/systick.h"
+#include "third_party/lmi/driverlib/uart.h"
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
 #include "lcd.h"
+#include "mmc_io.h"
 #include "mmc.h"
 #include "vs.h"
 #include "eth.h"
+#include "eth/ntp.h"
+#include "eth/ssdp.h"
 #include "menu.h"
 #include "alarm.h"
+#include "settings.h"
 
 
 volatile unsigned int status=0;
@@ -257,6 +261,20 @@ char* getdate(void)
 }
 
 
+void gettime(TIME* t)
+{
+  t->year  = time.year;
+  t->month = time.month;
+  t->day   = time.day;
+  t->wday  = time.wday;
+  t->h     = time.h;
+  t->m     = time.m;
+  t->s     = time.s;
+
+  return;
+}
+
+
 void settime(unsigned long s)
 {
   TIME t;
@@ -339,7 +357,6 @@ unsigned int standby(unsigned int param)
   DEBUGOUT("Standby\n");
 
   vs_stop();
-  fs_unmount();
   lcd_clear(RGB(0,0,0));
   tmp[0] = clock_str[0];
   tmp[1] = clock_str[1];
@@ -411,6 +428,7 @@ unsigned int standby(unsigned int param)
     }
   }
 
+  fs_unmount();
   fs_mount();
 
   cpu_speed(0); //high speed
@@ -503,8 +521,8 @@ int main()
 
   //show start-up screen
   lcd_clear(DEFAULT_BGCOLOR);
-  lcd_rect( 0,   0, LCD_WIDTH-1, 13, DEFAULT_EDGECOLOR);
-  lcd_puts(30,   3, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_rect( 0,   0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
+  lcd_puts(10,   2, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_rect( 0, 118, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, 121, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_puts(10,  20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);

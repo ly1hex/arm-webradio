@@ -19,7 +19,6 @@
 #include "third_party/lmi/driverlib/ethernet.h"
 #include "tools.h"
 #include "main.h"
-#include "menu.h"
 #include "io.h"
 
 
@@ -435,7 +434,7 @@ void ir_edge(void)
 }
 
 
-unsigned int ir_addr(void)
+unsigned int ir_getaddr(void)
 {
   return (ir_address>>6);
 }

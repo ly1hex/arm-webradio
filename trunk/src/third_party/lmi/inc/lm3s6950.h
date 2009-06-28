@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Firmware Development Package.
+// This is part of revision 4694 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -799,7 +799,7 @@
 #define SSI_CR0_SPO             0x00000040  // SSI Serial Clock Polarity.
 #define SSI_CR0_FRF_M           0x00000030  // SSI Frame Format Select.
 #define SSI_CR0_FRF_MOTO        0x00000000  // Freescale SPI Frame Format
-#define SSI_CR0_FRF_TI          0x00000010  // Texas Intruments Synchronous
+#define SSI_CR0_FRF_TI          0x00000010  // Texas Instruments Synchronous
                                             // Serial Frame Format
 #define SSI_CR0_FRF_NMW         0x00000020  // MICROWIRE Frame Format
 #define SSI_CR0_DSS_M           0x0000000F  // SSI Data Size Select.
@@ -1689,8 +1689,6 @@
 //
 //*****************************************************************************
 #define TIMER_CTL_TBPWML        0x00004000  // GPTM TimerB PWM Output Level.
-#define TIMER_CTL_TBOTE         0x00002000  // GPTM TimerB Output Trigger
-                                            // Enable.
 #define TIMER_CTL_TBEVENT_M     0x00000C00  // GPTM TimerB Event Mode.
 #define TIMER_CTL_TBEVENT_POS   0x00000000  // Positive edge
 #define TIMER_CTL_TBEVENT_NEG   0x00000400  // Negative edge
@@ -1698,8 +1696,6 @@
 #define TIMER_CTL_TBSTALL       0x00000200  // GPTM TimerB Stall Enable.
 #define TIMER_CTL_TBEN          0x00000100  // GPTM TimerB Enable.
 #define TIMER_CTL_TAPWML        0x00000040  // GPTM TimerA PWM Output Level.
-#define TIMER_CTL_TAOTE         0x00000020  // GPTM TimerA Output Trigger
-                                            // Enable.
 #define TIMER_CTL_RTCEN         0x00000010  // GPTM RTC Enable.
 #define TIMER_CTL_TAEVENT_M     0x0000000C  // GPTM TimerA Event Mode.
 #define TIMER_CTL_TAEVENT_POS   0x00000000  // Positive edge
@@ -2011,7 +2007,7 @@
 #define MAC_RIS_PHYINT          0x00000040  // PHY Interrupt.
 #define MAC_RIS_MDINT           0x00000020  // MII Transaction Complete.
 #define MAC_RIS_RXER            0x00000010  // Receive Error.
-#define MAC_RIS_FOV             0x00000008  // FIFO Overrrun.
+#define MAC_RIS_FOV             0x00000008  // FIFO Overrun.
 #define MAC_RIS_TXEMP           0x00000004  // Transmit FIFO Empty.
 #define MAC_RIS_TXER            0x00000002  // Transmit Error.
 #define MAC_RIS_RXINT           0x00000001  // Packet Received.
@@ -2077,7 +2073,7 @@
 #define MAC_IM_PHYINTM          0x00000040  // Mask PHY Interrupt.
 #define MAC_IM_MDINTM           0x00000020  // Mask MII Transaction Complete.
 #define MAC_IM_RXERM            0x00000010  // Mask Receive Error.
-#define MAC_IM_FOVM             0x00000008  // Mask FIFO Overrrun.
+#define MAC_IM_FOVM             0x00000008  // Mask FIFO Overrun.
 #define MAC_IM_TXEMPM           0x00000004  // Mask Transmit FIFO Empty.
 #define MAC_IM_TXERM            0x00000002  // Mask Transmit Error.
 #define MAC_IM_RXINTM           0x00000001  // Mask Packet Received.
@@ -2244,9 +2240,6 @@
 #define PHY_MR23_LED1_M         0x000000F0  // LED1 Source.
 #define PHY_MR23_LED1_LINK      0x00000000  // Link OK
 #define PHY_MR23_LED1_RXTX      0x00000010  // RX or TX Activity (Default LED1)
-#define PHY_MR23_LED1_TX        0x00000020  // TX Activity
-#define PHY_MR23_LED1_RX        0x00000030  // RX Activity
-#define PHY_MR23_LED1_COL       0x00000040  // Collision
 #define PHY_MR23_LED1_100       0x00000050  // 100BASE-TX mode
 #define PHY_MR23_LED1_10        0x00000060  // 10BASE-T mode
 #define PHY_MR23_LED1_DUPLEX    0x00000070  // Full-Duplex
@@ -2255,9 +2248,6 @@
 #define PHY_MR23_LED0_M         0x0000000F  // LED0 Source.
 #define PHY_MR23_LED0_LINK      0x00000000  // Link OK (Default LED0)
 #define PHY_MR23_LED0_RXTX      0x00000001  // RX or TX Activity
-#define PHY_MR23_LED0_TX        0x00000002  // TX Activity
-#define PHY_MR23_LED0_RX        0x00000003  // RX Activity
-#define PHY_MR23_LED0_COL       0x00000004  // Collision
 #define PHY_MR23_LED0_100       0x00000005  // 100BASE-TX mode
 #define PHY_MR23_LED0_10        0x00000006  // 10BASE-T mode
 #define PHY_MR23_LED0_DUPLEX    0x00000007  // Full-Duplex
@@ -2389,7 +2379,7 @@
 //
 //*****************************************************************************
 #define HIB_CTL_VABORT          0x00000080  // Power Cut Abort Enable.
-#define HIB_CTL_CLK32EN         0x00000040  // 32-kHz Oscillator Enable.
+#define HIB_CTL_CLK32EN         0x00000040  // Clocking Enable.
 #define HIB_CTL_LOWBATEN        0x00000020  // Low Battery Monitoring Enable.
 #define HIB_CTL_PINWEN          0x00000010  // External WAKE Pin Enable.
 #define HIB_CTL_RTCWEN          0x00000008  // RTC Wake-up Enable.
@@ -2877,12 +2867,10 @@
 #define SYSCTL_RCC_XTAL_8MHZ    0x00000380  // 8 MHz
 #define SYSCTL_RCC_XTAL_8_19MHZ 0x000003C0  // 8.192 MHz
 #define SYSCTL_RCC_OSCSRC_M     0x00000030  // Oscillator Source.
-#define SYSCTL_RCC_OSCSRC_MAIN  0x00000000  // Main oscillator
-#define SYSCTL_RCC_OSCSRC_INT   0x00000010  // Internal oscillator (default)
-#define SYSCTL_RCC_OSCSRC_INT4  0x00000020  // Internal oscillator / 4 (this is
-                                            // necessary if used as input to
-                                            // PLL)
-#define SYSCTL_RCC_OSCSRC_30    0x00000030  // 30 KHz internal oscillator
+#define SYSCTL_RCC_OSCSRC_MAIN  0x00000000  // MOSC
+#define SYSCTL_RCC_OSCSRC_INT   0x00000010  // IOSC
+#define SYSCTL_RCC_OSCSRC_INT4  0x00000020  // IOSC/4
+#define SYSCTL_RCC_OSCSRC_30    0x00000030  // 30 kHz
 #define SYSCTL_RCC_IOSCDIS      0x00000002  // Internal Oscillator Disable.
 #define SYSCTL_RCC_MOSCDIS      0x00000001  // Main Oscillator Disable.
 
@@ -2969,11 +2957,11 @@
 #define SYSCTL_RCC2_PWRDN2      0x00002000  // Power-Down PLL.
 #define SYSCTL_RCC2_BYPASS2     0x00000800  // Bypass PLL.
 #define SYSCTL_RCC2_OSCSRC2_M   0x00000070  // Oscillator Source.
-#define SYSCTL_RCC2_OSCSRC2_MO  0x00000000  // Main oscillator (MOSC)
-#define SYSCTL_RCC2_OSCSRC2_IO  0x00000010  // Internal oscillator (IOSC)
-#define SYSCTL_RCC2_OSCSRC2_IO4 0x00000020  // Internal oscillator / 4
-#define SYSCTL_RCC2_OSCSRC2_30  0x00000030  // 30 kHz internal oscillator
-#define SYSCTL_RCC2_OSCSRC2_32  0x00000070  // 32 kHz external oscillator
+#define SYSCTL_RCC2_OSCSRC2_MO  0x00000000  // MOSC
+#define SYSCTL_RCC2_OSCSRC2_IO  0x00000010  // IOSC
+#define SYSCTL_RCC2_OSCSRC2_IO4 0x00000020  // IOSC/4
+#define SYSCTL_RCC2_OSCSRC2_30  0x00000030  // 30 kHz
+#define SYSCTL_RCC2_OSCSRC2_32  0x00000070  // 32 kHz
 #define SYSCTL_RCC2_SYSDIV2_S   23
 
 //*****************************************************************************
@@ -3125,10 +3113,10 @@
 //*****************************************************************************
 #define SYSCTL_DSLPCLKCFG_D_M   0x1F800000  // Divider Field Override.
 #define SYSCTL_DSLPCLKCFG_O_M   0x00000070  // Clock Source.
-#define SYSCTL_DSLPCLKCFG_O_IGN 0x00000000  // NOORIDE
+#define SYSCTL_DSLPCLKCFG_O_IGN 0x00000000  // MOSC
 #define SYSCTL_DSLPCLKCFG_O_IO  0x00000010  // IOSC
-#define SYSCTL_DSLPCLKCFG_O_30  0x00000030  // 30kHz
-#define SYSCTL_DSLPCLKCFG_O_32  0x00000070  // 32kHz
+#define SYSCTL_DSLPCLKCFG_O_30  0x00000030  // 30 kHz
+#define SYSCTL_DSLPCLKCFG_O_32  0x00000070  // 32 kHz
 #define SYSCTL_DSLPCLKCFG_D_S   23
 
 //*****************************************************************************

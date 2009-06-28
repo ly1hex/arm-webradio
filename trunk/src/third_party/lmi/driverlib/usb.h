@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -46,7 +46,7 @@ extern "C"
 // are returned from USBIntStatus().
 //
 //*****************************************************************************
-#define USB_INT_ALL             0xFF010E0F  // All Interrupt sources
+#define USB_INT_ALL             0xFF030E0F  // All Interrupt sources
 #define USB_INT_STATUS          0xFF000000  // Status Interrupts
 #define USB_INT_VBUS_ERR        0x80000000  // VBUS Error
 #define USB_INT_SESSION_START   0x40000000  // Session Start Detected
@@ -58,6 +58,7 @@ extern "C"
 #define USB_INT_RESET           0x04000000  // Reset signaled
 #define USB_INT_RESUME          0x02000000  // Resume detected
 #define USB_INT_SUSPEND         0x01000000  // Suspend detected
+#define USB_INT_MODE_DETECT     0x00020000  // Mode value valid
 #define USB_INT_POWER_FAULT     0x00010000  // Power Fault detected
 #define USB_INT_HOST_IN         0x00000E00  // Host IN Interrupts
 #define USB_INT_DEV_OUT         0x00000E00  // Device OUT Interrupts
@@ -206,7 +207,19 @@ extern "C"
 #define USB_EP_1                0x00000010  // Endpoint 1
 #define USB_EP_2                0x00000020  // Endpoint 2
 #define USB_EP_3                0x00000030  // Endpoint 3
-#define NUM_USB_EP              4           // Number of supported endpoints
+#define USB_EP_4                0x00000040  // Endpoint 4
+#define USB_EP_5                0x00000050  // Endpoint 5
+#define USB_EP_6                0x00000060  // Endpoint 6
+#define USB_EP_7                0x00000070  // Endpoint 7
+#define USB_EP_8                0x00000080  // Endpoint 8
+#define USB_EP_9                0x00000090  // Endpoint 9
+#define USB_EP_10               0x000000A0  // Endpoint 10
+#define USB_EP_11               0x000000B0  // Endpoint 11
+#define USB_EP_12               0x000000C0  // Endpoint 12
+#define USB_EP_13               0x000000D0  // Endpoint 13
+#define USB_EP_14               0x000000E0  // Endpoint 14
+#define USB_EP_15               0x000000F0  // Endpoint 15
+#define NUM_USB_EP              16          // Number of supported endpoints
 
 //*****************************************************************************
 //
@@ -276,6 +289,31 @@ extern "C"
                                             // 0)
 #define USB_TRANS_STATUS        0x00000142  // Status transaction (for endpoint
                                             // 0)
+
+//*****************************************************************************
+//
+// The following are values are returned by the USBModeGet function.
+//
+//*****************************************************************************
+#define USB_DUAL_MODE_HOST      0x00000001  // Dual mode controller is in Host
+                                            // mode.
+#define USB_DUAL_MODE_DEVICE    0x00000081  // Dual mode controller is in
+                                            // Device mode.
+#define USB_DUAL_MODE_NONE      0x00000080  // Dual mode controller mode is not
+                                            // set.
+#define USB_OTG_MODE_ASIDE_HOST 0x0000001d  // OTG controller on the A side of
+                                            // the cable.
+#define USB_OTG_MODE_ASIDE_NPWR 0x00000001  // OTG controller on the A side of
+                                            // the cable.
+#define USB_OTG_MODE_ASIDE_DEV  0x00000019  // OTG controller on the A side of
+                                            // the cable.
+#define USB_OTG_MODE_BSIDE_HOST 0x0000009d  // OTG controller on the B side of
+                                            // the cable.
+#define USB_OTG_MODE_BSIDE_DEV  0x00000099  // OTG controller on the B side of
+                                            // the cable.
+#define USB_OTG_MODE_BSIDE_NPWR 0x00000081  // OTG controller on the B side of
+                                            // the cable.
+#define USB_OTG_MODE_NONE       0x00000080  // OTG controller mode is not set.
 
 //*****************************************************************************
 //
@@ -377,6 +415,11 @@ extern void USBIntRegister(unsigned long ulBase, void(*pfnHandler)(void));
 extern unsigned long USBIntStatus(unsigned long ulBase);
 extern void USBIntUnregister(unsigned long ulBase);
 extern void USBOTGSessionRequest(unsigned long ulBase, tBoolean bStart);
+extern unsigned long USBModeGet(unsigned long ulBase);
+extern void USBEndpointDMAChannel(unsigned long ulBase,
+                                  unsigned long ulEndpoint,
+                                  unsigned long ulChannel);
+extern void USBHostMode(unsigned long ulBase);
 
 //*****************************************************************************
 //

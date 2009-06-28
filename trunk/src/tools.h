@@ -23,10 +23,10 @@ int                                    strstrk(char *dst, const char *src, const
 const char*                            strstri(const char *s, const char *pattern);
 int                                    strncmpi(const char *s1, const char *s2, size_t n);
 
-unsigned long                          uitoa(unsigned long n, char *str);
+void                                   uitoa(unsigned long n, char *str);
 
-unsigned int                           atoui_hex(const char *s);
-unsigned int                           atoui(const char *s);
+unsigned long                          atoui_hex(const char *s);
+unsigned long                          atoui(const char *s);
 unsigned int                           atorgb(const char *s);
 
 void                                   sectotime(unsigned long s, TIME *time);

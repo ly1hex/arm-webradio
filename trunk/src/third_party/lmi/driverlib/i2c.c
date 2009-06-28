@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -40,7 +40,6 @@
 #include "driverlib/debug.h"
 #include "driverlib/i2c.h"
 #include "driverlib/interrupt.h"
-#include "driverlib/sysctl.h"
 
 //*****************************************************************************
 //

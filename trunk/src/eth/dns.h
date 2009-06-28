@@ -5,7 +5,7 @@
 //----- DEFINES -----
 #define DNS_PORT                       (53)
 
-#define DNS_TIMEOUT                    (4) //seconds
+#define DNS_TIMEOUT                    (3) //seconds
 
 //Proto: DNS Answer
 #define DNSA_HEADERLEN                 (12)

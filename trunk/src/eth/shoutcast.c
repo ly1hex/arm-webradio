@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "../third_party/fatfs/ff.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../io.h"
+#include "../vs.h"
 #include "../eth.h"
 #include "../menu.h"
 #include "../buffer.h"
@@ -15,14 +17,7 @@
 
 
 volatile unsigned int shoutcast_status=SHOUTCAST_CLOSED;
-IP_Addr shoutcast_ip=0;
-char *shoutcast_file;
-
-
-unsigned int shoutcast_getstatus(void)
-{
-  return shoutcast_status;
-}
+unsigned int shoutcast_localport=0;
 
 
 void shoutcast_close(void)
@@ -36,24 +31,27 @@ void shoutcast_close(void)
 }
 
 
-unsigned int shoutcast_open(IP_Addr ip, unsigned int port, char *file)
+unsigned int shoutcast_open(void)
 {
   long timeout;
   unsigned int index, trying;
-  MAC_Addr mac;
-
-  mac = arp_getmac(ip);
-  if(mac == 0)
-  {
-    return SHOUTCAST_CLOSED;
-  }
 
   shoutcast_status = SHOUTCAST_OPEN;
-  shoutcast_ip     = ip;
-  shoutcast_file   = file;
+  //calc next local port
+  switch(shoutcast_localport)
+  {
+    case SHOUTCAST_CLIENTPORT1: shoutcast_localport = SHOUTCAST_CLIENTPORT2; break;
+    case SHOUTCAST_CLIENTPORT2: shoutcast_localport = SHOUTCAST_CLIENTPORT3; break;
+    default:                    shoutcast_localport = SHOUTCAST_CLIENTPORT1; break;
+  }
+
+  if(gbuf.station.port == 0)
+  {
+    gbuf.station.port = SHOUTCAST_SERVERPORT;
+  }
 
   index   = TCP_ENTRIES;
-  index   = tcp_open(index, mac, ip, port, SHOUTCAST_PORT);
+  index   = tcp_open(index, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
   timeout = getontime()+SHOUTCAST_TIMEOUT;
   trying  = SHOUTCAST_TRY;
   for(;;)
@@ -79,7 +77,7 @@ unsigned int shoutcast_open(IP_Addr ip, unsigned int port, char *file)
       if(--trying)
       {
         shoutcast_status = SHOUTCAST_OPEN;
-        index = tcp_open(index, mac, ip, port, SHOUTCAST_PORT);
+        index = tcp_open(index, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
       }
       else
       {
@@ -94,16 +92,16 @@ unsigned int shoutcast_open(IP_Addr ip, unsigned int port, char *file)
 }
 
 
-//Filter Ogg headers
+//--- Filter Ogg headers ---
 //It is one whole stream. So we only need the Ogg header at stream start.
-//Otherwise there are sometimes problems with duplicate Ogg headers.
+//Otherwise there are sometimes problems with duplicate Ogg headers when a new song starts in the stream.
 #define WORKINGBUF (64)
 void shoutcast_putogg(const unsigned char *s, unsigned int len)
 {
   static unsigned int state=0;
-  long timeout;
   unsigned char c, buf[WORKINGBUF];
   unsigned int buf_len=0;
+  long timeout;
 
   timeout = getontime()+2;
 
@@ -140,12 +138,12 @@ void shoutcast_putogg(const unsigned char *s, unsigned int len)
     if(buf_len == WORKINGBUF)
     {
       buf_len = 0;
-      while(32 > vsbuf_free()) //wait for free buffer
+      while(WORKINGBUF > vsbuf_free()) //wait for free buffer
       {
         if(getdeltatime(timeout) > 0)
         {
           shoutcast_close();
-          return;;
+          return;
         }
       }
       vsbuf_puts(buf, WORKINGBUF);
@@ -188,32 +186,37 @@ void shoutcast_putdata(const unsigned char *s, unsigned int len)
 }
 
 
-unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   unsigned int tx_len, i;
-  static unsigned int parse_header=0, skip=0, ogg_data=0;
+  char buf[16];
+  static unsigned int parse_header=0, format=0, format_header=0, skip=0;
 
   switch(shoutcast_status)
   {
     case SHOUTCAST_OPENED:
-      tcp_send(index, 0, 0); //send ack
-      if(ogg_data) //ogg stream
+      //send ack
+      tcp_send(index, 0, 0);
+      //save audio data
+      if(format == FORMAT_OGG) //ogg stream
       {
-        shoutcast_putogg(rx, rx_len); //save data
+        shoutcast_putogg(rx, rx_len);
       }
       else
       {
-        shoutcast_putdata(rx, rx_len); //save data
+        shoutcast_putdata(rx, rx_len);
       }
       break;
 
     case SHOUTCAST_HEADER:
       if(rx_len)
       {
+        //send ack
+        tcp_send(index, 0, 0);
         //search http header
         if(parse_header == 0)
         {
-          i = http_getresponse(rx);
+          i = http_response(rx);
           if(i == 200) //200 OK
           {
             parse_header = 1;
@@ -249,16 +252,17 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
             parse_header = 0;
             rx_len       = 0;
             tcp_abort(index);
-            delay_ms(1000);
+            delay_ms(1000); //for reading popup
           }
         }
 
-        //search http header end
-        if(parse_header == 1) //get http header
+        //get stream infos and search http header end
+        if(parse_header == 1)
         {
-          if(http_getparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-BR:") == 0) //get stream bitrate
+          //get stream bitrate
+          if(http_hdparam(buf, 16-1, rx, "ICY-BR:") == 0)
           {
-            i = atoi(gbuf.menu.info);
+            i = atoi(buf);
             if(i >= 128) //bitrate >= 128
             {
               skip = 64; //skip first 64 frames
@@ -271,124 +275,218 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
             {
               skip = 0; //skip nothing
             }
-            station_calcbuf(i);
+            station_setbitrate(i);
           }
-          http_getparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-NAME:"); //get stream name
+          //get stream format
+          if(http_hdparam(buf, 16-1, rx, "CONTENT-TYPE:") == 0)
+          {
+            if((strncmpi(buf, "AUDIO/X-WAV", 11) == 0) ||
+               (strncmpi(buf, "AUDIO/WAV",    9) == 0))       //WAV
+            {
+              format = FORMAT_WAV;
+            }
+            else if((strncmpi(buf, "AUDIO/MPEG", 10) == 0) ||
+                    (strncmpi(buf, "AUDIO/MP3",   9) == 0))   //MP3
+            {
+              format = FORMAT_MP3;
+            }
+            else if(strncmpi(buf, "AUDIO/AAC", 9) == 0)       //AAC
+            {
+              format = FORMAT_AAC;
+            }
+            else if(strncmpi(buf, "AUDIO/OGG", 9) == 0)       //OGG
+            {
+              format = FORMAT_OGG;
+            }
+            else if(strncmpi(buf, "AUDIO/X-MS-WMA", 14) == 0) //WMA
+            {
+              format = FORMAT_WMA;
+            }
+          }
+          menu_setformat(format);
+          //get stream name
+          http_hdparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-NAME:");
+          //search http header end
           for(; rx_len!=0; rx_len--, rx++)
           {
-            if((rx[0] == '\r') && (rx[1] == '\n') && (rx[2] == '\r') && (rx[3] == '\n'))
+            if(rx_len >= 4)
             {
-              rx     += 4;
-              rx_len -= 4;
-              parse_header = 2;
-              break;
+              if((rx[0] == '\r') && (rx[1] == '\n') && (rx[2] == '\r') && (rx[3] == '\n'))
+              {
+                rx     += 4;
+                rx_len -= 4;
+                parse_header = 2;
+                break;
+              }
             }
           }
         }
 
-        //search audio header and get audio data
-        if(parse_header >= 2)
+        //skip the first x frames
+        if(parse_header >= (2+skip))
         {
-          //Ogg streams start with a special frame with decoding infos
-          if(ogg_data == 0)
+          switch(format)
           {
-            if((rx_len >= 4)  &&
-               (rx[0] == 'O') && 
-               (rx[1] == 'g') &&
-               (rx[2] == 'g') &&
-               (rx[3] == 'S')) //Ogg sync: OggS
-            {
-              DEBUGOUT("Shoutcast: Ogg header\n");
-              vsbuf_puts(rx, rx_len);
-              ogg_data = rx_len;
-              rx_len   = 0;
-            }
-          }
-          else if(ogg_data < 8000)
-          {
-            if(ogg_data < 4000) //Ogg header is around 4-5 kByte
-            {
-              vsbuf_puts(rx, rx_len);
-              ogg_data += rx_len;
-              rx_len    = 0;
-            }
-            else
-            {
-              for(i=0; i<rx_len; i++) //search Ogg sync
-              {
-                if(((rx_len-i) >= 4) &&
-                    (rx[i+0] == 'O') && 
-                    (rx[i+1] == 'g') &&
-                    (rx[i+2] == 'g') &&
-                    (rx[i+3] == 'S')) //Ogg sync: OggS
-                {
-                  ogg_data = 8000;
-                  break;
-                }
-              }
-              vsbuf_puts(rx, i);
-              ogg_data += i;
-              rx_len   -= i;
-            }
-          }
-
-          //skip the first x frames
-          if(parse_header >= (2+skip))
-          {
-            if(ogg_data) //search Ogg sync
-            {
+            case FORMAT_WAV:
               for(; rx_len!=0; rx_len--, rx++)
               {
-                if((rx_len >= 4)  &&
-                   (rx[0] == 'O') && 
-                   (rx[1] == 'g') &&
-                   (rx[2] == 'g') &&
-                   (rx[3] == 'S')) //Ogg sync: OggS
+                if((rx_len >= 3) &&
+                   (rx[0]== 'W') && 
+                   (rx[1]== 'A') &&
+                   (rx[2]== 'V')) //WAVE sync: WAV
                 {
                   break;
                 }
               }
-            }
-            else //search MPEG sync
-            {
+              break;
+            case FORMAT_MP3:
               for(; rx_len!=0; rx_len--, rx++)
               {
                 if((rx_len >= 2)         &&
-                        (rx[0]       == 0xFF) && 
-                       ((rx[1]&0xE0) == 0xE0)) //MPEG sync: 0xFFE
+                   (rx[0]       == 0xFF) && 
+                  ((rx[1]&0xE0) == 0xE0)) //MPEG sync: 0xFFE (11x 1bits)
                 {
                   break;
                 }
               }
-            }
-            if(rx_len)
-            {
-              vsbuf_puts(rx, rx_len);
-              shoutcast_status = SHOUTCAST_OPENED;
-            }
+              break;
+            case FORMAT_AAC:
+             for(; rx_len!=0; rx_len--, rx++)
+              {
+                if(rx_len >= 2)
+                {
+                  if((rx[0]       == 0xFF) && 
+                    ((rx[1]&0xF0) == 0xF0))        //AAC ADTS sync: 0xFFF
+                  {
+                    break;
+                  }
+                  else if((rx[0]       == 0x56) && 
+                         ((rx[1]&0xE0) == 0xE0))   //AAC LATM/LOAS sync: 0x56E 
+                  {
+                    break;
+                  }
+                  else if((rx[0] == 0x4D) && 
+                          (rx[1] == 0xE1))         //AAC LATM/LOAS sync: 0x4DE1
+                  {
+                    break;
+                  }
+                }
+                else if(rx_len >= 3)
+                {
+                  if((rx[0] == 'A') && 
+                     (rx[1] == 'D') &&
+                     (rx[2] == 'I'))               //AAC ADIF sync: ADI
+                  {
+                    break;
+                  }
+                }
+              }
+              break;
+            case FORMAT_OGG:
+              for(; rx_len!=0; rx_len--, rx++)
+              {
+                if((rx_len >= 3)  &&
+                   (rx[0] == 'O') && 
+                   (rx[1] == 'g') &&
+                   (rx[2] == 'g')) //Ogg sync: Ogg
+                {
+                  break;
+                }
+              }
+              break;
+            case FORMAT_WMA:
+              for(; rx_len!=0; rx_len--, rx++)
+              {
+                if((rx_len >= 3)  &&
+                   (rx[0] == 0x82) && 
+                   (rx[1] == 0x00) &&
+                   (rx[2] == 0x00)) //WMA sync: 0x82 0x00 0x00
+                {
+                  break;
+                }
+              }
+              break;
           }
-          else
+          if(rx_len)
           {
-            parse_header++;
+            vsbuf_puts(rx, rx_len);
+            rx_len = 0;
+            shoutcast_status = SHOUTCAST_OPENED;
           }
         }
-        //send ack
-        tcp_send(index, 0, 0);
+        else if(parse_header >= 2) //get format header (some formats start with a special frame with decoding infos)
+        {
+          parse_header++;
+          switch(format)
+          {
+            case FORMAT_OGG:
+              if(format_header < 4000) //Ogg header is around 4-5 kByte
+              {
+                vsbuf_puts(rx, rx_len);
+                format_header += rx_len;
+                rx_len         = 0;
+              }
+              else if(format_header < 10000)
+              {
+                for(i=0; i<rx_len; i++)
+                {
+                  if(((rx_len-i) >= 3) &&
+                      (rx[i+0] == 'O') && 
+                      (rx[i+1] == 'g') &&
+                      (rx[i+2] == 'g')) //Ogg sync: Ogg
+                  {
+                    format_header = 10000;
+                    break;
+                  }
+                }
+                vsbuf_puts(rx, i);
+                format_header += i;
+                rx_len        -= i;
+              }
+              break;
+            case FORMAT_WMA:
+              if(format_header < 4000) //WMA header is around 5 kByte
+              {
+                vsbuf_puts(rx, rx_len);
+                format_header += rx_len;
+                rx_len         = 0;
+              }
+              else if(format_header < 10000)
+              {
+                for(i=0; i<rx_len; i++)
+                {
+                  if(((rx_len-i) >= 3) &&
+                      (rx[i+0] == 0x82) && 
+                      (rx[i+1] == 0x00) &&
+                      (rx[i+2] == 0x00)) ///WMA sync: 0x82 0x00 0x00
+                  {
+                    format_header = 10000;
+                    break;
+                  }
+                }
+                vsbuf_puts(rx, i);
+                format_header += i;
+                rx_len        -= i;
+              }
+              break;
+          }
+        }
       }
       break;
 
     case SHOUTCAST_OPEN:
+      shoutcast_status = SHOUTCAST_HEADER;
+      parse_header     = 0;
+      format           = FORMAT_UNKNOWN;
+      format_header    = 0;
+      skip             = 32; //default skip
+      station_setbitrate(0);
       tx_len = sprintf(tx, "GET %s HTTP/1.0\r\n"
-                           "Host: %i.%i.%i.%i\r\n"
+                           "Host: %s\r\n"
                            "User-Agent: "APPNAME"\r\n"
                            "Icy-MetaData: 0\r\n"
                            "Connection: Keep-Alive\r\n"
-                           "\r\n", shoutcast_file, ((shoutcast_ip>>0)&0xff), ((shoutcast_ip>>8)&0xff), ((shoutcast_ip>>16)&0xff), ((shoutcast_ip>>24)&0xff));
-      shoutcast_status = SHOUTCAST_HEADER;
-      parse_header     = 0;
-      skip             = 32; //default skip
-      ogg_data         = 0;
-      station_calcbuf(0);
+                           "\r\n", gbuf.station.file, iptoa(gbuf.station.ip));
       tcp_send(index, tx_len, 0);
       break;
 
@@ -402,5 +500,5 @@ unsigned int shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsig
       break;
   }
 
-  return tx_len;
+  return;
 }

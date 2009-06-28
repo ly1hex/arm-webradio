@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
-#include "io.h"
+#include "eth.h"
 #include "buffer.h"
 
 
@@ -123,6 +123,14 @@ unsigned char vsbuf_getc(void)
   }
 
   return c;
+}
+
+
+void vsbuf_sethead(unsigned int head)
+{
+  vsbuf_head = head;
+
+  return;
 }
 
 

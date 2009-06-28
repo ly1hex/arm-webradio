@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -34,12 +34,11 @@
 
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
+#include "inc/hw_sysctl.h"
 #include "inc/hw_types.h"
 #include "inc/hw_uart.h"
-#include "inc/hw_sysctl.h"
 #include "driverlib/debug.h"
 #include "driverlib/interrupt.h"
-#include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
 
 //*****************************************************************************
@@ -48,7 +47,10 @@
 // UART.
 //
 //*****************************************************************************
-#define UART_CLK_DIVIDER        16
+#define UART_CLK_DIVIDER        ((CLASS_IS_SANDSTORM ||                       \
+                                  (CLASS_IS_FURY && REVISION_IS_A2) ||        \
+                                  (CLASS_IS_DUSTDEVIL && REVISION_IS_A0)) ?   \
+                                 16 : 8)
 
 //*****************************************************************************
 //
@@ -277,6 +279,31 @@ UARTConfigSetExpClk(unsigned long ulBase, unsigned long ulUARTClk,
     UARTDisable(ulBase);
 
     //
+    // Is the required baud rate greater than the maximum rate supported
+    // without the use of high speed mode?
+    //
+    if((ulBaud * 16) > ulUARTClk)
+    {
+        //
+        // Enable high speed mode.
+        //
+        HWREG(ulBase + UART_O_CTL) |= UART_CTL_HSE;
+
+        //
+        // Half the supplied baud rate to compensate for enabling high speed
+        // mode.  This allows the following code to be common to both cases.
+        //
+        ulBaud /= 2;
+    }
+    else
+    {
+        //
+        // Disable high speed mode.
+        //
+        HWREG(ulBase + UART_O_CTL) &= ~(UART_CTL_HSE);
+    }
+
+    //
     // Compute the fractional baud rate divider.
     //
     ulDiv = (((ulUARTClk * 8) / ulBaud) + 1) / 2;
@@ -348,6 +375,18 @@ UARTConfigGetExpClk(unsigned long ulBase, unsigned long ulUARTClk,
     ulInt = HWREG(ulBase + UART_O_IBRD);
     ulFrac = HWREG(ulBase + UART_O_FBRD);
     *pulBaud = (ulUARTClk * 4) / ((64 * ulInt) + ulFrac);
+
+    //
+    // See if high speed mode enabled.
+    //
+    if(HWREG(ulBase + UART_O_CTL) & UART_CTL_HSE)
+    {
+        //
+        // High speed mode is enabled so the actual baud rate is actually
+        // double what was just calculated.
+        //
+        *pulBaud *= 2;
+    }
 
     //
     // Get the parity, data length, and number of stop bits.
@@ -539,6 +578,387 @@ UARTDisableSIR(unsigned long ulBase)
     // Disable SIR and SIRLP (if appropriate).
     //
     HWREG(ulBase + UART_O_CTL) &= ~(UART_CTL_SIREN | UART_CTL_SIRLP);
+}
+
+//*****************************************************************************
+//
+//! Enables ISO 7816 smart card mode on the specified UART.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! Enables the SMART control bit for ISO 7816 smart card mode on the UART.
+//! This call also sets 8 bit word length and even parity as required by ISO
+//! 7816.
+//!
+//! \note The availability of ISO 7816 smart card mode varies with the
+//! Stellaris part and UART in use.  Please consult the datasheet for the part
+//! you are using to determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTSmartCardEnable(unsigned long ulBase)
+{
+    unsigned long ulVal;
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT((ulBase == UART0_BASE) || (ulBase == UART1_BASE) ||
+           (ulBase == UART2_BASE));
+
+    //
+    // Set 8 bit word length, even parity, 2 stop bits (even though the STP2
+    // bit is ignored when in smartcard mode, this lets the caller read back
+    // the actual setting in use).
+    //
+    ulVal = HWREG(ulBase + UART_O_LCRH);
+    ulVal &= ~(UART_LCRH_SPS | UART_LCRH_EPS | UART_LCRH_PEN |
+               UART_LCRH_WLEN_M);
+    ulVal |= UART_LCRH_WLEN_8 | UART_LCRH_PEN | UART_LCRH_EPS | UART_LCRH_STP2;
+    HWREG(ulBase + UART_O_LCRH) = ulVal;
+
+    //
+    // Enable SMART mode.
+    //
+    HWREG(ulBase + UART_O_CTL) |= UART_CTL_SMART;
+}
+
+//*****************************************************************************
+//
+//! Disables ISO 7816 smart card mode on the specified UART.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! Clears the SMART (ISO 7816 smart card) bits in the UART control register.
+//!
+//! \note The availability of ISO 7816 smart card mode varies with the
+//! Stellaris part and UART in use.  Please consult the datasheet for the part
+//! you are using to determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTSmartCardDisable(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT((ulBase == UART0_BASE) || (ulBase == UART1_BASE) ||
+           (ulBase == UART2_BASE));
+
+    //
+    // Disable the SMART bit.
+    //
+    HWREG(ulBase + UART_O_CTL) &= ~UART_CTL_SMART;
+}
+
+//*****************************************************************************
+//
+//! Sets the states of the DTR and/or RTS modem control signals.
+//!
+//! \param ulBase is the base address of the UART port.
+//! \param ulControl is a bit-mapped flag indicating which modem control bits
+//! should be set.
+//!
+//! Sets the states of the DTR or RTS modem handshake outputs from the UART.
+//!
+//! The \e ulControl parameter is the logical OR of any of the following:
+//!
+//! - \b UART_OUTPUT_DTR - The Modem Control DTR signal
+//! - \b UART_OUTPUT_RTS - The Modem Control RTS signal
+//!
+//! \note The availability of hardware modem handshake signals varies with the
+//! Stellaris part and UART in use.  Please consult the datasheet for the part
+//! you are using to determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTModemControlSet(unsigned long ulBase, unsigned long ulControl)
+{
+    unsigned long ulTemp;
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT(ulBase == UART1_BASE);
+    ASSERT((ulControl & ~(UART_OUTPUT_RTS | UART_OUTPUT_DTR)) == 0);
+
+    //
+    // Set the appropriate modem control output bits.
+    //
+    ulTemp = HWREG(ulBase + UART_O_CTL);
+    ulTemp |= (ulControl & (UART_OUTPUT_RTS | UART_OUTPUT_DTR));
+    HWREG(ulBase + UART_O_CTL) = ulTemp;
+}
+
+//*****************************************************************************
+//
+//! Clears the states of the DTR and/or RTS modem control signals.
+//!
+//! \param ulBase is the base address of the UART port.
+//! \param ulControl is a bit-mapped flag indicating which modem control bits
+//! should be set.
+//!
+//! Clears the states of the DTR or RTS modem handshake outputs from the UART.
+//!
+//! The \e ulControl parameter is the logical OR of any of the following:
+//!
+//! - \b UART_OUTPUT_DTR - The Modem Control DTR signal
+//! - \b UART_OUTPUT_RTS - The Modem Control RTS signal
+//!
+//! \note The availability of hardware modem handshake signals varies with the
+//! Stellaris part and UART in use.  Please consult the datasheet for the part
+//! you are using to determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTModemControlClear(unsigned long ulBase, unsigned long ulControl)
+{
+    unsigned long ulTemp;
+
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT(ulBase == UART1_BASE);
+    ASSERT((ulControl & ~(UART_OUTPUT_RTS | UART_OUTPUT_DTR)) == 0);
+
+    //
+    // Set the appropriate modem control output bits.
+    //
+    ulTemp = HWREG(ulBase + UART_O_CTL);
+    ulTemp &= ~(ulControl & (UART_OUTPUT_RTS | UART_OUTPUT_DTR));
+    HWREG(ulBase + UART_O_CTL) = ulTemp;
+}
+
+//*****************************************************************************
+//
+//! Gets the states of the DTR and RTS modem control signals.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! Returns the current states of each of the two UART modem control signals,
+//! DTR and RTS.
+//!
+//! \note The availability of hardware modem handshake signals varies with the
+//! Stellaris part and UART in use.  Please consult the datasheet for the part
+//! you are using to determine whether this support is available.
+//!
+//! \return Returns the states of the handshake output signals.  This will be a
+//! logical logical OR combination of values \b UART_OUTPUT_RTS and
+//! \b UART_OUTPUT_DTR where the presence of each flag indicates that the
+//! associated signal is asserted.
+//
+//*****************************************************************************
+unsigned long
+UARTModemControlGet(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT(ulBase == UART1_BASE);
+
+    return(HWREG(ulBase + UART_O_CTL) & (UART_OUTPUT_RTS | UART_OUTPUT_DTR));
+}
+
+//*****************************************************************************
+//
+//! Gets the states of the RI, DCD, DSR and CTS modem status signals.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! Returns the current states of each of the four UART modem status signals,
+//! RI, DCD, DSR and CTS.
+//!
+//! \note The availability of hardware modem handshake signals varies with the
+//! Stellaris part and UART in use.  Please consult the datasheet for the part
+//! you are using to determine whether this support is available.
+//!
+//! \return Returns the states of the handshake output signals.  This will be a
+//! logical logical OR combination of values \b UART_INPUT_RI, \b
+//! UART_INPUT_DCD, \b UART_INPUT_CTS and \b UART_INPUT_DSR where the
+//! presence of each flag indicates that the associated signal is asserted.
+//
+//*****************************************************************************
+unsigned long
+UARTModemStatusGet(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT(ulBase == UART1_BASE);
+
+    return(HWREG(ulBase + UART_O_FR) & (UART_INPUT_RI | UART_INPUT_DCD |
+           UART_INPUT_CTS | UART_INPUT_DSR));
+}
+
+//*****************************************************************************
+//
+//! Sets the UART hardware flow control mode to be used.
+//!
+//! \param ulBase is the base address of the UART port.
+//! \param ulMode indicates the flow control modes to be used.  This is a
+//! logical OR combination of values \b UART_FLOWCONTROL_TX and \b
+//! UART_FLOWCONTROL_RX to enable hardware transmit (CTS) and receive (RTS)
+//! flow control or \b UART_FLOWCONTROL_NONE to disable hardware flow control.
+//!
+//! Sets the required hardware flow control modes.  If \e ulMode contains
+//! flag \b UART_FLOWCONTROL_TX, data is only transmitted if the incoming CTS
+//! signal is asserted. If \e ulMode contains flag \b UART_FLOWCONTROL_RX,
+//! the RTS output is controlled by the hardware and is asserted only when
+//! there is space available in the receive FIFO.  If no hardware flow control
+//! is required, UART_FLOWCONTROL_NONE should be passed.
+//!
+//! \note The availability of hardware flow control varies with the Stellaris
+//! part and UART in use.  Please consult the datasheet for the part you are
+//! using to determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTFlowControlSet(unsigned long ulBase, unsigned long ulMode)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT((ulBase == UART0_BASE) || (ulBase == UART1_BASE) ||
+           (ulBase == UART2_BASE));
+    ASSERT((ulMode & ~(UART_FLOWCONTROL_TX | UART_FLOWCONTROL_RX)) == 0);
+
+    //
+    // Set the flow control mode as requested.
+    //
+    HWREG(ulBase + UART_O_CTL) = ((HWREG(ulBase + UART_O_CTL) &
+                                 ~(UART_FLOWCONTROL_TX |
+                                   UART_FLOWCONTROL_RX)) | ulMode);
+}
+
+//*****************************************************************************
+//
+//! Returns the UART hardware flow control mode currently in use.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! Returns the current hardware flow control mode.
+//!
+//! \note The availability of hardware flow control varies with the Stellaris
+//! part and UART in use.  Please consult the datasheet for the part you are
+//! using to determine whether this support is available.
+//!
+//! \return Returns the current flow control mode in use.  This is a
+//! logical OR combination of values \b UART_FLOWCONTROL_TX if transmit
+//! (CTS) flow control is enabled and \b UART_FLOWCONTROL_RX if receive (RTS)
+//! flow control is in use.  If hardware flow control is disabled, \b
+//! UART_FLOWCONTROL_NONE will be returned.
+//
+//*****************************************************************************
+unsigned long
+UARTFlowControlGet(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(!CLASS_IS_SANDSTORM && !CLASS_IS_FURY && !CLASS_IS_DUSTDEVIL);
+    ASSERT((ulBase == UART0_BASE) || (ulBase == UART1_BASE) ||
+           (ulBase == UART2_BASE));
+
+    return(HWREG(ulBase + UART_O_CTL) & (UART_FLOWCONTROL_TX |
+                                         UART_FLOWCONTROL_RX));
+}
+
+//*****************************************************************************
+//
+//! Sets the operating mode for the UART transmit interrupt.
+//!
+//! \param ulBase is the base address of the UART port.
+//! \param ulMode is the operating mode for the transmit interrupt.  It may be
+//! \b UART_TXINT_MODE_EOT to trigger interrupts when the transmitter is idle
+//! or \b UART_TXINT_MODE_FIFO to trigger based on the current transmit FIFO
+//! level.
+//!
+//! This function allows the mode of the UART transmit interrupt to be set.  By
+//! default, the transmit interrupt is asserted when the FIFO level falls past
+//! a threshold set via a call to UARTFIFOLevelSet().  Alternatively, if this
+//! function is called with \e ulMode set to \b UART_TXINT_MODE_EOT, the
+//! transmit interrupt will only be asserted once the transmitter is completely
+//! idle - the transmit FIFO is empty and all bits, including any stop bits,
+//! have cleared the transmitter.
+//!
+//! \note The availability of end-of-transmission mode varies with the
+//! Stellaris part in use.  Please consult the datasheet for the part you are
+//! using to determine whether this support is available.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+UARTTxIntModeSet(unsigned long ulBase, unsigned long ulMode)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == UART0_BASE) || (ulBase == UART1_BASE) ||
+           (ulBase == UART2_BASE));
+    ASSERT((ulMode == UART_TXINT_MODE_EOT) ||
+           (ulMode == UART_TXINT_MODE_FIFO));
+
+    //
+    // Set or clear the EOT bit of the UART control register as appropriate.
+    //
+    HWREG(ulBase + UART_O_CTL) = ((HWREG(ulBase + UART_O_CTL) &
+                                 ~(UART_TXINT_MODE_EOT |
+                                   UART_TXINT_MODE_FIFO)) | ulMode);
+}
+
+//*****************************************************************************
+//
+//! Returns the current operating mode for the UART transmit interrupt.
+//!
+//! \param ulBase is the base address of the UART port.
+//!
+//! This function returns the current operating mode for the UART transmit
+//! interrupt.  The return value will be \b UART_TXINT_MODE_EOT if the
+//! transmit interrupt is currently set to be asserted once the transmitter is
+//! completely idle - the transmit FIFO is empty and all bits, including any
+//! stop bits, have cleared the transmitter.  The return value will be \b
+//! UART_TXINT_MODE_FIFO if the interrupt is set to be asserted based upon the
+//! level of the transmit FIFO.
+//!
+//! \note The availability of end-of-transmission mode varies with the
+//! Stellaris part in use.  Please consult the datasheet for the part you are
+//! using to determine whether this support is available.
+//!
+//! \return Returns \b UART_TXINT_MODE_FIFO or \b UART_TXINT_MODE_EOT.
+//
+//*****************************************************************************
+unsigned long
+UARTTxIntModeGet(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == UART0_BASE) || (ulBase == UART1_BASE) ||
+           (ulBase == UART2_BASE));
+
+    //
+    // Return the current transmit interrupt mode.
+    //
+    return(HWREG(ulBase + UART_O_CTL) & (UART_TXINT_MODE_EOT |
+                                         UART_TXINT_MODE_FIFO));
 }
 
 //*****************************************************************************
@@ -934,6 +1354,10 @@ UARTIntUnregister(unsigned long ulBase)
 //! - \b UART_INT_RT - Receive Timeout interrupt
 //! - \b UART_INT_TX - Transmit interrupt
 //! - \b UART_INT_RX - Receive interrupt
+//! - \b UART_INT_DSR - DSR interrupt
+//! - \b UART_INT_DCD - DCD interrupt
+//! - \b UART_INT_CTS - CTS interrupt
+//! - \b UART_INT_RI - RI interrupt
 //!
 //! \return None.
 //
@@ -1158,7 +1582,6 @@ UARTRxErrorGet(unsigned long ulBase)
     // Return the current value of the receive status register.
     //
     return(HWREG(ulBase + UART_O_RSR) & 0x0000000F);
-
 }
 
 //*****************************************************************************

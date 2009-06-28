@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -32,15 +32,14 @@
 //
 //*****************************************************************************
 
+#include "inc/hw_can.h"
 #include "inc/hw_ints.h"
+#include "inc/hw_nvic.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
-#include "inc/hw_nvic.h"
-#include "inc/hw_can.h"
 #include "driverlib/can.h"
 #include "driverlib/debug.h"
 #include "driverlib/interrupt.h"
-#include "driverlib/sysctl.h"
 
 //*****************************************************************************
 //
@@ -56,6 +55,45 @@
 //
 //*****************************************************************************
 #define CAN_RW_DELAY            (5)
+
+//
+// The maximum CAN bit timing divisor is 13.
+//
+#define CAN_MAX_BIT_DIVISOR     (13)
+
+//
+// The minimum CAN bit timing divisor is 5.
+//
+#define CAN_MIN_BIT_DIVISOR     (5)
+
+//
+// The maximum CAN pre-divisor is 1024.
+//
+#define CAN_MAX_PRE_DIVISOR     (1024)
+
+//
+// The minimum CAN pre-divisor is 1024.
+//
+#define CAN_MIN_PRE_DIVISOR     (1024)
+
+//*****************************************************************************
+//
+// This table is used by the CANBitRateSet() API as the register defaults for
+// the bit timing values.
+//
+//*****************************************************************************
+static const unsigned short g_usCANBitValues[] =
+{
+    0x1100, // TSEG2 2, TSEG1 2, SJW 1, Divide 5
+    0x1200, // TSEG2 2, TSEG1 3, SJW 1, Divide 6
+    0x2240, // TSEG2 3, TSEG1 3, SJW 2, Divide 7
+    0x2340, // TSEG2 3, TSEG1 4, SJW 2, Divide 8
+    0x3340, // TSEG2 4, TSEG1 4, SJW 2, Divide 9
+    0x3440, // TSEG2 4, TSEG1 5, SJW 2, Divide 10
+    0x3540, // TSEG2 4, TSEG1 6, SJW 2, Divide 11
+    0x3640, // TSEG2 4, TSEG1 7, SJW 2, Divide 12
+    0x3740  // TSEG2 4, TSEG1 8, SJW 2, Divide 13
+};
 
 //*****************************************************************************
 //
@@ -598,6 +636,146 @@ CANBitTimingGet(unsigned long ulBase, tCANBitClkParms *pClkParms)
     pClkParms->uQuantumPrescaler =
         ((uBitReg & CAN_BIT_BRP_M) |
          ((CANRegRead(ulBase + CAN_O_BRPE) & CAN_BRPE_BRPE_M) << 6)) + 1;
+}
+
+//*****************************************************************************
+//
+//! This function is used to set the CAN bit timing values to a nominal setting
+//! based on a desired bit rate.
+//!
+//! \param ulBase is the base address of the CAN controller.
+//! \param ulSourceClock is the system clock for the device in Hz.
+//! \param ulBitRate is the desired bit rate.
+//!
+//! This function will set the CAN bit timing for the bit rate passed in the
+//! \e ulBitRate parameter based on the \e ulSourceClock parameter.  Since the
+//! CAN clock is based off of the system clock the calling function should pass
+//! in the source clock rate either by retrieving it from SysCtlClockGet() or
+//! using a specific value in Hz.  The CAN bit clock is calculated to be an
+//! average timing value that should work for most systems.  If tighter timing
+//! requirements are needed, then the CANBitTimingSet() function is available
+//! for full customization of all of the CAN bit timing values.  Since not all
+//! bit rates can be matched exactly, the bit rate is set to the value closest
+//! to the desired bit rate without being higher than the \e ulBitRate value.
+//!
+//! \note On some devices the source clock is fixed at 8MHz so the
+//! \e ulSourceClock should be set to 8000000.
+//!
+//! \return This function returns the bit rate that the CAN controller was
+//! configured to use or it returns 0 to indicate that the bit rate was not
+//! changed because the requested bit rate was not valid.
+//!
+//*****************************************************************************
+unsigned long
+CANBitRateSet(unsigned long ulBase, unsigned long ulSourceClock,
+              unsigned long ulBitRate)
+{
+    unsigned long ulDesiredRatio;
+    unsigned long ulCANBits;
+    unsigned long ulPreDivide;
+    unsigned long ulRegValue;
+    unsigned short usCANCTL;
+
+    ASSERT(ulBitRate != 0);
+
+    //
+    // Caclulate the desired clock rate.
+    //
+    ulDesiredRatio = ulSourceClock / ulBitRate;
+
+    //
+    // If the ratio of CAN bit rate to processor clock is too small or too
+    // large then return 0 indicating that no bit rate was set.
+    //
+    if((ulDesiredRatio > (CAN_MIN_PRE_DIVISOR * CAN_MIN_BIT_DIVISOR)) ||
+       (ulDesiredRatio < CAN_MIN_BIT_DIVISOR))
+    {
+        return(0);
+    }
+
+    //
+    // Make sure that the Desired Ratio is not too large.  This enforces the
+    // requirement that the bit rate is larger than requested.
+    //
+    if((ulSourceClock / ulDesiredRatio) > ulBitRate)
+    {
+        ulDesiredRatio += 1;
+    }
+
+    //
+    // Check all possible values to find a matching value.
+    //
+    while(ulDesiredRatio <= CAN_MAX_PRE_DIVISOR * CAN_MAX_BIT_DIVISOR)
+    {
+        //
+        // Loop through all possible CAN bit divisors.
+        //
+        for(ulCANBits = CAN_MAX_BIT_DIVISOR; ulCANBits >= CAN_MIN_BIT_DIVISOR;
+            ulCANBits--)
+        {
+            //
+            // For a given CAN bit divisor save the pre divisor.
+            //
+            ulPreDivide = ulDesiredRatio / ulCANBits;
+
+            //
+            // If the caculated divisors match the desired clock ratio then
+            // return these bit rate and set the CAN bit timing.
+            //
+            if((ulPreDivide * ulCANBits) == ulDesiredRatio)
+            {
+                //
+                // Start building the bit timing value by adding the bit timing
+                // in time quanta.
+                //
+                ulRegValue = g_usCANBitValues[ulCANBits - CAN_MIN_BIT_DIVISOR];
+
+                //
+                // To set the bit timing register, the controller must be placed
+                // in init mode (if not already), and also configuration change
+                // bit enabled.  The stat of the register should be saved
+                // so it can be restored.
+                //
+                usCANCTL = CANRegRead(ulBase + CAN_O_CTL);
+                CANRegWrite(ulBase + CAN_O_CTL, usCANCTL | CAN_CTL_INIT |
+                                                CAN_CTL_CCE);
+
+                //
+                // Now add in the pre-scalar on the bit rate.
+                //
+                ulRegValue |= ((ulPreDivide - 1)& CAN_BIT_BRP_M);
+
+                //
+                // Set the clock bits in the and the lower bits of the
+                // pre-scalar.
+                //
+                CANRegWrite(ulBase + CAN_O_BIT, ulRegValue);
+
+                //
+                // Set the divider upper bits in the extension register.
+                //
+                CANRegWrite(ulBase + CAN_O_BRPE,
+                            ((ulPreDivide - 1) >> 6) & CAN_BRPE_BRPE_M);
+
+                //
+                // Restore the saved CAN Control register.
+                //
+                CANRegWrite(ulBase + CAN_O_CTL, usCANCTL);
+
+                //
+                // Return the computed bit rate.
+                //
+                return(ulSourceClock / ( ulPreDivide * ulCANBits));
+            }
+        }
+
+        //
+        // Move the divisor up one and look again.  Only in rare cases are
+        // more than 2 loops required to find the value.
+        //
+        ulDesiredRatio++;
+    }
+    return(0);
 }
 
 //*****************************************************************************

@@ -17,8 +17,8 @@
 #define LM3S_REV_A2
 
 //Display: L2F50, LPH88, LS020
-#define LPH88
-#define LCD_MIRROR                     //mirror display
+#define LS020
+//#define LCD_MIRROR                     //mirror display
 #define LCD_PWMFREQ                    (60000) //60000 Hz LED PWM Freq
 #define LCD_PWMMIN                     (5)     // 5 % (1...100%)
 #define LCD_PWMSTANDBY                 (10)    //10 % (1...100%)
@@ -122,7 +122,7 @@ int                                    ir_cmd(void);
 int                                    ir_rawdata(void);
 void                                   ir_timer(void);
 void                                   ir_edge(void);
-unsigned int                           ir_addr(void);
+unsigned int                           ir_getaddr(void);
 void                                   ir_setaddr(unsigned int addr);
 void                                   ir_init(void);
 

@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
-#include "io.h"
 #include "mmc.h"
 #include "vs.h"
 #include "menu.h"
+#include "eth.h"
 #include "buffer.h"
 #include "card.h"
 

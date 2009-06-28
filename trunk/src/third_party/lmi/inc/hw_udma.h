@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Firmware Development Package.
+// This is part of revision 4694 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -54,6 +54,8 @@
 #define UDMA_PRIOSET            0x400FF038  // DMA Channel Priority Set
 #define UDMA_PRIOCLR            0x400FF03C  // DMA Channel Priority Clear
 #define UDMA_ERRCLR             0x400FF04C  // DMA Bus Error Clear
+#define UDMA_CHALT              0x400FF500  // DMA Channel Alternate Select
+#define UDMA_CHIS               0x400FF504  // DMA Channel Interrupt Status
 
 //*****************************************************************************
 //
@@ -194,7 +196,6 @@
 //
 //*****************************************************************************
 #define UDMA_WAITSTAT_WAITREQ_M 0xFFFFFFFF  // Channel [n] Wait Status.
-#define UDMA_WAITSTAT_WAITREQ_S 0
 
 //*****************************************************************************
 //
@@ -202,7 +203,6 @@
 //
 //*****************************************************************************
 #define UDMA_SWREQ_M            0xFFFFFFFF  // Channel [n] Software Request.
-#define UDMA_SWREQ_S            0
 
 //*****************************************************************************
 //
@@ -287,6 +287,21 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the UDMA_CHALT register.
+//
+//*****************************************************************************
+#define UDMA_CHALT_M            0xFFFFFFFF  // Channel [n] Alternate Assignment
+                                            // Select.
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the UDMA_CHIS register.
+//
+//*****************************************************************************
+#define UDMA_CHIS_M             0xFFFFFFFF  // Channel [n] Interrupt Status.
+
+//*****************************************************************************
+//
 // The following definitions are deprecated.
 //
 //*****************************************************************************
@@ -294,96 +309,11 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the bit fields in the
-// UDMA_USEBURSTSET register.
-//
-//*****************************************************************************
-#define UDMA_USEBURSTSET_SET__0 0x00000000  // No Effect
-#define UDMA_USEBURSTSET_SET__1 0x00000001  // Burst Only
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// UDMA_USEBURSTCLR register.
-//
-//*****************************************************************************
-#define UDMA_USEBURSTCLR_CLR__0 0x00000000  // No Effect
-#define UDMA_USEBURSTCLR_CLR__1 0x00000001  // Single and Burst
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// UDMA_REQMASKSET register.
-//
-//*****************************************************************************
-#define UDMA_REQMASKSET_SET__0  0x00000000  // No Effect
-#define UDMA_REQMASKSET_SET__1  0x00000001  // Masked
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// UDMA_REQMASKCLR register.
-//
-//*****************************************************************************
-#define UDMA_REQMASKCLR_CLR__0  0x00000000  // No Effect
-#define UDMA_REQMASKCLR_CLR__1  0x00000001  // Clear Mask
-
-//*****************************************************************************
-//
 // The following are deprecated defines for the bit fields in the UDMA_ENASET
 // register.
 //
 //*****************************************************************************
-#define UDMA_ENASET_SET__0      0x00000000  // Disabled
-#define UDMA_ENASET_SET__1      0x00000001  // Enabled
 #define UDMA_ENASET_CHENSET_M   0xFFFFFFFF  // Channel [n] Enable Set.
-#define UDMA_ENASET_CHENSET__0  0x00000000  // No Effect
-#define UDMA_ENASET_CHENSET__1  0x00000001  // Enable
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the UDMA_ENACLR
-// register.
-//
-//*****************************************************************************
-#define UDMA_ENACLR_CLR__0      0x00000000  // No Effect
-#define UDMA_ENACLR_CLR__1      0x00000001  // Disable
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the UDMA_ALTSET
-// register.
-//
-//*****************************************************************************
-#define UDMA_ALTSET_SET__0      0x00000000  // No Effect
-#define UDMA_ALTSET_SET__1      0x00000001  // Alternate
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the UDMA_ALTCLR
-// register.
-//
-//*****************************************************************************
-#define UDMA_ALTCLR_CLR__0      0x00000000  // No Effect
-#define UDMA_ALTCLR_CLR__1      0x00000001  // Primary
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the UDMA_PRIOSET
-// register.
-//
-//*****************************************************************************
-#define UDMA_PRIOSET_SET__0     0x00000000  // No Effect
-#define UDMA_PRIOSET_SET__1     0x00000001  // High Priority
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the UDMA_PRIOCLR
-// register.
-//
-//*****************************************************************************
-#define UDMA_PRIOCLR_CLR__0     0x00000000  // No Effect
-#define UDMA_PRIOCLR_CLR__1     0x00000001  // Default Priority
 
 #endif
 

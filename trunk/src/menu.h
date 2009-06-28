@@ -40,10 +40,9 @@ typedef struct
   void(*service)(void);                   //service routine
 } MAINMENUITEM;
 
-
 typedef struct
 {
-  unsigned int type; //button, checkbox, input
+  unsigned int type; //text, button, checkbox, input
   unsigned int x1;
   unsigned int y1;
   unsigned int x2;
@@ -77,6 +76,8 @@ void                                   menu_drawvol(void);
 void                                   menu_drawstatus(void);
 void                                   menu_setinfo(const char *info);
 void                                   menu_setname(const char *name);
+void                                   menu_setbitrate(unsigned int bitrate);
+void                                   menu_setformat(unsigned int format);
 void                                   menu_setstatus(unsigned int status);
 void                                   menu_drawwndinfo(unsigned int redraw);
 
@@ -91,10 +92,10 @@ void                                   menu_setedgecolor(unsigned int color);
 void                                   menu_setselcolor(unsigned int color);
 void                                   menu_setfgcolor(unsigned int color);
 void                                   menu_setbgcolor(unsigned int color);
-unsigned int                           menu_edgecolor(void);
-unsigned int                           menu_selcolor(void);
-unsigned int                           menu_fgcolor(void);
-unsigned int                           menu_bgcolor(void);
+unsigned int                           menu_getedgecolor(void);
+unsigned int                           menu_getselcolor(void);
+unsigned int                           menu_getfgcolor(void);
+unsigned int                           menu_getbgcolor(void);
 
 void                                   menu_init(void);
 

@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -32,14 +32,13 @@
 //
 //*****************************************************************************
 
+#include "inc/hw_ethernet.h"
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
-#include "inc/hw_ethernet.h"
 #include "driverlib/debug.h"
 #include "driverlib/ethernet.h"
 #include "driverlib/interrupt.h"
-#include "driverlib/sysctl.h"
 
 //*****************************************************************************
 //

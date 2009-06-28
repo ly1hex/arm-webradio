@@ -32,9 +32,9 @@ void nbns_reply(unsigned int index, unsigned int id)
   tx_nbns->data.an.ttl   = SWAP32(3600); //3600 sec = 1 hour
   tx_nbns->data.an.rdlen = SWAP16(6);
   tx_nbns->data.an.flags = SWAP16(0);
-  tx_nbns->data.an.addr  = eth_ip();
+  tx_nbns->data.an.addr  = eth_getip();
 
-  nbns_encode(tx_nbns->data.an.name, eth_name(), 0x00); //0x00 = Workstation
+  nbns_encode(tx_nbns->data.an.name, eth_getname(), 0x00); //0x00 = Workstation
   tx_nbns->data.an.name[32] = 0;
 
   udp_send(index, NBNS_HEADERLEN+NBNSA_HEADERLEN);
@@ -68,7 +68,7 @@ void nbns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
 
     if(type == 0x00) //0x00 = Workstation
     {
-      if(strcmp(name, eth_name()) == 0)
+      if(strcmp(name, eth_getname()) == 0)
       {
         nbns_reply(index, swap16(rx_nbns->id));
       }

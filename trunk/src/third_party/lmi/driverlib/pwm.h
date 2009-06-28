@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4423 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -175,6 +175,14 @@ extern "C"
 #define PWM_FAULT_ACMP0         0x00010000
 #define PWM_FAULT_ACMP1         0x00020000
 #define PWM_FAULT_ACMP2         0x00040000
+
+//*****************************************************************************
+//
+// Defines to identify each of the possible fault trigger conditions in
+// PWM_FAULT_GROUP_1.
+//
+//*****************************************************************************
+#define PWM_FAULT_GROUP_1       1
 
 //*****************************************************************************
 //

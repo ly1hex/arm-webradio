@@ -23,9 +23,13 @@ typedef struct
 
 typedef struct
 {
-  char name[MAX_NAME];
-  char info[MAX_INFO];
-  char addr[MAX_ADDR];
+  char         name[MAX_NAME];
+  char         info[MAX_INFO];
+  char         addr[MAX_ADDR];
+  MAC_Addr     mac;
+  IP_Addr      ip;
+  unsigned int port;
+  char         file[MAX_URLFILE];
 } STATIONBUFFER;
 
 typedef struct
@@ -66,6 +70,7 @@ void                                   vsbuf_puts(const unsigned char *s, unsign
 void                                   vsbuf_putc(unsigned char c);
 void                                   vsbuf_gets(unsigned char *s, unsigned int len);
 unsigned char                          vsbuf_getc(void);
+void                                   vsbuf_sethead(unsigned int head);
 void                                   vsbuf_init(void);
 
 
