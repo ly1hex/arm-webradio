@@ -61,7 +61,7 @@ alarm.ini
 ---------
   INI-File with alarm times:
 
-  [PLAYLIST]
+  [ALARM]
   TIME1= 08:00:MoTuWeThFrSaSu
   TIME2=!09:00:Tu
   TIME3= 12:34:Mo
