@@ -142,7 +142,14 @@ unsigned int dhcp_getcfg(void)
 
   if(dhcp_status == DHCP_ACK) //DHCP request successful
   {
-    eth_setip(dhcp_ip);
+    if(dhcp_ip != 0UL)
+    {
+      eth_setip(dhcp_ip);
+    }
+    else
+    {
+      eth_setip(ip); //set last ip
+    }
     if(dhcp_netmask != 0UL)
     {
       eth_setnetmask(dhcp_netmask);
@@ -159,13 +166,13 @@ unsigned int dhcp_getcfg(void)
     {
       eth_setntp(dhcp_ntp);
     }
+    dhcp_status = DHCP_CLOSED;
     return 0;
   }
 
-  dhcp_status = DHCP_CLOSED;
-
   eth_setip(ip); //set last ip
 
+  dhcp_status = DHCP_CLOSED;
   return 1;
 }
 
@@ -173,84 +180,76 @@ unsigned int dhcp_getcfg(void)
 void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   DHCP_Header *rx_dhcp;
-  unsigned char *ptr, c, len;
+  unsigned char *ptr, c, len, msg;
 
   DEBUGOUT("DHCP: UDP app\n");
 
   rx_dhcp = (DHCP_Header*) rx;
 
-  if((rx_dhcp->op              == DHCP_OP_REPLAY)  &&
+  if((rx_dhcp->op              == DHCP_OP_REPLY)   &&
      (rx_dhcp->htype           == DHCP_HTYPE_ETH)  &&
      (rx_dhcp->hlen            == DHCP_HLEN_MAC)   &&
      (rx_dhcp->xid             == swap32(dhcp_id)) &&
-     (rx_dhcp->yiaddr          != 0UL)             &&
-     (rx_dhcp->chaddr.mac      == eth_getmac())       &&
+     (rx_dhcp->chaddr.mac      == eth_getmac())    &&
      (rx_dhcp->mcookie         == SWAP32(DHCP_MCOOKIE)))
   {
     switch(dhcp_status)
     {
       case DHCP_DISCOVER:
-        if((rx_dhcp->options[0] == DHCP_OPTION_MSGTYPE) &&
-           (rx_dhcp->options[1] == 1) &&
-           (rx_dhcp->options[2] == DHCP_MSG_OFFER))        //DHCP Offer
+        msg = 0;
+        ptr = rx_dhcp->options;
+        while(*ptr != 0xff)
+        {
+          c  = *ptr++;
+          if(c == 0xff) //END
+          {
+            break;
+          }
+          len = *ptr++;
+          switch(c)
+          {
+            case DHCP_OPTION_MSGTYPE:    if(len == 1){ msg = ptr[0]; }
+              break;
+            case DHCP_OPTION_NETMASK:    if(len == 4){ dhcp_netmask = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0); }
+              break;
+            case DHCP_OPTION_ROUTER:     if(len == 4){ dhcp_router  = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0); }
+              break;
+            case DHCP_OPTION_TIMESERVER: if(len == 4){ dhcp_ntp     = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0); }
+              break;
+            case DHCP_OPTION_DNS:        if(len == 4){ dhcp_dns     = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0); }
+              break;
+            case DHCP_OPTION_SERVERID:   if(len == 4){ dhcp_server  = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0); }
+              break;
+          }
+          while(len--){ ptr++; }
+        }
+        if(msg == DHCP_MSG_OFFER)
         {
           dhcp_ip = rx_dhcp->yiaddr; //get ip
-    
-          //parse options
-          ptr = rx_dhcp->options;
-          while(*ptr != 0xff)
-          {
-            c  = *ptr++;
-            if(c == 0xff) //END
-            {
-              break;
-            }
-            len = *ptr++;
-    
-            switch(c)
-            {
-              case DHCP_OPTION_NETMASK:
-                if(len == 4)
-                {
-                  dhcp_netmask = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0);
-                }
-                break;
-              case DHCP_OPTION_ROUTER:
-                if(len == 4)
-                {
-                  dhcp_router = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0);
-                }
-                break;
-              case DHCP_OPTION_TIMESERVER:
-                if(len == 4)
-                {
-                  dhcp_ntp = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0);
-                }
-                break;
-              case DHCP_OPTION_DNS:
-                if(len == 4)
-                {
-                  dhcp_dns = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0);
-                }
-                break;
-              case DHCP_OPTION_SERVERID:
-                if(len == 4)
-                {
-                  dhcp_server = (ptr[3]<<24)|(ptr[2]<<16)|(ptr[1]<<8)|(ptr[0]<<0);
-                }
-                break;
-            }
-            while(len--){ ptr++; }
-          }
           dhcp_request(index, DHCP_MSG_REQUEST);
           dhcp_status = DHCP_REQUEST;
         }
         break;
 
       case DHCP_REQUEST:
-        if((rx_dhcp->options[0] == DHCP_OPTION_MSGTYPE) &&
-           (rx_dhcp->options[1] == 1)                   &&
-           (rx_dhcp->options[2] == DHCP_MSG_ACK))          //DHCP Ack
+        msg = 0;
+        ptr = rx_dhcp->options;
+        while(*ptr != 0xff)
+        {
+          c  = *ptr++;
+          if(c == 0xff) //END
+          {
+            break;
+          }
+          len = *ptr++;
+          switch(c)
+          {
+            case DHCP_OPTION_MSGTYPE:    if(len == 1){ msg = ptr[0]; }
+              break;
+          }
+          while(len--){ ptr++; }
+        }
+        if(msg == DHCP_MSG_ACK)
         {
           dhcp_status = DHCP_ACK;
         }

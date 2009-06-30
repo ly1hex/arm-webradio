@@ -102,13 +102,9 @@ void udp_app(unsigned int index)
   switch(udp_table[index].local_port)
   {
     case DHCPCLIENT_PORT:
-      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask) ||
-         (dev.ip == 0UL)) //local net only
+      if(udp_table[index].port == DHCPSERVER_PORT) //only if server port is correct
       {
-        if(udp_table[index].port == DHCPSERVER_PORT)
-        {
-          dhcp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
-        }
+        dhcp_udpapp(index, &eth_rxbuf[UDP_DATASTART], len, &eth_txbuf[UDP_DATASTART]);
       }
       break;
     case DNS_PORT:
@@ -149,7 +145,6 @@ void udp_service(void)
   for(index=0; index<UDP_ENTRIES; index++) //look for table index
   {
     if((udp_table[index].status != UDP_CLOSED)             &&
-       (rx_ip->src_ip    == udp_table[index].ip)           &&
        (rx_udp->src_port == swap16(udp_table[index].port)) &&
        (rx_udp->dst_port == swap16(udp_table[index].local_port)))
     {
@@ -336,7 +331,6 @@ void tcp_service(void)
   for(index=0; index<TCP_ENTRIES; index++) //look for table index
   {
     if((tcp_table[index].status != TCP_CLOSED)             &&
-       (rx_ip->src_ip    == tcp_table[index].ip)           &&
        (rx_tcp->src_port == swap16(tcp_table[index].port)) &&
        (rx_tcp->dst_port == swap16(tcp_table[index].local_port)))
     {
@@ -1020,6 +1014,8 @@ void eth_service(void)
       {
         switch(rx_ip->proto)
         {
+          //case IP_PROTO_ICMP: icmp_service(); break;
+          //case IP_PROTO_TCP:  tcp_service();  break;
           case IP_PROTO_UDP:  udp_service();  break;
         }
       }
