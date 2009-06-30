@@ -34,7 +34,7 @@
 #include "settings.h"
 
 
-volatile unsigned int status=0;
+volatile unsigned int status=0, standby_active=0;
 volatile long on_time=0;
 volatile unsigned int ms_time=0;
 unsigned long sec_time=0;
@@ -349,12 +349,20 @@ unsigned int getmstime(void)
 }
 
 
+unsigned int standby_state(void)
+{
+  return standby_active;
+}
+
+
 unsigned int standby(unsigned int param)
 {
   unsigned int i, alarm=0;
   char tmp[6];
 
   DEBUGOUT("Standby\n");
+
+  standby_active = 1;
 
   vs_stop();
   lcd_clear(RGB(0,0,0));
@@ -442,6 +450,8 @@ unsigned int standby(unsigned int param)
   {
     menu_alarm();
   }
+
+  standby_active = 0;
 
   return 0;
 }

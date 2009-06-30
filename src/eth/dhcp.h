@@ -17,7 +17,7 @@
 #define DHCP_OFFSET                    (ETH_HEADERLEN+IP_HEADERLEN+UDP_HEADERLEN)
 #define DHCP_HEADERLEN                 (44+64+128)
 #define DHCP_OP_REQUEST                (1)
-#define DHCP_OP_REPLAY                 (2)
+#define DHCP_OP_REPLY                  (2)
 #define DHCP_HTYPE_ETH                 (1)
 #define DHCP_HLEN_MAC                  (6)
 #define DHCP_MCOOKIE                   (0x63825363)

@@ -58,7 +58,10 @@ void http_station(char *rx, unsigned int rx_len)
       i = atoi(item);
       station_setitemaddr(i, addr);
       station_setitem(i, name);
-      menu_drawwnd(1);
+      if(standby_state() == 0)
+      {
+        menu_drawwnd(1);
+      }
     }
   }
   else if(add && name && addr)
@@ -69,7 +72,10 @@ void http_station(char *rx, unsigned int rx_len)
       station_setitemaddr(i, addr);
       station_setitem(i, name);
       station_setitems(i);
-      menu_drawwnd(1);
+      if(standby_state() == 0)
+      {
+        menu_drawwnd(1);
+      }
     }
   }
   else if(del && item)
@@ -78,7 +84,10 @@ void http_station(char *rx, unsigned int rx_len)
     {
       i = atoi(item);
       station_delitem(i);
-      menu_drawwnd(1);
+      if(standby_state() == 0)
+      {
+        menu_drawwnd(1);
+      }
     }
   }
   else if(up && item)
@@ -87,7 +96,10 @@ void http_station(char *rx, unsigned int rx_len)
     {
       i = atoi(item);
       station_moveitem(i, 1);
-      menu_drawwnd(1);
+      if(standby_state() == 0)
+      {
+        menu_drawwnd(1);
+      }
     }
   }
   else if(down && item)
@@ -96,7 +108,10 @@ void http_station(char *rx, unsigned int rx_len)
     {
       i = atoi(item);
       station_moveitem(i, 0);
-      menu_drawwnd(1);
+      if(standby_state() == 0)
+      {
+        menu_drawwnd(1);
+      }
     }
   }
 
@@ -132,7 +147,10 @@ void http_alarm(char *rx, unsigned int rx_len)
       alarm_parsetime(time, &t);
       alarm_settime(i, &t);
       alarm_load();
-      menu_drawwnd(1);
+      if(standby_state() == 0)
+      {
+        menu_drawwnd(1);
+      }
     }
   }
 
@@ -222,7 +240,10 @@ void http_settings(char *rx, unsigned int rx_len)
     }
   }
 
-  menu_drawwnd(1);
+  if(standby_state() == 0)
+  {
+    menu_drawwnd(1);
+  }
 
   return;
 }

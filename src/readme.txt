@@ -23,6 +23,7 @@ History
                       Auto detection of VS type (VS1053b, VS1033c, VS1033d)
                       Automatic standby
                       LFN support
+                      Modify settings via Webinterface
                       Modify settings in the radio menu
                       DNS client
 

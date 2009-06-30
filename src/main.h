@@ -51,6 +51,7 @@ long                                   getontime(void);
 void                                   delay_ms(unsigned int ms);
 unsigned int                           getmstime(void);
 
+unsigned int                           standby_state(void);
 unsigned int                           standby(unsigned int param);
 
 
