@@ -12,6 +12,9 @@
 || Up/down      || Scroll up/down ||
 || OK           || Select/Enter   ||
 
+== Webinterface ==
+Type in your browser *http://192.168.000.050* or *http://webradio* to access the webinterface.
+
 == Ethernet settings ==
 If DHCP is on and the DHCP request fails then the network settings are used from the _settings.ini_ file. If options are not found then the default settings are used.
 
