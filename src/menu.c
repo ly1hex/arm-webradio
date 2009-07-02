@@ -676,11 +676,12 @@ void menu_drawstatus(void)
 
     switch(menu_format)
     {
-      case FORMAT_WAV: strcpy(buf, "WAV"); break;
-      case FORMAT_MP3: strcpy(buf, "MP3"); break;
-      case FORMAT_AAC: strcpy(buf, "AAC"); break;
-      case FORMAT_OGG: strcpy(buf, "OGG"); break;
-      case FORMAT_WMA: strcpy(buf, "WMA"); break;
+      case FORMAT_WAV:  strcpy(buf, "WAV"); break;
+      case FORMAT_MP3:  strcpy(buf, "MP3"); break;
+      case FORMAT_AAC:  strcpy(buf, "AAC"); break;
+      case FORMAT_OGG:  strcpy(buf, "OGG"); break;
+      case FORMAT_WMA:  strcpy(buf, "WMA"); break;
+      case FORMAT_FLAC: strcpy(buf, "FLA"); break;
       default:              strcpy(buf, "   ");  break;
     }
     lcd_puts(LCD_WIDTH-1-5-65, 2, buf, SMALLFONT, bgcolor, edgecolor);

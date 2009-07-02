@@ -22,6 +22,7 @@
 #define FORMAT_AAC                     (3)
 #define FORMAT_OGG                     (4)
 #define FORMAT_WMA                     (5)
+#define FORMAT_FLAC                    (6)
 
 //Clock
 #define VS_XTAL                        (12288000UL)

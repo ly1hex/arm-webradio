@@ -1,6 +1,6 @@
 WebRadio v0.02 (c) Andreas Watterott (www.watterott.net)
 ========================================================
-  Compiled with Rowley's CrossWorks for ARM 2.0
+  Compiled with Rowley's CrossWorks for ARM 2.01
                 CPU Support Pkg Luminary_LM3S 1.8
 
 

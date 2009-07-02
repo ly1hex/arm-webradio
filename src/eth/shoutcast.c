@@ -302,6 +302,10 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             {
               format = FORMAT_WMA;
             }
+            else if(strncmpi(buf, "AUDIO/FLAC", 10) == 0)     //FLAC
+            {
+              format = FORMAT_FLAC;
+            }
           }
           menu_setformat(format);
           //get stream name
@@ -406,6 +410,18 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
                 }
               }
               break;
+            case FORMAT_FLAC:
+              for(; rx_len!=0; rx_len--, rx++)
+              {
+                if((rx_len >= 2)         &&
+                   (rx[0]       == 0xFF) && 
+                  ((rx[1]&0xF8) == 0xF8)) //FLAC sync: 0xFFF8 (13x 1bits)
+                {
+                  break;
+                }
+              }
+              break;
+
           }
           if(rx_len)
           {
