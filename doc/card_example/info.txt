@@ -1,40 +1,41 @@
-Files on the memory card
+Files on the memory card (root directory)
 ========================
 
 settings.ini
 ------------
   INI-File with settings:
 
-  PlayMode       Play mode (for future use)
-  AutoStart      Auto start file (Station item number or path to Card file)
-  IR             IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
+  [SETTINGS]
+  PlayMode=                  Play mode (for future use)
+  AutoStart=                 Auto start file (Station item number or path to Card file)
+  IR=0                       IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
 
-  Name           NetBios and UPnP Name (max 15 characters)
-  MAC            MAC Address
-  DHCP           DHCP, if fails use below settings (0=off, 1=on)
-  IP             Device IP (xxx.xxx.xxx.xxx)
-  NetMask        Device NetMask (xxx.xxx.xxx.xxx)
-  Router         Router IP (xxx.xxx.xxx.xxx)
-  DNS            DNS IP (xxx.xxx.xxx.xxx)
-  NTP            NTP IP (xxx.xxx.xxx.xxx)
-  TimeDiff       Time difference to GMT in seconds (3600 = 1h = GMT+1)
-  Summer         Summer time (0=off, 1=on)
+  Name=WEBRADIO              NetBios and UPnP Name (max 15 characters)
+  MAC=00:1E:E5:12:34:56      MAC Address
+  DHCP=1                     DHCP, if fails use below settings (0=off, 1=on)
+  IP=192.168.000.050         Device IP (xxx.xxx.xxx.xxx)
+  NetMask=255.255.255.000    Device NetMask (xxx.xxx.xxx.xxx)
+  Router=192.168.000.001     Router IP (xxx.xxx.xxx.xxx)
+  DNS=192.168.000.001        DNS IP (xxx.xxx.xxx.xxx)
+  NTP=078.046.194.189        NTP IP (xxx.xxx.xxx.xxx)
+  TimeDiff=3600              Time difference to GMT in seconds (3600 = 1h = GMT+1)
+  Summer=0                   Summer time (0=off, 1=on)
 
-  Volume         Default Volume (0...100 %)
-  BassFreq       Bass limit frequency (20...150 Hz)
-  BassAmp        Bass enhancemanent (0...15 dB)
-  TrebleFreq     Treble limit freqency (1000...15000 Hz)
-  TrebleAmp      Treble control (-8...7 dB)
+  Volume=40                  Default Volume (0...100 %)
+  BassFreq=150               Bass limit frequency (20...150 Hz)
+  BassAmp=9                  Bass enhancemanent (0...15 dB)
+  TrebleFreq=15000           Treble limit freqency (1000...15000 Hz)
+  TrebleAmp=0                Treble control (-8...7 dB)
 
-  AlarmVol       Alarm volume
-  AlarmFile1     Alarm file 1 (Station item number or path to Card file)
-  AlarmFile2     Alarm file 2, if 1st file not working
-  AlarmFile3     Alarm file 3, if 2nd file not working
+  AlarmVol=70                Alarm volume
+  AlarmFile1=4               Alarm file 1 (Station item number or path to Card file)
+  AlarmFile2=1               Alarm file 2, if 1st file not working
+  AlarmFile3=/alarm.mp3      Alarm file 3, if 2nd file not working
 
-  ColorBG        Background color: Red,Green,Blue (xxx,xxx,xxx)
-  ColorFG        Foreground color: Red,Green,Blue (xxx,xxx,xxx)
-  ColorSel       Selection color: Red,Green,Blue (xxx,xxx,xxx)
-  ColorEdge      Edge color: Red,Green,Blue (xxx,xxx,xxx)
+  ColorBG=255,255,255        Background color (Red,Green,Blue)
+  ColorFG=000,000,000        Foreground color (Red,Green,Blue)
+  ColorSel=255,000,000       Selection color (Red,Green,Blue)
+  ColorEdge=000,144,240      Edge color (Red,Green,Blue)
 
 
 station.pls
