@@ -3,7 +3,7 @@
 || Rotary Encoder                        || working (2 and 4 step encoder) ||
 || IR Receiver (RC5)                     || working ||
 || SD-Card                               || working ||
-|| VS1033/VS1053                         || working ||
+|| VS1033c/VS1033d/VS1053b               || working ||
 || F-RAM (currently not needed)          || -       ||
 || *Ethernet Stack* ||
 || Protocols                             || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
