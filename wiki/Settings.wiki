@@ -2,38 +2,38 @@
 
 === settings.ini ===
 INI-File with settings:
-
 {{{
-  PlayMode       Play mode (for future use)
-  AutoStart      Auto start file (Station item number or path to Card file)
-  IR             IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
+[SETTINGS]
+PlayMode=       Play mode (for future use)
+AutoStart=      Auto start file (Station item number or path to Card file)
+IR=             IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
 
-  Name           NetBios and UPnP Name (max 15 characters)
-  MAC            MAC Address
-  DHCP           DHCP, if fails use below settings (0=off, 1=on)
-  IP             Device IP (xxx.xxx.xxx.xxx)
-  NetMask        Device NetMask (xxx.xxx.xxx.xxx)
-  Router         Router IP (xxx.xxx.xxx.xxx)
-  DNS            DNS IP (xxx.xxx.xxx.xxx)
-  NTP            NTP IP (xxx.xxx.xxx.xxx)
-  TimeDiff       Time difference to GMT in seconds (3600 = 1h = GMT+1)
-  Summer         Summer time (0=off, 1=on)
+Name=           NetBios and UPnP Name (max 15 characters)
+MAC=            MAC Address
+DHCP=           DHCP, if fails use below settings (0=off, 1=on)
+IP=             Device IP (xxx.xxx.xxx.xxx)
+NetMask=        Device NetMask (xxx.xxx.xxx.xxx)
+Router=         Router IP (xxx.xxx.xxx.xxx)
+DNS=            DNS IP (xxx.xxx.xxx.xxx)
+NTP=            NTP IP (xxx.xxx.xxx.xxx)
+TimeDiff=       Time difference to GMT in seconds (3600 = 1h = GMT+1)
+Summer=         Summer time (0=off, 1=on)
 
-  Volume         Default Volume (0...100 %)
-  BassFreq       Bass limit frequency (20...150 Hz)
-  BassAmp        Bass enhancemanent (0...15 dB)
-  TrebleFreq     Treble limit freqency (1000...15000 Hz)
-  TrebleAmp      Treble control (-8...7 dB)
+Volume=         Default Volume (0...100 %)
+BassFreq=       Bass limit frequency (20...150 Hz)
+BassAmp=        Bass enhancemanent (0...15 dB)
+TrebleFreq=     Treble limit freqency (1000...15000 Hz)
+TrebleAmp=      Treble control (-8...7 dB)
 
-  AlarmVol       Alarm volume
-  AlarmFile1     Alarm file 1 (Station item number or path to Card file)
-  AlarmFile2     Alarm file 2, if 1st file not working
-  AlarmFile3     Alarm file 3, if 2nd file not working
+AlarmVol=       Alarm volume
+AlarmFile1=     Alarm file 1 (Station item number or path to Card file)
+AlarmFile2=     Alarm file 2, if 1st file not working
+AlarmFile3=     Alarm file 3, if 2nd file not working
 
-  ColorBG        Background color: Red,Green,Blue (xxx,xxx,xxx)
-  ColorFG        Foreground color: Red,Green,Blue (xxx,xxx,xxx)
-  ColorSel       Selection color: Red,Green,Blue (xxx,xxx,xxx)
-  ColorEdge      Edge color: Red,Green,Blue (xxx,xxx,xxx)
+ColorBG=        Background color: Red,Green,Blue (xxx,xxx,xxx)
+ColorFG=        Foreground color: Red,Green,Blue (xxx,xxx,xxx)
+ColorSel=       Selection color: Red,Green,Blue (xxx,xxx,xxx)
+ColorEdge=      Edge color: Red,Green,Blue (xxx,xxx,xxx)
 }}}
 
 
