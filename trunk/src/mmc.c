@@ -19,7 +19,7 @@ char lfn[_DF1S ? ((_MAX_LFN*2)+1) : (_MAX_LFN+1)];
 unsigned int fs_checkitem(FILINFO *finfo)
 {
   unsigned int len;
-  char c1, c2, c3;
+  char *fname, c1, c2, c3, c4, c5;
 
   if(!(finfo->fattrib & (AM_HID|AM_SYS))) //no system and hidden files
   {
@@ -29,18 +29,30 @@ unsigned int fs_checkitem(FILINFO *finfo)
     }
     else //file
     {
-      len = strlen(finfo->fname);
-      c1 = toupper(finfo->fname[len-3]);
-      c2 = toupper(finfo->fname[len-2]);
-      c3 = toupper(finfo->fname[len-1]);
-
-      if(finfo->fname[len-4] == '.')
+#if _USE_LFN
+      fname = (*finfo->lfname)?finfo->lfname:finfo->fname;
+#else
+      fname = finfo->fname;
+#endif
+      len = strlen(fname);
+      if(len > 4)
       {
-        if(((c1 == 'A') && (c2 == 'A') && (c3 == 'C')) || //AAC
-           ((c1 == 'M') && (c2 == 'P') && (c3 == '3')) || //MP3
-           ((c1 == 'O') && (c2 == 'G') && (c3 == 'G')) || //OGG
-           ((c1 == 'W') && (c2 == 'A') && (c3 == 'V')) || //WAV
-           ((c1 == 'W') && (c2 == 'M') && (c3 == 'A')))   //WMA
+        c5 = toupper(fname[len-5]);
+        c4 = toupper(fname[len-4]);
+        c3 = toupper(fname[len-3]);
+        c2 = toupper(fname[len-2]);
+        c1 = toupper(fname[len-1]);
+        if((c4 == '.') &&
+           (((c3 == 'A') && (c2 == 'A') && (c1 == 'C')) || //AAC
+            ((c3 == 'M') && (c2 == 'P') && (c1 == '3')) || //MP3
+            ((c3 == 'O') && (c2 == 'G') && (c1 == 'G')) || //OGG
+            ((c3 == 'W') && (c2 == 'A') && (c1 == 'V')) || //WAV
+            ((c3 == 'W') && (c2 == 'M') && (c1 == 'A'))))  //WMA
+        {
+          return 0;
+        }
+        else if((c5 == '.') &&
+                ((c4 == 'F') && (c3 == 'L') && (c2 == 'A') && (c1 == 'C')))   //FLAC
         {
           return 0;
         }
@@ -457,7 +469,7 @@ unsigned int ini_setentry(const char *filename, const char *entry, const char *v
   unsigned int i, len, found, rd;
   char c;
 
-  res = f_open(&fileobj, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
+  res = f_open(&fileobj, filename, FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
   if(res != FR_OK)
   {
     return 1;

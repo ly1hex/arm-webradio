@@ -768,7 +768,7 @@ int dlg_service(void)
 {
   int sw;
 
-  eth_service();
+  //no ehternet in dialogs eth_service();
 
   sw = keys_steps();
   if(sw > 0)
