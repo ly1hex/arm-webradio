@@ -189,7 +189,7 @@ void shoutcast_putdata(const unsigned char *s, unsigned int len)
 void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   unsigned int tx_len, i;
-  char buf[16];
+  char buf[32], *ptr;
   static unsigned int parse_header=0, format=0, format_header=0, skip=0;
 
   switch(shoutcast_status)
@@ -260,7 +260,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
         if(parse_header == 1)
         {
           //get stream bitrate
-          if(http_hdparam(buf, 16-1, rx, "ICY-BR:") == 0)
+          if(http_hdparam(buf, 32-1, rx, "ICY-BR:") == 0)
           {
             i = atoi(buf);
             if(i >= 128) //bitrate >= 128
@@ -277,37 +277,51 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             }
             station_setbitrate(i);
           }
+
+// skip = 0; //skip nothing
+
           //get stream format
-          if(http_hdparam(buf, 16-1, rx, "CONTENT-TYPE:") == 0)
+          if(http_hdparam(buf, 32-1, rx, "CONTENT-TYPE:") == 0)
           {
-            if((strncmpi(buf, "AUDIO/X-WAV", 11) == 0) ||
-               (strncmpi(buf, "AUDIO/WAV",    9) == 0))       //WAV
+            ptr = buf;
+            if(strncmpi(buf, "AUDIO/", 6) == 0)
+            {
+              ptr += 6;
+            }
+            else if(strncmpi(buf, "APPLICATION/", 12) == 0)
+            {
+              ptr += 12;
+            }
+
+            if((strncmpi(ptr, "X-WAV", 5) == 0) ||
+               (strncmpi(ptr, "WAV",   3) == 0))           //WAV
             {
               format = FORMAT_WAV;
             }
-            else if((strncmpi(buf, "AUDIO/MPEG", 10) == 0) ||
-                    (strncmpi(buf, "AUDIO/MP3",   9) == 0))   //MP3
+            else if((strncmpi(ptr, "MPEG", 4) == 0) ||
+                    (strncmpi(ptr, "MP3",  3) == 0))       //MP3
             {
               format = FORMAT_MP3;
             }
-            else if(strncmpi(buf, "AUDIO/AAC", 9) == 0)       //AAC
+            else if(strncmpi(ptr, "AAC", 3) == 0)          //AAC
             {
               format = FORMAT_AAC;
             }
-            else if(strncmpi(buf, "AUDIO/OGG", 9) == 0)       //OGG
+            else if(strncmpi(ptr, "OGG", 3) == 0)          //OGG
             {
               format = FORMAT_OGG;
             }
-            else if(strncmpi(buf, "AUDIO/X-MS-WMA", 14) == 0) //WMA
+            else if((strncmpi(ptr, "X-MS-WMA", 8) == 0) ||
+                    (strncmpi(ptr, "WMA",      3) == 0))   //WMA
             {
               format = FORMAT_WMA;
             }
-            else if(strncmpi(buf, "AUDIO/FLAC", 10) == 0)     //FLAC
+            else if(strncmpi(ptr, "FLAC", 4) == 0)         //FLAC
             {
               format = FORMAT_FLAC;
             }
+            menu_setformat(format);
           }
-          menu_setformat(format);
           //get stream name
           http_hdparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-NAME:");
           //search http header end
@@ -421,7 +435,6 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
                 }
               }
               break;
-
           }
           if(rx_len)
           {
@@ -497,6 +510,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
       format_header    = 0;
       skip             = 32; //default skip
       station_setbitrate(0);
+      menu_setformat(FORMAT_UNKNOWN);
       tx_len = sprintf(tx, "GET %s HTTP/1.0\r\n"
                            "Host: %s\r\n"
                            "User-Agent: "APPNAME"\r\n"
