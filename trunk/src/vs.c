@@ -410,7 +410,7 @@ void vs_stopstream(void)
 
   //flush buffer
   VS_DCS_ENABLE();
-  for(i=2052; i!=0; i--)
+  for(i=12288; i!=0; i--) //for FLAC 12288 otherwise 2052
   {
     vs_ssi_write(0x00);
   }
