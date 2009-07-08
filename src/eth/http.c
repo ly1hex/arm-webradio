@@ -202,7 +202,8 @@ void http_settings(char *rx, unsigned int rx_len)
             break;
 
           case F_STR: //p1=max len
-            if(strlen(rx) > settingsmenu[item].p1)
+            if((settingsmenu[item].p1 != 0) &&
+              (strlen(rx) > settingsmenu[item].p1))
             {
               rx[settingsmenu[item].p1] = 0;
             }
