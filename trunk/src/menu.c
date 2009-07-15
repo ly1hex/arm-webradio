@@ -626,18 +626,17 @@ void menu_drawclock(void)
 {
   if(menu_mode == MODE_INFO)
   {
-    lcd_puts(25, 108, getclock(), TIMEFONT, bgcolor, fgcolor);
+    lcd_puts(25, LCD_HEIGHT-24, getclock(), TIMEFONT, bgcolor, fgcolor);
   }
 
   return;
 }
 
-
 void menu_drawdate(void)
 {
   if(menu_mode == MODE_INFO)
   {
-    lcd_puts(37, 90, getdate(), NORMALFONT, bgcolor, fgcolor);
+    lcd_puts(37, LCD_HEIGHT-42, getdate(), NORMALFONT, bgcolor, fgcolor);
   }
 
   return;
@@ -795,10 +794,10 @@ void menu_drawwnd(unsigned int redraw)
     switch(menu_mode)
     {
       case MODE_INFO:
-        lcd_puts(4,  2, APPNAME, SMALLFONT, bgcolor, edgecolor);
-        lcd_rect(0, 86, LCD_WIDTH-1, LCD_HEIGHT-1, fgcolor);
-        lcd_line(0, 35,  LCD_WIDTH-1, 35, edgecolor);
-        break;
+        lcd_puts(4, 2, APPNAME, SMALLFONT, bgcolor, edgecolor);
+        lcd_line(0, 35, LCD_WIDTH-1, 35, edgecolor);
+        lcd_rect(0, LCD_HEIGHT-46, LCD_WIDTH-1, LCD_HEIGHT-1, fgcolor);
+        lcd_line(0, 35, LCD_WIDTH-1, 35, edgecolor);       break;
       case MODE_MAIN:
         lcd_puts( 4, 2, APPNAME, SMALLFONT, bgcolor, edgecolor);
         break;

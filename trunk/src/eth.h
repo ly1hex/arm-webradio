@@ -13,12 +13,12 @@
 #define DEFAULT_TIMEDIFF               (3600) //seconds (3600sec = 1h = GMT+1)
 #define DEFAULT_SUMMER                 (0)    //summer time on
 
-#define ETH_MTUSIZE                    (1500) //1500 bytes (rx and tx buffer)
+#define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
 #define ETH_TIMEOUT                    (10) //seconds (ARP request, DHCP request, DNS request...)
 #define ETH_USE_DSCP                   //use Differentiated Services Code Point (QoS -> DSCP)
 
 #define TCP_MSS                        (ETH_MTUSIZE-ETH_HEADERLEN-IP_HEADERLEN-TCP_HEADERLEN) //Maximum Segment Size
-#define TCP_WINDOW                     (2048-256) //window size (ARM has 2kByte Rx FIFO for up to 31 frames)
+#define TCP_WINDOW                     (2048-256) //(2048-256) //window size (ARM has 2kByte Rx FIFO for up to 31 frames)
 #define TCP_ENTRIES                    (10) //max TCP Table Entries
 #define TCP_TIMEOUT                    (2) //seconds
 #define TCP_MAXERROR                   (3) //try x times

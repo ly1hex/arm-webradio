@@ -107,6 +107,7 @@ void                                   http_station(char *rx, unsigned int rx_le
 void                                   http_alarm(char *rx, unsigned int rx_len);
 void                                   http_settings(char *rx, unsigned int rx_len);
 unsigned int                           http_sendfile(unsigned int index, const char *name, unsigned char *tx);
+void                                   http_close(unsigned int index);
 void                                   http_tcpapp(unsigned int index, unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 

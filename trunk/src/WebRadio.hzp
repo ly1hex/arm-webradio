@@ -145,6 +145,8 @@
         <file Name="lcd_ls020.h" file_name="lcd/lcd_ls020.h"/>
         <file Name="lcd_l2f50.c" file_name="lcd/lcd_l2f50.c"/>
         <file Name="lcd_l2f50.h" file_name="lcd/lcd_l2f50.h"/>
+        <file file_name="lcd/lcd_mio283qt.c"/>
+        <file file_name="lcd/lcd_mio283qt.h"/>
       </folder>
       <folder Name="eth">
         <file Name="http.c" file_name="eth/http.c"/>

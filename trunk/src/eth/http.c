@@ -337,13 +337,21 @@ unsigned int http_sendfile(unsigned int index, const char *name, unsigned char *
     tcp_send(index, len, 0);
     if((http_table[index].fpos >= http_table[index].flen) || (len == 0))
     {
-      http_table[index].status = HTTP_CLOSED;
-      http_table[index].flen   = 0;
+      http_close(index);
       tcp_close(index);
     }
   }
 
   return len;
+}
+
+
+void http_close(unsigned int index)
+{
+  http_table[index].status = HTTP_CLOSED;
+  http_table[index].flen   = 0;
+
+  return;
 }
 
 

@@ -16,7 +16,7 @@
 //LM3S6950 Revision: LM3S_REV_A1, LM3S_REV_A2 or LM3S_REV_B0
 #define LM3S_REV_A2
 
-//Display: L2F50, LPH88, LS020
+//Display: L2F50, LPH88, LS020, MIO283QT
 #define LS020
 //#define LCD_MIRROR                     //mirror display
 #define LCD_PWMFREQ                    (60000) //60000 Hz LED PWM Freq

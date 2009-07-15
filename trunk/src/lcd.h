@@ -19,8 +19,14 @@
 #define TIMEFONT_WIDTH                 FONT3_WIDTH
 #define TIMEFONT_HEIGHT                FONT3_HEIGHT
 
-#define LCD_WIDTH                      (176)
-#define LCD_HEIGHT                     (132)
+#if defined(MIO283QT)
+# define LCD_WIDTH                     (320)
+# define LCD_HEIGHT                    (240)
+#else
+# define LCD_WIDTH                     (176)
+# define LCD_HEIGHT                    (132)
+#endif
+
 #define RGB(r,g,b)                     (((r&0xF8)<<8)|((g&0xFC)<<3)|((b&0xF8)>>3)) //5 red | 6 green | 5 blue
 #define GET_RED(x)                     ((x>>8)&0xF8) //5 red
 #define GET_GREEN(x)                   ((x>>3)&0xFC) //6 green

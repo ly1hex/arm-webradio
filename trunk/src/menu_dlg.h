@@ -2,9 +2,6 @@
 #define _MENU_DLG_H_
 
 
-//----- DEFINES -----
-
-
 //----- PROTOTYPES -----
 unsigned int                           dlg_ip(const char* title, IP_Addr *value);
 unsigned int                           dlg_rgb(const char* title, unsigned int *value);

@@ -277,9 +277,6 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             }
             station_setbitrate(i);
           }
-
-// skip = 0; //skip nothing
-
           //get stream format
           if(http_hdparam(buf, 32-1, rx, "CONTENT-TYPE:") == 0)
           {
