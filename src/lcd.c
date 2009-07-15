@@ -9,6 +9,7 @@
 #include "lcd/lcd_l2f50.h"
 #include "lcd/lcd_ls020.h"
 #include "lcd/lcd_lph88.h"
+#include "lcd/lcd_mio283qt.h"
 #include "lcd/font_8x8.h"
 #include "lcd/font_8x12.h"
 #include "lcd/font_clock.h"
@@ -378,7 +379,6 @@ void lcd_init(void)
 
   ssi_speed(2000000); //2 MHz
   lcd_reset();
-  lcd_clear(RGB(0,0,0));
   ssi_speed(0); //ssi speed up (0 = default speed)
 
   return;

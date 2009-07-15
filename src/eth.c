@@ -258,6 +258,7 @@ unsigned int tcp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsi
   return index;
 }
 
+
 void tcp_send(unsigned int index, unsigned int len, unsigned int options)
 {
   if(index < TCP_ENTRIES)
@@ -365,8 +366,8 @@ void tcp_service(void)
           tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
           tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
           tx_tcp->options[1] = 0x04; //len  = 4 bytes
-          tx_tcp->options[2] = (SWAP16((ETH_MTUSIZE-40))>>0)&0xff;
-          tx_tcp->options[3] = (SWAP16((ETH_MTUSIZE-40))>>8)&0xff;
+          tx_tcp->options[2] = (SWAP16(TCP_MSS)>>0)&0xff;
+          tx_tcp->options[3] = (SWAP16(TCP_MSS)>>8)&0xff;
           tcp_send(index, 4, 4);
 #else
           tcp_send(index, 0, 0);
@@ -519,6 +520,7 @@ void tcp_service(void)
     }
     else if(rx_tcp->flags&TCP_FLAG_SYN) //i am server -> SYN+ACK
     {
+      http_close(index); //close/reset index in http table 
       tcp_table[index].mac        = rx_eth->src_mac;
       tcp_table[index].ip         = rx_ip->src_ip;
       tcp_table[index].port       = swap16(rx_tcp->src_port);
@@ -533,8 +535,8 @@ void tcp_service(void)
       tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
       tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
       tx_tcp->options[1] = 0x04; //len  = 4 bytes
-      tx_tcp->options[2] = (SWAP16((ETH_MTUSIZE-40))>>0)&0xff;
-      tx_tcp->options[3] = (SWAP16((ETH_MTUSIZE-40))>>8)&0xff;
+      tx_tcp->options[2] = (SWAP16(TCP_MSS)>>0)&0xff;
+      tx_tcp->options[3] = (SWAP16(TCP_MSS)>>8)&0xff;
       tcp_send(index, 4, 4);
 #else
       tcp_send(index, 0, 0);
@@ -921,8 +923,8 @@ void eth_timerservice(void) //called every second
             tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
             tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
             tx_tcp->options[1] = 0x04; //len  = 4 bytes
-            tx_tcp->options[2] = (SWAP16((ETH_MTUSIZE-40))>>0)&0xff;
-            tx_tcp->options[3] = (SWAP16((ETH_MTUSIZE-40))>>8)&0xff;
+            tx_tcp->options[2] = (SWAP16(TCP_MSS)>>0)&0xff;
+            tx_tcp->options[3] = (SWAP16(TCP_MSS)>>8)&0xff;
             tcp_send(index, 4, 4);
 #else
             tcp_send(index, 0, 0);

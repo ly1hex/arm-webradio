@@ -170,7 +170,9 @@ void station_service(void)
       }
       if(getdeltatime(station_timeout) > 0)
       {
+        station_close();
         station_status = STATION_OPEN;
+        station_timeout = getontime()+1;
       }
       break;
 

@@ -23,6 +23,9 @@
 #include "main.h"
 #include "io.h"
 #include "lcd.h"
+#include "lcd/font_8x8.h"
+#include "lcd/font_8x12.h"
+#include "lcd/font_clock.h"
 #include "mmc_io.h"
 #include "mmc.h"
 #include "vs.h"
@@ -372,7 +375,7 @@ unsigned int standby(unsigned int param)
   tmp[3] = clock_str[3];
   tmp[4] = clock_str[4];
   tmp[5] = 0;
-  lcd_puts(50, 50, tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+  lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
 
   cpu_speed(1); //low speed
 
@@ -400,7 +403,7 @@ unsigned int standby(unsigned int param)
           tmp[1] = clock_str[1];
           tmp[3] = clock_str[3];
           tmp[4] = clock_str[4];
-          lcd_puts(50, 50, tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+          lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
         }
       }
     }
@@ -519,6 +522,8 @@ int main()
   # define LCD_NAME "S65-LS020"
   #elif defined(L2F50)
   # define LCD_NAME "S65-L2F50"
+  #elif defined(MIO283QT)
+  # define LCD_NAME "MIO283QT"
   #else
   # warning "LCD not defined"
   #endif
@@ -531,12 +536,12 @@ int main()
 
   //show start-up screen
   lcd_clear(DEFAULT_BGCOLOR);
-  lcd_rect( 0,   0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
-  lcd_puts(10,   2, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_rect( 0, 118, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
-  lcd_puts(20, 121, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_puts(10,  20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(15,  30, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_rect( 0, 0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
+  lcd_puts(10, 2, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_rect( 0, LCD_HEIGHT-14, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
+  lcd_puts(20, LCD_HEIGHT-11, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_puts(10, 20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(15, 30, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   if(r)
   {
     i = lcd_puts(10,  45, "Reset:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
