@@ -1,28 +1,28 @@
 || *Hardware* ||
-|| S65-Display                           || working (LPH88, LS020) ||
-|| Rotary Encoder                        || working (2 and 4 step encoder) ||
-|| IR Receiver (RC5)                     || working ||
-|| SD-Card                               || working ||
-|| VS1033c/VS1033d/VS1053b               || working ||
-|| F-RAM (currently not needed)          || -       ||
+|| Display                           || working (S65 LPH88, S65 LS020, Multi-Inno MIO283QT) ||
+|| Rotary Encoder                    || working (2 and 4 step encoder) ||
+|| IR Receiver (RC5)                 || working ||
+|| SD-Card                           || working ||
+|| VS1033c/VS1033d/VS1053b           || working ||
+|| F-RAM (currently not needed)      || -       ||
 || *Ethernet Stack* ||
-|| Protocols                             || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
-|| DHCP Client                           || working ||
-|| DNS Client                            || working ||
-|| NTP Client                            || working ||
-|| HTTP Server                           || working ||
-|| UPnP Device                           || working ||
+|| Protocols                         || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
+|| DHCP Client                       || working ||
+|| DNS Client                        || working ||
+|| NTP Client                        || working ||
+|| HTTP Server                       || working ||
+|| UPnP Device                       || working ||
 || *FAT Stack* ||
-|| ELM ChaN's FatFs with LFN             || working ||
+|| ELM ChaN's FatFs with LFN         || working ||
 || *Functions* ||
-|| Play Shoutcast/Icecast streams        || working ||
-|| Play RTSP streams                     || 50%     ||
-|| Play from SMB/CIFS Shares             || -       ||
-|| Play from Memory Card                 || working ||
-|| Load Settings from Memory Card        || working ||
-|| Change Settings via Menu              || working ||
-|| Change Settings via HTTP              || working  ||
-|| Control via HTTP                      || -       ||
-|| Control via UPnP                      || Volume control works ||
-|| Alarm Clock                           || working ||
-|| Bootloader                            || -       ||
+|| Play Shoutcast/Icecast streams    || working ||
+|| Play RTSP streams                 || 50%     ||
+|| Play from SMB/CIFS Shares         || -       ||
+|| Play from Memory Card             || working ||
+|| Load Settings from Memory Card    || working ||
+|| Change Settings via Menu          || working ||
+|| Change Settings via HTTP          || working  ||
+|| Control via HTTP                  || -       ||
+|| Control via UPnP                  || Volume control works ||
+|| Alarm Clock                       || working ||
+|| Bootloader                        || -       ||
