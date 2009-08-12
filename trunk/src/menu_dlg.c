@@ -197,7 +197,7 @@ unsigned int dlg_rgb(const char* title, unsigned int *value)
   menu_createctrl(&ctrl[3], CTRL_INPUT,  0,  72,  70, 3, buf_g); //G
   menu_createctrl(&ctrl[4], CTRL_TEXT,   0,  32-0,50, 0, "Red");
   menu_createctrl(&ctrl[4], CTRL_INPUT,  0,  32,  70, 3, buf_r); //R
-  lcd_rect(60, 20, 111, 42, *value);
+  lcd_fillrect(60, 20, 111, 42, *value);
   ctrl[2].p2 = ctrl[3].p2 = ctrl[4].p2 = 0xFFFF; //mark whole edit on selection
   sel = 1;
 
@@ -254,7 +254,7 @@ unsigned int dlg_rgb(const char* title, unsigned int *value)
         }
         itoa(i, ctrl[sel].val, 10);
         *value = RGB(atoi(buf_r), atoi(buf_g), atoi(buf_b));
-        lcd_rect(60, 20, 111, 42, *value);
+        lcd_fillrect(60, 20, 111, 42, *value);
         break;
     }
 

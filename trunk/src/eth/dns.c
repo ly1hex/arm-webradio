@@ -57,7 +57,7 @@ unsigned int dns_request(unsigned int index, const char *domain)
 
   len += 5;
 
-  mac = arp_getmac(eth_getdns());
+  mac   = arp_getmac(eth_getdns());
   index = udp_open(index, mac, eth_getdns(), DNS_PORT, DNS_PORT, 0, DNS_HEADERLEN+len);
 
   return index;
@@ -74,28 +74,31 @@ IP_Addr dns_getip(const char *domain)
 
   index = dns_request(UDP_ENTRIES, domain);
 
-  timeout     = getontime()+ETH_TIMEOUT;
-  timeout_dns = getontime()+DNS_TIMEOUT;
-  for(;;)
+  if(index < UDP_ENTRIES)
   {
-    eth_service();
-
-    if(dns_ip != 0UL)
+    timeout     = getontime()+ETH_TIMEOUT;
+    timeout_dns = getontime()+DNS_TIMEOUT;
+    for(;;)
     {
-      break;
+      eth_service();
+  
+      if(dns_ip != 0UL)
+      {
+        break;
+      }
+      if(getdeltatime(timeout_dns) > 0)
+      {
+        timeout_dns = getontime()+DNS_TIMEOUT;
+        index = dns_request(index, domain);
+      }
+      if(getdeltatime(timeout) > 0)
+      {
+        break;
+      }
     }
-    if(getdeltatime(timeout_dns) > 0)
-    {
-      timeout_dns = getontime()+DNS_TIMEOUT;
-      index = dns_request(index, domain);
-    }
-    if(getdeltatime(timeout) > 0)
-    {
-      break;
-    }
+  
+    udp_close(index);
   }
-
-  udp_close(index);
 
   return dns_ip;
 }

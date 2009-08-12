@@ -93,7 +93,7 @@ typedef struct
 
 //Proto: Ethernet
 #define ETH_OFFSET                     (0x0000)
-#define	ETH_HEADERLEN                  (14)
+#define        ETH_HEADERLEN                  (14)
 #define ETH_TYPE_IP                    SWAP16(0x0800)
 #define ETH_TYPE_ARP                   SWAP16(0x0806)
 typedef struct __attribute__((packed))
@@ -105,13 +105,13 @@ typedef struct __attribute__((packed))
 
 //Proto: ARP (Address Resolution Protocol)
 #define ARP_OFFSET                     (ETH_HEADERLEN)
-#define	ARP_HEADERLEN                  (28)
-#define	ARP_HW_TYPE                    SWAP16(0x0001)
-#define	ARP_PRO_TYPE                   SWAP16(0x0800)
-#define	ARP_HW_LEN                     (0x06)
-#define	ARP_PRO_LEN                    (0x04)
-#define	ARP_OP_REQUEST                 SWAP16(0x0001)
-#define	ARP_OP_REPLY                   SWAP16(0x0002)
+#define        ARP_HEADERLEN                  (28)
+#define        ARP_HW_TYPE                    SWAP16(0x0001)
+#define        ARP_PRO_TYPE                   SWAP16(0x0800)
+#define        ARP_HW_LEN                     (0x06)
+#define        ARP_PRO_LEN                    (0x04)
+#define        ARP_OP_REQUEST                 SWAP16(0x0001)
+#define        ARP_OP_REPLY                   SWAP16(0x0002)
 typedef struct __attribute__((packed))
 {
   unsigned int     hw_type   : 16; //16bit Hardware Type
@@ -127,10 +127,10 @@ typedef struct __attribute__((packed))
 
 //Proto: IP v4 (Internet Protocol)
 #define IP_OFFSET                      (ETH_HEADERLEN)
-#define	IP_HEADERLEN                   (20)
-#define	IP_PROTO_ICMP                  (0x01)
-#define	IP_PROTO_TCP                   (0x06)
-#define	IP_PROTO_UDP                   (0x11)
+#define        IP_HEADERLEN                   (20)
+#define        IP_PROTO_ICMP                  (0x01)
+#define        IP_PROTO_TCP                   (0x06)
+#define        IP_PROTO_UDP                   (0x11)
 typedef struct __attribute__((packed))
 {
   unsigned int     hd_len    :  4; // 4bit Version

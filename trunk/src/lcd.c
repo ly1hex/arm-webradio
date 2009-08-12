@@ -17,7 +17,7 @@
 
 void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
 {
-  int i, start_x, start_y, end_x, end_y;
+  int i, x0, y0, x1, y1;
   unsigned long *ptr, data, mask, start_bit, end_bit;
 
   if((x <= -32) || (x >= LCD_WIDTH))
@@ -27,33 +27,33 @@ void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int col
 
   if(x < 0)
   {
-    start_x   = 0;
-    start_y   = y;
-    end_x     = 31+x;
-    end_y     = y+31;
+    x0        = 0;
+    y0        = y;
+    x1        = 31+x;
+    y1        = y+31;
     start_bit = 1UL<<(31+x);
     end_bit   = 0UL;
   }
   else if(x > (LCD_WIDTH-32))
   {
-    start_x   = x;
-    start_y   = y;
-    end_x     = LCD_WIDTH-1;
-    end_y     = y+31;
+    x0        = x;
+    y0        = y;
+    x1        = LCD_WIDTH-1;
+    y1        = y+31;
     start_bit = 1UL<<31;
-    end_bit   = 1UL<<(30-(end_x-start_x));
+    end_bit   = 1UL<<(30-(x1-x0));
   }
   else
   {
-    start_x   = x;
-    start_y   = y;
-    end_x     = x+31;
-    end_y     = y+31;
+    x0        = x;
+    y0        = y;
+    x1        = x+31;
+    y1        = y+31;
     start_bit = 1UL<<31;
     end_bit   = 0UL;
   }
 
-  lcd_area(start_x, start_y, end_x, end_y);
+  lcd_area(x0, y0, x1, y1);
 
   lcd_drawstart();
   ptr = (unsigned long*)img;
@@ -93,28 +93,27 @@ void lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsig
     case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
   }
 
-  lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+  lcd_fillrect(0, y, x-1, (y+font_height), bgcolor); //clear before text
 
   while(*s)
   {
     c = *s++;
     if(c == '\n') //new line
     {
-      lcd_rect(x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
+      lcd_fillrect(x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
       x  = start_x;
       y += font_height+2;
-      lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+      lcd_fillrect(0, y, x-1, (y+font_height), bgcolor); //clear before text
       continue;
     }
 
     x = lcd_putc(x, y, c, font, color, bgcolor);
-
     if(x >= LCD_WIDTH) //new line
     {
-      lcd_rect(x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
+      lcd_fillrect(x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
       x  = start_x;
       y += font_height+2;
-      lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+      lcd_fillrect(0, y, x-1, (y+font_height), bgcolor); //clear before text
       x = lcd_putc(x, y, c, font, color, bgcolor);
     }
   }
@@ -134,7 +133,7 @@ void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigne
     case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
   }
 
-  lcd_rect(0, y, x-1, (y+font_height), bgcolor); //clear before text
+  lcd_fillrect(0, y, x-1, (y+font_height), bgcolor); //clear before text
 
   while(*s)
   {
@@ -146,7 +145,7 @@ void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigne
     last_x = x;
   }
 
-  lcd_rect(last_x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
+  lcd_fillrect(last_x, y, (LCD_WIDTH-1), (y+font_height), bgcolor); //clear after text
 
   return;
 }
@@ -226,19 +225,33 @@ data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<
 }
 
 
-void lcd_rect(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color)
+void lcd_fillrect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int color)
 {
-  unsigned int size;
+  unsigned int size, tmp;
 
-  if((start_x > end_x) ||
-     (start_y > end_y))
+  if(x0 > x1)
+  {
+    tmp = x0;
+    x0  = x1;
+    x1  = tmp;
+  }
+  if(y0 > y1)
+  {
+    tmp = y0;
+    y0  = y1;
+    y1  = tmp;
+  }
+
+  if((x1 >= LCD_WIDTH) ||
+     (y1 >= LCD_HEIGHT))
   {
     return;
   }
 
-  lcd_area(start_x, start_y, end_x, end_y);
+  lcd_area(x0, y0, x1, y1);
+
   lcd_drawstart();
-  for(size=((1+(end_x-start_x))*(1+(end_y-start_y))); size!=0; size--)
+  for(size=((1+(x1-x0))*(1+(y1-y0))); size!=0; size--)
   {
     lcd_draw(color);
   }
@@ -248,91 +261,110 @@ void lcd_rect(unsigned int start_x, unsigned int start_y, unsigned int end_x, un
 }
 
 
-void lcd_rectedge(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color)
+void lcd_rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int color)
 {
-  lcd_rect(start_x, start_y, start_x, end_y, color);
-  lcd_rect(start_x, end_y, end_x, end_y, color);
-  lcd_rect(end_x, start_y, end_x, end_y, color);
-  lcd_rect(start_x, start_y, end_x, start_y, color);
+  lcd_fillrect(x0, y0, x0, y1, color);
+  lcd_fillrect(x0, y1, x1, y1, color);
+  lcd_fillrect(x1, y0, x1, y1, color);
+  lcd_fillrect(x0, y0, x1, y0, color);
 
   return;
 }
 
 
-void lcd_line(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color)
+void lcd_circle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color)
 {
-  int x, y, dx, dy, xinc, xinc_e, yinc, yinc_e, eadd, esub, steps;
-  int e;
+  int f, ddF_x, ddF_y, x, y;
 
-  if((start_x == end_x) ||
-     (start_y == end_y)) //horizontal or vertical line
+  f     = 1 - radius;
+  ddF_x = 0;
+  ddF_y = -2 * radius;
+  x     = 0;
+  y     = radius;
+
+  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+
+  lcd_pixel(x0, y0 + radius, color);
+  lcd_pixel(x0, y0 - radius, color);
+  lcd_pixel(x0 + radius, y0, color);
+  lcd_pixel(x0 - radius, y0, color);
+  
+  while(x < y)
   {
-    lcd_rect(start_x, start_y, end_x, end_y, color);
+    if(f >= 0)
+    {
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    x++;
+    ddF_x += 2;
+    f     += ddF_x + 1;
+
+    lcd_pixel(x0 + x, y0 + y, color);
+    lcd_pixel(x0 - x, y0 + y, color);
+    lcd_pixel(x0 + x, y0 - y, color);
+    lcd_pixel(x0 - x, y0 - y, color);
+    lcd_pixel(x0 + y, y0 + x, color);
+    lcd_pixel(x0 - y, y0 + x, color);
+    lcd_pixel(x0 + y, y0 - x, color);
+    lcd_pixel(x0 - y, y0 - x, color);
+  }
+
+  return;
+}
+
+
+void lcd_line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int color)
+{
+  int dx, dy, dx2, dy2, stepx, stepy, err;
+
+  if((x0 == x1) ||
+     (y0 == y1)) //horizontal or vertical line
+  {
+    lcd_fillrect(x0, y0, x1, y1, color);
   }
   else
   {
-    if(start_x > end_x) //swap coordinates
-    {
-      x       = start_x;
-      start_x = end_x;
-      end_x   = x;
-      y       = start_y;
-      start_y = end_y;
-      end_y   = y;
-    }
-
-    if(start_y < end_y) // "\"
-    {
-      x   = start_x;
-      y   = start_y;
-      dx  = end_x - start_x;
-      dy  = end_y - start_y;
-      xinc = +1;
-      yinc = +1;
-    }
-    else                // "/"
-    {
-      x   = start_x;
-      y   = start_y;
-      dx  = end_x   - start_x;
-      dy  = start_y - end_y;
-      xinc = +1;
-      yinc = -1;
-    }
-
+    //calculate direction
+    dx = x1 - x0;
+    dy = y1 - y0;
+    if(dx < 0) { dx = -dx; stepx = -1; } else { stepx = +1; }
+    if(dy < 0) { dy = -dy; stepy = -1; } else { stepy = +1; }
+    dx2 = dx << 1;
+    dy2 = dy << 1;
+    //draw line
+    lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+    lcd_pixel(x0, y0, color);
     if(dx > dy)
     {
-      eadd   = dx;
-      esub   = dy;
-      xinc_e = 0;
-      yinc_e = yinc;
-      yinc   = 0;
-      steps  = dx;
+      err = dy2 - dx;
+      while(x0 != x1)
+      {
+        if(err >= 0)
+        {
+          err -= dx2;
+          y0  += stepy;
+        }
+        err += dy2;
+        x0  += stepx;
+        lcd_pixel(x0, y0, color);
+      }
     }
     else
     {
-      eadd   = dy;
-      esub   = dx;
-      xinc_e = xinc;
-      yinc_e = 0;
-      xinc   = 0;
-      steps  = dy;
-    }
-
-    lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
-    lcd_pixel(x, y, color);
-    for(e=eadd/2; steps!=0; steps--)
-    {
-      x += xinc;
-      y += yinc;
-      e -= esub;
-      if(e < 0)
+      err = dx2 - dy;
+      while(y0 != y1)
       {
-        x += xinc_e;
-        y += yinc_e;
-        e += eadd;
+        if(err >= 0)
+        {
+          err -= dy2;
+          x0  += stepx;
+        }
+        err += dx2;
+        y0  += stepy;
+        lcd_pixel(x0, y0, color);
       }
-      lcd_pixel(x, y, color);
     }
   }
 
@@ -349,6 +381,7 @@ void lcd_pixel(unsigned int x, unsigned int y, unsigned int color)
   }
 
   lcd_cursor(x, y);
+
   lcd_drawstart();
   lcd_draw(color);
   lcd_drawstop();
@@ -362,6 +395,7 @@ void lcd_clear(unsigned int color)
   unsigned int i;
 
   lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+
   lcd_drawstart();
   for(i=(LCD_WIDTH*LCD_HEIGHT); i!=0; i--)
   {

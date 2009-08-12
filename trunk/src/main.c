@@ -316,13 +316,13 @@ void settime(unsigned long s)
 }
 
 
-long getdeltatime(long time)
+long getdeltatime(long t)
 {
   long s;
 
   s = on_time;
 
-  return (s-time);
+  return (s-t);
 }
 
 
@@ -361,7 +361,7 @@ unsigned int standby_state(void)
 unsigned int standby(unsigned int param)
 {
   unsigned int i, alarm=0;
-  char tmp[6];
+  char tmp[32];
 
   DEBUGOUT("Standby\n");
 
@@ -376,6 +376,8 @@ unsigned int standby(unsigned int param)
   tmp[4] = clock_str[4];
   tmp[5] = 0;
   lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+
+  USB_OFF();
 
   cpu_speed(1); //low speed
 
@@ -414,26 +416,8 @@ unsigned int standby(unsigned int param)
     }
     else if(keys_sw() || (ir_cmd() == SW_POWER))
     {
-      if((time.h >= 19) || (time.h <= 4))
-      {
-        lcd_puts(20, 20, "Good Night !", NORMALFONT, RGB(255,255,255), RGB(0,0,0));
-      }
-      else if(time.h >= 17)
-      {
-        lcd_puts(20, 20, "Good Evening !", NORMALFONT, RGB(255,255,255), RGB(0,0,0));
-      }
-      else if(time.h >= 12)
-      {
-        lcd_puts(20, 20, "Good Afternoon !", NORMALFONT, RGB(255,255,255), RGB(0,0,0));
-      }
-      else if(time.h >= 10)
-      {
-        lcd_puts(20, 20, "Good Day !", NORMALFONT, RGB(255,255,255), RGB(0,0,0));
-      }
-      else if(time.h >= 5)
-      {
-        lcd_puts(20, 20, "Good Morning !", NORMALFONT, RGB(255,255,255), RGB(0,0,0));
-      }
+      daytime(tmp, &time);
+      lcd_puts(20, 20, tmp, NORMALFONT, RGB(255,255,255), RGB(0,0,0));
       delay_ms(1000);
       break;
     }
@@ -443,6 +427,8 @@ unsigned int standby(unsigned int param)
   fs_mount();
 
   cpu_speed(0); //high speed
+
+  USB_ON();
 
   //clear cmds
   keys_sw();
@@ -463,13 +449,13 @@ unsigned int standby(unsigned int param)
 int main()
 {
   unsigned int i, draw=0;
-  unsigned long r;
+  unsigned long l;
 
   //get reset cause
-  r = SysCtlResetCauseGet();
-  if(r)
+  l = SysCtlResetCauseGet();
+  if(l)
   {
-    SysCtlResetCauseClear(r);
+    SysCtlResetCauseClear(l);
   }
 
   //init pins and peripherals
@@ -536,46 +522,54 @@ int main()
 
   //show start-up screen
   lcd_clear(DEFAULT_BGCOLOR);
-  lcd_rect( 0, 0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
+  lcd_fillrect( 0, 0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
   lcd_puts(10, 2, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_rect( 0, LCD_HEIGHT-14, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
+  lcd_fillrect( 0, LCD_HEIGHT-14, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, LCD_HEIGHT-11, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_puts(10, 20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   lcd_puts(15, 30, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  if(r)
+  if(l)
   {
     i = lcd_puts(10,  45, "Reset:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    if(r & SYSCTL_CAUSE_LDO)
+    if(l & SYSCTL_CAUSE_LDO)
     {
       i = lcd_puts(i, 45, "LDO", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
-    if(r & SYSCTL_CAUSE_SW)
+    if(l & SYSCTL_CAUSE_SW)
     {
       i = lcd_puts(i, 45, "SW", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
-    if(r & SYSCTL_CAUSE_WDOG)
+    if(l & SYSCTL_CAUSE_WDOG)
     {
       i = lcd_puts(i, 45, "WD", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
-    if(r & SYSCTL_CAUSE_BOR)
+    if(l & SYSCTL_CAUSE_BOR)
     {
       i = lcd_puts(i, 45, "BOR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
-    if(r & SYSCTL_CAUSE_POR)
+    if(l & SYSCTL_CAUSE_POR)
     {
       i = lcd_puts(i, 45, "POR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
-    if(r & SYSCTL_CAUSE_EXT)
+    if(l & SYSCTL_CAUSE_EXT)
     {
       i = lcd_puts(i, 45, "EXT", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
     }
   }
 
-  i = 60;
+  i = 60; //msg y start
 
   //init mmc & mount filesystem
   lcd_puts(10,  i, "Init Memory Card...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   fs_mount();
+
+  //init fram
+  lcd_puts(10,  i, "Init F-RAM...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  if(fm_init())
+  {
+    lcd_puts(10,  i, "Init F-RAM...found", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  }
+  i += 10;
 
   //init ethernet
   lcd_puts(10,  i, "Init Ethernet...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
@@ -594,7 +588,7 @@ int main()
 #endif
 
   //advertise UPnP device
-  lcd_puts(10, 100, "SSDP: Advertise...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10, i, "SSDP: Advertise...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   ssdp_advertise();
 
   //cpu high speed
@@ -602,6 +596,9 @@ int main()
 
   //init menu
   menu_init();
+
+  //usb power on
+  USB_ON();
 
   DEBUGOUT("Ready...\n");
 

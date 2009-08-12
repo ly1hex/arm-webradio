@@ -51,8 +51,7 @@ unsigned int rtsp_open(void)
     gbuf.station.port = RTSP_SERVERPORT;
   }
 
-  index   = TCP_ENTRIES;
-  index   = tcp_open(index, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, rtsp_localport);
+  index   = tcp_open(TCP_ENTRIES, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, rtsp_localport);
   timeout = getontime()+RTSP_TIMEOUT;
   trying  = RTSP_TRY;
   for(;;)

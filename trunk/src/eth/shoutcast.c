@@ -50,8 +50,7 @@ unsigned int shoutcast_open(void)
     gbuf.station.port = SHOUTCAST_SERVERPORT;
   }
 
-  index   = TCP_ENTRIES;
-  index   = tcp_open(index, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
+  index   = tcp_open(TCP_ENTRIES, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
   timeout = getontime()+SHOUTCAST_TIMEOUT;
   trying  = SHOUTCAST_TRY;
   for(;;)
@@ -271,6 +270,10 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             {
               skip = 32; //skip first 32 frames
             }
+            else if(i >= 16)
+            {
+              skip = 16; //skip first 16 frames
+            }
             else if(i >= 8)
             {
               skip = 0; //skip nothing
@@ -448,7 +451,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             case FORMAT_OGG:
               if(format_header < 4000) //Ogg header is around 4-5 kByte
               {
-                vsbuf_puts(rx, rx_len);
+                //vsbuf_puts(rx, rx_len);
                 format_header += rx_len;
                 rx_len         = 0;
               }

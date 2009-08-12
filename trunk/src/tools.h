@@ -30,6 +30,7 @@ unsigned long                          atoui(const char *s);
 unsigned int                           atorgb(const char *s);
 
 void                                   sectotime(unsigned long s, TIME *time);
+void                                   daytime(char *s, TIME *time);
 
 
 #endif //_TOOLS_H_

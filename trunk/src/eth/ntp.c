@@ -41,28 +41,31 @@ unsigned long ntp_gettime(void)
 
   index = ntp_request(UDP_ENTRIES);
 
-  timeout     = getontime()+ETH_TIMEOUT;
-  timeout_ntp = getontime()+NTP_TIMEOUT;
-  for(;;)
+  if(index < UDP_ENTRIES)
   {
-    eth_service();
-
-    if(ntp_time != 0UL)
+    timeout     = getontime()+ETH_TIMEOUT;
+    timeout_ntp = getontime()+NTP_TIMEOUT;
+    for(;;)
     {
-      break;
+      eth_service();
+  
+      if(ntp_time != 0UL)
+      {
+        break;
+      }
+      if(getdeltatime(timeout_ntp) > 0)
+      {
+        timeout_ntp = getontime()+NTP_TIMEOUT;
+        index = ntp_request(index);
+      }
+      if(getdeltatime(timeout) > 0)
+      {
+        break;
+      }
     }
-    if(getdeltatime(timeout_ntp) > 0)
-    {
-      timeout_ntp = getontime()+NTP_TIMEOUT;
-      index = ntp_request(index);
-    }
-    if(getdeltatime(timeout) > 0)
-    {
-      break;
-    }
+  
+    udp_close(index);
   }
-
-  udp_close(index);
 
   return ntp_time;
 }

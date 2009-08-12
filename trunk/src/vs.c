@@ -263,7 +263,7 @@ unsigned int vs_read_ram(unsigned int addr)
   unsigned long ret;
 
   vs_write_reg(VS_WRAMADDR, addr);
-  ret  = vs_read_reg(VS_WRAM);
+  ret = vs_read_reg(VS_WRAM);
 
   return ret;
 }
@@ -435,13 +435,11 @@ void vs_stop(void)
 
   vs_playing = 0;
 
-  USB_OFF();
-
   vs_pause();
   vs_setvolume(0);
   vs_stopstream();
 
-  vsbuf_init();
+  vsbuf_reset();
 
   return;
 }
@@ -453,12 +451,10 @@ void vs_start(void)
 
   vs_playing = 1;
 
-  USB_ON();
-
   vs_pause();
   vs_setvolume(vs_vol);
 
-  vsbuf_init();
+  vsbuf_reset();
 
   return;
 }
@@ -472,7 +468,7 @@ void vs_init(void)
 
   vs_playing = 0;
 
-  vsbuf_init();
+  vsbuf_reset();
 
   //ssi speed down
   vs_ssi_speed(2000000); //2 MHz
