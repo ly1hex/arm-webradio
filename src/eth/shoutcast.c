@@ -451,7 +451,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             case FORMAT_OGG:
               if(format_header < 4000) //Ogg header is around 4-5 kByte
               {
-                //vsbuf_puts(rx, rx_len);
+                vsbuf_puts(rx, rx_len);
                 format_header += rx_len;
                 rx_len         = 0;
               }
