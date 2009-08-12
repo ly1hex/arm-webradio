@@ -313,3 +313,30 @@ void sectotime(unsigned long s, TIME *time) //seconds from 1970
 
   return;
 }
+
+
+void daytime(char *s, TIME *time)
+{
+  if((time->h >= 19) || (time->h <= 4))
+  {
+    strcpy(s, "Good Night !");
+  }
+  else if(time->h >= 17)
+  {
+    strcpy(s, "Good Evening !");
+  }
+  else if(time->h >= 12)
+  {
+    strcpy(s, "Good Afternoon !");
+  }
+  else if(time->h >= 10)
+  {
+    strcpy(s, "Good Day !");
+  }
+  else if(time->h >= 5)
+  {
+    strcpy(s, "Good Morning !");
+  }
+
+  return;
+}

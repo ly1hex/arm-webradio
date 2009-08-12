@@ -235,6 +235,8 @@ unsigned int fs_items(const char *path)
 
 void fs_unmount(void)
 {
+  DEBUGOUT("MMC: unmount\n");
+
   f_mount(0, 0);
 
   return;
@@ -245,10 +247,14 @@ void fs_mount(void)
 {
   unsigned int mount_try=3;
 
+  DEBUGOUT("MMC: init\n");
+
   if(disk_status(0) & STA_NOINIT)
   {
     while((disk_initialize(0) & STA_NOINIT) && --mount_try);
   }
+
+  DEBUGOUT("MMC: mount\n");
 
   if(disk_status(0) == 0)
   {

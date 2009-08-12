@@ -111,34 +111,37 @@ unsigned int dhcp_getcfg(void)
 
   index = dhcp_request(UDP_ENTRIES, DHCP_MSG_DISCOVER); 
 
-  timeout = getontime()+ETH_TIMEOUT;
-  for(;;)
+  if(index < UDP_ENTRIES)
   {
-    eth_service();
-
-    if(dhcp_status == DHCP_ACK)
+    timeout = getontime()+ETH_TIMEOUT;
+    for(;;)
     {
-      break;
-    }
-    if(getdeltatime(dhcp_timeout) > 0)
-    {
-      switch(dhcp_status)
+      eth_service();
+  
+      if(dhcp_status == DHCP_ACK)
       {
-        case DHCP_DISCOVER:
-          index = dhcp_request(index, DHCP_MSG_DISCOVER); 
-          break;
-        case DHCP_REQUEST:
-          index = dhcp_request(index, DHCP_MSG_REQUEST);
-          break;
+        break;
+      }
+      if(getdeltatime(dhcp_timeout) > 0)
+      {
+        switch(dhcp_status)
+        {
+          case DHCP_DISCOVER:
+            index = dhcp_request(index, DHCP_MSG_DISCOVER); 
+            break;
+          case DHCP_REQUEST:
+            index = dhcp_request(index, DHCP_MSG_REQUEST);
+            break;
+        }
+      }
+      if(getdeltatime(timeout) > 0)
+      {
+        break;
       }
     }
-    if(getdeltatime(timeout) > 0)
-    {
-      break;
-    }
+  
+    udp_close(index);
   }
-
-  udp_close(index);
 
   if(dhcp_status == DHCP_ACK) //DHCP request successful
   {
@@ -167,12 +170,14 @@ unsigned int dhcp_getcfg(void)
       eth_setntp(dhcp_ntp);
     }
     dhcp_status = DHCP_CLOSED;
+
     return 0;
   }
 
   eth_setip(ip); //set last ip
 
   dhcp_status = DHCP_CLOSED;
+
   return 1;
 }
 

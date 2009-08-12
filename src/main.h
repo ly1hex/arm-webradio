@@ -4,7 +4,7 @@
 
 //----- DEFINES -----
 #if !defined(DEBUG)
-//# define DEBUG                        //Switch debug output on
+//# define DEBUG                        //switch debug output on
 #endif
 
 //Debug settings
@@ -46,7 +46,7 @@ char*                                  getclock(void);
 char*                                  getdate(void);
 void                                   gettime(TIME* t);
 void                                   settime(unsigned long s);
-long                                   getdeltatime(long time);
+long                                   getdeltatime(long t);
 long                                   getontime(void);
 void                                   delay_ms(unsigned int ms);
 unsigned int                           getmstime(void);

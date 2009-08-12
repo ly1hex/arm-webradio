@@ -23,7 +23,7 @@
 #define LCD_PWMMIN                     (5)     // 5 % (1...100%)
 #define LCD_PWMSTANDBY                 (10)    //10 % (1...100%)
 
-//StandBy
+//Stand-By
 #define STANDBY_TIME                   (3*60)  //standby after x seconds
 
 //SSI Speed: LCD, SD, F-RAM, VS
@@ -48,6 +48,29 @@
 #define IR_VCR2                        (6)
 #define IR_ALLADDR                     (0x1F)
 
+//Commandos
+#define SW_PRESSED                     (1)
+#define SW_PRESSEDLONG                 (2)
+#define SW_VOL_P                       (3)
+#define SW_VOL_M                       (4)
+#define SW_UP                          (5)
+#define SW_DOWN                        (6)
+#define SW_ENTER                       (7)
+#define SW_POWER                       (8)
+
+//FM
+#define FM_WREN                        (0x06) //Set Write Enable Latch
+#define FM_WRDI                        (0x04) //Write Disable
+#define FM_RDSR                        (0x05) //Read Status Register
+#define FM_WRSR                        (0x01) //Write Status Register
+#define FM_READ                        (0x03) //Read Memory Data
+#define FM_FSTRD                       (0x0B) //Fast Read Memory Data
+#define FM_WRITE                       (0x02) //Write Memory Data
+#define FM_SLEEP                       (0xB9) //Enter Sleep Mode
+#define FM_RDID                        (0x9F) //Read Device ID
+#define FM_SNR                         (0xC3) //Read S/N 
+
+//--- Pins ---
 //Encoder
 #define ENC_PHA_READ()                 GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_1)
 #define ENC_PHB_READ()                 GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_0)
@@ -85,19 +108,10 @@
 #define FM_CS_DISABLE()                GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, GPIO_PIN_1)
 #define FM_CS_ENABLE()                 GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0)
 
-//Commandos
-#define SW_PRESSED                    (1)
-#define SW_PRESSEDLONG                (2)
-#define SW_VOL_P                      (3)
-#define SW_VOL_M                      (4)
-#define SW_UP                         (5)
-#define SW_DOWN                       (6)
-#define SW_ENTER                      (7)
-#define SW_POWER                      (8)
-
 
 //----- PROTOTYPES -----
 void                                   ethernet_setmac(uint64_t mac);
+unsigned int                           ethernet_link(void);
 unsigned int                           ethernet_data(void);
 void                                   ethernet_put(unsigned char *pkt, unsigned int len);
 unsigned int                           ethernet_get(unsigned char *pkt, unsigned int len);
@@ -107,6 +121,16 @@ void                                   vs_ssi_writewait(void);
 void                                   vs_ssi_write(unsigned char c);
 unsigned char                          vs_ssi_readwrite(unsigned char c);
 void                                   vs_ssi_speed(unsigned long speed);
+
+unsigned long                          fm_free(void);
+unsigned long                          fm_len(void);
+void                                   fm_gets(unsigned char *s, unsigned long len);
+unsigned char                          fm_getc(void);
+void                                   fm_puts(const unsigned char *s, unsigned long len);
+void                                   fm_putc(unsigned char c);
+void                                   fm_reset(void);
+unsigned long                          fm_getsize(void);
+unsigned long                          fm_init(void);
 
 void                                   ssi_wait(void);
 void                                   ssi_write(unsigned char c);

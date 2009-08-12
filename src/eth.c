@@ -41,34 +41,37 @@ void udp_close(unsigned int index)
 
 unsigned int udp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int dst_port, unsigned int src_port, unsigned char *data, unsigned int len)
 {
-  if(index >= UDP_ENTRIES)
+  if(ethernet_link())
   {
-    for(index=0; index<UDP_ENTRIES; index++) //look for free table index
-    {
-      if(udp_table[index].status == UDP_CLOSED)
-      {
-         break;
-      }
-    }
     if(index >= UDP_ENTRIES)
     {
-      DEBUGOUT("Eth: UDP table full\n");
-      return UDP_ENTRIES;
+      for(index=0; index<UDP_ENTRIES; index++) //look for free table index
+      {
+        if(udp_table[index].status == UDP_CLOSED)
+        {
+           break;
+        }
+      }
+      if(index >= UDP_ENTRIES)
+      {
+        DEBUGOUT("Eth: UDP table full\n");
+        return UDP_ENTRIES;
+      }
     }
+  
+    udp_table[index].mac        = dst_mac;
+    udp_table[index].ip         = dst_ip;
+    udp_table[index].port       = dst_port;
+    udp_table[index].local_port = src_port;
+    udp_table[index].status     = UDP_OPENED;
+    udp_table[index].time       = 0;
+  
+    if(data)
+    {
+      memcpy(&eth_txbuf[UDP_DATASTART], data, len);
+    }
+    udp_send(index, len);
   }
-
-  udp_table[index].mac        = dst_mac;
-  udp_table[index].ip         = dst_ip;
-  udp_table[index].port       = dst_port;
-  udp_table[index].local_port = src_port;
-  udp_table[index].status     = UDP_OPENED;
-  udp_table[index].time       = 0;
-
-  if(data)
-  {
-    memcpy(&eth_txbuf[UDP_DATASTART], data, len);
-  }
-  udp_send(index, len);
 
   return index;
 }
@@ -217,43 +220,46 @@ unsigned int tcp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsi
   TCP_Header *tx_tcp;
 #endif
 
-  if(index >= TCP_ENTRIES)
+  if(ethernet_link())
   {
-    for(index=0; index<TCP_ENTRIES; index++)
-    {
-      if(tcp_table[index].status == TCP_CLOSED) //empty entry found
-      {
-        break;
-      }
-    }
     if(index >= TCP_ENTRIES)
     {
-      DEBUGOUT("Eth: TCP table full\n");
-      return TCP_ENTRIES;
+      for(index=0; index<TCP_ENTRIES; index++)
+      {
+        if(tcp_table[index].status == TCP_CLOSED) //empty entry found
+        {
+          break;
+        }
+      }
+      if(index >= TCP_ENTRIES)
+      {
+        DEBUGOUT("Eth: TCP table full\n");
+        return TCP_ENTRIES;
+      }
     }
-  }
-
-  tcp_table[index].mac        = dst_mac;
-  tcp_table[index].ip         = dst_ip;
-  tcp_table[index].port       = dst_port;
-  tcp_table[index].local_port = src_port;
-  tcp_table[index].acknum     = 0UL;
-  tcp_table[index].seqnum     = swap32(generate_id()); //1UL;
-  tcp_table[index].flags      = TCP_FLAG_SYN;
-  tcp_table[index].status     = TCP_OPEN;
-  tcp_table[index].time       = 0;
-  tcp_table[index].error      = 0;
-
+  
+    tcp_table[index].mac        = dst_mac;
+    tcp_table[index].ip         = dst_ip;
+    tcp_table[index].port       = dst_port;
+    tcp_table[index].local_port = src_port;
+    tcp_table[index].acknum     = 0UL;
+    tcp_table[index].seqnum     = swap32(generate_id()); //1UL;
+    tcp_table[index].flags      = TCP_FLAG_SYN;
+    tcp_table[index].status     = TCP_OPEN;
+    tcp_table[index].time       = 0;
+    tcp_table[index].error      = 0;
+  
 #if defined(TCP_MSS)
-  tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
-  tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
-  tx_tcp->options[1] = 0x04; //len  = 4 bytes
-  tx_tcp->options[2] = (SWAP16(TCP_MSS)>>0)&0xff;
-  tx_tcp->options[3] = (SWAP16(TCP_MSS)>>8)&0xff;
-  tcp_send(index, 4, 4);
+    tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
+    tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
+    tx_tcp->options[1] = 0x04; //len  = 4 bytes
+    tx_tcp->options[2] = (SWAP16(TCP_MSS)>>0)&0xff;
+    tx_tcp->options[3] = (SWAP16(TCP_MSS)>>8)&0xff;
+    tcp_send(index, 4, 4);
 #else
-  tcp_send(index, 0, 0);
+    tcp_send(index, 0, 0);
 #endif
+  }
 
   return index;
 }
@@ -633,26 +639,29 @@ MAC_Addr arp_getmac(IP_Addr ip)
 
   requested_mac = 0ULL;
 
-  arp_request(ip);
-
-  timeout     = getontime()+ETH_TIMEOUT;
-  timeout_arp = getontime()+1;
-  for(;;)
+  if(ethernet_link())
   {
-    eth_service();
-
-    if(requested_mac != 0ULL)
+    arp_request(ip);
+  
+    timeout     = getontime()+ETH_TIMEOUT;
+    timeout_arp = getontime()+1;
+    for(;;)
     {
-      break;
-    }
-    if(getdeltatime(timeout_arp) > 0)
-    {
-      timeout_arp = getontime()+1;
-      arp_request(ip);
-    }
-    if(getdeltatime(timeout) > 0)
-    {
-      break;
+      eth_service();
+  
+      if(requested_mac != 0ULL)
+      {
+        break;
+      }
+      if(getdeltatime(timeout_arp) > 0)
+      {
+        timeout_arp = getontime()+1;
+        arp_request(ip);
+      }
+      if(getdeltatime(timeout) > 0)
+      {
+        break;
+      }
     }
   }
 

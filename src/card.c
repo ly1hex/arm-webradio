@@ -75,7 +75,6 @@ void card_closeitem(void)
     f_close(&gbuf.card.fsrc);
     strshrinkpath(gbuf.card.file);
     menu_setstatus(MENU_STATE_STOP);
-    menu_setinfo("");
     DEBUGOUT("Card: closed\n");
   }
 

@@ -39,9 +39,10 @@ void                                   lcd_putlinebr(unsigned int x, unsigned in
 void                                   lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor);
 unsigned int                           lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor);
 unsigned int                           lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned int font, unsigned int color, unsigned int bgcolor);
-void                                   lcd_rect(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color);
-void                                   lcd_rectedge(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color);
-void                                   lcd_line(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y, unsigned int color);
+void                                   lcd_circle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color);
+void                                   lcd_fillrect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int color);
+void                                   lcd_rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int color);
+void                                   lcd_line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int color);
 void                                   lcd_pixel(unsigned int x, unsigned int y, unsigned int color);
 void                                   lcd_clear(unsigned int color);
 void                                   lcd_init(void);

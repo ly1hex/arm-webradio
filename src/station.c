@@ -6,6 +6,7 @@
 #include "third_party/fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
+#include "io.h"
 #include "mmc.h"
 #include "vs.h"
 #include "eth.h"
@@ -60,7 +61,6 @@ void station_close(void)
     vs_stop();
     station_status = STATION_CLOSED;
     menu_setstatus(MENU_STATE_STOP);
-    menu_setinfo("");
     DEBUGOUT("Station: closed\n");
   }
 
@@ -73,21 +73,24 @@ unsigned int station_open(unsigned int item)
   unsigned int r=STATION_CLOSED;
   char proto[8];
 
-  if(station_getitemaddr(item, gbuf.station.addr) != 0)
-  {
-    return STATION_CLOSED;
-  }
+  menu_drawpopup("Open Station...");
 
   station_getitem(item, gbuf.menu.name);
   menu_setinfo("");
 
-  menu_drawpopup("Open Station...");
+  if(station_getitemaddr(item, gbuf.station.addr) != 0)
+  {
+    station_init();
+    return STATION_CLOSED;
+  }
+
   DEBUGOUT("Station: %i %s\n", station_try, gbuf.station.addr);
 
   atoaddr(gbuf.station.addr, proto, 0, 0, &gbuf.station.ip, &gbuf.station.port, gbuf.station.file);
   gbuf.station.mac = arp_getmac(gbuf.station.ip);
-  if(gbuf.station.mac == 0)
+  if(gbuf.station.mac == 0ULL)
   {
+    station_init();
     return STATION_CLOSED;
   }
 
@@ -415,9 +418,9 @@ void station_init(void)
   station_try      = STATION_TRY;
   station_setbitrate(0);
 
-  gbuf.card.name[0] = 0;
-  gbuf.card.info[0] = 0;
-  gbuf.card.file[0] = 0;
+  gbuf.station.name[0] = 0;
+  gbuf.station.info[0] = 0;
+  gbuf.station.addr[0] = 0;
 
   menu_setstatus(MENU_STATE_STOP);
 

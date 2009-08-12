@@ -66,12 +66,12 @@ extern BUFFER gbuf;
 //----- PROTOTYPES -----
 unsigned int                           vsbuf_free(void);
 unsigned int                           vsbuf_len(void);
-void                                   vsbuf_puts(const unsigned char *s, unsigned int len);
-void                                   vsbuf_putc(unsigned char c);
 void                                   vsbuf_gets(unsigned char *s, unsigned int len);
 unsigned char                          vsbuf_getc(void);
+void                                   vsbuf_puts(const unsigned char *s, unsigned int len);
+void                                   vsbuf_putc(unsigned char c);
 void                                   vsbuf_sethead(unsigned int head);
-void                                   vsbuf_init(void);
+void                                   vsbuf_reset(void);
 
 
 #endif //_BUFFER_H_

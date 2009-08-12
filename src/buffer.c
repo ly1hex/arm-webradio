@@ -55,41 +55,6 @@ unsigned int vsbuf_len(void)
 }
 
 
-void vsbuf_puts(const unsigned char *s, unsigned int len)
-{
-  unsigned int head;
-
-  head = vsbuf_head;
-  while(len--)
-  {
-    vsbuf.b8[head++] = *s++;
-    if(head >= VS_BUFSIZE)
-    {
-      head = 0;
-    }
-  }
-  vsbuf_head = head;
-
-  return;
-}
-
-
-void vsbuf_putc(unsigned char c)
-{
-  unsigned int head;
-
-  head = vsbuf_head;
-  vsbuf.b8[head++] = c;
-  if(head >= VS_BUFSIZE)
-  {
-    head = 0;
-  }
-  vsbuf_head = head;
-
-  return;
-}
-
-
 void vsbuf_gets(unsigned char *s, unsigned int len)
 {
   while(len--)
@@ -126,6 +91,41 @@ unsigned char vsbuf_getc(void)
 }
 
 
+void vsbuf_puts(const unsigned char *s, unsigned int len)
+{
+  unsigned int head;
+
+  head = vsbuf_head;
+  while(len--)
+  {
+    vsbuf.b8[head++] = *s++;
+    if(head >= VS_BUFSIZE)
+    {
+      head = 0;
+    }
+  }
+  vsbuf_head = head;
+
+  return;
+}
+
+
+void vsbuf_putc(unsigned char c)
+{
+  unsigned int head;
+
+  head = vsbuf_head;
+  vsbuf.b8[head++] = c;
+  if(head >= VS_BUFSIZE)
+  {
+    head = 0;
+  }
+  vsbuf_head = head;
+
+  return;
+}
+
+
 void vsbuf_sethead(unsigned int head)
 {
   vsbuf_head = head;
@@ -134,7 +134,7 @@ void vsbuf_sethead(unsigned int head)
 }
 
 
-void vsbuf_init(void)
+void vsbuf_reset(void)
 {
   vsbuf_head = 0;
   vsbuf_tail = 0;

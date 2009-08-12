@@ -6,6 +6,7 @@
 #include "third_party/lmi/inc/hw_memmap.h"
 #include "third_party/lmi/inc/hw_ints.h"
 #include "third_party/lmi/inc/hw_ssi.h"
+#include "third_party/lmi/inc/hw_ethernet.h"
 #include "third_party/lmi/driverlib/sysctl.h"
 #include "third_party/lmi/driverlib/gpio.h"
 #include "third_party/lmi/driverlib/interrupt.h"
@@ -25,6 +26,8 @@
 volatile int sw_pressed=0, ir_data=0;
 unsigned long ir_address=0, ir_status=IR_DETECT, ir_1us=0;
 unsigned long ssi_defspeed=0;
+unsigned long fm_size=0;
+volatile unsigned long fm_head=0, fm_tail=0;
 
 
 void ethernet_setmac(uint64_t mac)
@@ -34,6 +37,12 @@ void ethernet_setmac(uint64_t mac)
   EthernetEnable(ETH_BASE);
 
   return;
+}
+
+
+unsigned int ethernet_link(void)
+{
+  return (EthernetPHYRead(ETH_BASE, PHY_MR1) & 0x04) ? 1 : 0;
 }
 
 
@@ -129,6 +138,212 @@ void vs_ssi_speed(unsigned long speed)
   SSIEnable(SSI0_BASE);
 
   return;
+}
+
+
+unsigned long fm_free(void)
+{
+  unsigned long head, tail;
+
+  head = fm_head;
+  tail = fm_tail;
+
+  if(head > tail)
+  {
+    return (fm_size-(head-tail))-1;
+  }
+  else if(head < tail)
+  {
+    return (tail-head)-1;
+  }
+
+  return (fm_size-1);
+}
+
+
+unsigned long fm_len(void)
+{
+  unsigned int head, tail;
+
+  head = fm_head;
+  tail = fm_tail;
+
+  if(head > tail)
+  {
+    return (head-tail);
+  }
+  else if(head < tail)
+  {
+    return (fm_size-(tail-head));
+  }
+
+  return 0;
+}
+
+
+void fm_gets(unsigned char *s, unsigned long len)
+{
+  while(len--)
+  {
+    *s++ = fm_getc();
+  }
+
+  return;
+}
+
+
+unsigned char fm_getc(void)
+{
+  unsigned char c;
+  unsigned long head, tail;
+
+  head = fm_head;
+  tail = fm_tail;
+
+  if(head != tail)
+  {
+    FM_CS_ENABLE();
+    ssi_write(FM_READ);
+    ssi_write(tail>>16);
+    ssi_write(tail>>8);
+    ssi_write(tail);
+    ssi_wait();
+    c = ssi_readwrite(0xff);
+    FM_CS_DISABLE();
+
+    if(tail >= fm_size)
+    {
+      tail = 0;
+    }
+    fm_tail = tail;
+  }
+  else
+  {
+    c = 0;
+  }
+
+  return c;
+}
+
+
+void fm_puts(const unsigned char *s, unsigned long len)
+{
+  unsigned long head;
+
+  head = fm_head;
+
+  FM_CS_ENABLE();
+  ssi_readwrite(FM_WREN);
+  FM_CS_DISABLE();
+
+  FM_CS_ENABLE();
+  ssi_write(FM_WRITE);
+  ssi_write(head>>16);
+  ssi_write(head>>8);
+  ssi_write(head);
+  while(len--)
+  {
+    ssi_write(*s++);
+    if(++head >= fm_size)
+    {
+      head = 0;
+    }
+  }
+  ssi_wait();
+  FM_CS_DISABLE();
+
+  fm_head = head;
+
+  return;
+}
+
+
+void fm_putc(unsigned char c)
+{
+  unsigned long head;
+
+  head = fm_head;
+
+  FM_CS_ENABLE();
+  ssi_readwrite(FM_WREN);
+  FM_CS_DISABLE();
+
+  FM_CS_ENABLE();
+  ssi_write(FM_WRITE);
+  ssi_write(head>>16);
+  ssi_write(head>>8);
+  ssi_write(head);
+  ssi_write(c);
+  ssi_wait();
+  FM_CS_DISABLE();
+
+  if(++head >= fm_size)
+  {
+    head = 0;
+  }
+  fm_head = head;
+
+  return;
+}
+
+
+void fm_reset(void)
+{
+  fm_head = 0;
+  fm_tail = 0;
+
+  return;
+}
+
+
+unsigned long fm_getsize(void)
+{
+  return fm_size;
+}
+
+
+unsigned long fm_init(void)
+{
+  unsigned long i;
+
+  fm_size = 0;
+  fm_head = 0;
+  fm_tail = 0;
+
+  FM_CS_ENABLE();
+  ssi_readwrite(FM_WREN);
+  FM_CS_DISABLE();
+
+  FM_CS_ENABLE();
+  ssi_readwrite(FM_WRSR);
+  ssi_readwrite(0x40);
+  FM_CS_DISABLE();
+
+  FM_CS_ENABLE();
+  ssi_readwrite(FM_RDSR);
+  ssi_readwrite(0xff);
+  FM_CS_DISABLE();
+
+  FM_CS_ENABLE();
+  ssi_readwrite(FM_RDID);
+  ssi_readwrite(0xff); //0x7F
+  ssi_readwrite(0xff); //0x7F
+  ssi_readwrite(0xff); //0x7F
+  ssi_readwrite(0xff); //0x7F
+  ssi_readwrite(0xff); //0x7F
+  ssi_readwrite(0xff); //0x7F
+  ssi_readwrite(0xff); //0xC2
+  i = ssi_readwrite(0xff); //Device ID 1
+  ssi_readwrite(0xff); //Device ID 2
+  FM_CS_DISABLE();
+
+  if((i != 0x00) && (i != 0xff))
+  {
+    fm_size = (0x2000<<(i&0x1F)); // (0x2000<<(i&0x1F)) -> Byte, (64<<(i&0x1F)) -> kBit
+    DEBUGOUT("F-RAM: device-id=%i (%i byte)\n", i, fm_size);
+  }
+
+  return fm_size;
 }
 
 
@@ -653,7 +868,7 @@ void init_periph(void)
   SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
   SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
   EthernetInitExpClk(ETH_BASE, SysCtlClockGet());
-  EthernetConfigSet(ETH_BASE, ETH_CFG_TX_DPLXEN | ETH_CFG_TX_CRCEN | ETH_CFG_TX_PADEN | ETH_CFG_RX_AMULEN); //duplex, crc, padding, multicast
+  EthernetConfigSet(ETH_BASE, ETH_CFG_TX_DPLXEN | ETH_CFG_TX_CRCEN | ETH_CFG_TX_PADEN | ETH_CFG_RX_BADCRCDIS | ETH_CFG_RX_AMULEN); //duplex, auto-crc, padding, crc-check, multicast
   EthernetEnable(ETH_BASE);
 
   return;
