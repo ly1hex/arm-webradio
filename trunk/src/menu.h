@@ -70,7 +70,7 @@ void                                   menu_drawwndsub(unsigned int redraw);
 
 void                                   menu_drawwndmain(unsigned int redraw);
 
-void                                   menu_drawclock(void);
+void                                   menu_drawclock(unsigned int draw);
 void                                   menu_drawdate(void);
 void                                   menu_drawvol(void);
 void                                   menu_drawstatus(void);

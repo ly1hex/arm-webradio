@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -376,8 +376,22 @@ SysCtlPeripheralPresent(unsigned long ulPeripheral)
     //
     // Read the correct DC register and determine if this peripheral exists.
     //
-    if(HWREG(g_pulDCRegs[SYSCTL_PERIPH_INDEX(ulPeripheral)]) &
-       SYSCTL_PERIPH_MASK(ulPeripheral))
+    if(ulPeripheral == SYSCTL_PERIPH_USB0)
+    {
+        //
+        // USB is a special case since the DC bit is missing for USB0.
+        //
+        if(HWREG(SYSCTL_DC6) && SYSCTL_DC6_USB0_M)
+        {
+            return(true);
+        }
+        else
+        {
+            return(false);
+        }
+    }
+    else if(HWREG(g_pulDCRegs[SYSCTL_PERIPH_INDEX(ulPeripheral)]) &
+            SYSCTL_PERIPH_MASK(ulPeripheral))
     {
         return(true);
     }
@@ -1713,6 +1727,12 @@ SysCtlClockGet(void)
         {
             ulClk /= 4;
         }
+
+        //
+        // Force the system divider to be enabled.  It is always used when
+        // using the PLL, but in some cases it will not read as being enabled.
+        //
+        ulRCC |= SYSCTL_RCC_USESYSDIV;
     }
 
     //

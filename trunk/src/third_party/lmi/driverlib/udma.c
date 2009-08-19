@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1128,6 +1128,9 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
 //! requesting an interrupt.  This function can be used from within an
 //! interrupt handler to determine or confirm which uDMA channel has requested
 //! an interrupt.
+//!
+//! \note This function is only available on devices that have the DMA Channel
+//! Interrupt Status Register (DMACHIS).
 //!
 //! \return Returns a 32-bit mask which indicates requesting uDMA channels.
 //! There is a bit for each channel, and a 1 in a bit indicates that channel
