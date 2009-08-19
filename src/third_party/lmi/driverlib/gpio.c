@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1333,6 +1333,10 @@ GPIOPinTypeUART(unsigned long ulPort, unsigned char ucPins)
 //! the digital USB pin(s); other configurations may work as well depending
 //! upon the board setup (for example, using the on-chip pull-ups).
 //!
+//! This function should only be used with EPEN and PFAULT pins as all other
+//! USB pins are analog in nature or are not used in devices without OTG
+//! functionality.
+//!
 //! The pin(s) are specified using a bit-packed byte, where each bit that is
 //! set identifies the pin to be accessed, and where bit 0 of the byte
 //! represents GPIO port pin 0, bit 1 represents GPIO port pin 1, and so on.
@@ -1371,7 +1375,8 @@ GPIOPinTypeUSBDigital(unsigned long ulPort, unsigned char ucPins)
 //!
 //! Some USB analog pins must be properly configured for the USB peripheral to
 //! function correctly.  This function provides the proper configuration for
-//! those pin(s).
+//! any USB pin(s).  This can also be used to configure the EPEN and PFAULT pins
+//! so that they are no longer used by the USB controller.
 //!
 //! The pin(s) are specified using a bit-packed byte, where each bit that is
 //! set identifies the pin to be accessed, and where bit 0 of the byte

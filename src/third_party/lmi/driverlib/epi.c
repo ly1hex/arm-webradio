@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -198,6 +198,13 @@ EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
 //! - one of \b EPI_HB8_RDWAIT_0, \b EPI_HB8_RDWAIT_1, \b EPI_HB8_RDWAIT_2,
 //! or \b EPI_HB8_RDWAIT_3 to select the number of read wait states (default
 //! is 0 wait states)
+//! - \b EPI_HB8_WORD_ACCESS - use Word Access mode to route bytes to the
+//! correct byte lanes allowing data to be stored in bits [31:8].  If absent,
+//! all data transfers use bits [7:0].
+//! - \b EPI_HB8_CSCFG_CS - sets EPI30 to operate as a Chip Select (CSn)
+//! signal.  When using this mode, \b EPI_HB8_MODE_ADMUX must not be specified.
+//! If this option is absent, EPI30 operates as an addres latch enable (ALE)
+//! signal.
 //!
 //! The parameter \e ulMaxWait is used if the FIFO mode is chosen.  If a
 //! FIFO is used along with RXFULL or TXEMPTY ready signals, then this
@@ -219,15 +226,23 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
     ASSERT(ulMaxWait < 256);
 
     //
+    // Determine the CS and word access modes.
+    //
+    HWREG(ulBase + EPI_O_HB8CFG2) = (((ulConfig & EPI_HB8_WORD_ACCESS) ?
+                                       EPI_HB8CFG2_WORD : 0) |
+                                     ((ulConfig & EPI_HB8_CSCFG_CS) ?
+                                       EPI_HB8CFG2_CSCFG : 0));
+
+    //
     // Fill in the max wait field of the configuration word.
     //
     ulConfig &= ~EPI_HB8CFG_MAXWAIT_M;
     ulConfig |= ulMaxWait << EPI_HB8CFG_MAXWAIT_S;
 
     //
-    // Write the non-moded configuration register.
+    // Write the main HostBus8 configuration register.
     //
-    HWREG(ulBase + EPI_O_HB8CFG) = ulConfig;
+    HWREG(ulBase + EPI_O_HB8CFG)  = ulConfig;
 }
 
 //*****************************************************************************
@@ -263,6 +278,9 @@ EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
 //! - \b EPI_NONMODE_DSIZE_8, \b EPI_NONMODE_DSIZE_16,
 //! \b EPI_NONMODE_DSIZE_24, or \b EPI_NONMODE_DSIZE_32 to select a data bus
 //! size of 8, 16, 24, or 32 bits
+//! - \b EPI_NONMODE_WORD_ACCESS - use Word Access mode to route bytes to the
+//! correct byte lanes allowing data to be stored in the upper bits of the word
+//! when necessary.
 //!
 //! The parameter \e ulFrameCount is the number of clocks used to form the
 //! framing signal, if the framing signal is used.  The behavior depends on
@@ -291,6 +309,12 @@ EPIConfigNoModeSet(unsigned long ulBase, unsigned long ulConfig,
     ASSERT(ulBase == EPI0_BASE);
     ASSERT(ulFrameCount < 16);
     ASSERT(ulMaxWait < 256);
+
+    //
+    // Set the word access mode.
+    //
+    HWREG(ulBase + EPI_O_GPCFG2) = ((ulConfig & EPI_NONMODE_WORD_ACCESS) ?
+                                    EPI_GPCFG2_WORD : 0);
 
     //
     // Fill in the frame count field of the configuration word.

@@ -60,9 +60,7 @@ void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int col
   for(i=32; i!=0; i--)
   {
     data = *ptr++;
-
-data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<8)|((data&0x000000FFUL)<<24); //swap32
-
+    //data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<8)|((data&0x000000FFUL)<<24); //swap32
     for(mask=start_bit; mask>end_bit; mask>>=1)
     {
       if(data & mask)
@@ -204,9 +202,7 @@ unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned i
   for(size=(width*height)/32; size!=0; size--)
   {
     data = *ptr++;
-
-data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<8)|((data&0x000000FFUL)<<24); //swap32
-
+    //data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<8)|((data&0x000000FFUL)<<24); //swap32
     for(mask=0x80000000UL; mask!=0UL; mask>>=1)
     {
       if(data & mask)

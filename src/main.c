@@ -232,6 +232,7 @@ void systick(void) //1000 Hz
       if(++time.m == 60)
       {
         time.m = 0;
+        s |= HOUR_CHANGED;
         if(++time.h == 24)
         {
           time.h = 0;
@@ -389,24 +390,21 @@ unsigned int standby(unsigned int param)
     {
       i = status;
       status &= ~i;
-      if(i & SEC_CHANGED)
+      if(i & MIN_CHANGED)
       {
-        if(i & MIN_CHANGED)
+        if(i & DAY_CHANGED)
         {
-          if(i & DAY_CHANGED)
-          {
-            settime(sec_time);
-          }
-          if(alarm_check(&time))
-          {
-            alarm = 1;
-          }
-          tmp[0] = clock_str[0];
-          tmp[1] = clock_str[1];
-          tmp[3] = clock_str[3];
-          tmp[4] = clock_str[4];
-          lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+          settime(sec_time);
         }
+        if(alarm_check(&time))
+        {
+          alarm = 1;
+        }
+        tmp[0] = clock_str[0];
+        tmp[1] = clock_str[1];
+        tmp[3] = clock_str[3];
+        tmp[4] = clock_str[4];
+        lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
       }
     }
 
@@ -448,7 +446,7 @@ unsigned int standby(unsigned int param)
 
 int main()
 {
-  unsigned int i, draw=0;
+  unsigned int i;
   unsigned long l;
 
   //get reset cause
@@ -610,25 +608,23 @@ int main()
     {
       i = status;
       status &= ~i;
-      if(i & SEC_CHANGED)
+      if(i & MIN_CHANGED)
       {
-        draw = SEC_CHANGED;
-        if(i & MIN_CHANGED)
+        if(i & DAY_CHANGED)
         {
-          if(i & DAY_CHANGED)
-          {
-            draw |= DAY_CHANGED;
-            settime(sec_time);
-          }
-          if(alarm_check(&time))
-          {
-            DEBUGOUT("Ready...\n");
-            menu_alarm();
-          }
+          settime(sec_time);
+        }
+        if(alarm_check(&time))
+        {
+          DEBUGOUT("Ready...\n");
+          menu_alarm();
         }
       }
+      menu_service(i);
     }
-    menu_service(draw);
-    draw = 0;
+    else
+    {
+      menu_service(0);
+    }
   }
 }

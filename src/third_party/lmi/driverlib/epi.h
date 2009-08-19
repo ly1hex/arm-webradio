@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4694 of the Stellaris Peripheral Driver Library.
+// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -86,6 +86,7 @@ extern "C"
 #define EPI_NONMODE_DSIZE_16            0x00000001
 #define EPI_NONMODE_DSIZE_24            0x00000002
 #define EPI_NONMODE_DSIZE_32            0x00000003
+#define EPI_NONMODE_WORD_ACCESS         0x00000100
 
 //*****************************************************************************
 //
@@ -108,6 +109,8 @@ extern "C"
 #define EPI_HB8_MODE_ADDEMUX            0x00000001
 #define EPI_HB8_MODE_SRAM               0x00000002
 #define EPI_HB8_MODE_FIFO               0x00000003
+#define EPI_HB8_WORD_ACCESS             0x00000100
+#define EPI_HB8_CSCFG_CS                0x00000200
 
 //*****************************************************************************
 //

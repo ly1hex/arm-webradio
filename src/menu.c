@@ -407,7 +407,7 @@ void menu_service(unsigned int draw)
           menu_drawwnd(1);
         }
       }
-      menu_drawclock();
+      menu_drawclock(draw);
     }
     if(draw & DAY_CHANGED)
     {
@@ -622,15 +622,30 @@ void menu_drawwndmain(unsigned int redraw)
 }
 
 
-void menu_drawclock(void)
+void menu_drawclock(unsigned int draw)
 {
+  char *clock;
+
   if(menu_mode == MODE_INFO)
   {
-    lcd_puts(25, LCD_HEIGHT-24, getclock(), TIMEFONT, bgcolor, fgcolor);
+    clock = getclock();
+    if((draw == 0) || (draw & HOUR_CHANGED))
+    {
+      lcd_puts(25+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, bgcolor, fgcolor);
+    }
+    else if(draw & MIN_CHANGED)
+    {
+      lcd_puts(25+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, bgcolor, fgcolor);
+    }
+    else if(draw & SEC_CHANGED)
+    {
+      lcd_puts(25+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, bgcolor, fgcolor);
+    }
   }
 
   return;
 }
+
 
 void menu_drawdate(void)
 {
@@ -766,7 +781,7 @@ void menu_drawwndinfo(unsigned int redraw)
   menu_drawstatus();
   menu_drawvol();
   menu_drawdate();
-  menu_drawclock();
+  menu_drawclock(0);
 
   if(menu_mode == MODE_INFO)
   {

@@ -6,7 +6,7 @@ WebRadio v0.02 (c) Andreas Watterott (www.watterott.net)
 
 Third party software
 --------------------
-  Luminary Micro DriverLib 4694
+  Luminary Micro StellarisWare Driver Library 4905
     http://www.luminarymicro.com
     Modifications:
       lmi/driverlib/cpu.c: 46: PRIMASK -> primask
@@ -19,7 +19,7 @@ Third party software
 
 History
 -------
-         2009  v0.02  VS1053b FLAC decoder plugin
+  Aug 19 2009  v0.02  VS1053b FLAC decoder plugin
                       Auto detection of VS type (VS1053b, VS1033c, VS1033d)
                       Automatic standby
                       LFN support
