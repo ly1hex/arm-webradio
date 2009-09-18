@@ -14,7 +14,7 @@
 || UPnP Device                       || working ||
 || *FAT Stack* ||
 || ELM ChaN's FatFs with LFN         || working ||
-|| *Functions* ||
+|| *Features* ||
 || Play Shoutcast/Icecast streams    || working ||
 || Play RTSP streams                 || 50%     ||
 || Play from SMB/CIFS Shares         || -       ||
