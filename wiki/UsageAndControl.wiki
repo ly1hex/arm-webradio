@@ -1,11 +1,12 @@
-== Rotary encoder ==
+#labels Featured
+= Rotary encoder =
 || *Encoder*    || *Function*     ||
 || Left/right   || Scroll up/down ||
 || Normal press || Select/Enter   ||
 || Long press   || Back/Abort     ||
 
 
-== IR remote control (RC5) ==
+= IR remote control (RC5) =
 || *Button*     || *Function*     ||
 || 2x Power     || Standby on/off ||
 || Volume +/-   || Volume control and in menu scroll page up/down ||
@@ -13,7 +14,7 @@
 || OK           || Select/Enter   ||
 
 
-== Webinterface ==
+= Webinterface =
 Type in your browser * http://192.168.0.50 * or * http://webradio * to access the webinterface. (These are the default addresses.)
 
 
