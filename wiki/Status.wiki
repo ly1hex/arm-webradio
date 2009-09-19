@@ -1,6 +1,6 @@
 #labels Featured
 || *Hardware* ||
-|| Display                           || working (S65 LPH88, S65 LS020, Multi-Inno MIO283QT) ||
+|| Display                           || working (S65-LPH88, S65-LS020, Multi-Inno MIO283QT) ||
 || Rotary Encoder                    || working (2 and 4 step encoder) ||
 || IR Receiver (RC5)                 || working ||
 || SD-Card                           || working ||
