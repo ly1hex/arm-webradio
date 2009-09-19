@@ -1,9 +1,9 @@
-#labels Phase-Deploy
-== Files on the memory card (root directory) ==
+#labels Featured
+= Files on the memory card (root directory) =
 For Examples have a look in the SVN repository:
 http://code.google.com/p/arm-webradio/source/browse/#svn/trunk/doc/card_example
 
-=== settings.ini ===
+== settings.ini ==
 INI-File with settings:
 {{{
 [SETTINGS]
@@ -40,7 +40,7 @@ ColorEdge=      Edge color: Red,Green,Blue (xxx,xxx,xxx)
 }}}
 
 
-=== station.pls ===
+== station.pls ==
 PLS-File with radio streams:
 {{{
 [PLAYLIST]
@@ -50,7 +50,7 @@ TITLE1=Stream Name
 }}}
 
 
-=== share.pls ===
+== share.pls ==
 PLS-File with network shares:
 {{{
 [PLAYLIST]
@@ -60,7 +60,7 @@ TITLE1=Share Name
 }}}
 
 
-=== alarm.ini ===
+== alarm.ini ==
 INI-File with alarm times:
 {{{
 [ALARM]
