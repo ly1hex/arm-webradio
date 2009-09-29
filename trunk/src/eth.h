@@ -14,7 +14,7 @@
 #define DEFAULT_SUMMER                 (0)    //summer time on
 
 #define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
-#define ETH_TIMEOUT                    (10) //seconds (ARP request, DHCP request, DNS request...)
+#define ETH_TIMEOUT                    (12) //seconds (ARP request, DHCP request, DNS request...)
 #define ETH_USE_DSCP                   //use Differentiated Services Code Point (QoS -> DSCP)
 
 #define TCP_MSS                        (ETH_MTUSIZE-ETH_HEADERLEN-IP_HEADERLEN-TCP_HEADERLEN) //Maximum Segment Size

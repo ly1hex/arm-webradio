@@ -133,6 +133,7 @@ void                                   vs_play(void);
 void                                   vs_stopstream(void);
 void                                   vs_stop(void);
 void                                   vs_start(void);
+void                                   vs_reset(void);
 void                                   vs_init(void);
 
 

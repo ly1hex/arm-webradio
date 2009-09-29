@@ -17,8 +17,8 @@
 
 //Application settings
 #define APPNAME                        "WebRadio" //max 15 characters
-#define APPVERSION                     "0.02"
-#define APPRELEASE                     //Release version
+#define APPVERSION                     "0.03"
+//#define APPRELEASE                     //Release version
 #if defined(APPRELEASE)
 # define APPRELEASE_SYM ""
 #else

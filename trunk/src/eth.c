@@ -305,10 +305,10 @@ void tcp_app(unsigned int index)
       rtsp_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
       break;
     case HTTP_SERVERPORT:
-      if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
-      {
+      //if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
+      //{
         http_tcpapp(index, &eth_rxbuf[ETH_HEADERLEN+hd_len], len, &eth_txbuf[TCP_DATASTART]);
-      }
+      //}
       break;
     case UPNP_PORT:
       if((rx_ip->src_ip&dev.netmask) == (dev.ip&dev.netmask)) //local net only
