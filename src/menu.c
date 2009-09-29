@@ -629,17 +629,17 @@ void menu_drawclock(unsigned int draw)
   if(menu_mode == MODE_INFO)
   {
     clock = getclock();
-    if((draw == 0) || (draw & HOUR_CHANGED))
+    if(draw & HOUR_CHANGED)
     {
-      lcd_puts(25+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, bgcolor, fgcolor);
+      lcd_puts(25+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, bgcolor, fgcolor); //00:00:00
     }
     else if(draw & MIN_CHANGED)
     {
-      lcd_puts(25+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, bgcolor, fgcolor);
+      lcd_puts(25+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, bgcolor, fgcolor); //---00:00
     }
     else if(draw & SEC_CHANGED)
     {
-      lcd_puts(25+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, bgcolor, fgcolor);
+      lcd_puts(25+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, bgcolor, fgcolor); //------00
     }
   }
 
@@ -677,39 +677,36 @@ void menu_drawstatus(void)
 {
   char c, buf[8];
 
-  if(menu_mode == MODE_INFO)
+  switch(menu_status)
   {
-    switch(menu_status)
-    {
-      case MENU_STATE_STOP: c = 0xFE; break;
-      case MENU_STATE_BUF:  c = 0xFD; break;
-      case MENU_STATE_PLAY: c = 0xFC; break;
-      default:              c = ' ';  break;
-    }
-    lcd_putc(LCD_WIDTH-1-5-38, 1, c, SMALLFONT, bgcolor, edgecolor);
-
-    switch(menu_format)
-    {
-      case FORMAT_WAV:  strcpy(buf, "WAV"); break;
-      case FORMAT_MP3:  strcpy(buf, "MP3"); break;
-      case FORMAT_AAC:  strcpy(buf, "AAC"); break;
-      case FORMAT_OGG:  strcpy(buf, "OGG"); break;
-      case FORMAT_WMA:  strcpy(buf, "WMA"); break;
-      case FORMAT_FLAC: strcpy(buf, "FLA"); break;
-      default:              strcpy(buf, "   ");  break;
-    }
-    lcd_puts(LCD_WIDTH-1-5-65, 2, buf, SMALLFONT, bgcolor, edgecolor);
-
-    if(menu_bitrate)
-    {
-      itoa(menu_bitrate, buf, 10);
-    }
-    else
-    {
-      strcpy(buf, "   ");
-    }
-    lcd_puts(LCD_WIDTH-1-5-93, 2, buf, SMALLFONT, bgcolor, edgecolor);
+    case MENU_STATE_STOP: c = 0xFE; break;
+    case MENU_STATE_BUF:  c = 0xFD; break;
+    case MENU_STATE_PLAY: c = 0xFC; break;
+    default:              c = ' ';  break;
   }
+  lcd_putc(LCD_WIDTH-1-5-38, 1, c, SMALLFONT, bgcolor, edgecolor);
+
+  switch(menu_format)
+  {
+    case FORMAT_WAV:  strcpy(buf, "WAV"); break;
+    case FORMAT_MP3:  strcpy(buf, "MP3"); break;
+    case FORMAT_AAC:  strcpy(buf, "AAC"); break;
+    case FORMAT_OGG:  strcpy(buf, "OGG"); break;
+    case FORMAT_WMA:  strcpy(buf, "WMA"); break;
+    case FORMAT_FLAC: strcpy(buf, "FLA"); break;
+    default:              strcpy(buf, "   ");  break;
+  }
+  lcd_puts(LCD_WIDTH-1-5-65, 2, buf, SMALLFONT, bgcolor, edgecolor);
+
+  if(menu_bitrate)
+  {
+    itoa(menu_bitrate, buf, 10);
+  }
+  else
+  {
+    strcpy(buf, "   ");
+  }
+  lcd_puts(LCD_WIDTH-1-5-93, 2, buf, SMALLFONT, bgcolor, edgecolor);
 
   return;
 }
@@ -720,7 +717,10 @@ void menu_setinfo(const char *info)
   DEBUGOUT("Menu: info: %s\n", info);
 
   strncpy(gbuf.menu.info, info, MAX_INFO-1);
-  menu_drawwndinfo(1);
+  if(menu_mode == MODE_INFO)
+  {
+    menu_drawwndinfo(1);
+  }
 
   return;
 }
@@ -731,7 +731,10 @@ void menu_setname(const char *name)
   DEBUGOUT("Menu: name: %s\n", name);
 
   strncpy(gbuf.menu.name, name, MAX_NAME-1);
-  menu_drawwndinfo(1);
+  if(menu_mode == MODE_INFO)
+  {
+    menu_drawwndinfo(1);
+  }
 
   return;
 }
@@ -740,7 +743,10 @@ void menu_setname(const char *name)
 void menu_setbitrate(unsigned int bitrate)
 {
   menu_bitrate = bitrate;
-  menu_drawstatus();
+  if(menu_mode == MODE_INFO)
+  {
+    menu_drawstatus();
+  }
 
   return;
 }
@@ -749,7 +755,10 @@ void menu_setbitrate(unsigned int bitrate)
 void menu_setformat(unsigned int format)
 {
   menu_format = format;
-  menu_drawstatus();
+  if(menu_mode == MODE_INFO)
+  {
+    menu_drawstatus();
+  }
 
   return;
 }
@@ -765,7 +774,10 @@ void menu_setstatus(unsigned int status)
     menu_bitrate = 0;
   }
 
-  menu_drawstatus();
+  if(menu_mode == MODE_INFO)
+  {
+    menu_drawstatus();
+  }
 
   return;
 }
@@ -773,21 +785,17 @@ void menu_setstatus(unsigned int status)
 
 void menu_drawwndinfo(unsigned int redraw)
 {
-  if(redraw == 0)
+  if(redraw)
   {
-    return;
-  }
-
-  menu_drawstatus();
-  menu_drawvol();
-  menu_drawdate();
-  menu_drawclock(0);
-
-  if(menu_mode == MODE_INFO)
-  {
+    menu_drawstatus();
+    menu_drawvol();
+    menu_drawdate();
+    menu_drawclock(HOUR_CHANGED);
+  
     lcd_putline(5, 18, gbuf.menu.name, NORMALFONT, fgcolor, bgcolor);
     lcd_putlinebr(5, 40, gbuf.menu.info, SMALLFONT, fgcolor, bgcolor);
   }
+
   return;
 }
 

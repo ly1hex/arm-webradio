@@ -417,12 +417,10 @@ void vs_stopstream(void)
   vs_ssi_writewait();
   VS_DCS_DISABLE();
 
-  //check status -> soft reset
+  //check status -> reset
   if(vs_read_reg(VS_HDAT0) || vs_read_reg(VS_HDAT1))
   {
-    vs_write_reg(VS_MODE, SM_SDINEW | SM_RESET);
-    delay_ms(5);
-    DEBUGOUT("VS: soft reset\n");
+    vs_reset();
   }
 
   return;
@@ -460,17 +458,14 @@ void vs_start(void)
 }
 
 
-void vs_init(void)
+void vs_reset(void)
 {
   unsigned long i;
 
-  DEBUGOUT("VS: init\n");
-
-  vs_playing = 0;
-
-  vsbuf_reset();
+  DEBUGOUT("VS: reset\n");
 
   //ssi speed down
+  vs_ssi_wait(); //wait for transfer complete
   vs_ssi_speed(2000000); //2 MHz
 
   //hard reset
@@ -483,7 +478,7 @@ void vs_init(void)
 
   //set registers
   vs_write_reg(VS_MODE, SM_SDINEW);
-  
+
   //get VS version, set clock multiplier and load patch
   i = (vs_read_reg(VS_STATUS)&0xF0)>>4;
   if(i == 4)                                                         //VS1053
@@ -510,6 +505,25 @@ void vs_init(void)
     }
   }
 
+  //ssi speed up
+  vs_ssi_speed(0); //0 = default speed
+
+  return;
+}
+
+
+void vs_init(void)
+{
+  DEBUGOUT("VS: init\n");
+
+  vs_playing = 0;
+
+  //reset vs buffer
+  vsbuf_reset();
+
+  //reset vs
+  vs_reset();
+
   //set volume, bass, treble
   vs_setvolume(DEFAULT_VOLUME);
   vs_setbassfreq(DEFAULT_BASSFREQ);
@@ -517,9 +531,6 @@ void vs_init(void)
   vs_settreblefreq(DEFAULT_TREBLEFREQ); 
   vs_settrebleamp(DEFAULT_TREBLEAMP);
   vs_setvolume(0); //0 -> analog power off
-
-  //ssi speed up
-  vs_ssi_speed(0); //0 = default speed
 
   //init pin interrupt
   GPIOIntTypeSet(GPIO_PORTA_BASE, GPIO_PIN_1, GPIO_HIGH_LEVEL);

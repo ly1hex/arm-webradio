@@ -1,7 +1,7 @@
-WebRadio v0.02 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.03 (c) Andreas Watterott (www.watterott.net)
 ========================================================
-  Compiled with Rowley's CrossWorks for ARM 2.02
-                CPU Support Pkg Luminary_LM3S 1.8
+  Compiled with Rowley's CrossWorks for ARM 2.03
+                         CPU Support Pkg. Stellaris 1.1
 
 
 Third party software
@@ -19,6 +19,8 @@ Third party software
 
 History
 -------
+         2009  v0.03  Switched to CrossWorks CPU Support Pkg. Stellaris 1.1
+
   Aug 19 2009  v0.02  VS1053b FLAC decoder plugin
                       Auto detection of VS type (VS1053b, VS1033c, VS1033d)
                       Automatic standby
