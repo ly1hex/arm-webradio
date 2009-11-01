@@ -25,7 +25,8 @@ Device dev;
 volatile MAC_Addr requested_mac=0UL;
 TCP_Table tcp_table[TCP_ENTRIES];
 UDP_Table udp_table[UDP_ENTRIES];
-unsigned char eth_rxbuf[ETH_MTUSIZE], eth_txbuf[ETH_MTUSIZE];
+unsigned char eth_txbuf[ETH_MTUSIZE], *eth_rxbuf, eth_rxfifo[ETH_RXFIFO][ETH_MTUSIZE];
+volatile unsigned int rxfifo_head=0, rxfifo_tail=0;
 
 
 void udp_close(unsigned int index)
@@ -398,16 +399,17 @@ void tcp_service(void)
             }
             else                                                 //frame lost -> send last ack
             {
-              if(++tcp_table[index].error > TCP_MAXERROR)
+              /*if(++tcp_table[index].error > TCP_MAXERROR)
               {
                 tcp_abort(index);
+                DEBUGOUT("Eth: (%i) TCP_OPENED seq>ack -> TCP_ABORT\n", index);
               }
               else
-              {
+              {*/
                 tcp_table[index].flags = TCP_FLAG_ACK;
                 tcp_send(index, 0, 0);
-              }
-              DEBUGOUT("Eth: (%i) TCP_OPENED seq>ack\n", index);
+                DEBUGOUT("Eth: (%i) TCP_OPENED seq>ack\n", index);
+              //}
             }
           }
           else
@@ -773,15 +775,15 @@ void make_tcp_header(unsigned int index, unsigned int len, unsigned int options)
   tx_tcp->reserved = 0x00;
   tx_tcp->flags    = tcp_table[index].flags;
 
-  if(tcp_table[index].local_port > 1000) //station stream
+  if(tcp_table[index].local_port >= 1000) //station stream
   {
-    unsigned int free = vsbuf_free();
-    if     (free > (TCP_WINDOW*2)){ tx_tcp->window = SWAP16(TCP_WINDOW/1);  }
-    else if(free > (TCP_WINDOW/1)){ tx_tcp->window = SWAP16(TCP_WINDOW/2);  }
-    else if(free > (TCP_WINDOW/2)){ tx_tcp->window = SWAP16(TCP_WINDOW/4);  }
-    else if(free > (TCP_WINDOW/4)){ tx_tcp->window = SWAP16(TCP_WINDOW/8);  }
-    else if(free > (TCP_WINDOW/8)){ tx_tcp->window = SWAP16(TCP_WINDOW/16); }
-    else                          { tx_tcp->window = SWAP16(32);            }
+    unsigned int size, free;
+    size = buf_size();
+    free = buf_free();
+    if      (free > size/2){ tx_tcp->window = SWAP16(TCP_WINDOW/1); }
+    else if (free > size/4){ tx_tcp->window = SWAP16(TCP_WINDOW/2); }
+    else if (free > size/8){ tx_tcp->window = SWAP16(TCP_WINDOW/4); }
+    else                   { tx_tcp->window = SWAP16(32);           }
   }
   else
   {
@@ -997,7 +999,7 @@ void eth_service(void)
   }
 
   //check for data
-  if(ethernet_get(eth_rxbuf, ETH_MTUSIZE) == 0)
+  if(eth_rxget() == 0)
   {
     return;
   }
@@ -1091,6 +1093,66 @@ IP_Addr      eth_getip(void)                { return dev.ip; }
 MAC_Addr     eth_getmac(void)               { return dev.mac; }
 
 
+unsigned int eth_rxget(void)
+{
+  unsigned int head, tail;
+
+  head = rxfifo_head;
+  tail = rxfifo_tail;
+  if(head != tail)
+  {
+    eth_rxbuf = eth_rxfifo[tail];
+    if(++tail >= ETH_RXFIFO)
+    {
+      tail = 0;
+    }
+    rxfifo_tail = tail;
+    return 1;
+  }
+
+  return 0;
+}
+
+
+unsigned int eth_rxput(void)
+{
+  unsigned int head;
+
+  head = rxfifo_head;
+  if(ethernet_get(eth_rxfifo[head], ETH_MTUSIZE) != 0)
+  {
+    if(++head >= ETH_RXFIFO)
+    {
+      head = 0;
+    }
+    rxfifo_head = head;
+    return 1;
+  }
+
+  return 0;
+}
+
+
+unsigned int eth_rxfree(void)
+{
+  unsigned int head, tail;
+
+  head = rxfifo_head;
+  tail = rxfifo_tail;
+
+  if(head > tail)
+  {
+    return (((ETH_RXFIFO-(head-tail))-1)*ETH_MTUSIZE);
+  }
+  else if(head < tail)
+  {
+    return (((tail-head)-1)*ETH_MTUSIZE);
+  }
+
+  return ((ETH_RXFIFO-1)*ETH_MTUSIZE);
+}
+
+
 void eth_init(void)
 {
   DEBUGOUT("Eth: init\n");
@@ -1099,6 +1161,11 @@ void eth_init(void)
   memset(&dev, 0, sizeof(dev));
   memset(&tcp_table, 0, sizeof(tcp_table));
   memset(&udp_table, 0, sizeof(udp_table));
+  memset(&eth_txbuf, 0, sizeof(eth_txbuf));
+  memset(&eth_rxfifo, 0, sizeof(eth_rxfifo));
+  eth_rxbuf   = eth_rxfifo[0];
+  rxfifo_head = 0;
+  rxfifo_tail = 0;
 
   eth_setname(APPNAME);
   eth_setmac(atomac(DEFAULT_MAC));

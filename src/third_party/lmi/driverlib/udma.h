@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -323,8 +323,6 @@ extern void uDMAIntRegister(unsigned long ulIntChannel,
 extern void uDMAIntUnregister(unsigned long ulIntChannel);
 extern void uDMAChannelSelectDefault(unsigned long ulDefPeriphs);
 extern void uDMAChannelSelectSecondary(unsigned long ulSecPeriphs);
-extern unsigned long uDMAIntStatus(void);
-extern void uDMAIntClear(unsigned long ulChanMask);
 
 //*****************************************************************************
 //

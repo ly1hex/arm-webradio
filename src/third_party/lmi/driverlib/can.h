@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -113,6 +113,12 @@ typedef enum
     //! This indicates that a message object is a remote frame.
     //
     MSG_OBJ_REMOTE_FRAME =      0x00000040,
+
+    //
+    //! This indicates that this message object is part of a FIFO structure and
+    //! not the final message object in a FIFO.
+    //
+    MSG_OBJ_FIFO =                 0x00000200,
 
     //
     //! This indicates that a message object has no flags set.

@@ -9,7 +9,10 @@
 #define DEFAULT_TREBLEAMP              (0)      //  -8 -     7 dB
 #define DEFAULT_TREBLEFREQ             (15000)  //1000 - 15000 Hz
 
-//Audio Format
+//VS FiFo
+#define VS_BUFSIZE                     (32*1024) //32 kBytes
+
+//VS Type
 #define VS_UNKNOWN                     (0)
 #define VS1033C                        (1)
 #define VS1033D                        (2)
@@ -54,6 +57,14 @@
 #define VS_VOL                         (0x0B)   //Volume control
 //RAM Data
 #define VS_RAM_ENDFILLBYTE             (0x1E06)  //End fill byte
+
+
+typedef union
+{
+  uint8_t  b8[VS_BUFSIZE];
+  uint16_t b16[VS_BUFSIZE/2];
+  uint32_t b32[VS_BUFSIZE/4];
+} VSBUFFER;
 
 
 //ASF Header
@@ -105,8 +116,22 @@
   unsigned int     reserved4 : 16; //16bit Reserved
 } ASF_Header;*/
 
+//ASF Data Packet
+//0x82 0x00 0x00...
+
+//----- GLOBALS -----
+extern VSBUFFER vs_buf;
+
 
 //----- PROTOTYPES -----
+void                                   vs_requesthandler(void);
+unsigned char                          vs_bufgetc(void);
+void                                   vs_bufputs(const unsigned char *s, unsigned int len);
+unsigned int                           vs_buffree(void);
+unsigned int                           vs_buflen(void);
+void                                   vs_bufsethead(unsigned int head);
+void                                   vs_bufreset(void);
+
 int                                    vs_gettreblefreq(void);
 void                                   vs_settreblefreq(int freq); //1000 - 15000 Hz
 int                                    vs_gettrebleamp(void);
@@ -118,7 +143,6 @@ void                                   vs_setbassamp( int amp);    //   0 -    1
 int                                    vs_getvolume(void);
 void                                   vs_setvolume(int vol);      //   0 -   100 %, 0=off
 unsigned int                           vs_request(void);
-void                                   vs_requesthandler(void);
 void                                   vs_data(unsigned int c);
 void                                   vs_write_bass(void);
 void                                   vs_write_volume(void);

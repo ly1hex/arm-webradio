@@ -433,6 +433,8 @@ void menu_alarm(void)
 {
   unsigned int i;
 
+  DEBUGOUT("Alarm\n");
+
   //set alarm volume
   i = alarm_getvol();
   if(i)

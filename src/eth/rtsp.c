@@ -17,7 +17,7 @@
 
 
 volatile unsigned int rtsp_status=RTSP_CLOSED;
-unsigned int rtsp_localport=0, rtsp_pktlen=0;
+unsigned int rtsp_localport=0;
 
 
 void rtsp_close(void)
@@ -37,7 +37,6 @@ unsigned int rtsp_open(void)
   unsigned int index, trying;
 
   rtsp_status = RTSP_OPEN;
-  rtsp_pktlen = 0;
   //calc next local port
   switch(rtsp_localport)
   {
@@ -60,7 +59,8 @@ unsigned int rtsp_open(void)
 
     if((rtsp_status == RTSP_CLOSED) || 
        (rtsp_status == RTSP_OPENED) || 
-       (rtsp_status == RTSP_ERROR))
+       (rtsp_status == RTSP_ERROR)  ||
+       (rtsp_status == RTSP_ADDRMOVED))
     {
       break;
     }
@@ -87,7 +87,11 @@ unsigned int rtsp_open(void)
     }
   }
 
-  return rtsp_status;
+       if(rtsp_status == RTSP_OPENED)     { return STATION_OPENED; }
+  else if(rtsp_status == RTSP_ERROR)      { return STATION_ERROR; }
+  else if(rtsp_status == RTSP_ADDRMOVED)  { return STATION_ADDRMOVED; }
+
+  return STATION_OPEN;
 }
 
 
@@ -99,10 +103,12 @@ void rtsp_putdata(const unsigned char *s, unsigned int len)
   timeout = getontime()+2;
   while(len)
   {
-    free = vsbuf_free();
+    buf_service();
+
+    free = buf_free();
     if(free < len)
     {
-      vsbuf_puts(s, free);
+      buf_puts(s, free);
       s   += free;
       len -= free;
       if(getdeltatime(timeout) > 0)
@@ -113,7 +119,7 @@ void rtsp_putdata(const unsigned char *s, unsigned int len)
     }
     else
     {
-      vsbuf_puts(s, len);
+      buf_puts(s, len);
       break;
     }
   }
@@ -124,9 +130,9 @@ void rtsp_putdata(const unsigned char *s, unsigned int len)
 
 void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
-/*  unsigned int tx_len, i;
+  unsigned int tx_len, i;
   static char session[32]={0,};
-  static unsigned int seq=0, content_len=0;
+  static unsigned int seq=0, content_len=0, pkt_len=0;
   RTSP_Header *rtsp;
 
   switch(rtsp_status)
@@ -137,13 +143,13 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
       while(rx_len)
       {
         //read rtsp header
-        if(rtsp_pktlen == 0)
+        if(pkt_len == 0)
         {
           rtsp = (RTSP_Header*) rx;
           if((rx_len >= (RTSP_HEADERLEN+RTP_HEADERLEN+RTPASF_HEADERLEN)) &&
              (rtsp->magic == 0x24))
           {
-            rtsp_pktlen = swap16(rtsp->len) - RTP_HEADERLEN - RTPASF_HEADERLEN; //get data len
+            pkt_len = swap16(rtsp->len) - RTP_HEADERLEN - RTPASF_HEADERLEN; //get data len
             //skip header
             rx     += RTSP_HEADERLEN + RTP_HEADERLEN + RTPASF_HEADERLEN;
             rx_len -= RTSP_HEADERLEN + RTP_HEADERLEN + RTPASF_HEADERLEN;
@@ -156,17 +162,17 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
           }
         }
         //save data
-        if(rx_len > rtsp_pktlen)
+        if(rx_len > pkt_len)
         {
-          rtsp_putdata(rx, rtsp_pktlen);
-          rx     += rtsp_pktlen;
-          rx_len -= rtsp_pktlen;
-          rtsp_pktlen = 0;
+          rtsp_putdata(rx, pkt_len);
+          rx     += pkt_len;
+          rx_len -= pkt_len;
+          pkt_len = 0;
         }
         else
         {
           rtsp_putdata(rx, rx_len);
-          rtsp_pktlen -= rx_len;
+          pkt_len -= rx_len;
           rx_len = 0;
           break;
         }
@@ -180,6 +186,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
         {
           rtsp_status = RTSP_OPENED;
           tcp_send(index, 0, 0); //send ack
+          DEBUGOUT("RTSP: stream ready\n");
         }
         else
         {
@@ -201,7 +208,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
           //cut off additional parameters
           for(i=0; isdigit(session[i]) && (i<(32-1)); i++);
           session[i] = 0;
-  
+
           seq++;
           tx_len = sprintf(tx, "PLAY rtsp://%s%s RTSP/1.0\r\n"
                                "CSeq: %i\r\n"
@@ -210,6 +217,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
                                "User-Agent: "APPNAME"\r\n"
                                "\r\n", iptoa(gbuf.station.ip), gbuf.station.file, seq, session);
           tcp_send(index, tx_len, 0);
+          DEBUGOUT("RTSP: PLAY\n");
         }
         else
         {
@@ -223,32 +231,28 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
       if(rx_len)
       {
         //save ASF header
-        i = strlen(vsbuf.b8);
-        memcpy((vsbuf.b8+i), rx, rx_len);
-        vsbuf.b8[i+rx_len] = 0;
+        i = strlen(vs_buf.b8);
+        memcpy((vs_buf.b8+i), rx, rx_len);
+        vs_buf.b8[i+rx_len] = 0;
 
         content_len -= rx_len;
         if(content_len == 0)
         {
-          if(strncmpi(vsbuf.b8, "BASE32", 6) == 0)
+          i = 0;
+          if(strncmpi(vs_buf.b8, "BASE32", 6) == 0)
           {
-            //i = base32_decode(vsbuf.b8, (vsbuf.b8+6), VS_BUFSIZE-1);
-            i = 0;
+            //i = base32_decode(vs_buf.b8, (vs_buf.b8+6), VS_BUFSIZE-1);
           }
-          else if(strncmpi(vsbuf.b8, "BASE64", 6) == 0)
+          else if(strncmpi(vs_buf.b8, "BASE64", 6) == 0)
           {
-            i = base64_decode(vsbuf.b8, (vsbuf.b8+6), VS_BUFSIZE-1);
-          }
-          else
-          {
-            i = 0;
+            i = base64_decode(vs_buf.b8, (vs_buf.b8+6), VS_BUFSIZE-1);
           }
 
           if(i)
           {
-            vsbuf_sethead(i);
+            vs_bufsethead(i);
             DEBUGOUT("RTSP: ASF header: %i\n", i);
-  
+
             rtsp_status = RTSP_SETUP;
             seq++;
             tx_len = sprintf(tx, "SETUP rtsp://%s%s/audio RTSP/1.0\r\n"
@@ -257,6 +261,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
                                  "User-Agent: "APPNAME"\r\n"
                                  "\r\n", iptoa(gbuf.station.ip), gbuf.station.file, seq);
             tcp_send(index, tx_len, 0);
+            DEBUGOUT("RTSP: SETUP\n");
           }
           else
           {
@@ -280,14 +285,15 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
           if(content_len)
           {
             //search SDP start (skip http header)
-            rx = http_skiphd(rx, &rx_len);
+            rx = http_skiphd((char*)rx, &rx_len);
             //get ASF header
             if(rx_len)
             {
               rtsp_status = RTSP_DESCRIBE2;
               content_len -= rx_len;
-              vsbuf_init();
-              http_hdparam(vsbuf.b8, VS_BUFSIZE-1, rx, "WMS-HDR.ASFV1;");
+              vs_bufreset();
+              http_hdparam(vs_buf.b8, VS_BUFSIZE-1, rx, "WMS-HDR.ASFV1;");
+              DEBUGOUT("RTSP: get ASF header\n");
             }
           }
           tcp_send(index, 0, 0);
@@ -314,6 +320,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
                                "User-Agent: "APPNAME"\r\n"
                                "\r\n", iptoa(gbuf.station.ip), gbuf.station.file, seq);
           tcp_send(index, tx_len, 0);
+          DEBUGOUT("RTSP: DESCRIPE\n");
         }
         else
         {
@@ -339,7 +346,8 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
       break;
 
     case RTSP_OPEN:
-      rtsp_pktlen = 0;
+      memset(vs_buf.b8, 0, VS_BUFSIZE-1);
+      pkt_len = 0;
       rtsp_status = RTSP_GET;
       station_setbitrate(0);
       menu_setformat(FORMAT_WMA);
@@ -349,6 +357,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
                            "User-Agent: "APPNAME"\r\n"
                            "\r\n", iptoa(gbuf.station.ip), gbuf.station.file, seq);
       tcp_send(index, tx_len, 0);
+      DEBUGOUT("RTSP: GET\n");
       break;
 
     case RTSP_CLOSE:
@@ -360,15 +369,17 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
                            "\r\n", iptoa(gbuf.station.ip), gbuf.station.file, seq);
       tcp_send(index, tx_len, 0);
       tcp_close(index);
+      DEBUGOUT("RTSP: TEARDOWN\n");
       break;
 
     case RTSP_ERROR:
+    case RTSP_ADDRMOVED:
     case RTSP_CLOSED:
       rtsp_status = RTSP_CLOSED;
       tcp_abort(index);
       tcp_send(index, 0, 0);
       break;
   }
-*/
+
   return;
 }

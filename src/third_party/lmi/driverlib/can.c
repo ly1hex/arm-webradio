@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -72,9 +72,9 @@
 #define CAN_MAX_PRE_DIVISOR     (1024)
 
 //
-// The minimum CAN pre-divisor is 1024.
+// The minimum CAN pre-divisor is 1.
 //
-#define CAN_MIN_PRE_DIVISOR     (1024)
+#define CAN_MIN_PRE_DIVISOR     (1)
 
 //*****************************************************************************
 //
@@ -237,7 +237,7 @@ CANRegRead(unsigned long ulRegAddress)
     }
 
     //
-    // Trigger the inital read to the CAN controller.  The value returned at
+    // Trigger the initial read to the CAN controller.  The value returned at
     // this point is not valid.
     //
     HWREG(ulRegAddress);
@@ -255,7 +255,7 @@ CANRegRead(unsigned long ulRegAddress)
     ulRetVal = HWREG(ulRegAddress);
 
     //
-    // Reenable CAN interrupts if they were enabled before this call.
+    // Enable CAN interrupts if they were enabled before this call.
     //
     if(ulReenableInts)
     {
@@ -294,7 +294,7 @@ CANRegWrite(unsigned long ulRegAddress, unsigned long ulRegValue)
     volatile int iDelay;
 
     //
-    // Trigger the inital write to the CAN controller.  The value will not make
+    // Trigger the initial write to the CAN controller.  The value will not make
     // it out to the CAN controller for CAN_RW_DELAY cycles.
     //
     HWREG(ulRegAddress) = ulRegValue;
@@ -626,7 +626,7 @@ CANBitTimingGet(unsigned long ulBase, tCANBitClkParms *pClkParms)
     pClkParms->uSyncPropPhase1Seg = ((uBitReg & CAN_BIT_TSEG1_M) >> 8) + 1;
 
     //
-    // Set the sychronous jump width.
+    // Set the synchronous jump width.
     //
     pClkParms->uSJW = ((uBitReg & CAN_BIT_SJW_M) >> 6) + 1;
 
@@ -679,7 +679,7 @@ CANBitRateSet(unsigned long ulBase, unsigned long ulSourceClock,
     ASSERT(ulBitRate != 0);
 
     //
-    // Caclulate the desired clock rate.
+    // Calculate the desired clock rate.
     //
     ulDesiredRatio = ulSourceClock / ulBitRate;
 
@@ -687,11 +687,8 @@ CANBitRateSet(unsigned long ulBase, unsigned long ulSourceClock,
     // If the ratio of CAN bit rate to processor clock is too small or too
     // large then return 0 indicating that no bit rate was set.
     //
-    if((ulDesiredRatio > (CAN_MIN_PRE_DIVISOR * CAN_MIN_BIT_DIVISOR)) ||
-       (ulDesiredRatio < CAN_MIN_BIT_DIVISOR))
-    {
-        return(0);
-    }
+    ASSERT(ulDesiredRatio <= (CAN_MAX_PRE_DIVISOR * CAN_MAX_BIT_DIVISOR));
+    ASSERT(ulDesiredRatio >= (CAN_MIN_PRE_DIVISOR * CAN_MIN_BIT_DIVISOR));
 
     //
     // Make sure that the Desired Ratio is not too large.  This enforces the
@@ -719,7 +716,7 @@ CANBitRateSet(unsigned long ulBase, unsigned long ulSourceClock,
             ulPreDivide = ulDesiredRatio / ulCANBits;
 
             //
-            // If the caculated divisors match the desired clock ratio then
+            // If the calculated divisors match the desired clock ratio then
             // return these bit rate and set the CAN bit timing.
             //
             if((ulPreDivide * ulCANBits) == ulDesiredRatio)
@@ -733,7 +730,7 @@ CANBitRateSet(unsigned long ulBase, unsigned long ulSourceClock,
                 //
                 // To set the bit timing register, the controller must be placed
                 // in init mode (if not already), and also configuration change
-                // bit enabled.  The stat of the register should be saved
+                // bit enabled.  The state of the register should be saved
                 // so it can be restored.
                 //
                 usCANCTL = CANRegRead(ulBase + CAN_O_CTL);
@@ -1577,8 +1574,8 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
               tCANMsgObject *pMsgObject, tMsgObjType eMsgType)
 {
     unsigned short usCmdMaskReg;
-    unsigned short usMaskReg[2];
-    unsigned short usArbReg[2];
+    unsigned short usMaskReg0, usMaskReg1;
+    unsigned short usArbReg0, usArbReg1;
     unsigned short usMsgCtrl;
     tBoolean bTransferData;
     tBoolean bUseExtendedID;
@@ -1630,10 +1627,11 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
     // Initialize the values to a known state before filling them in based on
     // the type of message object that is being configured.
     //
-    usArbReg[0] = 0;
+    usArbReg0 = 0;
+    usArbReg1 = 0;
     usMsgCtrl = 0;
-    usMaskReg[0] = 0;
-    usMaskReg[1] = 0;
+    usMaskReg0 = 0;
+    usMaskReg1 = 0;
 
     switch(eMsgType)
     {
@@ -1646,7 +1644,7 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
             // Set the TXRQST bit and the reset the rest of the register.
             //
             usMsgCtrl |= CAN_IF1MCTL_TXRQST;
-            usArbReg[1] = CAN_IF1ARB2_DIR;
+            usArbReg1 = CAN_IF1ARB2_DIR;
             bTransferData = 1;
             break;
         }
@@ -1660,7 +1658,7 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
             // Set the TXRQST bit and the reset the rest of the register.
             //
             usMsgCtrl |= CAN_IF1MCTL_TXRQST;
-            usArbReg[1] = 0;
+            usArbReg1 = 0;
             break;
         }
 
@@ -1670,10 +1668,10 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
         case MSG_OBJ_TYPE_RX:
         {
             //
-            // This clears the DIR bit along with everthing else.  The TXRQST
-            // bit was cleard by defaulting usMsgCtrl to 0.
+            // This clears the DIR bit along with everything else.  The TXRQST
+            // bit was cleared by defaulting usMsgCtrl to 0.
             //
-            usArbReg[1] = 0;
+            usArbReg1 = 0;
             break;
         }
 
@@ -1684,9 +1682,9 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
         {
             //
             // The DIR bit is set to one for remote receivers.  The TXRQST bit
-            // was cleard by defaulting usMsgCtrl to 0.
+            // was cleared by defaulting usMsgCtrl to 0.
             //
-            usArbReg[1] = CAN_IF1ARB2_DIR;
+            usArbReg1 = CAN_IF1ARB2_DIR;
 
             //
             // Set this object so that it only indicates that a remote frame
@@ -1698,8 +1696,8 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
             //
             // Use the full Identifier by default.
             //
-            usMaskReg[0] = 0xffff;
-            usMaskReg[1] = 0x1fff;
+            usMaskReg0 = 0xffff;
+            usMaskReg1 = 0x1fff;
 
             //
             // Make sure to send the mask to the message object.
@@ -1716,7 +1714,7 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
             //
             // Oddly the DIR bit is set to one for remote receivers.
             //
-            usArbReg[1] = CAN_IF1ARB2_DIR;
+            usArbReg1 = CAN_IF1ARB2_DIR;
 
             //
             // Set this object to auto answer if a matching identifier is seen.
@@ -1750,8 +1748,8 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
             //
             // Set the 29 bits of Identifier mask that were requested.
             //
-            usMaskReg[0] = pMsgObject->ulMsgIDMask & CAN_IF1MSK1_IDMSK_M;
-            usMaskReg[1] = ((pMsgObject->ulMsgIDMask >> 16) &
+            usMaskReg0 = pMsgObject->ulMsgIDMask & CAN_IF1MSK1_IDMSK_M;
+            usMaskReg1 = ((pMsgObject->ulMsgIDMask >> 16) &
                             CAN_IF1MSK2_IDMSK_M);
         }
         else
@@ -1759,13 +1757,13 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
             //
             // Lower 16 bit are unused so set them to zero.
             //
-            usMaskReg[0] = 0;
+            usMaskReg0 = 0;
 
             //
             // Put the 11 bit Mask Identifier into the upper bits of the field
             // in the register.
             //
-            usMaskReg[1] = ((pMsgObject->ulMsgIDMask << 2) &
+            usMaskReg1 = ((pMsgObject->ulMsgIDMask << 2) &
                             CAN_IF1MSK2_IDMSK_M);
         }
     }
@@ -1776,7 +1774,7 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
     if((pMsgObject->ulFlags & MSG_OBJ_USE_EXT_FILTER) ==
        MSG_OBJ_USE_EXT_FILTER)
     {
-        usMaskReg[1] |= CAN_IF1MSK2_MXTD;
+        usMaskReg1 |= CAN_IF1MSK2_MXTD;
     }
 
     //
@@ -1785,7 +1783,7 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
     if((pMsgObject->ulFlags & MSG_OBJ_USE_DIR_FILTER) ==
        MSG_OBJ_USE_DIR_FILTER)
     {
-        usMaskReg[1] |= CAN_IF1MSK2_MDIR;
+        usMaskReg1 |= CAN_IF1MSK2_MDIR;
     }
 
     if(pMsgObject->ulFlags & (MSG_OBJ_USE_ID_FILTER | MSG_OBJ_USE_DIR_FILTER |
@@ -1797,7 +1795,7 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
         usMsgCtrl |= CAN_IF1MCTL_UMASK;
 
         //
-        // Set the MASK bit so that this gets trasferred to the Message Object.
+        // Set the MASK bit so that this gets transferred to the Message Object.
         //
         usCmdMaskReg |= CAN_IF1CMSK_MASK;
     }
@@ -1815,13 +1813,13 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
         //
         // Set the 29 bit version of the Identifier for this message object.
         //
-        usArbReg[0] |= pMsgObject->ulMsgID & CAN_IF1ARB1_ID_M;
-        usArbReg[1] |= (pMsgObject->ulMsgID >> 16) & CAN_IF1ARB2_ID_M;
+        usArbReg0 |= pMsgObject->ulMsgID & CAN_IF1ARB1_ID_M;
+        usArbReg1 |= (pMsgObject->ulMsgID >> 16) & CAN_IF1ARB2_ID_M;
 
         //
         // Mark the message as valid and set the extended ID bit.
         //
-        usArbReg[1] |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD;
+        usArbReg1 |= CAN_IF1ARB2_MSGVAL | CAN_IF1ARB2_XTD;
     }
     else
     {
@@ -1829,19 +1827,27 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
         // Set the 11 bit version of the Identifier for this message object.
         // The lower 18 bits are set to zero.
         //
-        usArbReg[1] |= (pMsgObject->ulMsgID << 2) & CAN_IF1ARB2_ID_M;
+        usArbReg1 |= (pMsgObject->ulMsgID << 2) & CAN_IF1ARB2_ID_M;
 
         //
         // Mark the message as valid.
         //
-        usArbReg[1] |= CAN_IF1ARB2_MSGVAL;
+        usArbReg1 |= CAN_IF1ARB2_MSGVAL;
     }
 
     //
     // Set the data length since this is set for all transfers.  This is also a
     // single transfer and not a FIFO transfer so set EOB bit.
     //
-    usMsgCtrl |= (pMsgObject->ulMsgLen & CAN_IF1MCTL_DLC_M) | CAN_IF1MCTL_EOB;
+    usMsgCtrl |= (pMsgObject->ulMsgLen & CAN_IF1MCTL_DLC_M);
+
+    //
+    // Mark this as the last entry if this is not the last entry in a FIFO.
+    //
+    if((pMsgObject->ulFlags & MSG_OBJ_FIFO) == 0)
+    {
+        usMsgCtrl |= CAN_IF1MCTL_EOB;
+    }
 
     //
     // Enable transmit interrupts if they should be enabled.
@@ -1873,10 +1879,10 @@ CANMessageSet(unsigned long ulBase, unsigned long ulObjID,
     // Write out the registers to program the message object.
     //
     CANRegWrite(ulBase + CAN_O_IF1CMSK, usCmdMaskReg);
-    CANRegWrite(ulBase + CAN_O_IF1MSK1, usMaskReg[0]);
-    CANRegWrite(ulBase + CAN_O_IF1MSK2, usMaskReg[1]);
-    CANRegWrite(ulBase + CAN_O_IF1ARB1, usArbReg[0]);
-    CANRegWrite(ulBase + CAN_O_IF1ARB2, usArbReg[1]);
+    CANRegWrite(ulBase + CAN_O_IF1MSK1, usMaskReg0);
+    CANRegWrite(ulBase + CAN_O_IF1MSK2, usMaskReg1);
+    CANRegWrite(ulBase + CAN_O_IF1ARB1, usArbReg0);
+    CANRegWrite(ulBase + CAN_O_IF1ARB2, usArbReg1);
     CANRegWrite(ulBase + CAN_O_IF1MCTL, usMsgCtrl);
 
     //
@@ -1928,8 +1934,8 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
               tCANMsgObject *pMsgObject, tBoolean bClrPendingInt)
 {
     unsigned short usCmdMaskReg;
-    unsigned short usMaskReg[2];
-    unsigned short usArbReg[2];
+    unsigned short usMaskReg0, usMaskReg1;
+    unsigned short usArbReg0, usArbReg1;
     unsigned short usMsgCtrl;
 
     //
@@ -1959,7 +1965,7 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
     CANRegWrite(ulBase + CAN_O_IF2CMSK, usCmdMaskReg);
 
     //
-    // Transfer the message object to the message object specifiec by ulObjID.
+    // Transfer the message object to the message object specified by ulObjID.
     //
     CANRegWrite(ulBase + CAN_O_IF2CRQ, ulObjID & CAN_IF1CRQ_MNUM_M);
 
@@ -1973,10 +1979,10 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
     //
     // Read out the IF Registers.
     //
-    usMaskReg[0] = CANRegRead(ulBase + CAN_O_IF2MSK1);
-    usMaskReg[1] = CANRegRead(ulBase + CAN_O_IF2MSK2);
-    usArbReg[0] = CANRegRead(ulBase + CAN_O_IF2ARB1);
-    usArbReg[1] = CANRegRead(ulBase + CAN_O_IF2ARB2);
+    usMaskReg0 = CANRegRead(ulBase + CAN_O_IF2MSK1);
+    usMaskReg1 = CANRegRead(ulBase + CAN_O_IF2MSK2);
+    usArbReg0 = CANRegRead(ulBase + CAN_O_IF2ARB1);
+    usArbReg1 = CANRegRead(ulBase + CAN_O_IF2ARB2);
     usMsgCtrl = CANRegRead(ulBase + CAN_O_IF2MCTL);
 
     pMsgObject->ulFlags = MSG_OBJ_NO_FLAGS;
@@ -1984,10 +1990,8 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
     //
     // Determine if this is a remote frame by checking the TXRQST and DIR bits.
     //
-    if((!(usMsgCtrl & CAN_IF1MCTL_TXRQST) &&
-        (usArbReg[1] & CAN_IF1ARB2_DIR)) ||
-       ((usMsgCtrl & CAN_IF1MCTL_TXRQST) &&
-        (!(usArbReg[1] & CAN_IF1ARB2_DIR))))
+    if((!(usMsgCtrl & CAN_IF1MCTL_TXRQST) && (usArbReg1 & CAN_IF1ARB2_DIR)) ||
+       ((usMsgCtrl & CAN_IF1MCTL_TXRQST) && (!(usArbReg1 & CAN_IF1ARB2_DIR))))
     {
         pMsgObject->ulFlags |= MSG_OBJ_REMOTE_FRAME;
     }
@@ -1996,13 +2000,13 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
     // Get the identifier out of the register, the format depends on size of
     // the mask.
     //
-    if(usArbReg[1] & CAN_IF1ARB2_XTD)
+    if(usArbReg1 & CAN_IF1ARB2_XTD)
     {
         //
         // Set the 29 bit version of the Identifier for this message object.
         //
-        pMsgObject->ulMsgID = ((usArbReg[1] & CAN_IF1ARB2_ID_M) << 16) |
-            usArbReg[0];
+        pMsgObject->ulMsgID = ((usArbReg1 & CAN_IF1ARB2_ID_M) << 16) |
+            usArbReg0;
 
         pMsgObject->ulFlags |= MSG_OBJ_EXTENDED_ID;
     }
@@ -2011,7 +2015,7 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
         //
         // The Identifier is an 11 bit value.
         //
-        pMsgObject->ulMsgID = (usArbReg[1] & CAN_IF1ARB2_ID_M) >> 2;
+        pMsgObject->ulMsgID = (usArbReg1 & CAN_IF1ARB2_ID_M) >> 2;
     }
 
     //
@@ -2027,13 +2031,14 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
     //
     if(usMsgCtrl & CAN_IF1MCTL_UMASK)
     {
-        if(usArbReg[1] & CAN_IF1ARB2_XTD)
+        if(usArbReg1 & CAN_IF1ARB2_XTD)
         {
             //
             // The Identifier Mask is assumed to also be a 29 bit value.
             //
             pMsgObject->ulMsgIDMask =
-                ((usMaskReg[1] & CAN_IF1MSK2_IDMSK_M) << 16) | usMaskReg[0];
+                ((usMaskReg1 & CAN_IF1MSK2_IDMSK_M) << 16) | usMaskReg0;
+
             //
             // If this is a fully specified Mask and a remote frame then don't
             // set the MSG_OBJ_USE_ID_FILTER because the ID was not really
@@ -2050,7 +2055,7 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
             //
             // The Identifier Mask is assumed to also be an 11 bit value.
             //
-            pMsgObject->ulMsgIDMask = ((usMaskReg[1] & CAN_IF1MSK2_IDMSK_M) >>
+            pMsgObject->ulMsgIDMask = ((usMaskReg1 & CAN_IF1MSK2_IDMSK_M) >>
                                        2);
 
             //
@@ -2068,7 +2073,7 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
         //
         // Indicate if the extended bit was used in filtering.
         //
-        if(usMaskReg[1] & CAN_IF1MSK2_MXTD)
+        if(usMaskReg1 & CAN_IF1MSK2_MXTD)
         {
             pMsgObject->ulFlags |= MSG_OBJ_USE_EXT_FILTER;
         }
@@ -2076,14 +2081,14 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
         //
         // Indicate if direction filtering was enabled.
         //
-        if(usMaskReg[1] & CAN_IF1MSK2_MDIR)
+        if(usMaskReg1 & CAN_IF1MSK2_MDIR)
         {
             pMsgObject->ulFlags |= MSG_OBJ_USE_DIR_FILTER;
         }
     }
 
     //
-    // Set the interupt flags.
+    // Set the interrupt flags.
     //
     if(usMsgCtrl & CAN_IF1MCTL_TXIE)
     {
@@ -2124,7 +2129,7 @@ CANMessageGet(unsigned long ulBase, unsigned long ulObjID,
         CANRegWrite(ulBase + CAN_O_IF2CMSK, CAN_IF1CMSK_NEWDAT);
 
         //
-        // Transfer the message object to the message object specifiec by
+        // Transfer the message object to the message object specified by
         // ulObjID.
         //
         CANRegWrite(ulBase + CAN_O_IF2CRQ, ulObjID & CAN_IF1CRQ_MNUM_M);

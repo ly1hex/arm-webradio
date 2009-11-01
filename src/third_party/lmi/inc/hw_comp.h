@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -54,29 +54,29 @@
 //
 //*****************************************************************************
 #define COMP_ACMIS_IN2          0x00000004  // Comparator 2 Masked Interrupt
-                                            // Status.
+                                            // Status
 #define COMP_ACMIS_IN1          0x00000002  // Comparator 1 Masked Interrupt
-                                            // Status.
+                                            // Status
 #define COMP_ACMIS_IN0          0x00000001  // Comparator 0 Masked Interrupt
-                                            // Status.
+                                            // Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACRIS register.
 //
 //*****************************************************************************
-#define COMP_ACRIS_IN2          0x00000004  // Comparator 2 Interrupt Status.
-#define COMP_ACRIS_IN1          0x00000002  // Comparator 1 Interrupt Status.
-#define COMP_ACRIS_IN0          0x00000001  // Comparator 0 Interrupt Status.
+#define COMP_ACRIS_IN2          0x00000004  // Comparator 2 Interrupt Status
+#define COMP_ACRIS_IN1          0x00000002  // Comparator 1 Interrupt Status
+#define COMP_ACRIS_IN0          0x00000001  // Comparator 0 Interrupt Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACINTEN register.
 //
 //*****************************************************************************
-#define COMP_ACINTEN_IN2        0x00000004  // Comparator 2 Interrupt Enable.
-#define COMP_ACINTEN_IN1        0x00000002  // Comparator 1 Interrupt Enable.
-#define COMP_ACINTEN_IN0        0x00000001  // Comparator 0 Interrupt Enable.
+#define COMP_ACINTEN_IN2        0x00000004  // Comparator 2 Interrupt Enable
+#define COMP_ACINTEN_IN1        0x00000002  // Comparator 1 Interrupt Enable
+#define COMP_ACINTEN_IN0        0x00000001  // Comparator 0 Interrupt Enable
 
 //*****************************************************************************
 //
@@ -84,9 +84,9 @@
 // register.
 //
 //*****************************************************************************
-#define COMP_ACREFCTL_EN        0x00000200  // Resistor Ladder Enable.
-#define COMP_ACREFCTL_RNG       0x00000100  // Resistor Ladder Range.
-#define COMP_ACREFCTL_VREF_M    0x0000000F  // Resistor Ladder Voltage Ref.
+#define COMP_ACREFCTL_EN        0x00000200  // Resistor Ladder Enable
+#define COMP_ACREFCTL_RNG       0x00000100  // Resistor Ladder Range
+#define COMP_ACREFCTL_VREF_M    0x0000000F  // Resistor Ladder Voltage Ref
 #define COMP_ACREFCTL_VREF_S    0
 
 //*****************************************************************************
@@ -94,93 +94,93 @@
 // The following are defines for the bit fields in the COMP_O_ACSTAT0 register.
 //
 //*****************************************************************************
-#define COMP_ACSTAT0_OVAL       0x00000002  // Comparator Output Value.
+#define COMP_ACSTAT0_OVAL       0x00000002  // Comparator Output Value
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACCTL0 register.
 //
 //*****************************************************************************
-#define COMP_ACCTL0_TOEN        0x00000800  // Trigger Output Enable.
-#define COMP_ACCTL0_ASRCP_M     0x00000600  // Analog Source Positive.
+#define COMP_ACCTL0_TOEN        0x00000800  // Trigger Output Enable
+#define COMP_ACCTL0_ASRCP_M     0x00000600  // Analog Source Positive
 #define COMP_ACCTL0_ASRCP_PIN   0x00000000  // Pin value
 #define COMP_ACCTL0_ASRCP_PIN0  0x00000200  // Pin value of C0+
 #define COMP_ACCTL0_ASRCP_REF   0x00000400  // Internal voltage reference
-#define COMP_ACCTL0_TSLVAL      0x00000080  // Trigger Sense Level Value.
-#define COMP_ACCTL0_TSEN_M      0x00000060  // Trigger Sense.
+#define COMP_ACCTL0_TSLVAL      0x00000080  // Trigger Sense Level Value
+#define COMP_ACCTL0_TSEN_M      0x00000060  // Trigger Sense
 #define COMP_ACCTL0_TSEN_LEVEL  0x00000000  // Level sense, see TSLVAL
 #define COMP_ACCTL0_TSEN_FALL   0x00000020  // Falling edge
 #define COMP_ACCTL0_TSEN_RISE   0x00000040  // Rising edge
 #define COMP_ACCTL0_TSEN_BOTH   0x00000060  // Either edge
-#define COMP_ACCTL0_ISLVAL      0x00000010  // Interrupt Sense Level Value.
-#define COMP_ACCTL0_ISEN_M      0x0000000C  // Interrupt Sense.
+#define COMP_ACCTL0_ISLVAL      0x00000010  // Interrupt Sense Level Value
+#define COMP_ACCTL0_ISEN_M      0x0000000C  // Interrupt Sense
 #define COMP_ACCTL0_ISEN_LEVEL  0x00000000  // Level sense, see ISLVAL
 #define COMP_ACCTL0_ISEN_FALL   0x00000004  // Falling edge
 #define COMP_ACCTL0_ISEN_RISE   0x00000008  // Rising edge
 #define COMP_ACCTL0_ISEN_BOTH   0x0000000C  // Either edge
-#define COMP_ACCTL0_CINV        0x00000002  // Comparator Output Invert.
+#define COMP_ACCTL0_CINV        0x00000002  // Comparator Output Invert
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACSTAT1 register.
 //
 //*****************************************************************************
-#define COMP_ACSTAT1_OVAL       0x00000002  // Comparator Output Value.
+#define COMP_ACSTAT1_OVAL       0x00000002  // Comparator Output Value
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACCTL1 register.
 //
 //*****************************************************************************
-#define COMP_ACCTL1_TOEN        0x00000800  // Trigger Output Enable.
-#define COMP_ACCTL1_ASRCP_M     0x00000600  // Analog Source Positive.
+#define COMP_ACCTL1_TOEN        0x00000800  // Trigger Output Enable
+#define COMP_ACCTL1_ASRCP_M     0x00000600  // Analog Source Positive
 #define COMP_ACCTL1_ASRCP_PIN   0x00000000  // Pin value
 #define COMP_ACCTL1_ASRCP_PIN0  0x00000200  // Pin value of C0+
 #define COMP_ACCTL1_ASRCP_REF   0x00000400  // Internal voltage reference
-#define COMP_ACCTL1_TSLVAL      0x00000080  // Trigger Sense Level Value.
-#define COMP_ACCTL1_TSEN_M      0x00000060  // Trigger Sense.
+#define COMP_ACCTL1_TSLVAL      0x00000080  // Trigger Sense Level Value
+#define COMP_ACCTL1_TSEN_M      0x00000060  // Trigger Sense
 #define COMP_ACCTL1_TSEN_LEVEL  0x00000000  // Level sense, see TSLVAL
 #define COMP_ACCTL1_TSEN_FALL   0x00000020  // Falling edge
 #define COMP_ACCTL1_TSEN_RISE   0x00000040  // Rising edge
 #define COMP_ACCTL1_TSEN_BOTH   0x00000060  // Either edge
-#define COMP_ACCTL1_ISLVAL      0x00000010  // Interrupt Sense Level Value.
-#define COMP_ACCTL1_ISEN_M      0x0000000C  // Interrupt Sense.
+#define COMP_ACCTL1_ISLVAL      0x00000010  // Interrupt Sense Level Value
+#define COMP_ACCTL1_ISEN_M      0x0000000C  // Interrupt Sense
 #define COMP_ACCTL1_ISEN_LEVEL  0x00000000  // Level sense, see ISLVAL
 #define COMP_ACCTL1_ISEN_FALL   0x00000004  // Falling edge
 #define COMP_ACCTL1_ISEN_RISE   0x00000008  // Rising edge
 #define COMP_ACCTL1_ISEN_BOTH   0x0000000C  // Either edge
-#define COMP_ACCTL1_CINV        0x00000002  // Comparator Output Invert.
+#define COMP_ACCTL1_CINV        0x00000002  // Comparator Output Invert
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACSTAT2 register.
 //
 //*****************************************************************************
-#define COMP_ACSTAT2_OVAL       0x00000002  // Comparator Output Value.
+#define COMP_ACSTAT2_OVAL       0x00000002  // Comparator Output Value
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the COMP_O_ACCTL2 register.
 //
 //*****************************************************************************
-#define COMP_ACCTL2_TOEN        0x00000800  // Trigger Output Enable.
-#define COMP_ACCTL2_ASRCP_M     0x00000600  // Analog Source Positive.
+#define COMP_ACCTL2_TOEN        0x00000800  // Trigger Output Enable
+#define COMP_ACCTL2_ASRCP_M     0x00000600  // Analog Source Positive
 #define COMP_ACCTL2_ASRCP_PIN   0x00000000  // Pin value
 #define COMP_ACCTL2_ASRCP_PIN0  0x00000200  // Pin value of C0+
 #define COMP_ACCTL2_ASRCP_REF   0x00000400  // Internal voltage reference
-#define COMP_ACCTL2_TSLVAL      0x00000080  // Trigger Sense Level Value.
-#define COMP_ACCTL2_TSEN_M      0x00000060  // Trigger Sense.
+#define COMP_ACCTL2_TSLVAL      0x00000080  // Trigger Sense Level Value
+#define COMP_ACCTL2_TSEN_M      0x00000060  // Trigger Sense
 #define COMP_ACCTL2_TSEN_LEVEL  0x00000000  // Level sense, see TSLVAL
 #define COMP_ACCTL2_TSEN_FALL   0x00000020  // Falling edge
 #define COMP_ACCTL2_TSEN_RISE   0x00000040  // Rising edge
 #define COMP_ACCTL2_TSEN_BOTH   0x00000060  // Either edge
-#define COMP_ACCTL2_ISLVAL      0x00000010  // Interrupt Sense Level Value.
-#define COMP_ACCTL2_ISEN_M      0x0000000C  // Interrupt Sense.
+#define COMP_ACCTL2_ISLVAL      0x00000010  // Interrupt Sense Level Value
+#define COMP_ACCTL2_ISEN_M      0x0000000C  // Interrupt Sense
 #define COMP_ACCTL2_ISEN_LEVEL  0x00000000  // Level sense, see ISLVAL
 #define COMP_ACCTL2_ISEN_FALL   0x00000004  // Falling edge
 #define COMP_ACCTL2_ISEN_RISE   0x00000008  // Rising edge
 #define COMP_ACCTL2_ISEN_BOTH   0x0000000C  // Either edge
-#define COMP_ACCTL2_CINV        0x00000002  // Comparator Output Invert.
+#define COMP_ACCTL2_CINV        0x00000002  // Comparator Output Invert
 
 //*****************************************************************************
 //
@@ -197,7 +197,18 @@
 #define COMP_O_MIS              0x00000000  // Interrupt status register
 #define COMP_O_RIS              0x00000004  // Raw interrupt status register
 #define COMP_O_INTEN            0x00000008  // Interrupt enable register
-#define COMP_O_REFCTL           0x00000010  // Reference voltage control reg.
+#define COMP_O_REFCTL           0x00000010  // Reference voltage control reg
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the COMP_O_REFCTL
+// register.
+//
+//*****************************************************************************
+#define COMP_REFCTL_EN          0x00000200  // Reference voltage enable
+#define COMP_REFCTL_RNG         0x00000100  // Reference voltage range
+#define COMP_REFCTL_VREF_MASK   0x0000000F  // Reference voltage select mask
+#define COMP_REFCTL_VREF_SHIFT  0
 
 //*****************************************************************************
 //
@@ -208,17 +219,6 @@
 #define COMP_INT_2              0x00000004  // Comp2 interrupt
 #define COMP_INT_1              0x00000002  // Comp1 interrupt
 #define COMP_INT_0              0x00000001  // Comp0 interrupt
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the COMP_REFCTL
-// register.
-//
-//*****************************************************************************
-#define COMP_REFCTL_EN          0x00000200  // Reference voltage enable
-#define COMP_REFCTL_RNG         0x00000100  // Reference voltage range
-#define COMP_REFCTL_VREF_MASK   0x0000000F  // Reference voltage select mask
-#define COMP_REFCTL_VREF_SHIFT  0
 
 //*****************************************************************************
 //
@@ -270,7 +270,7 @@
 #define COMP_RV_MIS             0x00000000  // Interrupt status register
 #define COMP_RV_ACCTL0          0x00000000  // Comp0 control register
 #define COMP_RV_ACSTAT1         0x00000000  // Comp1 status register
-#define COMP_RV_REFCTL          0x00000000  // Reference voltage control reg.
+#define COMP_RV_REFCTL          0x00000000  // Reference voltage control reg
 
 #endif
 

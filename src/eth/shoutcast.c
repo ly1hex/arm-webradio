@@ -57,9 +57,10 @@ unsigned int shoutcast_open(void)
   {
     eth_service();
 
-    if((shoutcast_status == SHOUTCAST_CLOSED) || 
-       (shoutcast_status == SHOUTCAST_OPENED) || 
-       (shoutcast_status == SHOUTCAST_ERROR)  ||
+    if((shoutcast_status == SHOUTCAST_CLOSED)    || 
+       (shoutcast_status == SHOUTCAST_OPENED)    || 
+       (shoutcast_status == SHOUTCAST_ERROR)     ||
+       (shoutcast_status == SHOUTCAST_ADDRMOVED) ||
        (shoutcast_status == SHOUTCAST_SERVERFULL))
     {
       break;
@@ -87,7 +88,12 @@ unsigned int shoutcast_open(void)
     }
   }
 
-  return shoutcast_status;
+       if(shoutcast_status == SHOUTCAST_OPENED)     { return STATION_OPENED; }
+  else if(shoutcast_status == SHOUTCAST_ERROR)      { return STATION_ERROR; }
+  else if(shoutcast_status == SHOUTCAST_ADDRMOVED)  { return STATION_ADDRMOVED; }
+  else if(shoutcast_status == SHOUTCAST_SERVERFULL) { return STATION_ERROR; }
+
+  return STATION_OPEN;
 }
 
 
@@ -137,18 +143,19 @@ void shoutcast_putogg(const unsigned char *s, unsigned int len)
     if(buf_len == WORKINGBUF)
     {
       buf_len = 0;
-      while(WORKINGBUF > vsbuf_free()) //wait for free buffer
+      while(WORKINGBUF > buf_free()) //wait for free buffer
       {
+        buf_service();
         if(getdeltatime(timeout) > 0)
         {
           shoutcast_close();
           return;
         }
       }
-      vsbuf_puts(buf, WORKINGBUF);
+      buf_puts(buf, WORKINGBUF);
     }
   }
-  vsbuf_puts(buf, buf_len);
+  buf_puts(buf, buf_len);
 
   return;
 }
@@ -162,10 +169,12 @@ void shoutcast_putdata(const unsigned char *s, unsigned int len)
   timeout = getontime()+2;
   while(len)
   {
-    free = vsbuf_free();
+    buf_service();
+
+    free = buf_free();
     if(free < len)
     {
-      vsbuf_puts(s, free);
+      buf_puts(s, free);
       s   += free;
       len -= free;
       if(getdeltatime(timeout) > 0)
@@ -176,7 +185,7 @@ void shoutcast_putdata(const unsigned char *s, unsigned int len)
     }
     else
     {
-      vsbuf_puts(s, len);
+      buf_puts(s, len);
       break;
     }
   }
@@ -228,7 +237,14 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
               case 301: //301 Moved Permanently
               case 302: //302 Moved Temporarily
               case 303: //303 See Other
-                shoutcast_status = SHOUTCAST_ERROR;
+                if(http_hdparam(gbuf.station.addr, MAX_ADDR-1, rx, "LOCATION:") == 0)
+                {
+                  shoutcast_status = SHOUTCAST_ADDRMOVED;
+                }
+                else
+                {
+                  shoutcast_status = SHOUTCAST_ERROR;
+                }
                 menu_drawpopup("Station: Addr moved");
                 break;
               case 400: //400 Server full
@@ -262,21 +278,24 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
           if(http_hdparam(buf, 32-1, rx, "ICY-BR:") == 0)
           {
             i = atoi(buf);
-            if(i >= 128) //bitrate >= 128
+            if(fm_size() == 0)
             {
-              skip = 64; //skip first 64 frames
-            }
-            else if(i >= 64) //bitrate >= 64
-            {
-              skip = 32; //skip first 32 frames
-            }
-            else if(i >= 16)
-            {
-              skip = 16; //skip first 16 frames
-            }
-            else if(i >= 8)
-            {
-              skip = 0; //skip nothing
+              if(i >= 128) //bitrate >= 128
+              {
+                skip = 64; //skip first 64 frames
+              }
+              else if(i >= 64) //bitrate >= 64
+              {
+                skip = 32; //skip first 32 frames
+              }
+              else if(i >= 16)
+              {
+                skip = 16; //skip first 16 frames
+              }
+              else if(i >= 8)
+              {
+                skip = 0; //skip nothing
+              }
             }
             station_setbitrate(i);
           }
@@ -438,7 +457,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
           }
           if(rx_len)
           {
-            vsbuf_puts(rx, rx_len);
+            buf_puts(rx, rx_len);
             rx_len = 0;
             shoutcast_status = SHOUTCAST_OPENED;
           }
@@ -451,7 +470,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             case FORMAT_OGG:
               if(format_header < 4000) //Ogg header is around 4-5 kByte
               {
-                vsbuf_puts(rx, rx_len);
+                buf_puts(rx, rx_len);
                 format_header += rx_len;
                 rx_len         = 0;
               }
@@ -468,7 +487,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
                     break;
                   }
                 }
-                vsbuf_puts(rx, i);
+                buf_puts(rx, i);
                 format_header += i;
                 rx_len        -= i;
               }
@@ -476,7 +495,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             case FORMAT_WMA:
               if(format_header < 4000) //WMA header is around 5 kByte
               {
-                vsbuf_puts(rx, rx_len);
+                buf_puts(rx, rx_len);
                 format_header += rx_len;
                 rx_len         = 0;
               }
@@ -493,7 +512,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
                     break;
                   }
                 }
-                vsbuf_puts(rx, i);
+                buf_puts(rx, i);
                 format_header += i;
                 rx_len        -= i;
               }
@@ -508,19 +527,27 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
       parse_header     = 0;
       format           = FORMAT_UNKNOWN;
       format_header    = 0;
-      skip             = 32; //default skip
-      station_setbitrate(0);
+      if(fm_size() == 0) //no F-RAM
+      {
+        skip = 32; //default skip
+      }
+      else
+      {
+        skip = 0;
+      }
+      station_setbitrate(0); //set default bitrate / buffer limits
       menu_setformat(FORMAT_UNKNOWN);
       tx_len = sprintf(tx, "GET %s HTTP/1.0\r\n"
                            "Host: %s\r\n"
                            "User-Agent: "APPNAME"\r\n"
                            "Icy-MetaData: 0\r\n"
                            "Connection: Keep-Alive\r\n"
-                           "\r\n", gbuf.station.file, iptoa(gbuf.station.ip));
+                           "\r\n", gbuf.station.file, gbuf.station.host);
       tcp_send(index, tx_len, 0);
       break;
 
     case SHOUTCAST_ERROR:
+    case SHOUTCAST_ADDRMOVED:
     case SHOUTCAST_SERVERFULL:
     case SHOUTCAST_CLOSE:
     case SHOUTCAST_CLOSED:

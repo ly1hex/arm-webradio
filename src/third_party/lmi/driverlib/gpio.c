@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1446,6 +1446,46 @@ GPIOPinTypeI2S(unsigned long ulPort, unsigned char ucPins)
     // Set the pad(s) for standard push-pull operation.
     //
     GPIOPadConfigSet(ulPort, ucPins, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD);
+}
+
+//*****************************************************************************
+//
+//! Configures pin(s) for use by the Ethernet peripheral as LED signals.
+//!
+//! \param ulPort is the base address of the GPIO port.
+//! \param ucPins is the bit-packed representation of the pin(s).
+//!
+//! The Ethernet peripheral provides two signals that can be used to drive
+//! an LED (e.g. for link status/activity).  This function provides a typical
+//! configuration for the pins.
+//!
+//! The pin(s) are specified using a bit-packed byte, where each bit that is
+//! set identifies the pin to be accessed, and where bit 0 of the byte
+//! represents GPIO port pin 0, bit 1 represents GPIO port pin 1, and so on.
+//!
+//! \note This cannot be used to turn any pin into an Ethernet LED pin; it only
+//! configures an Ethernet LED pin for proper operation.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+GPIOPinTypeEthernetLED(unsigned long ulPort, unsigned char ucPins)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(GPIOBaseValid(ulPort));
+
+    //
+    // Make the pin(s) be peripheral controlled.
+    //
+    GPIODirModeSet(ulPort, ucPins, GPIO_DIR_MODE_HW);
+
+    //
+    // Set the pad(s) for standard push-pull operation.
+    //
+    GPIOPadConfigSet(ulPort, ucPins, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD);
 }
 
 //*****************************************************************************

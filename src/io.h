@@ -27,8 +27,7 @@
 #define STANDBY_TIME                   (3*60)  //standby after x seconds
 
 //SSI Speed: LCD, SD, F-RAM, VS
-#define DEFAULT_SSISPEED               (8000000) //8 MHz
-#define DEFAULT_SSILOWSPEED            (2000000) //2 MHz (init and standby)
+#define SSI_SPEED                      (8000000UL) //8 MHz (max ssi speed)
 
 //Rotary encoder switch
 #define SW_SHORTTIME                   (8)   //  8*10ms =   80ms
@@ -115,6 +114,7 @@ unsigned int                           ethernet_link(void);
 unsigned int                           ethernet_data(void);
 void                                   ethernet_put(unsigned char *pkt, unsigned int len);
 unsigned int                           ethernet_get(unsigned char *pkt, unsigned int len);
+void                                   ethernet_handler(void);
 
 void                                   vs_ssi_wait(void);
 void                                   vs_ssi_writewait(void);
@@ -122,14 +122,12 @@ void                                   vs_ssi_write(unsigned char c);
 unsigned char                          vs_ssi_readwrite(unsigned char c);
 void                                   vs_ssi_speed(unsigned long speed);
 
+void                                   fm_gets(unsigned char *s, unsigned long len);
+void                                   fm_puts(const unsigned char *s, unsigned long len);
+unsigned long                          fm_size(void);
 unsigned long                          fm_free(void);
 unsigned long                          fm_len(void);
-void                                   fm_gets(unsigned char *s, unsigned long len);
-unsigned char                          fm_getc(void);
-void                                   fm_puts(const unsigned char *s, unsigned long len);
-void                                   fm_putc(unsigned char c);
 void                                   fm_reset(void);
-unsigned long                          fm_getsize(void);
 unsigned long                          fm_init(void);
 
 void                                   ssi_wait(void);
@@ -138,7 +136,6 @@ unsigned char                          ssi_readwrite(unsigned char c);
 void                                   ssi_speed(unsigned long speed);
 void                                   ssi_off(void);
 void                                   ssi_on(void);
-void                                   ssi_defaultspeed(unsigned long speed);
 
 void                                   pwm_led(unsigned int power);
 

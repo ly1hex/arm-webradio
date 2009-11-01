@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -63,6 +63,22 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the FLASH_FMA register.
+//
+//*****************************************************************************
+#define FLASH_FMA_OFFSET_M      0x0003FFFF  // Address Offset
+#define FLASH_FMA_OFFSET_S      0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_FMD register.
+//
+//*****************************************************************************
+#define FLASH_FMD_DATA_M        0xFFFFFFFF  // Data Value
+#define FLASH_FMD_DATA_S        0
+
+//*****************************************************************************
+//
 // The following are defines for the bit fields in the FLASH_FMC register.
 //
 //*****************************************************************************
@@ -76,38 +92,135 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the FLASH_FMC2 register.
-//
-//*****************************************************************************
-#define FLASH_FMC2_WRKEY        0xA4420000  // FLASH write key
-#define FLASH_FMC2_WRBUF        0x00000001  // Buffered Flash Write.
-
-//*****************************************************************************
-//
 // The following are defines for the bit fields in the FLASH_FCRIS register.
 //
 //*****************************************************************************
-#define FLASH_FCRIS_PRIS        0x00000002  // Programming Raw Interrupt
-                                            // Status.
-#define FLASH_FCRIS_ARIS        0x00000001  // Access Raw Interrupt Status.
+#define FLASH_FCRIS_PRIS        0x00000002  // Programming Raw Interrupt Status
+#define FLASH_FCRIS_ARIS        0x00000001  // Access Raw Interrupt Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the FLASH_FCIM register.
 //
 //*****************************************************************************
-#define FLASH_FCIM_PMASK        0x00000002  // Programming Interrupt Mask.
-#define FLASH_FCIM_AMASK        0x00000001  // Access Interrupt Mask.
+#define FLASH_FCIM_PMASK        0x00000002  // Programming Interrupt Mask
+#define FLASH_FCIM_AMASK        0x00000001  // Access Interrupt Mask
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the FLASH_FMIS register.
+// The following are defines for the bit fields in the FLASH_FCMISC register.
 //
 //*****************************************************************************
 #define FLASH_FCMISC_PMISC      0x00000002  // Programming Masked Interrupt
-                                            // Status and Clear.
+                                            // Status and Clear
 #define FLASH_FCMISC_AMISC      0x00000001  // Access Masked Interrupt Status
-                                            // and Clear.
+                                            // and Clear
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_FMC2 register.
+//
+//*****************************************************************************
+#define FLASH_FMC2_WRKEY        0xA4420000  // FLASH write key
+#define FLASH_FMC2_WRBUF        0x00000001  // Buffered Flash Write
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_FWBVAL register.
+//
+//*****************************************************************************
+#define FLASH_FWBVAL_FWB_M      0xFFFFFFFF  // Flash Write Buffer
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_FWBN register.
+//
+//*****************************************************************************
+#define FLASH_FWBN_DATA_M       0xFFFFFFFF  // Data
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_RMCTL register.
+//
+//*****************************************************************************
+#define FLASH_RMCTL_BA          0x00000001  // Boot Alias
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_RMVER register.
+//
+//*****************************************************************************
+#define FLASH_RMVER_CONT_M      0xFF000000  // ROM Contents
+#define FLASH_RMVER_CONT_LM     0x00000000  // Stellaris Boot Loader &
+                                            // DriverLib
+#define FLASH_RMVER_CONT_LM_AES 0x02000000  // Stellaris Boot Loader &
+                                            // DriverLib with AES
+#define FLASH_RMVER_CONT_LM_AES_SAFERTOS \
+                                0x03000000  // Stellaris Boot Loader &
+                                            // DriverLib with AES and SAFERTOS
+#define FLASH_RMVER_SIZE_M      0x00FF0000  // ROM Size
+#define FLASH_RMVER_SIZE_11K    0x00000000  // 11KB Size
+#define FLASH_RMVER_SIZE_23_75K 0x00020000  // 23.75KB Size
+#define FLASH_RMVER_SIZE_28_25K 0x00030000  // 28.25KB Size
+#define FLASH_RMVER_VER_M       0x0000FF00  // ROM Version
+#define FLASH_RMVER_REV_M       0x000000FF  // ROM Revision
+#define FLASH_RMVER_VER_S       8
+#define FLASH_RMVER_REV_S       0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_USECRL register.
+//
+//*****************************************************************************
+#define FLASH_USECRL_M          0x000000FF  // Microsecond Reload Value
+#define FLASH_USECRL_S          0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_USERDBG register.
+//
+//*****************************************************************************
+#define FLASH_USERDBG_NW        0x80000000  // User Debug Not Written
+#define FLASH_USERDBG_DATA_M    0x7FFFFFFC  // User Data
+#define FLASH_USERDBG_DBG1      0x00000002  // Debug Control 1
+#define FLASH_USERDBG_DBG0      0x00000001  // Debug Control 0
+#define FLASH_USERDBG_DATA_S    2
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_USERREG0 register.
+//
+//*****************************************************************************
+#define FLASH_USERREG0_NW       0x80000000  // Not Written
+#define FLASH_USERREG0_DATA_M   0x7FFFFFFF  // User Data
+#define FLASH_USERREG0_DATA_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_USERREG1 register.
+//
+//*****************************************************************************
+#define FLASH_USERREG1_NW       0x80000000  // Not Written
+#define FLASH_USERREG1_DATA_M   0x7FFFFFFF  // User Data
+#define FLASH_USERREG1_DATA_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_USERREG2 register.
+//
+//*****************************************************************************
+#define FLASH_USERREG2_NW       0x80000000  // Not Written
+#define FLASH_USERREG2_DATA_M   0x7FFFFFFF  // User Data
+#define FLASH_USERREG2_DATA_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the FLASH_USERREG3 register.
+//
+//*****************************************************************************
+#define FLASH_USERREG3_NW       0x80000000  // Not Written
+#define FLASH_USERREG3_DATA_M   0x7FFFFFFF  // User Data
+#define FLASH_USERREG3_DATA_S   0
 
 //*****************************************************************************
 //
@@ -150,14 +263,6 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the FLASH_USECRL register.
-//
-//*****************************************************************************
-#define FLASH_USECRL_M          0x000000FF  // Microsecond Reload Value.
-#define FLASH_USECRL_S          0
-
-//*****************************************************************************
-//
 // The following are defines for the erase size of the FLASH block that is
 // erased by an erase operation, and the protect size is the size of the FLASH
 // block that is protected by each protection register.
@@ -165,112 +270,6 @@
 //*****************************************************************************
 #define FLASH_PROTECT_SIZE      0x00000800
 #define FLASH_ERASE_SIZE        0x00000400
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_FMA register.
-//
-//*****************************************************************************
-#define FLASH_FMA_OFFSET_M      0x0003FFFF  // Address Offset.
-#define FLASH_FMA_OFFSET_S      0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_FMD register.
-//
-//*****************************************************************************
-#define FLASH_FMD_DATA_M        0xFFFFFFFF  // Data Value.
-#define FLASH_FMD_DATA_S        0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_USERDBG register.
-//
-//*****************************************************************************
-#define FLASH_USERDBG_NW        0x80000000  // User Debug Not Written.
-#define FLASH_USERDBG_DATA_M    0x7FFFFFFC  // User Data.
-#define FLASH_USERDBG_DBG1      0x00000002  // Debug Control 1.
-#define FLASH_USERDBG_DBG0      0x00000001  // Debug Control 0.
-#define FLASH_USERDBG_DATA_S    2
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_USERREG0 register.
-//
-//*****************************************************************************
-#define FLASH_USERREG0_NW       0x80000000  // Not Written.
-#define FLASH_USERREG0_DATA_M   0x7FFFFFFF  // User Data.
-#define FLASH_USERREG0_DATA_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_USERREG1 register.
-//
-//*****************************************************************************
-#define FLASH_USERREG1_NW       0x80000000  // Not Written.
-#define FLASH_USERREG1_DATA_M   0x7FFFFFFF  // User Data.
-#define FLASH_USERREG1_DATA_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_RMCTL register.
-//
-//*****************************************************************************
-#define FLASH_RMCTL_BA          0x00000001  // Boot Alias.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_RMVER register.
-//
-//*****************************************************************************
-#define FLASH_RMVER_CONT_M      0xFF000000  // ROM Contents.
-#define FLASH_RMVER_CONT_LM     0x00000000  // Stellaris Boot Loader &
-                                            // DriverLib
-#define FLASH_RMVER_CONT_LM_AES 0x02000000  // Stellaris Boot Loader &
-                                            // DriverLib with AES
-#define FLASH_RMVER_CONT_LM_AES_SAFERTOS \
-                                0x03000000  // Stellaris Boot Loader &
-                                            // DriverLib with AES and SAFERTOS
-#define FLASH_RMVER_SIZE_M      0x00FF0000  // ROM Size.
-#define FLASH_RMVER_SIZE_11K    0x00000000  // 11KB Size
-#define FLASH_RMVER_SIZE_23_75K 0x00020000  // 23.75KB Size
-#define FLASH_RMVER_SIZE_28_25K 0x00030000  // 28.25KB Size
-#define FLASH_RMVER_VER_M       0x0000FF00  // ROM Version.
-#define FLASH_RMVER_REV_M       0x000000FF  // ROM Revision.
-#define FLASH_RMVER_VER_S       8
-#define FLASH_RMVER_REV_S       0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_USERREG2 register.
-//
-//*****************************************************************************
-#define FLASH_USERREG2_NW       0x80000000  // Not Written.
-#define FLASH_USERREG2_DATA_M   0x7FFFFFFF  // User Data.
-#define FLASH_USERREG2_DATA_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_USERREG3 register.
-//
-//*****************************************************************************
-#define FLASH_USERREG3_NW       0x80000000  // Not Written.
-#define FLASH_USERREG3_DATA_M   0x7FFFFFFF  // User Data.
-#define FLASH_USERREG3_DATA_S   0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_FWBVAL register.
-//
-//*****************************************************************************
-#define FLASH_FWBVAL_FWB_M      0xFFFFFFFF  // Flash Write Buffer.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the FLASH_FWBN register.
-//
-//*****************************************************************************
-#define FLASH_FWBN_DATA_M       0xFFFFFFFF  // Data.
 
 //*****************************************************************************
 //
@@ -307,7 +306,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the bit fields in the FLASH_FMIS
+// The following are deprecated defines for the bit fields in the FLASH_FCMISC
 // register.
 //
 //*****************************************************************************

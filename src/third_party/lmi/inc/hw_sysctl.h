@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -59,8 +59,6 @@
 #define SYSCTL_GPIOHBCTL        0x400FE06C  // GPIO Host-Bus Control
 #define SYSCTL_RCC2             0x400FE070  // Run-mode clock config register 2
 #define SYSCTL_MOSCCTL          0x400FE07C  // Main Oscillator Control
-#define SYSCTL_PIOSCCTL         0x400FE088  // Precision internal oscillator
-                                            // control register
 #define SYSCTL_RCGC0            0x400FE100  // Run-mode clock gating register 0
 #define SYSCTL_RCGC1            0x400FE104  // Run-mode clock gating register 1
 #define SYSCTL_RCGC2            0x400FE108  // Run-mode clock gating register 2
@@ -117,19 +115,19 @@
 // The following are defines for the bit fields in the SYSCTL_DID1 register.
 //
 //*****************************************************************************
-#define SYSCTL_DID1_VER_M       0xF0000000  // DID1 Version.
+#define SYSCTL_DID1_VER_M       0xF0000000  // DID1 Version
 #define SYSCTL_DID1_VER_0       0x00000000  // Initial DID1 register format
                                             // definition, indicating a
-                                            // Stellaris LM3Snnn device.
+                                            // Stellaris LM3Snnn device
 #define SYSCTL_DID1_VER_1       0x10000000  // First revision of the DID1
                                             // register format, indicating a
-                                            // Stellaris Fury-class device.
-#define SYSCTL_DID1_FAM_M       0x0F000000  // Family.
+                                            // Stellaris Fury-class device
+#define SYSCTL_DID1_FAM_M       0x0F000000  // Family
 #define SYSCTL_DID1_FAM_STELLARIS \
                                 0x00000000  // Stellaris family of
                                             // microcontollers, that is, all
                                             // devices with external part
-                                            // numbers starting with LM3S.
+                                            // numbers starting with LM3S
 #define SYSCTL_DID1_PRTNO_M     0x00FF0000  // Part number mask
 #define SYSCTL_DID1_PRTNO_2B93  0x006C0000  // LM3S2B93
 #define SYSCTL_DID1_PRTNO_5B91  0x00680000  // LM3S5B91
@@ -269,7 +267,7 @@
 #define SYSCTL_DID1_PRTNO_8971  0x00D70000  // LM3S8971
 #define SYSCTL_DID1_PRTNO_9790  0x00670000  // LM3S9790
 #define SYSCTL_DID1_PRTNO_9792  0x006B0000  // LM3S9792
-#define SYSCTL_DID1_PINCNT_M    0x0000E000  // Package Pin Count.
+#define SYSCTL_DID1_PINCNT_M    0x0000E000  // Package Pin Count
 #define SYSCTL_DID1_PINCNT_28   0x00000000  // 28 pin package
 #define SYSCTL_DID1_PINCNT_48   0x00002000  // 48 pin package
 #define SYSCTL_DID1_PINCNT_100  0x00004000  // 100 pin package
@@ -279,7 +277,7 @@
 #define SYSCTL_DID1_TEMP_I      0x00000020  // Industrial temp range (-40..85C)
 #define SYSCTL_DID1_TEMP_E      0x00000040  // Extended temperature range (-40C
                                             // to 105C)
-#define SYSCTL_DID1_PKG_M       0x00000018  // Package Type.
+#define SYSCTL_DID1_PKG_M       0x00000018  // Package Type
 #define SYSCTL_DID1_PKG_28SOIC  0x00000000  // 28-pin SOIC
 #define SYSCTL_DID1_PKG_48QFP   0x00000008  // 48-pin QFP
 #define SYSCTL_DID1_PKG_BGA     0x00000010  // BGA package
@@ -319,39 +317,39 @@
 // The following are defines for the bit fields in the SYSCTL_DC1 register.
 //
 //*****************************************************************************
-#define SYSCTL_DC1_WDT1         0x10000000  // Watchdog Timer1 Present.
+#define SYSCTL_DC1_WDT1         0x10000000  // Watchdog Timer1 Present
 #define SYSCTL_DC1_CAN2         0x04000000  // CAN2 module present
 #define SYSCTL_DC1_CAN1         0x02000000  // CAN1 module present
 #define SYSCTL_DC1_CAN0         0x01000000  // CAN0 module present
 #define SYSCTL_DC1_PWM          0x00100000  // PWM module present
-#define SYSCTL_DC1_ADC1         0x00020000  // ADC Module 1 Present.
-#define SYSCTL_DC1_ADC0         0x00010000  // ADC Module 0 Present.
-#define SYSCTL_DC1_MINSYSDIV_M  0x0000F000  // System Clock Divider.
+#define SYSCTL_DC1_ADC1         0x00020000  // ADC Module 1 Present
+#define SYSCTL_DC1_ADC0         0x00010000  // ADC Module 0 Present
+#define SYSCTL_DC1_MINSYSDIV_M  0x0000F000  // System Clock Divider
 #define SYSCTL_DC1_MINSYSDIV_100 \
                                 0x00001000  // Specifies a 100-MHz clock with a
-                                            // PLL divider of 2.
+                                            // PLL divider of 2
 #define SYSCTL_DC1_MINSYSDIV_66 0x00002000  // Specifies a 66-MHz clock with a
-                                            // PLL divider of 3.
+                                            // PLL divider of 3
 #define SYSCTL_DC1_MINSYSDIV_50 0x00003000  // Specifies a 50-MHz clock with a
-                                            // PLL divider of 4.
+                                            // PLL divider of 4
 #define SYSCTL_DC1_MINSYSDIV_25 0x00007000  // Specifies a 25-MHz clock with a
-                                            // PLL divider of 8.
+                                            // PLL divider of 8
 #define SYSCTL_DC1_MINSYSDIV_20 0x00009000  // Specifies a 20-MHz clock with a
-                                            // PLL divider of 10.
+                                            // PLL divider of 10
 #define SYSCTL_DC1_ADCSPD_M     0x00000F00  // ADC speed mask
 #define SYSCTL_DC1_ADCSPD_125K  0x00000000  // 125Ksps ADC
 #define SYSCTL_DC1_ADCSPD_250K  0x00000100  // 250Ksps ADC
 #define SYSCTL_DC1_ADCSPD_500K  0x00000200  // 500Ksps ADC
 #define SYSCTL_DC1_ADCSPD_1M    0x00000300  // 1Msps ADC
-#define SYSCTL_DC1_ADC1SPD_M    0x00000C00  // Max ADC1 Speed.
+#define SYSCTL_DC1_ADC1SPD_M    0x00000C00  // Max ADC1 Speed
 #define SYSCTL_DC1_ADC1SPD_1M   0x00000C00  // 1M samples/second
-#define SYSCTL_DC1_ADC0SPD_M    0x00000300  // Max ADC0 Speed.
+#define SYSCTL_DC1_ADC0SPD_M    0x00000300  // Max ADC0 Speed
 #define SYSCTL_DC1_ADC0SPD_1M   0x00000300  // 1M samples/second
 #define SYSCTL_DC1_MPU          0x00000080  // Cortex M3 MPU present
 #define SYSCTL_DC1_HIB          0x00000040  // Hibernation module present
 #define SYSCTL_DC1_TEMP         0x00000020  // Temperature sensor present
 #define SYSCTL_DC1_PLL          0x00000010  // PLL present
-#define SYSCTL_DC1_WDT0         0x00000008  // Watchdog Timer 0 Present.
+#define SYSCTL_DC1_WDT0         0x00000008  // Watchdog Timer 0 Present
 #define SYSCTL_DC1_SWO          0x00000004  // Serial wire output present
 #define SYSCTL_DC1_SWD          0x00000002  // Serial wire debug present
 #define SYSCTL_DC1_JTAG         0x00000001  // JTAG debug present
@@ -361,8 +359,8 @@
 // The following are defines for the bit fields in the SYSCTL_DC2 register.
 //
 //*****************************************************************************
-#define SYSCTL_DC2_EPI0         0x40000000  // EPI0 Present.
-#define SYSCTL_DC2_I2S0         0x10000000  // I2S 0 Present.
+#define SYSCTL_DC2_EPI0         0x40000000  // EPI0 Present
+#define SYSCTL_DC2_I2S0         0x10000000  // I2S 0 Present
 #define SYSCTL_DC2_COMP2        0x04000000  // Analog comparator 2 present
 #define SYSCTL_DC2_COMP1        0x02000000  // Analog comparator 1 present
 #define SYSCTL_DC2_COMP0        0x01000000  // Analog comparator 0 present
@@ -385,22 +383,22 @@
 // The following are defines for the bit fields in the SYSCTL_DC3 register.
 //
 //*****************************************************************************
-#define SYSCTL_DC3_32KHZ        0x80000000  // 32KHz Pin Present.
+#define SYSCTL_DC3_32KHZ        0x80000000  // 32KHz Pin Present
 #define SYSCTL_DC3_CCP5         0x20000000  // CCP5 pin present
 #define SYSCTL_DC3_CCP4         0x10000000  // CCP4 pin present
 #define SYSCTL_DC3_CCP3         0x08000000  // CCP3 pin present
 #define SYSCTL_DC3_CCP2         0x04000000  // CCP2 pin present
 #define SYSCTL_DC3_CCP1         0x02000000  // CCP1 pin present
 #define SYSCTL_DC3_CCP0         0x01000000  // CCP0 pin present
-#define SYSCTL_DC3_ADC0AIN7     0x00800000  // AIN7 Pin Present.
-#define SYSCTL_DC3_ADC0AIN6     0x00400000  // AIN6 Pin Present.
-#define SYSCTL_DC3_ADC0AIN5     0x00200000  // AIN5 Pin Present.
-#define SYSCTL_DC3_ADC0AIN4     0x00100000  // AIN4 Pin Present.
-#define SYSCTL_DC3_ADC0AIN3     0x00080000  // AIN3 Pin Present.
-#define SYSCTL_DC3_ADC0AIN2     0x00040000  // AIN2 Pin Present.
-#define SYSCTL_DC3_ADC0AIN1     0x00020000  // AIN1 Pin Present.
-#define SYSCTL_DC3_ADC0AIN0     0x00010000  // AIN0 Pin Present.
-#define SYSCTL_DC3_PWMFAULT     0x00008000  // PWM Fault Pin Present.
+#define SYSCTL_DC3_ADC0AIN7     0x00800000  // AIN7 Pin Present
+#define SYSCTL_DC3_ADC0AIN6     0x00400000  // AIN6 Pin Present
+#define SYSCTL_DC3_ADC0AIN5     0x00200000  // AIN5 Pin Present
+#define SYSCTL_DC3_ADC0AIN4     0x00100000  // AIN4 Pin Present
+#define SYSCTL_DC3_ADC0AIN3     0x00080000  // AIN3 Pin Present
+#define SYSCTL_DC3_ADC0AIN2     0x00040000  // AIN2 Pin Present
+#define SYSCTL_DC3_ADC0AIN1     0x00020000  // AIN1 Pin Present
+#define SYSCTL_DC3_ADC0AIN0     0x00010000  // AIN0 Pin Present
+#define SYSCTL_DC3_PWMFAULT     0x00008000  // PWM Fault Pin Present
 #define SYSCTL_DC3_C2O          0x00004000  // C2o pin present
 #define SYSCTL_DC3_C2PLUS       0x00002000  // C2+ pin present
 #define SYSCTL_DC3_C2MINUS      0x00001000  // C2- pin present
@@ -423,16 +421,16 @@
 //
 //*****************************************************************************
 #define SYSCTL_DC4_ETH          0x50000000  // Ethernet present
-#define SYSCTL_DC4_EPHY0        0x40000000  // Ethernet PHY0 Present.
-#define SYSCTL_DC4_EMAC0        0x10000000  // Ethernet MAC0 Present.
-#define SYSCTL_DC4_E1588        0x01000000  // 1588 Capable.
+#define SYSCTL_DC4_EPHY0        0x40000000  // Ethernet PHY0 Present
+#define SYSCTL_DC4_EMAC0        0x10000000  // Ethernet MAC0 Present
+#define SYSCTL_DC4_E1588        0x01000000  // 1588 Capable
 #define SYSCTL_DC4_PICAL        0x00040000  // When set, indicates that the
                                             // USER can calibrate the PIOSC
-#define SYSCTL_DC4_CCP7         0x00008000  // CCP7 Pin Present.
-#define SYSCTL_DC4_CCP6         0x00004000  // CCP6 Pin Present.
-#define SYSCTL_DC4_UDMA         0x00002000  // Micro-DMA is present.
-#define SYSCTL_DC4_ROM          0x00001000  // Internal Code ROM is present.
-#define SYSCTL_DC4_GPIOJ        0x00000100  // GPIO Port J Present.
+#define SYSCTL_DC4_CCP7         0x00008000  // CCP7 Pin Present
+#define SYSCTL_DC4_CCP6         0x00004000  // CCP6 Pin Present
+#define SYSCTL_DC4_UDMA         0x00002000  // Micro-DMA is present
+#define SYSCTL_DC4_ROM          0x00001000  // Internal Code ROM is present
+#define SYSCTL_DC4_GPIOJ        0x00000100  // GPIO Port J Present
 #define SYSCTL_DC4_GPIOH        0x00000080  // GPIO port H present
 #define SYSCTL_DC4_GPIOG        0x00000040  // GPIO port G present
 #define SYSCTL_DC4_GPIOF        0x00000020  // GPIO port F present
@@ -444,10 +442,133 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the SYSCTL_DC5 register.
+//
+//*****************************************************************************
+#define SYSCTL_DC5_PWMFAULT3    0x08000000  // PWM Fault 3 Pin Present
+#define SYSCTL_DC5_PWMFAULT2    0x04000000  // PWM Fault 2 Pin Present
+#define SYSCTL_DC5_PWMFAULT1    0x02000000  // PWM Fault 1 Pin Present
+#define SYSCTL_DC5_PWMFAULT0    0x01000000  // PWM Fault 0 Pin Present
+#define SYSCTL_DC5_PWMEFLT      0x00200000  // PWM Extended Fault feature is
+                                            // active
+#define SYSCTL_DC5_PWMESYNC     0x00100000  // PWM Extended SYNC feature is
+                                            // active
+#define SYSCTL_DC5_PWM7         0x00000080  // PWM7 Pin Present
+#define SYSCTL_DC5_PWM6         0x00000040  // PWM6 Pin Present
+#define SYSCTL_DC5_PWM5         0x00000020  // PWM5 Pin Present
+#define SYSCTL_DC5_PWM4         0x00000010  // PWM4 Pin Present
+#define SYSCTL_DC5_PWM3         0x00000008  // PWM3 Pin Present
+#define SYSCTL_DC5_PWM2         0x00000004  // PWM2 Pin Present
+#define SYSCTL_DC5_PWM1         0x00000002  // PWM1 Pin Present
+#define SYSCTL_DC5_PWM0         0x00000001  // PWM0 Pin Present
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DC6 register.
+//
+//*****************************************************************************
+#define SYSCTL_DC6_USB0PHY      0x00000010  // This specifies that USB0 PHY is
+                                            // present
+#define SYSCTL_DC6_USB0_M       0x00000003  // This specifies that USB0 is
+                                            // present and its capability
+#define SYSCTL_DC6_USB0_HOSTDEV 0x00000002  // USB is DEVICE or HOST
+#define SYSCTL_DC6_USB0_OTG     0x00000003  // USB is OTG
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DC7 register.
+//
+//*****************************************************************************
+#define SYSCTL_DC7_DMACH30      0x40000000  // SW
+#define SYSCTL_DC7_DMACH29      0x20000000  // I2S0_TX
+#define SYSCTL_DC7_DMACH28      0x10000000  // I2S0_RX
+#define SYSCTL_DC7_DMACH27      0x08000000  // ADC1_SS3
+#define SYSCTL_DC7_DMACH26      0x04000000  // ADC1_SS2
+#define SYSCTL_DC7_DMACH25      0x02000000  // SSI1_TX / ADC1_SS1
+#define SYSCTL_DC7_SSI1_TX      0x02000000  // SSI1 TX on uDMA Ch25
+#define SYSCTL_DC7_SSI1_RX      0x01000000  // SSI1 RX on uDMA Ch24
+#define SYSCTL_DC7_DMACH24      0x01000000  // SSI1_RX / ADC1_SS0
+#define SYSCTL_DC7_UART1_TX     0x00800000  // UART1 TX on uDMA Ch23
+#define SYSCTL_DC7_DMACH23      0x00800000  // UART1_TX
+#define SYSCTL_DC7_DMACH22      0x00400000  // UART1_RX
+#define SYSCTL_DC7_UART1_RX     0x00400000  // UART1 RX on uDMA Ch22
+#define SYSCTL_DC7_DMACH21      0x00200000  // Timer1B / EPI0_TX
+#define SYSCTL_DC7_DMACH20      0x00100000  // Timer1A / EPI0_RX
+#define SYSCTL_DC7_DMACH19      0x00080000  // Timer0B / Timer1B
+#define SYSCTL_DC7_DMACH18      0x00040000  // Timer0A / Timer1A
+#define SYSCTL_DC7_DMACH17      0x00020000  // ADC0_SS3
+#define SYSCTL_DC7_DMACH16      0x00010000  // ADC0_SS2
+#define SYSCTL_DC7_DMACH15      0x00008000  // ADC0_SS1 / Timer2B
+#define SYSCTL_DC7_DMACH14      0x00004000  // ADC0_SS0 / Timer2A
+#define SYSCTL_DC7_DMACH13      0x00002000  // UART2_TX
+#define SYSCTL_DC7_DMACH12      0x00001000  // UART2_RX
+#define SYSCTL_DC7_SSI0_TX      0x00000800  // SSI0 TX on uDMA Ch11
+#define SYSCTL_DC7_DMACH11      0x00000800  // SSI0_TX / UART1_TX
+#define SYSCTL_DC7_SSI0_RX      0x00000400  // SSI0 RX on uDMA Ch10
+#define SYSCTL_DC7_DMACH10      0x00000400  // SSI0_RX / UART1_RX
+#define SYSCTL_DC7_UART0_TX     0x00000200  // UART0 TX on uDMA Ch9
+#define SYSCTL_DC7_DMACH9       0x00000200  // UART0_TX / SSI1_TX
+#define SYSCTL_DC7_DMACH8       0x00000100  // UART0_RX / SSI1_RX
+#define SYSCTL_DC7_UART0_RX     0x00000100  // UART0 RX on uDMA Ch8
+#define SYSCTL_DC7_DMACH7       0x00000080  // ETH_TX / Timer2B
+#define SYSCTL_DC7_DMACH6       0x00000040  // ETH_RX / Timer2A
+#define SYSCTL_DC7_DMACH5       0x00000020  // USB_EP3_TX / Timer2B
+#define SYSCTL_DC7_USB_EP3_TX   0x00000020  // USB EP3 TX on uDMA Ch5
+#define SYSCTL_DC7_USB_EP3_RX   0x00000010  // USB EP3 RX on uDMA Ch4
+#define SYSCTL_DC7_DMACH4       0x00000010  // USB_EP3_RX / Timer2A
+#define SYSCTL_DC7_USB_EP2_TX   0x00000008  // USB EP2 TX on uDMA Ch3
+#define SYSCTL_DC7_DMACH3       0x00000008  // USB_EP2_TX / Timer3B
+#define SYSCTL_DC7_USB_EP2_RX   0x00000004  // USB EP2 RX on uDMA Ch2
+#define SYSCTL_DC7_DMACH2       0x00000004  // USB_EP2_RX / Timer3A
+#define SYSCTL_DC7_USB_EP1_TX   0x00000002  // USB EP1 TX on uDMA Ch1
+#define SYSCTL_DC7_DMACH1       0x00000002  // USB_EP1_TX / UART2_TX
+#define SYSCTL_DC7_DMACH0       0x00000001  // USB_EP1_RX / UART2_RX
+#define SYSCTL_DC7_USB_EP1_RX   0x00000001  // USB EP1 RX on uDMA Ch0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DC8 register.
+//
+//*****************************************************************************
+#define SYSCTL_DC8_ADC1AIN15    0x80000000  // ADC Module 1 AIN15 Pin Present
+#define SYSCTL_DC8_ADC1AIN14    0x40000000  // ADC Module 1 AIN14 Pin Present
+#define SYSCTL_DC8_ADC1AIN13    0x20000000  // ADC Module 1 AIN13 Pin Present
+#define SYSCTL_DC8_ADC1AIN12    0x10000000  // ADC Module 1 AIN12 Pin Present
+#define SYSCTL_DC8_ADC1AIN11    0x08000000  // ADC1 11 Pin Present
+#define SYSCTL_DC8_ADC1AIN10    0x04000000  // ADC1 10 Pin Present
+#define SYSCTL_DC8_ADC1AIN9     0x02000000  // ADC1 9 Pin Present
+#define SYSCTL_DC8_ADC1AIN8     0x01000000  // ADC1 8 Pin Present
+#define SYSCTL_DC8_ADC1AIN7     0x00800000  // ADC1 7 Pin Present
+#define SYSCTL_DC8_ADC1AIN6     0x00400000  // ADC1 6 Pin Present
+#define SYSCTL_DC8_ADC1AIN5     0x00200000  // ADC1 5 Pin Present
+#define SYSCTL_DC8_ADC1AIN4     0x00100000  // ADC1 4 Pin Present
+#define SYSCTL_DC8_ADC1AIN3     0x00080000  // ADC1 3 Pin Present
+#define SYSCTL_DC8_ADC1AIN2     0x00040000  // ADC1 2 Pin Present
+#define SYSCTL_DC8_ADC1AIN1     0x00020000  // ADC1 1 Pin Present
+#define SYSCTL_DC8_ADC1AIN0     0x00010000  // ADC1 0 Pin Present
+#define SYSCTL_DC8_ADC0AIN15    0x00008000  // ADC Module 0 AIN15 Pin Present
+#define SYSCTL_DC8_ADC0AIN14    0x00004000  // ADC Module 0 AIN14 Pin Present
+#define SYSCTL_DC8_ADC0AIN13    0x00002000  // ADC Module 0 AIN13 Pin Present
+#define SYSCTL_DC8_ADC0AIN12    0x00001000  // ADC Module 0 AIN12 Pin Present
+#define SYSCTL_DC8_ADC0AIN11    0x00000800  // ADC0 11 Pin Present
+#define SYSCTL_DC8_ADC0AIN10    0x00000400  // ADC0 10 Pin Present
+#define SYSCTL_DC8_ADC0AIN9     0x00000200  // ADC0 9 Pin Present
+#define SYSCTL_DC8_ADC0AIN8     0x00000100  // ADC0 8 Pin Present
+#define SYSCTL_DC8_ADC0AIN7     0x00000080  // ADC0 7 Pin Present
+#define SYSCTL_DC8_ADC0AIN6     0x00000040  // ADC0 6 Pin Present
+#define SYSCTL_DC8_ADC0AIN5     0x00000020  // ADC0 5 Pin Present
+#define SYSCTL_DC8_ADC0AIN4     0x00000010  // ADC0 4 Pin Present
+#define SYSCTL_DC8_ADC0AIN3     0x00000008  // ADC0 3 Pin Present
+#define SYSCTL_DC8_ADC0AIN2     0x00000004  // ADC0 2 Pin Present
+#define SYSCTL_DC8_ADC0AIN1     0x00000002  // ADC0 1 Pin Present
+#define SYSCTL_DC8_ADC0AIN0     0x00000001  // ADC0 0 Pin Present
+
+//*****************************************************************************
+//
 // The following are defines for the bit fields in the SYSCTL_PBORCTL register.
 //
 //*****************************************************************************
-#define SYSCTL_PBORCTL_BORTIM_M 0x0000FFFC  // BOR Time Delay.
+#define SYSCTL_PBORCTL_BORTIM_M 0x0000FFFC  // BOR Time Delay
 #define SYSCTL_PBORCTL_BORIOR   0x00000002  // BOR interrupt or reset
 #define SYSCTL_PBORCTL_BORWT    0x00000001  // BOR wait and check for noise
 #define SYSCTL_PBORCTL_BORTIM_S 2
@@ -457,7 +578,7 @@
 // The following are defines for the bit fields in the SYSCTL_LDOPCTL register.
 //
 //*****************************************************************************
-#define SYSCTL_LDOPCTL_M        0x0000003F  // LDO Output Voltage.
+#define SYSCTL_LDOPCTL_M        0x0000003F  // LDO Output Voltage
 #define SYSCTL_LDOPCTL_2_55V    0x0000001F  // LDO output of 2.55V
 #define SYSCTL_LDOPCTL_2_60V    0x0000001E  // LDO output of 2.60V
 #define SYSCTL_LDOPCTL_2_65V    0x0000001D  // LDO output of 2.65V
@@ -472,14 +593,132 @@
 
 //*****************************************************************************
 //
+// The following are defines for the bit fields in the SYSCTL_SRCR0 register.
+//
+//*****************************************************************************
+#define SYSCTL_SRCR0_WDT1       0x10000000  // WDT1 Reset Control
+#define SYSCTL_SRCR0_CAN2       0x04000000  // CAN2 Reset Control
+#define SYSCTL_SRCR0_CAN1       0x02000000  // CAN1 Reset Control
+#define SYSCTL_SRCR0_CAN0       0x01000000  // CAN0 Reset Control
+#define SYSCTL_SRCR0_PWM        0x00100000  // PWM Reset Control
+#define SYSCTL_SRCR0_ADC1       0x00020000  // ADC1 Reset Control
+#define SYSCTL_SRCR0_ADC0       0x00010000  // ADC0 Reset Control
+#define SYSCTL_SRCR0_HIB        0x00000040  // HIB Reset Control
+#define SYSCTL_SRCR0_WDT0       0x00000008  // WDT0 Reset Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRCR1 register.
+//
+//*****************************************************************************
+#define SYSCTL_SRCR1_EPI0       0x40000000  // EPI0 Reset Control
+#define SYSCTL_SRCR1_I2S0       0x10000000  // I2S 0 Reset Control
+#define SYSCTL_SRCR1_COMP2      0x04000000  // Analog Comp 2 Reset Control
+#define SYSCTL_SRCR1_COMP1      0x02000000  // Analog Comp 1 Reset Control
+#define SYSCTL_SRCR1_COMP0      0x01000000  // Analog Comp 0 Reset Control
+#define SYSCTL_SRCR1_TIMER3     0x00080000  // Timer 3 Reset Control
+#define SYSCTL_SRCR1_TIMER2     0x00040000  // Timer 2 Reset Control
+#define SYSCTL_SRCR1_TIMER1     0x00020000  // Timer 1 Reset Control
+#define SYSCTL_SRCR1_TIMER0     0x00010000  // Timer 0 Reset Control
+#define SYSCTL_SRCR1_I2C1       0x00004000  // I2C1 Reset Control
+#define SYSCTL_SRCR1_I2C0       0x00001000  // I2C0 Reset Control
+#define SYSCTL_SRCR1_QEI1       0x00000200  // QEI1 Reset Control
+#define SYSCTL_SRCR1_QEI0       0x00000100  // QEI0 Reset Control
+#define SYSCTL_SRCR1_SSI1       0x00000020  // SSI1 Reset Control
+#define SYSCTL_SRCR1_SSI0       0x00000010  // SSI0 Reset Control
+#define SYSCTL_SRCR1_UART2      0x00000004  // UART2 Reset Control
+#define SYSCTL_SRCR1_UART1      0x00000002  // UART1 Reset Control
+#define SYSCTL_SRCR1_UART0      0x00000001  // UART0 Reset Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SRCR2 register.
+//
+//*****************************************************************************
+#define SYSCTL_SRCR2_EPHY0      0x40000000  // PHY0 Reset Control
+#define SYSCTL_SRCR2_EMAC0      0x10000000  // MAC0 Reset Control
+#define SYSCTL_SRCR2_USB0       0x00010000  // USB0 Reset Control
+#define SYSCTL_SRCR2_UDMA       0x00002000  // UDMA Reset Control
+#define SYSCTL_SRCR2_GPIOJ      0x00000100  // Port J Reset Control
+#define SYSCTL_SRCR2_GPIOH      0x00000080  // Port H Reset Control
+#define SYSCTL_SRCR2_GPIOG      0x00000040  // Port G Reset Control
+#define SYSCTL_SRCR2_GPIOF      0x00000020  // Port F Reset Control
+#define SYSCTL_SRCR2_GPIOE      0x00000010  // Port E Reset Control
+#define SYSCTL_SRCR2_GPIOD      0x00000008  // Port D Reset Control
+#define SYSCTL_SRCR2_GPIOC      0x00000004  // Port C Reset Control
+#define SYSCTL_SRCR2_GPIOB      0x00000002  // Port B Reset Control
+#define SYSCTL_SRCR2_GPIOA      0x00000001  // Port A Reset Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RIS register.
+//
+//*****************************************************************************
+#define SYSCTL_RIS_MOSCPUPRIS   0x00000100  // MOSC Power Up Raw Interrupt
+                                            // Status
+#define SYSCTL_RIS_USBPLLLRIS   0x00000080  // USB PLL Lock Raw Interrupt
+                                            // Status
+#define SYSCTL_RIS_PLLLRIS      0x00000040  // PLL Lock Raw Interrupt Status
+#define SYSCTL_RIS_CLRIS        0x00000020  // Current Limit Raw Interrupt
+                                            // Status
+#define SYSCTL_RIS_IOFRIS       0x00000010  // Internal Oscillator Fault Raw
+                                            // Interrupt Status
+#define SYSCTL_RIS_MOFRIS       0x00000008  // Main Oscillator Fault Raw
+                                            // Interrupt Status
+#define SYSCTL_RIS_LDORIS       0x00000004  // LDO Power Unregulated Raw
+                                            // Interrupt Status
+#define SYSCTL_RIS_BORRIS       0x00000002  // Brown-Out Reset Raw Interrupt
+                                            // Status
+#define SYSCTL_RIS_PLLFRIS      0x00000001  // PLL Fault Raw Interrupt Status
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_IMC register.
+//
+//*****************************************************************************
+#define SYSCTL_IMC_MOSCPUPIM    0x00000100  // MOSC Power Up Interrupt Mask
+#define SYSCTL_IMC_USBPLLLIM    0x00000080  // USB PLL Lock Interrupt Mask
+#define SYSCTL_IMC_PLLLIM       0x00000040  // PLL Lock Interrupt Mask
+#define SYSCTL_IMC_CLIM         0x00000020  // Current Limit Interrupt Mask
+#define SYSCTL_IMC_IOFIM        0x00000010  // Internal Oscillator Fault
+                                            // Interrupt Mask
+#define SYSCTL_IMC_MOFIM        0x00000008  // Main Oscillator Fault Interrupt
+                                            // Mask
+#define SYSCTL_IMC_LDOIM        0x00000004  // LDO Power Unregulated Interrupt
+                                            // Mask
+#define SYSCTL_IMC_BORIM        0x00000002  // Brown-Out Reset Interrupt Mask
+#define SYSCTL_IMC_PLLFIM       0x00000001  // PLL Fault Interrupt Mask
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_MISC register.
+//
+//*****************************************************************************
+#define SYSCTL_MISC_MOSCPUPMIS  0x00000100  // MOSC Power Up Masked Interrupt
+                                            // Status
+#define SYSCTL_MISC_USBPLLLMIS  0x00000080  // USB PLL Lock Masked Interrupt
+                                            // Status
+#define SYSCTL_MISC_PLLLMIS     0x00000040  // PLL Lock Masked Interrupt Status
+#define SYSCTL_MISC_CLMIS       0x00000020  // Current Limit Masked Interrupt
+                                            // Status
+#define SYSCTL_MISC_IOFMIS      0x00000010  // Internal Oscillator Fault Masked
+                                            // Interrupt Status
+#define SYSCTL_MISC_MOFMIS      0x00000008  // Main Oscillator Fault Masked
+                                            // Interrupt Status
+#define SYSCTL_MISC_LDOMIS      0x00000004  // LDO Power Unregulated Masked
+                                            // Interrupt Status
+#define SYSCTL_MISC_BORMIS      0x00000002  // BOR Masked Interrupt Status
+
+//*****************************************************************************
+//
 // The following are defines for the bit fields in the SYSCTL_RESC register.
 //
 //*****************************************************************************
-#define SYSCTL_RESC_MOSCFAIL    0x00010000  // MOSC Failure Reset.
+#define SYSCTL_RESC_MOSCFAIL    0x00010000  // MOSC Failure Reset
 #define SYSCTL_RESC_LDO         0x00000020  // LDO power OK lost reset
-#define SYSCTL_RESC_WDT1        0x00000020  // Watchdog Timer 1 Reset.
+#define SYSCTL_RESC_WDT1        0x00000020  // Watchdog Timer 1 Reset
 #define SYSCTL_RESC_SW          0x00000010  // Software reset
-#define SYSCTL_RESC_WDT0        0x00000008  // Watchdog Timer 0 Reset.
+#define SYSCTL_RESC_WDT0        0x00000008  // Watchdog Timer 0 Reset
 #define SYSCTL_RESC_BOR         0x00000004  // Brown-out reset
 #define SYSCTL_RESC_POR         0x00000002  // Power on reset
 #define SYSCTL_RESC_EXT         0x00000001  // External reset
@@ -490,7 +729,7 @@
 //
 //*****************************************************************************
 #define SYSCTL_RCC_ACG          0x08000000  // Automatic clock gating
-#define SYSCTL_RCC_SYSDIV_M     0x07800000  // System Clock Divisor.
+#define SYSCTL_RCC_SYSDIV_M     0x07800000  // System Clock Divisor
 #define SYSCTL_RCC_SYSDIV_2     0x00800000  // System clock /2
 #define SYSCTL_RCC_SYSDIV_3     0x01000000  // System clock /3
 #define SYSCTL_RCC_SYSDIV_4     0x01800000  // System clock /4
@@ -506,8 +745,8 @@
 #define SYSCTL_RCC_SYSDIV_14    0x06800000  // System clock /14
 #define SYSCTL_RCC_SYSDIV_15    0x07000000  // System clock /15
 #define SYSCTL_RCC_SYSDIV_16    0x07800000  // System clock /16
-#define SYSCTL_RCC_USESYSDIV    0x00400000  // Enable System Clock Divider.
-#define SYSCTL_RCC_USEPWMDIV    0x00100000  // Enable PWM Clock Divisor.
+#define SYSCTL_RCC_USESYSDIV    0x00400000  // Enable System Clock Divider
+#define SYSCTL_RCC_USEPWMDIV    0x00100000  // Enable PWM Clock Divisor
 #define SYSCTL_RCC_PWMDIV_M     0x000E0000  // PWM clock divider
 #define SYSCTL_RCC_PWMDIV_2     0x00000000  // PWM clock /2
 #define SYSCTL_RCC_PWMDIV_4     0x00020000  // PWM clock /4
@@ -516,7 +755,7 @@
 #define SYSCTL_RCC_PWMDIV_32    0x00080000  // PWM clock /32
 #define SYSCTL_RCC_PWMDIV_64    0x000A0000  // PWM clock /64
 #define SYSCTL_RCC_PWRDN        0x00002000  // PLL power down
-#define SYSCTL_RCC_OEN          0x00001000  // PLL Output Enable.
+#define SYSCTL_RCC_OEN          0x00001000  // PLL Output Enable
 #define SYSCTL_RCC_BYPASS       0x00000800  // PLL bypass
 #define SYSCTL_RCC_XTAL_M       0x000007C0  // Crystal attached to main osc
 #define SYSCTL_RCC_XTAL_1MHZ    0x00000000  // Using a 1MHz crystal
@@ -566,10 +805,41 @@
 #define SYSCTL_PLLCFG_OD_1      0x00000000  // Output divider is 1
 #define SYSCTL_PLLCFG_OD_2      0x00004000  // Output divider is 2
 #define SYSCTL_PLLCFG_OD_4      0x00008000  // Output divider is 4
-#define SYSCTL_PLLCFG_F_M       0x00003FE0  // PLL F Value.
-#define SYSCTL_PLLCFG_R_M       0x0000001F  // PLL R Value.
+#define SYSCTL_PLLCFG_F_M       0x00003FE0  // PLL F Value
+#define SYSCTL_PLLCFG_R_M       0x0000001F  // PLL R Value
 #define SYSCTL_PLLCFG_F_S       5
 #define SYSCTL_PLLCFG_R_S       0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_GPIOHSCTL
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_GPIOHSCTL_PORTH  0x00000080  // Port H High-Speed
+#define SYSCTL_GPIOHSCTL_PORTG  0x00000040  // Port G High-Speed
+#define SYSCTL_GPIOHSCTL_PORTF  0x00000020  // Port F High-Speed
+#define SYSCTL_GPIOHSCTL_PORTE  0x00000010  // Port E High-Speed
+#define SYSCTL_GPIOHSCTL_PORTD  0x00000008  // Port D High-Speed
+#define SYSCTL_GPIOHSCTL_PORTC  0x00000004  // Port C High-Speed
+#define SYSCTL_GPIOHSCTL_PORTB  0x00000002  // Port B High-Speed
+#define SYSCTL_GPIOHSCTL_PORTA  0x00000001  // Port A High-Speed
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_GPIOHBCTL
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_GPIOHBCTL_PORTJ  0x00000100  // Port J Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTH  0x00000080  // Port H Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTG  0x00000040  // Port G Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTF  0x00000020  // Port F Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTE  0x00000010  // Port E Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTD  0x00000008  // Port D Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTC  0x00000004  // Port C Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTB  0x00000002  // Port B Advanced Host Bus
+#define SYSCTL_GPIOHBCTL_PORTA  0x00000001  // Port A Advanced Host Bus
 
 //*****************************************************************************
 //
@@ -643,17 +913,216 @@
 #define SYSCTL_RCC2_SYSDIV2_63  0x1F000000  // System clock /63
 #define SYSCTL_RCC2_SYSDIV2_64  0x1F800000  // System clock /64
 #define SYSCTL_RCC2_FRACT       0x00400000  // Fractional divide
-#define SYSCTL_RCC2_USBPWRDN    0x00004000  // Power-Down USB PLL.
+#define SYSCTL_RCC2_USBPWRDN    0x00004000  // Power-Down USB PLL
 #define SYSCTL_RCC2_PWRDN2      0x00002000  // PLL power down
 #define SYSCTL_RCC2_BYPASS2     0x00000800  // PLL bypass
-#define SYSCTL_RCC2_OSCSRC2_M   0x00000070  // System Clock Source.
+#define SYSCTL_RCC2_OSCSRC2_M   0x00000070  // System Clock Source
 #define SYSCTL_RCC2_OSCSRC2_MO  0x00000000  // Use the main oscillator
 #define SYSCTL_RCC2_OSCSRC2_IO  0x00000010  // Use the internal oscillator
 #define SYSCTL_RCC2_OSCSRC2_IO4 0x00000020  // Use the internal oscillator / 4
-#define SYSCTL_RCC2_OSCSRC2_30  0x00000030  // Use the 30 KHz internal osc.
-#define SYSCTL_RCC2_OSCSRC2_419 0x00000060  // Use the 4.19 MHz external osc.
-#define SYSCTL_RCC2_OSCSRC2_32  0x00000070  // Use the 32 KHz external osc.
+#define SYSCTL_RCC2_OSCSRC2_30  0x00000030  // Use the 30 KHz internal osc
+#define SYSCTL_RCC2_OSCSRC2_419 0x00000060  // Use the 4.19 MHz external osc
+#define SYSCTL_RCC2_OSCSRC2_32  0x00000070  // Use the 32 KHz external osc
 #define SYSCTL_RCC2_SYSDIV2_S   23          // Shift to the SYSDIV2 field
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_MOSCCTL register.
+//
+//*****************************************************************************
+#define SYSCTL_MOSCCTL_CVAL     0x00000001  // Clock Validation for MOSC
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGC0 register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGC0_WDT1       0x10000000  // WDT1 Clock Gating Control
+#define SYSCTL_RCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control
+#define SYSCTL_RCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control
+#define SYSCTL_RCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control
+#define SYSCTL_RCGC0_PWM        0x00100000  // PWM Clock Gating Control
+#define SYSCTL_RCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control
+#define SYSCTL_RCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control
+#define SYSCTL_RCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed
+#define SYSCTL_RCGC0_ADCSPD125K 0x00000000  // 125K samples/second
+#define SYSCTL_RCGC0_ADCSPD250K 0x00000100  // 250K samples/second
+#define SYSCTL_RCGC0_ADCSPD500K 0x00000200  // 500K samples/second
+#define SYSCTL_RCGC0_ADCSPD1M   0x00000300  // 1M samples/second
+#define SYSCTL_RCGC0_ADC1SPD_M  0x00000C00  // ADC1 Sample Speed
+#define SYSCTL_RCGC0_ADC1SPD_1M 0x00000C00  // 1M samples/second
+#define SYSCTL_RCGC0_ADC0SPD_M  0x00000300  // ADC0 Sample Speed
+#define SYSCTL_RCGC0_ADC0SPD_1M 0x00000300  // 1M samples/second
+#define SYSCTL_RCGC0_HIB        0x00000040  // HIB Clock Gating Control
+#define SYSCTL_RCGC0_WDT0       0x00000008  // WDT0 Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGC1 register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGC1_EPI0       0x40000000  // EPI0 Clock Gating
+#define SYSCTL_RCGC1_I2S0       0x10000000  // I2S0 Clock Gating Control
+#define SYSCTL_RCGC1_COMP2      0x04000000  // Analog Comparator 2 Clock Gating
+#define SYSCTL_RCGC1_COMP1      0x02000000  // Analog Comparator 1 Clock Gating
+#define SYSCTL_RCGC1_COMP0      0x01000000  // Analog Comparator 0 Clock Gating
+#define SYSCTL_RCGC1_TIMER3     0x00080000  // Timer 3 Clock Gating Control
+#define SYSCTL_RCGC1_TIMER2     0x00040000  // Timer 2 Clock Gating Control
+#define SYSCTL_RCGC1_TIMER1     0x00020000  // Timer 1 Clock Gating Control
+#define SYSCTL_RCGC1_TIMER0     0x00010000  // Timer 0 Clock Gating Control
+#define SYSCTL_RCGC1_I2C1       0x00004000  // I2C1 Clock Gating Control
+#define SYSCTL_RCGC1_I2C0       0x00001000  // I2C0 Clock Gating Control
+#define SYSCTL_RCGC1_QEI1       0x00000200  // QEI1 Clock Gating Control
+#define SYSCTL_RCGC1_QEI0       0x00000100  // QEI0 Clock Gating Control
+#define SYSCTL_RCGC1_SSI1       0x00000020  // SSI1 Clock Gating Control
+#define SYSCTL_RCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control
+#define SYSCTL_RCGC1_UART2      0x00000004  // UART2 Clock Gating Control
+#define SYSCTL_RCGC1_UART1      0x00000002  // UART1 Clock Gating Control
+#define SYSCTL_RCGC1_UART0      0x00000001  // UART0 Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_RCGC2 register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGC2_EPHY0      0x40000000  // PHY0 Clock Gating Control
+#define SYSCTL_RCGC2_EMAC0      0x10000000  // MAC0 Clock Gating Control
+#define SYSCTL_RCGC2_USB0       0x00010000  // USB0 Clock Gating Control
+#define SYSCTL_RCGC2_UDMA       0x00002000  // UDMA Clock Gating Control
+#define SYSCTL_RCGC2_GPIOJ      0x00000100  // Port J Clock Gating Control
+#define SYSCTL_RCGC2_GPIOH      0x00000080  // Port H Clock Gating Control
+#define SYSCTL_RCGC2_GPIOG      0x00000040  // Port G Clock Gating Control
+#define SYSCTL_RCGC2_GPIOF      0x00000020  // Port F Clock Gating Control
+#define SYSCTL_RCGC2_GPIOE      0x00000010  // Port E Clock Gating Control
+#define SYSCTL_RCGC2_GPIOD      0x00000008  // Port D Clock Gating Control
+#define SYSCTL_RCGC2_GPIOC      0x00000004  // Port C Clock Gating Control
+#define SYSCTL_RCGC2_GPIOB      0x00000002  // Port B Clock Gating Control
+#define SYSCTL_RCGC2_GPIOA      0x00000001  // Port A Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGC0 register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGC0_WDT1       0x10000000  // WDT1 Clock Gating Control
+#define SYSCTL_SCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control
+#define SYSCTL_SCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control
+#define SYSCTL_SCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control
+#define SYSCTL_SCGC0_PWM        0x00100000  // PWM Clock Gating Control
+#define SYSCTL_SCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control
+#define SYSCTL_SCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control
+#define SYSCTL_SCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed
+#define SYSCTL_SCGC0_ADCSPD125K 0x00000000  // 125K samples/second
+#define SYSCTL_SCGC0_ADCSPD250K 0x00000100  // 250K samples/second
+#define SYSCTL_SCGC0_ADCSPD500K 0x00000200  // 500K samples/second
+#define SYSCTL_SCGC0_ADCSPD1M   0x00000300  // 1M samples/second
+#define SYSCTL_SCGC0_ADC1SPD_M  0x00000C00  // ADC1 Sample Speed
+#define SYSCTL_SCGC0_ADC1SPD_1M 0x00000C00  // 1M samples/second
+#define SYSCTL_SCGC0_ADC0SPD_M  0x00000300  // ADC0 Sample Speed
+#define SYSCTL_SCGC0_ADC0SPD_1M 0x00000300  // 1M samples/second
+#define SYSCTL_SCGC0_HIB        0x00000040  // HIB Clock Gating Control
+#define SYSCTL_SCGC0_WDT0       0x00000008  // WDT0 Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGC1 register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGC1_EPI0       0x40000000  // EPI0 Clock Gating
+#define SYSCTL_SCGC1_I2S0       0x10000000  // I2S 0 Clock Gating
+#define SYSCTL_SCGC1_COMP2      0x04000000  // Analog Comparator 2 Clock Gating
+#define SYSCTL_SCGC1_COMP1      0x02000000  // Analog Comparator 1 Clock Gating
+#define SYSCTL_SCGC1_COMP0      0x01000000  // Analog Comparator 0 Clock Gating
+#define SYSCTL_SCGC1_TIMER3     0x00080000  // Timer 3 Clock Gating Control
+#define SYSCTL_SCGC1_TIMER2     0x00040000  // Timer 2 Clock Gating Control
+#define SYSCTL_SCGC1_TIMER1     0x00020000  // Timer 1 Clock Gating Control
+#define SYSCTL_SCGC1_TIMER0     0x00010000  // Timer 0 Clock Gating Control
+#define SYSCTL_SCGC1_I2C1       0x00004000  // I2C1 Clock Gating Control
+#define SYSCTL_SCGC1_I2C0       0x00001000  // I2C0 Clock Gating Control
+#define SYSCTL_SCGC1_QEI1       0x00000200  // QEI1 Clock Gating Control
+#define SYSCTL_SCGC1_QEI0       0x00000100  // QEI0 Clock Gating Control
+#define SYSCTL_SCGC1_SSI1       0x00000020  // SSI1 Clock Gating Control
+#define SYSCTL_SCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control
+#define SYSCTL_SCGC1_UART2      0x00000004  // UART2 Clock Gating Control
+#define SYSCTL_SCGC1_UART1      0x00000002  // UART1 Clock Gating Control
+#define SYSCTL_SCGC1_UART0      0x00000001  // UART0 Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_SCGC2 register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGC2_EPHY0      0x40000000  // PHY0 Clock Gating Control
+#define SYSCTL_SCGC2_EMAC0      0x10000000  // MAC0 Clock Gating Control
+#define SYSCTL_SCGC2_USB0       0x00010000  // USB0 Clock Gating Control
+#define SYSCTL_SCGC2_UDMA       0x00002000  // UDMA Clock Gating Control
+#define SYSCTL_SCGC2_GPIOJ      0x00000100  // GPIO Port J Present
+#define SYSCTL_SCGC2_GPIOH      0x00000080  // Port H Clock Gating Control
+#define SYSCTL_SCGC2_GPIOG      0x00000040  // Port G Clock Gating Control
+#define SYSCTL_SCGC2_GPIOF      0x00000020  // Port F Clock Gating Control
+#define SYSCTL_SCGC2_GPIOE      0x00000010  // Port E Clock Gating Control
+#define SYSCTL_SCGC2_GPIOD      0x00000008  // Port D Clock Gating Control
+#define SYSCTL_SCGC2_GPIOC      0x00000004  // Port C Clock Gating Control
+#define SYSCTL_SCGC2_GPIOB      0x00000002  // Port B Clock Gating Control
+#define SYSCTL_SCGC2_GPIOA      0x00000001  // Port A Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGC0 register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGC0_WDT1       0x10000000  // WDT1 Clock Gating Control
+#define SYSCTL_DCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control
+#define SYSCTL_DCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control
+#define SYSCTL_DCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control
+#define SYSCTL_DCGC0_PWM        0x00100000  // PWM Clock Gating Control
+#define SYSCTL_DCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control
+#define SYSCTL_DCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control
+#define SYSCTL_DCGC0_HIB        0x00000040  // HIB Clock Gating Control
+#define SYSCTL_DCGC0_WDT0       0x00000008  // WDT0 Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGC1 register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGC1_EPI0       0x40000000  // EPI0 Clock Gating
+#define SYSCTL_DCGC1_I2S0       0x10000000  // I2S 0 Clock Gating
+#define SYSCTL_DCGC1_COMP2      0x04000000  // Analog Comparator 2 Clock Gating
+#define SYSCTL_DCGC1_COMP1      0x02000000  // Analog Comparator 1 Clock Gating
+#define SYSCTL_DCGC1_COMP0      0x01000000  // Analog Comparator 0 Clock Gating
+#define SYSCTL_DCGC1_TIMER3     0x00080000  // Timer 3 Clock Gating Control
+#define SYSCTL_DCGC1_TIMER2     0x00040000  // Timer 2 Clock Gating Control
+#define SYSCTL_DCGC1_TIMER1     0x00020000  // Timer 1 Clock Gating Control
+#define SYSCTL_DCGC1_TIMER0     0x00010000  // Timer 0 Clock Gating Control
+#define SYSCTL_DCGC1_I2C1       0x00004000  // I2C1 Clock Gating Control
+#define SYSCTL_DCGC1_I2C0       0x00001000  // I2C0 Clock Gating Control
+#define SYSCTL_DCGC1_QEI1       0x00000200  // QEI1 Clock Gating Control
+#define SYSCTL_DCGC1_QEI0       0x00000100  // QEI0 Clock Gating Control
+#define SYSCTL_DCGC1_SSI1       0x00000020  // SSI1 Clock Gating Control
+#define SYSCTL_DCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control
+#define SYSCTL_DCGC1_UART2      0x00000004  // UART2 Clock Gating Control
+#define SYSCTL_DCGC1_UART1      0x00000002  // UART1 Clock Gating Control
+#define SYSCTL_DCGC1_UART0      0x00000001  // UART0 Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DCGC2 register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGC2_EPHY0      0x40000000  // PHY0 Clock Gating Control
+#define SYSCTL_DCGC2_EMAC0      0x10000000  // MAC0 Clock Gating Control
+#define SYSCTL_DCGC2_USB0       0x00010000  // USB0 Clock Gating Control
+#define SYSCTL_DCGC2_UDMA       0x00002000  // UDMA Clock Gating Control
+#define SYSCTL_DCGC2_GPIOJ      0x00000100  // GPIO Port J Present
+#define SYSCTL_DCGC2_GPIOH      0x00000080  // Port H Clock Gating Control
+#define SYSCTL_DCGC2_GPIOG      0x00000040  // Port G Clock Gating Control
+#define SYSCTL_DCGC2_GPIOF      0x00000020  // Port F Clock Gating Control
+#define SYSCTL_DCGC2_GPIOE      0x00000010  // Port E Clock Gating Control
+#define SYSCTL_DCGC2_GPIOD      0x00000008  // Port D Clock Gating Control
+#define SYSCTL_DCGC2_GPIOC      0x00000004  // Port C Clock Gating Control
+#define SYSCTL_DCGC2_GPIOB      0x00000002  // Port B Clock Gating Control
+#define SYSCTL_DCGC2_GPIOA      0x00000001  // Port A Clock Gating Control
 
 //*****************************************************************************
 //
@@ -661,7 +1130,7 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_DSLPCLKCFG_D_M   0x1F800000  // Divider Field Override.
+#define SYSCTL_DSLPCLKCFG_D_M   0x1F800000  // Divider Field Override
 #define SYSCTL_DSLPCLKCFG_D_2   0x00800000  // System clock /2
 #define SYSCTL_DSLPCLKCFG_D_3   0x01000000  // System clock /3
 #define SYSCTL_DSLPCLKCFG_D_4   0x01800000  // System clock /4
@@ -725,501 +1194,28 @@
 #define SYSCTL_DSLPCLKCFG_D_62  0x1E800000  // System clock /62
 #define SYSCTL_DSLPCLKCFG_D_63  0x1F000000  // System clock /63
 #define SYSCTL_DSLPCLKCFG_D_64  0x1F800000  // System clock /64
-#define SYSCTL_DSLPCLKCFG_O_M   0x00000070  // Clock Source.
+#define SYSCTL_DSLPCLKCFG_O_M   0x00000070  // Clock Source
 #define SYSCTL_DSLPCLKCFG_O_IGN 0x00000000  // Do not override
 #define SYSCTL_DSLPCLKCFG_O_IO  0x00000010  // Use the internal oscillator
-#define SYSCTL_DSLPCLKCFG_O_30  0x00000030  // Use the 30 KHz internal osc.
-#define SYSCTL_DSLPCLKCFG_O_32  0x00000070  // Use the 32 KHz external osc.
-#define SYSCTL_DSLPCLKCFG_IOSC  0x00000001  // IOSC Clock Source.
+#define SYSCTL_DSLPCLKCFG_O_30  0x00000030  // Use the 30 KHz internal osc
+#define SYSCTL_DSLPCLKCFG_O_32  0x00000070  // Use the 32 KHz external osc
+#define SYSCTL_DSLPCLKCFG_IOSC  0x00000001  // IOSC Clock Source
 #define SYSCTL_DSLPCLKCFG_D_S   23
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_DSFLASHCFG
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DSFLASHCFG_SHDWN 0x00000001  // Flash Shutdown
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the SYSCTL_CLKVCLR register.
 //
 //*****************************************************************************
-#define SYSCTL_CLKVCLR_VERCLR   0x00000001  // Clock Verification Clear.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_LDOARST register.
-//
-//*****************************************************************************
-#define SYSCTL_LDOARST_LDOARST  0x00000001  // LDO Reset.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SRCR0 register.
-//
-//*****************************************************************************
-#define SYSCTL_SRCR0_WDT1       0x10000000  // WDT1 Reset Control.
-#define SYSCTL_SRCR0_CAN2       0x04000000  // CAN2 Reset Control.
-#define SYSCTL_SRCR0_CAN1       0x02000000  // CAN1 Reset Control.
-#define SYSCTL_SRCR0_CAN0       0x01000000  // CAN0 Reset Control.
-#define SYSCTL_SRCR0_PWM        0x00100000  // PWM Reset Control.
-#define SYSCTL_SRCR0_ADC1       0x00020000  // ADC1 Reset Control.
-#define SYSCTL_SRCR0_ADC0       0x00010000  // ADC0 Reset Control.
-#define SYSCTL_SRCR0_HIB        0x00000040  // HIB Reset Control.
-#define SYSCTL_SRCR0_WDT0       0x00000008  // WDT0 Reset Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SRCR1 register.
-//
-//*****************************************************************************
-#define SYSCTL_SRCR1_EPI0       0x40000000  // EPI0 Reset Control.
-#define SYSCTL_SRCR1_I2S0       0x10000000  // I2S 0 Reset Control.
-#define SYSCTL_SRCR1_COMP2      0x04000000  // Analog Comp 2 Reset Control.
-#define SYSCTL_SRCR1_COMP1      0x02000000  // Analog Comp 1 Reset Control.
-#define SYSCTL_SRCR1_COMP0      0x01000000  // Analog Comp 0 Reset Control.
-#define SYSCTL_SRCR1_TIMER3     0x00080000  // Timer 3 Reset Control.
-#define SYSCTL_SRCR1_TIMER2     0x00040000  // Timer 2 Reset Control.
-#define SYSCTL_SRCR1_TIMER1     0x00020000  // Timer 1 Reset Control.
-#define SYSCTL_SRCR1_TIMER0     0x00010000  // Timer 0 Reset Control.
-#define SYSCTL_SRCR1_I2C1       0x00004000  // I2C1 Reset Control.
-#define SYSCTL_SRCR1_I2C0       0x00001000  // I2C0 Reset Control.
-#define SYSCTL_SRCR1_QEI1       0x00000200  // QEI1 Reset Control.
-#define SYSCTL_SRCR1_QEI0       0x00000100  // QEI0 Reset Control.
-#define SYSCTL_SRCR1_SSI1       0x00000020  // SSI1 Reset Control.
-#define SYSCTL_SRCR1_SSI0       0x00000010  // SSI0 Reset Control.
-#define SYSCTL_SRCR1_UART2      0x00000004  // UART2 Reset Control.
-#define SYSCTL_SRCR1_UART1      0x00000002  // UART1 Reset Control.
-#define SYSCTL_SRCR1_UART0      0x00000001  // UART0 Reset Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SRCR2 register.
-//
-//*****************************************************************************
-#define SYSCTL_SRCR2_EPHY0      0x40000000  // PHY0 Reset Control.
-#define SYSCTL_SRCR2_EMAC0      0x10000000  // MAC0 Reset Control.
-#define SYSCTL_SRCR2_USB0       0x00010000  // USB0 Reset Control.
-#define SYSCTL_SRCR2_UDMA       0x00002000  // UDMA Reset Control.
-#define SYSCTL_SRCR2_GPIOJ      0x00000100  // Port J Reset Control.
-#define SYSCTL_SRCR2_GPIOH      0x00000080  // Port H Reset Control.
-#define SYSCTL_SRCR2_GPIOG      0x00000040  // Port G Reset Control.
-#define SYSCTL_SRCR2_GPIOF      0x00000020  // Port F Reset Control.
-#define SYSCTL_SRCR2_GPIOE      0x00000010  // Port E Reset Control.
-#define SYSCTL_SRCR2_GPIOD      0x00000008  // Port D Reset Control.
-#define SYSCTL_SRCR2_GPIOC      0x00000004  // Port C Reset Control.
-#define SYSCTL_SRCR2_GPIOB      0x00000002  // Port B Reset Control.
-#define SYSCTL_SRCR2_GPIOA      0x00000001  // Port A Reset Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RIS register.
-//
-//*****************************************************************************
-#define SYSCTL_RIS_MOSCPUPRIS   0x00000100  // MOSC Power Up Raw Interrupt
-                                            // Status.
-#define SYSCTL_RIS_USBPLLLRIS   0x00000080  // USB PLL Lock Raw Interrupt
-                                            // Status.
-#define SYSCTL_RIS_PLLLRIS      0x00000040  // PLL Lock Raw Interrupt Status.
-#define SYSCTL_RIS_CLRIS        0x00000020  // Current Limit Raw Interrupt
-                                            // Status.
-#define SYSCTL_RIS_IOFRIS       0x00000010  // Internal Oscillator Fault Raw
-                                            // Interrupt Status.
-#define SYSCTL_RIS_MOFRIS       0x00000008  // Main Oscillator Fault Raw
-                                            // Interrupt Status.
-#define SYSCTL_RIS_LDORIS       0x00000004  // LDO Power Unregulated Raw
-                                            // Interrupt Status.
-#define SYSCTL_RIS_BORRIS       0x00000002  // Brown-Out Reset Raw Interrupt
-                                            // Status.
-#define SYSCTL_RIS_PLLFRIS      0x00000001  // PLL Fault Raw Interrupt Status.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_IMC register.
-//
-//*****************************************************************************
-#define SYSCTL_IMC_MOSCPUPIM    0x00000100  // MOSC Power Up Interrupt Mask.
-#define SYSCTL_IMC_USBPLLLIM    0x00000080  // USB PLL Lock Interrupt Mask.
-#define SYSCTL_IMC_PLLLIM       0x00000040  // PLL Lock Interrupt Mask.
-#define SYSCTL_IMC_CLIM         0x00000020  // Current Limit Interrupt Mask.
-#define SYSCTL_IMC_IOFIM        0x00000010  // Internal Oscillator Fault
-                                            // Interrupt Mask.
-#define SYSCTL_IMC_MOFIM        0x00000008  // Main Oscillator Fault Interrupt
-                                            // Mask.
-#define SYSCTL_IMC_LDOIM        0x00000004  // LDO Power Unregulated Interrupt
-                                            // Mask.
-#define SYSCTL_IMC_BORIM        0x00000002  // Brown-Out Reset Interrupt Mask.
-#define SYSCTL_IMC_PLLFIM       0x00000001  // PLL Fault Interrupt Mask.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_MISC register.
-//
-//*****************************************************************************
-#define SYSCTL_MISC_MOSCPUPMIS  0x00000100  // MOSC Power Up Masked Interrupt
-                                            // Status.
-#define SYSCTL_MISC_USBPLLLMIS  0x00000080  // USB PLL Lock Masked Interrupt
-                                            // Status.
-#define SYSCTL_MISC_PLLLMIS     0x00000040  // PLL Lock Masked Interrupt
-                                            // Status.
-#define SYSCTL_MISC_CLMIS       0x00000020  // Current Limit Masked Interrupt
-                                            // Status.
-#define SYSCTL_MISC_IOFMIS      0x00000010  // Internal Oscillator Fault Masked
-                                            // Interrupt Status.
-#define SYSCTL_MISC_MOFMIS      0x00000008  // Main Oscillator Fault Masked
-                                            // Interrupt Status.
-#define SYSCTL_MISC_LDOMIS      0x00000004  // LDO Power Unregulated Masked
-                                            // Interrupt Status.
-#define SYSCTL_MISC_BORMIS      0x00000002  // BOR Masked Interrupt Status.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGC0 register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGC0_WDT1       0x10000000  // WDT1 Clock Gating Control.
-#define SYSCTL_RCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control.
-#define SYSCTL_RCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control.
-#define SYSCTL_RCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control.
-#define SYSCTL_RCGC0_PWM        0x00100000  // PWM Clock Gating Control.
-#define SYSCTL_RCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control.
-#define SYSCTL_RCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control.
-#define SYSCTL_RCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed.
-#define SYSCTL_RCGC0_ADCSPD125K 0x00000000  // 125K samples/second
-#define SYSCTL_RCGC0_ADCSPD250K 0x00000100  // 250K samples/second
-#define SYSCTL_RCGC0_ADCSPD500K 0x00000200  // 500K samples/second
-#define SYSCTL_RCGC0_ADCSPD1M   0x00000300  // 1M samples/second
-#define SYSCTL_RCGC0_ADC1SPD_M  0x00000C00  // ADC1 Sample Speed.
-#define SYSCTL_RCGC0_ADC1SPD_1M 0x00000C00  // 1M samples/second
-#define SYSCTL_RCGC0_ADC0SPD_M  0x00000300  // ADC0 Sample Speed.
-#define SYSCTL_RCGC0_ADC0SPD_1M 0x00000300  // 1M samples/second
-#define SYSCTL_RCGC0_HIB        0x00000040  // HIB Clock Gating Control.
-#define SYSCTL_RCGC0_WDT0       0x00000008  // WDT0 Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGC1 register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGC1_EPI0       0x40000000  // EPI0 Clock Gating.
-#define SYSCTL_RCGC1_I2S0       0x10000000  // I2S0 Clock Gating Control.
-#define SYSCTL_RCGC1_COMP2      0x04000000  // Analog Comparator 2 Clock
-                                            // Gating.
-#define SYSCTL_RCGC1_COMP1      0x02000000  // Analog Comparator 1 Clock
-                                            // Gating.
-#define SYSCTL_RCGC1_COMP0      0x01000000  // Analog Comparator 0 Clock
-                                            // Gating.
-#define SYSCTL_RCGC1_TIMER3     0x00080000  // Timer 3 Clock Gating Control.
-#define SYSCTL_RCGC1_TIMER2     0x00040000  // Timer 2 Clock Gating Control.
-#define SYSCTL_RCGC1_TIMER1     0x00020000  // Timer 1 Clock Gating Control.
-#define SYSCTL_RCGC1_TIMER0     0x00010000  // Timer 0 Clock Gating Control.
-#define SYSCTL_RCGC1_I2C1       0x00004000  // I2C1 Clock Gating Control.
-#define SYSCTL_RCGC1_I2C0       0x00001000  // I2C0 Clock Gating Control.
-#define SYSCTL_RCGC1_QEI1       0x00000200  // QEI1 Clock Gating Control.
-#define SYSCTL_RCGC1_QEI0       0x00000100  // QEI0 Clock Gating Control.
-#define SYSCTL_RCGC1_SSI1       0x00000020  // SSI1 Clock Gating Control.
-#define SYSCTL_RCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control.
-#define SYSCTL_RCGC1_UART2      0x00000004  // UART2 Clock Gating Control.
-#define SYSCTL_RCGC1_UART1      0x00000002  // UART1 Clock Gating Control.
-#define SYSCTL_RCGC1_UART0      0x00000001  // UART0 Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_RCGC2 register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGC2_EPHY0      0x40000000  // PHY0 Clock Gating Control.
-#define SYSCTL_RCGC2_EMAC0      0x10000000  // MAC0 Clock Gating Control.
-#define SYSCTL_RCGC2_USB0       0x00010000  // USB0 Clock Gating Control.
-#define SYSCTL_RCGC2_UDMA       0x00002000  // UDMA Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOJ      0x00000100  // Port J Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOH      0x00000080  // Port H Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOG      0x00000040  // Port G Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOF      0x00000020  // Port F Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOE      0x00000010  // Port E Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOD      0x00000008  // Port D Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOC      0x00000004  // Port C Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOB      0x00000002  // Port B Clock Gating Control.
-#define SYSCTL_RCGC2_GPIOA      0x00000001  // Port A Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SCGC0 register.
-//
-//*****************************************************************************
-#define SYSCTL_SCGC0_WDT1       0x10000000  // WDT1 Clock Gating Control.
-#define SYSCTL_SCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control.
-#define SYSCTL_SCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control.
-#define SYSCTL_SCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control.
-#define SYSCTL_SCGC0_PWM        0x00100000  // PWM Clock Gating Control.
-#define SYSCTL_SCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control.
-#define SYSCTL_SCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control.
-#define SYSCTL_SCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed.
-#define SYSCTL_SCGC0_ADCSPD125K 0x00000000  // 125K samples/second
-#define SYSCTL_SCGC0_ADCSPD250K 0x00000100  // 250K samples/second
-#define SYSCTL_SCGC0_ADCSPD500K 0x00000200  // 500K samples/second
-#define SYSCTL_SCGC0_ADCSPD1M   0x00000300  // 1M samples/second
-#define SYSCTL_SCGC0_ADC1SPD_M  0x00000C00  // ADC1 Sample Speed.
-#define SYSCTL_SCGC0_ADC1SPD_1M 0x00000C00  // 1M samples/second
-#define SYSCTL_SCGC0_ADC0SPD_M  0x00000300  // ADC0 Sample Speed.
-#define SYSCTL_SCGC0_ADC0SPD_1M 0x00000300  // 1M samples/second
-#define SYSCTL_SCGC0_HIB        0x00000040  // HIB Clock Gating Control.
-#define SYSCTL_SCGC0_WDT0       0x00000008  // WDT0 Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SCGC1 register.
-//
-//*****************************************************************************
-#define SYSCTL_SCGC1_EPI0       0x40000000  // EPI0 Clock Gating.
-#define SYSCTL_SCGC1_I2S0       0x10000000  // I2S 0 Clock Gating.
-#define SYSCTL_SCGC1_COMP2      0x04000000  // Analog Comparator 2 Clock
-                                            // Gating.
-#define SYSCTL_SCGC1_COMP1      0x02000000  // Analog Comparator 1 Clock
-                                            // Gating.
-#define SYSCTL_SCGC1_COMP0      0x01000000  // Analog Comparator 0 Clock
-                                            // Gating.
-#define SYSCTL_SCGC1_TIMER3     0x00080000  // Timer 3 Clock Gating Control.
-#define SYSCTL_SCGC1_TIMER2     0x00040000  // Timer 2 Clock Gating Control.
-#define SYSCTL_SCGC1_TIMER1     0x00020000  // Timer 1 Clock Gating Control.
-#define SYSCTL_SCGC1_TIMER0     0x00010000  // Timer 0 Clock Gating Control.
-#define SYSCTL_SCGC1_I2C1       0x00004000  // I2C1 Clock Gating Control.
-#define SYSCTL_SCGC1_I2C0       0x00001000  // I2C0 Clock Gating Control.
-#define SYSCTL_SCGC1_QEI1       0x00000200  // QEI1 Clock Gating Control.
-#define SYSCTL_SCGC1_QEI0       0x00000100  // QEI0 Clock Gating Control.
-#define SYSCTL_SCGC1_SSI1       0x00000020  // SSI1 Clock Gating Control.
-#define SYSCTL_SCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control.
-#define SYSCTL_SCGC1_UART2      0x00000004  // UART2 Clock Gating Control.
-#define SYSCTL_SCGC1_UART1      0x00000002  // UART1 Clock Gating Control.
-#define SYSCTL_SCGC1_UART0      0x00000001  // UART0 Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_SCGC2 register.
-//
-//*****************************************************************************
-#define SYSCTL_SCGC2_EPHY0      0x40000000  // PHY0 Clock Gating Control.
-#define SYSCTL_SCGC2_EMAC0      0x10000000  // MAC0 Clock Gating Control.
-#define SYSCTL_SCGC2_USB0       0x00010000  // USB0 Clock Gating Control.
-#define SYSCTL_SCGC2_UDMA       0x00002000  // UDMA Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOJ      0x00000100  // GPIO Port J Present.
-#define SYSCTL_SCGC2_GPIOH      0x00000080  // Port H Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOG      0x00000040  // Port G Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOF      0x00000020  // Port F Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOE      0x00000010  // Port E Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOD      0x00000008  // Port D Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOC      0x00000004  // Port C Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOB      0x00000002  // Port B Clock Gating Control.
-#define SYSCTL_SCGC2_GPIOA      0x00000001  // Port A Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DCGC0 register.
-//
-//*****************************************************************************
-#define SYSCTL_DCGC0_WDT1       0x10000000  // WDT1 Clock Gating Control.
-#define SYSCTL_DCGC0_CAN2       0x04000000  // CAN2 Clock Gating Control.
-#define SYSCTL_DCGC0_CAN1       0x02000000  // CAN1 Clock Gating Control.
-#define SYSCTL_DCGC0_CAN0       0x01000000  // CAN0 Clock Gating Control.
-#define SYSCTL_DCGC0_PWM        0x00100000  // PWM Clock Gating Control.
-#define SYSCTL_DCGC0_ADC1       0x00020000  // ADC1 Clock Gating Control.
-#define SYSCTL_DCGC0_ADC0       0x00010000  // ADC0 Clock Gating Control.
-#define SYSCTL_DCGC0_ADCSPD_M   0x00000F00  // ADC Sample Speed.
-#define SYSCTL_DCGC0_ADCSPD125K 0x00000000  // 125K samples/second
-#define SYSCTL_DCGC0_ADCSPD250K 0x00000100  // 250K samples/second
-#define SYSCTL_DCGC0_ADCSPD500K 0x00000200  // 500K samples/second
-#define SYSCTL_DCGC0_ADCSPD1M   0x00000300  // 1M samples/second
-#define SYSCTL_DCGC0_ADC1SPD_M  0x00000C00  // ADC1 Sample Speed.
-#define SYSCTL_DCGC0_ADC1SPD_1M 0x00000C00  // 1M samples/second
-#define SYSCTL_DCGC0_ADC0SPD_M  0x00000300  // ADC0 Sample Speed.
-#define SYSCTL_DCGC0_ADC0SPD_1M 0x00000300  // 1M samples/second
-#define SYSCTL_DCGC0_HIB        0x00000040  // HIB Clock Gating Control.
-#define SYSCTL_DCGC0_WDT0       0x00000008  // WDT0 Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DCGC1 register.
-//
-//*****************************************************************************
-#define SYSCTL_DCGC1_EPI0       0x40000000  // EPI0 Clock Gating.
-#define SYSCTL_DCGC1_I2S0       0x10000000  // I2S 0 Clock Gating.
-#define SYSCTL_DCGC1_COMP2      0x04000000  // Analog Comparator 2 Clock
-                                            // Gating.
-#define SYSCTL_DCGC1_COMP1      0x02000000  // Analog Comparator 1 Clock
-                                            // Gating.
-#define SYSCTL_DCGC1_COMP0      0x01000000  // Analog Comparator 0 Clock
-                                            // Gating.
-#define SYSCTL_DCGC1_TIMER3     0x00080000  // Timer 3 Clock Gating Control.
-#define SYSCTL_DCGC1_TIMER2     0x00040000  // Timer 2 Clock Gating Control.
-#define SYSCTL_DCGC1_TIMER1     0x00020000  // Timer 1 Clock Gating Control.
-#define SYSCTL_DCGC1_TIMER0     0x00010000  // Timer 0 Clock Gating Control.
-#define SYSCTL_DCGC1_I2C1       0x00004000  // I2C1 Clock Gating Control.
-#define SYSCTL_DCGC1_I2C0       0x00001000  // I2C0 Clock Gating Control.
-#define SYSCTL_DCGC1_QEI1       0x00000200  // QEI1 Clock Gating Control.
-#define SYSCTL_DCGC1_QEI0       0x00000100  // QEI0 Clock Gating Control.
-#define SYSCTL_DCGC1_SSI1       0x00000020  // SSI1 Clock Gating Control.
-#define SYSCTL_DCGC1_SSI0       0x00000010  // SSI0 Clock Gating Control.
-#define SYSCTL_DCGC1_UART2      0x00000004  // UART2 Clock Gating Control.
-#define SYSCTL_DCGC1_UART1      0x00000002  // UART1 Clock Gating Control.
-#define SYSCTL_DCGC1_UART0      0x00000001  // UART0 Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DCGC2 register.
-//
-//*****************************************************************************
-#define SYSCTL_DCGC2_EPHY0      0x40000000  // PHY0 Clock Gating Control.
-#define SYSCTL_DCGC2_EMAC0      0x10000000  // MAC0 Clock Gating Control.
-#define SYSCTL_DCGC2_USB0       0x00010000  // USB0 Clock Gating Control.
-#define SYSCTL_DCGC2_UDMA       0x00002000  // UDMA Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOJ      0x00000100  // GPIO Port J Present.
-#define SYSCTL_DCGC2_GPIOH      0x00000080  // Port H Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOG      0x00000040  // Port G Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOF      0x00000020  // Port F Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOE      0x00000010  // Port E Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOD      0x00000008  // Port D Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOC      0x00000004  // Port C Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOB      0x00000002  // Port B Clock Gating Control.
-#define SYSCTL_DCGC2_GPIOA      0x00000001  // Port A Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DC5 register.
-//
-//*****************************************************************************
-#define SYSCTL_DC5_PWMFAULT3    0x08000000  // PWM Fault 3 Pin Present.
-#define SYSCTL_DC5_PWMFAULT2    0x04000000  // PWM Fault 2 Pin Present.
-#define SYSCTL_DC5_PWMFAULT1    0x02000000  // PWM Fault 1 Pin Present.
-#define SYSCTL_DC5_PWMFAULT0    0x01000000  // PWM Fault 0 Pin Present.
-#define SYSCTL_DC5_PWMEFLT      0x00200000  // PWM Extended Fault feature is
-                                            // active.
-#define SYSCTL_DC5_PWMESYNC     0x00100000  // PWM Extended SYNC feature is
-                                            // active.
-#define SYSCTL_DC5_PWM7         0x00000080  // PWM7 Pin Present.
-#define SYSCTL_DC5_PWM6         0x00000040  // PWM6 Pin Present.
-#define SYSCTL_DC5_PWM5         0x00000020  // PWM5 Pin Present.
-#define SYSCTL_DC5_PWM4         0x00000010  // PWM4 Pin Present.
-#define SYSCTL_DC5_PWM3         0x00000008  // PWM3 Pin Present.
-#define SYSCTL_DC5_PWM2         0x00000004  // PWM2 Pin Present.
-#define SYSCTL_DC5_PWM1         0x00000002  // PWM1 Pin Present.
-#define SYSCTL_DC5_PWM0         0x00000001  // PWM0 Pin Present.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DC6 register.
-//
-//*****************************************************************************
-#define SYSCTL_DC6_USB0PHY      0x00000010  // This specifies that USB0 PHY is
-                                            // present.
-#define SYSCTL_DC6_USB0_M       0x00000003  // This specifies that USB0 is
-                                            // present and its capability.
-#define SYSCTL_DC6_USB0_HOSTDEV 0x00000002  // USB is DEVICE or HOST
-#define SYSCTL_DC6_USB0_OTG     0x00000003  // USB is OTG
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_GPIOHSCTL
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_GPIOHSCTL_PORTH  0x00000080  // Port H High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTG  0x00000040  // Port G High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTF  0x00000020  // Port F High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTE  0x00000010  // Port E High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTD  0x00000008  // Port D High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTC  0x00000004  // Port C High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTB  0x00000002  // Port B High-Speed.
-#define SYSCTL_GPIOHSCTL_PORTA  0x00000001  // Port A High-Speed.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_MOSCCTL register.
-//
-//*****************************************************************************
-#define SYSCTL_MOSCCTL_CVAL     0x00000001  // Clock Validation for MOSC.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DC7 register.
-//
-//*****************************************************************************
-#define SYSCTL_DC7_DMACH30      0x40000000  // SW.
-#define SYSCTL_DC7_DMACH29      0x20000000  // I2S0_TX.
-#define SYSCTL_DC7_DMACH28      0x10000000  // I2S0_RX.
-#define SYSCTL_DC7_DMACH27      0x08000000  // ADC1_SS3.
-#define SYSCTL_DC7_DMACH26      0x04000000  // ADC1_SS2.
-#define SYSCTL_DC7_DMACH25      0x02000000  // SSI1_TX / ADC1_SS1.
-#define SYSCTL_DC7_SSI1_TX      0x02000000  // SSI1 TX on uDMA Ch25.
-#define SYSCTL_DC7_SSI1_RX      0x01000000  // SSI1 RX on uDMA Ch24.
-#define SYSCTL_DC7_DMACH24      0x01000000  // SSI1_RX / ADC1_SS0.
-#define SYSCTL_DC7_UART1_TX     0x00800000  // UART1 TX on uDMA Ch23.
-#define SYSCTL_DC7_DMACH23      0x00800000  // UART1_TX.
-#define SYSCTL_DC7_DMACH22      0x00400000  // UART1_RX.
-#define SYSCTL_DC7_UART1_RX     0x00400000  // UART1 RX on uDMA Ch22.
-#define SYSCTL_DC7_DMACH21      0x00200000  // Timer1B / EPI0_TX.
-#define SYSCTL_DC7_DMACH20      0x00100000  // Timer1A / EPI0_RX.
-#define SYSCTL_DC7_DMACH19      0x00080000  // Timer0B / Timer1B.
-#define SYSCTL_DC7_DMACH18      0x00040000  // Timer0A / Timer1A.
-#define SYSCTL_DC7_DMACH17      0x00020000  // ADC0_SS3.
-#define SYSCTL_DC7_DMACH16      0x00010000  // ADC0_SS2.
-#define SYSCTL_DC7_DMACH15      0x00008000  // ADC0_SS1 / Timer2B.
-#define SYSCTL_DC7_DMACH14      0x00004000  // ADC0_SS0 / Timer2A.
-#define SYSCTL_DC7_DMACH13      0x00002000  // UART2_TX.
-#define SYSCTL_DC7_DMACH12      0x00001000  // UART2_RX.
-#define SYSCTL_DC7_SSI0_TX      0x00000800  // SSI0 TX on uDMA Ch11.
-#define SYSCTL_DC7_DMACH11      0x00000800  // SSI0_TX / UART1_TX.
-#define SYSCTL_DC7_SSI0_RX      0x00000400  // SSI0 RX on uDMA Ch10.
-#define SYSCTL_DC7_DMACH10      0x00000400  // SSI0_RX / UART1_RX.
-#define SYSCTL_DC7_UART0_TX     0x00000200  // UART0 TX on uDMA Ch9.
-#define SYSCTL_DC7_DMACH9       0x00000200  // UART0_TX / SSI1_TX.
-#define SYSCTL_DC7_DMACH8       0x00000100  // UART0_RX / SSI1_RX.
-#define SYSCTL_DC7_UART0_RX     0x00000100  // UART0 RX on uDMA Ch8.
-#define SYSCTL_DC7_DMACH7       0x00000080  // ETH_TX / Timer2B.
-#define SYSCTL_DC7_DMACH6       0x00000040  // ETH_RX / Timer2A.
-#define SYSCTL_DC7_DMACH5       0x00000020  // USB_EP3_TX / Timer2B.
-#define SYSCTL_DC7_USB_EP3_TX   0x00000020  // USB EP3 TX on uDMA Ch5.
-#define SYSCTL_DC7_USB_EP3_RX   0x00000010  // USB EP3 RX on uDMA Ch4.
-#define SYSCTL_DC7_DMACH4       0x00000010  // USB_EP3_RX / Timer2A.
-#define SYSCTL_DC7_USB_EP2_TX   0x00000008  // USB EP2 TX on uDMA Ch3.
-#define SYSCTL_DC7_DMACH3       0x00000008  // USB_EP2_TX / Timer3B.
-#define SYSCTL_DC7_USB_EP2_RX   0x00000004  // USB EP2 RX on uDMA Ch2.
-#define SYSCTL_DC7_DMACH2       0x00000004  // USB_EP2_RX / Timer3A.
-#define SYSCTL_DC7_USB_EP1_TX   0x00000002  // USB EP1 TX on uDMA Ch1.
-#define SYSCTL_DC7_DMACH1       0x00000002  // USB_EP1_TX / UART2_TX.
-#define SYSCTL_DC7_DMACH0       0x00000001  // USB_EP1_RX / UART2_RX.
-#define SYSCTL_DC7_USB_EP1_RX   0x00000001  // USB EP1 RX on uDMA Ch0.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DC8 register.
-//
-//*****************************************************************************
-#define SYSCTL_DC8_ADC1AIN15    0x80000000  // ADC Module 1 AIN15 Pin Present.
-#define SYSCTL_DC8_ADC1AIN14    0x40000000  // ADC Module 1 AIN14 Pin Present.
-#define SYSCTL_DC8_ADC1AIN13    0x20000000  // ADC Module 1 AIN13 Pin Present.
-#define SYSCTL_DC8_ADC1AIN12    0x10000000  // ADC Module 1 AIN12 Pin Present.
-#define SYSCTL_DC8_ADC1AIN11    0x08000000  // ADC1 11 Pin Present.
-#define SYSCTL_DC8_ADC1AIN10    0x04000000  // ADC1 10 Pin Present.
-#define SYSCTL_DC8_ADC1AIN9     0x02000000  // ADC1 9 Pin Present.
-#define SYSCTL_DC8_ADC1AIN8     0x01000000  // ADC1 8 Pin Present.
-#define SYSCTL_DC8_ADC1AIN7     0x00800000  // ADC1 7 Pin Present.
-#define SYSCTL_DC8_ADC1AIN6     0x00400000  // ADC1 6 Pin Present.
-#define SYSCTL_DC8_ADC1AIN5     0x00200000  // ADC1 5 Pin Present.
-#define SYSCTL_DC8_ADC1AIN4     0x00100000  // ADC1 4 Pin Present.
-#define SYSCTL_DC8_ADC1AIN3     0x00080000  // ADC1 3 Pin Present.
-#define SYSCTL_DC8_ADC1AIN2     0x00040000  // ADC1 2 Pin Present.
-#define SYSCTL_DC8_ADC1AIN1     0x00020000  // ADC1 1 Pin Present.
-#define SYSCTL_DC8_ADC1AIN0     0x00010000  // ADC1 0 Pin Present.
-#define SYSCTL_DC8_ADC0AIN15    0x00008000  // ADC Module 0 AIN15 Pin Present.
-#define SYSCTL_DC8_ADC0AIN14    0x00004000  // ADC Module 0 AIN14 Pin Present.
-#define SYSCTL_DC8_ADC0AIN13    0x00002000  // ADC Module 0 AIN13 Pin Present.
-#define SYSCTL_DC8_ADC0AIN12    0x00001000  // ADC Module 0 AIN12 Pin Present.
-#define SYSCTL_DC8_ADC0AIN11    0x00000800  // ADC0 11 Pin Present.
-#define SYSCTL_DC8_ADC0AIN10    0x00000400  // ADC0 10 Pin Present.
-#define SYSCTL_DC8_ADC0AIN9     0x00000200  // ADC0 9 Pin Present.
-#define SYSCTL_DC8_ADC0AIN8     0x00000100  // ADC0 8 Pin Present.
-#define SYSCTL_DC8_ADC0AIN7     0x00000080  // ADC0 7 Pin Present.
-#define SYSCTL_DC8_ADC0AIN6     0x00000040  // ADC0 6 Pin Present.
-#define SYSCTL_DC8_ADC0AIN5     0x00000020  // ADC0 5 Pin Present.
-#define SYSCTL_DC8_ADC0AIN4     0x00000010  // ADC0 4 Pin Present.
-#define SYSCTL_DC8_ADC0AIN3     0x00000008  // ADC0 3 Pin Present.
-#define SYSCTL_DC8_ADC0AIN2     0x00000004  // ADC0 2 Pin Present.
-#define SYSCTL_DC8_ADC0AIN1     0x00000002  // ADC0 1 Pin Present.
-#define SYSCTL_DC8_ADC0AIN0     0x00000001  // ADC0 0 Pin Present.
+#define SYSCTL_CLKVCLR_VERCLR   0x00000001  // Clock Verification Clear
 
 //*****************************************************************************
 //
@@ -1227,10 +1223,10 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_PIOSCCAL_UTEN    0x80000000  // Use User Trim Value.
-#define SYSCTL_PIOSCCAL_CAL     0x00000200  // Start Calibration.
-#define SYSCTL_PIOSCCAL_UPDATE  0x00000100  // Update Trim.
-#define SYSCTL_PIOSCCAL_UT_M    0x0000007F  // User Trim Value.
+#define SYSCTL_PIOSCCAL_UTEN    0x80000000  // Use User Trim Value
+#define SYSCTL_PIOSCCAL_CAL     0x00000200  // Start Calibration
+#define SYSCTL_PIOSCCAL_UPDATE  0x00000100  // Update Trim
+#define SYSCTL_PIOSCCAL_UT_M    0x0000007F  // User Trim Value
 #define SYSCTL_PIOSCCAL_UT_S    0
 
 //*****************************************************************************
@@ -1239,17 +1235,24 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_PIOSCSTAT_DT_M   0x007F0000  // Default Trim Value.
-#define SYSCTL_PIOSCSTAT_CR_M   0x00000300  // Calibration Result.
+#define SYSCTL_PIOSCSTAT_DT_M   0x007F0000  // Default Trim Value
+#define SYSCTL_PIOSCSTAT_CR_M   0x00000300  // Calibration Result
 #define SYSCTL_PIOSCSTAT_CRNONE 0x00000000  // Calibration has not been
-                                            // attempted.
+                                            // attempted
 #define SYSCTL_PIOSCSTAT_CRPASS 0x00000100  // The last calibration operation
-                                            // completed to meet 1% accuracy.
+                                            // completed to meet 1% accuracy
 #define SYSCTL_PIOSCSTAT_CRFAIL 0x00000200  // The last calibration operation
-                                            // failed to meet 1% accuracy.
-#define SYSCTL_PIOSCSTAT_CT_M   0x0000007F  // Calibration Trim Value.
+                                            // failed to meet 1% accuracy
+#define SYSCTL_PIOSCSTAT_CT_M   0x0000007F  // Calibration Trim Value
 #define SYSCTL_PIOSCSTAT_DT_S   16
 #define SYSCTL_PIOSCSTAT_CT_S   0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the SYSCTL_LDOARST register.
+//
+//*****************************************************************************
+#define SYSCTL_LDOARST_LDOARST  0x00000001  // LDO Reset
 
 //*****************************************************************************
 //
@@ -1257,12 +1260,12 @@
 // register.
 //
 //*****************************************************************************
-#define SYSCTL_I2SMCLKCFG_RXEN  0x80000000  // RX Clock Enable.
-#define SYSCTL_I2SMCLKCFG_RXI_M 0x0FF00000  // RX Clock Integer Input.
-#define SYSCTL_I2SMCLKCFG_RXF_M 0x000F0000  // RX Clock Fractional Input.
-#define SYSCTL_I2SMCLKCFG_TXEN  0x00008000  // TX Clock Enable.
-#define SYSCTL_I2SMCLKCFG_TXI_M 0x00000FF0  // TX Clock Integer Input.
-#define SYSCTL_I2SMCLKCFG_TXF_M 0x0000000F  // TX Clock Fractional Input.
+#define SYSCTL_I2SMCLKCFG_RXEN  0x80000000  // RX Clock Enable
+#define SYSCTL_I2SMCLKCFG_RXI_M 0x0FF00000  // RX Clock Integer Input
+#define SYSCTL_I2SMCLKCFG_RXF_M 0x000F0000  // RX Clock Fractional Input
+#define SYSCTL_I2SMCLKCFG_TXEN  0x00008000  // TX Clock Enable
+#define SYSCTL_I2SMCLKCFG_TXI_M 0x00000FF0  // TX Clock Integer Input
+#define SYSCTL_I2SMCLKCFG_TXF_M 0x0000000F  // TX Clock Fractional Input
 #define SYSCTL_I2SMCLKCFG_RXI_S 20
 #define SYSCTL_I2SMCLKCFG_RXF_S 16
 #define SYSCTL_I2SMCLKCFG_TXI_S 4
@@ -1273,22 +1276,22 @@
 // The following are defines for the bit fields in the SYSCTL_DC9 register.
 //
 //*****************************************************************************
-#define SYSCTL_DC9_ADC1DC7      0x00800000  // ADC1 7 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC6      0x00400000  // ADC1 6 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC5      0x00200000  // ADC1 5 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC4      0x00100000  // ADC1 4 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC3      0x00080000  // ADC1 3 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC2      0x00040000  // ADC1 2 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC1      0x00020000  // ADC1 1 Dig Cmp Present.
-#define SYSCTL_DC9_ADC1DC0      0x00010000  // ADC1 0 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC7      0x00000080  // ADC0 7 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC6      0x00000040  // ADC0 6 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC5      0x00000020  // ADC0 5 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC4      0x00000010  // ADC0 4 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC3      0x00000008  // ADC0 3 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC2      0x00000004  // ADC0 2 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC1      0x00000002  // ADC0 1 Dig Cmp Present.
-#define SYSCTL_DC9_ADC0DC0      0x00000001  // ADC0 0 Dig Cmp Present.
+#define SYSCTL_DC9_ADC1DC7      0x00800000  // ADC1 7 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC6      0x00400000  // ADC1 6 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC5      0x00200000  // ADC1 5 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC4      0x00100000  // ADC1 4 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC3      0x00080000  // ADC1 3 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC2      0x00040000  // ADC1 2 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC1      0x00020000  // ADC1 1 Dig Cmp Present
+#define SYSCTL_DC9_ADC1DC0      0x00010000  // ADC1 0 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC7      0x00000080  // ADC0 7 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC6      0x00000040  // ADC0 6 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC5      0x00000020  // ADC0 5 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC4      0x00000010  // ADC0 4 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC3      0x00000008  // ADC0 3 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC2      0x00000004  // ADC0 2 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC1      0x00000002  // ADC0 1 Dig Cmp Present
+#define SYSCTL_DC9_ADC0DC0      0x00000001  // ADC0 0 Dig Cmp Present
 
 //*****************************************************************************
 //
@@ -1296,33 +1299,9 @@
 //
 //*****************************************************************************
 #define SYSCTL_NVMSTAT_TPSW     0x00000010  // 1: Indicates 3rd party software
-                                            // in ROM.
+                                            // in ROM
 #define SYSCTL_NVMSTAT_FWB      0x00000001  // 32 Word flash write buffer
-                                            // function available.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_DSFLASHCFG
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_DSFLASHCFG_SHDWN 0x00000001  // Flash Shutdown.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the SYSCTL_GPIOHBCTL
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_GPIOHBCTL_PORTJ  0x00000100  // Port J Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTH  0x00000080  // Port H Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTG  0x00000040  // Port G Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTF  0x00000020  // Port F Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTE  0x00000010  // Port E Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTD  0x00000008  // Port D Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTC  0x00000004  // Port C Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTB  0x00000002  // Port B Advanced Host Bus.
-#define SYSCTL_GPIOHBCTL_PORTA  0x00000001  // Port A Advanced Host Bus.
+                                            // function available
 
 //*****************************************************************************
 //
@@ -1389,7 +1368,7 @@
 #define SYSCTL_DC1_SYSDIV_MASK  0x0000F000  // Minimum system divider mask
 #define SYSCTL_DC1_ADCSPD_MASK  0x00000F00  // ADC speed mask
 #define SYSCTL_DC1_WDOG         0x00000008  // Watchdog present
-#define SYSCTL_DC1_WDT          0x00000008  // Watchdog Timer Present.
+#define SYSCTL_DC1_WDT          0x00000008  // Watchdog Timer Present
 
 //*****************************************************************************
 //
@@ -1433,6 +1412,117 @@
 //
 //*****************************************************************************
 #define SYSCTL_LDOPCTL_MASK     0x0000003F  // Voltage adjust mask
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_SRCR0
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SRCR0_ADC        0x00010000  // ADC0 Reset Control
+#define SYSCTL_SRCR0_WDT        0x00000008  // WDT Reset Control
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_RESC
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RESC_WDOG        0x00000008  // Watchdog reset
+#define SYSCTL_RESC_WDT         0x00000008  // Watchdog Timer Reset
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_RCC
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCC_SYSDIV_MASK  0x07800000  // System clock divider
+#define SYSCTL_RCC_USE_SYSDIV   0x00400000  // Use sytem clock divider
+#define SYSCTL_RCC_USE_PWMDIV   0x00100000  // Use PWM clock divider
+#define SYSCTL_RCC_PWMDIV_MASK  0x000E0000  // PWM clock divider
+#define SYSCTL_RCC_OE           0x00001000  // PLL output enable
+#define SYSCTL_RCC_XTAL_3_68MHz 0x00000140  // Using a 3.6864 MHz crystal
+#define SYSCTL_RCC_XTAL_4MHz    0x00000180  // Using a 4 MHz crystal
+#define SYSCTL_RCC_XTAL_MASK    0x000003C0  // Crystal attached to main osc
+#define SYSCTL_RCC_OSCSRC_MASK  0x00000030  // Oscillator input select
+#define SYSCTL_RCC_SYSDIV_SHIFT 23          // Shift to the SYSDIV field
+#define SYSCTL_RCC_PWMDIV_SHIFT 17          // Shift to the PWMDIV field
+#define SYSCTL_RCC_XTAL_SHIFT   6           // Shift to the XTAL field
+#define SYSCTL_RCC_OSCSRC_SHIFT 4           // Shift to the OSCSRC field
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_PLLCFG
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_PLLCFG_OD_MASK   0x0000C000  // Output divider
+#define SYSCTL_PLLCFG_F_MASK    0x00003FE0  // PLL multiplier
+#define SYSCTL_PLLCFG_R_MASK    0x0000001F  // Input predivider
+#define SYSCTL_PLLCFG_F_SHIFT   5
+#define SYSCTL_PLLCFG_R_SHIFT   0
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_RCC2
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCC2_SYSDIV2_MSK 0x1F800000  // System clock divider
+#define SYSCTL_RCC2_OSCSRC2_MSK 0x00000070  // Oscillator input select
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_RCGC0
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_RCGC0_ADC        0x00010000  // ADC0 Clock Gating Control
+#define SYSCTL_RCGC0_WDT        0x00000008  // WDT Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_SCGC0
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_SCGC0_ADC        0x00010000  // ADC0 Clock Gating Control
+#define SYSCTL_SCGC0_WDT        0x00000008  // WDT Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the SYSCTL_DCGC0
+// register.
+//
+//*****************************************************************************
+#define SYSCTL_DCGC0_ADC        0x00010000  // ADC0 Clock Gating Control
+#define SYSCTL_DCGC0_WDT        0x00000008  // WDT Clock Gating Control
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the
+// SYSCTL_DSLPCLKCFG register.
+//
+//*****************************************************************************
+#define SYSCTL_DSLPCLKCFG_D_MSK 0x1F800000  // Deep sleep system clock override
+#define SYSCTL_DSLPCLKCFG_O_MSK 0x00000070  // Deep sleep oscillator override
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the
+// SYSCTL_CLKVCLR register.
+//
+//*****************************************************************************
+#define SYSCTL_CLKVCLR_CLR      0x00000001  // Clear clock verification fault
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the
+// SYSCTL_LDOARST register.
+//
+//*****************************************************************************
+#define SYSCTL_LDOARST_ARST     0x00000001  // Allow LDO to reset device
 
 //*****************************************************************************
 //
@@ -1508,117 +1598,6 @@
 #define SYSCTL_INT_POR          0x00000004  // Power on reset interrupt
 #define SYSCTL_INT_BOR          0x00000002  // Brown out interrupt
 #define SYSCTL_INT_PLL_FAIL     0x00000001  // PLL failure interrupt
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_RESC
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_RESC_WDOG        0x00000008  // Watchdog reset
-#define SYSCTL_RESC_WDT         0x00000008  // Watchdog Timer Reset.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_RCC
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_RCC_SYSDIV_MASK  0x07800000  // System clock divider
-#define SYSCTL_RCC_USE_SYSDIV   0x00400000  // Use sytem clock divider
-#define SYSCTL_RCC_USE_PWMDIV   0x00100000  // Use PWM clock divider
-#define SYSCTL_RCC_PWMDIV_MASK  0x000E0000  // PWM clock divider
-#define SYSCTL_RCC_OE           0x00001000  // PLL output enable
-#define SYSCTL_RCC_XTAL_3_68MHz 0x00000140  // Using a 3.6864 MHz crystal
-#define SYSCTL_RCC_XTAL_4MHz    0x00000180  // Using a 4 MHz crystal
-#define SYSCTL_RCC_XTAL_MASK    0x000003C0  // Crystal attached to main osc
-#define SYSCTL_RCC_OSCSRC_MASK  0x00000030  // Oscillator input select
-#define SYSCTL_RCC_SYSDIV_SHIFT 23          // Shift to the SYSDIV field
-#define SYSCTL_RCC_PWMDIV_SHIFT 17          // Shift to the PWMDIV field
-#define SYSCTL_RCC_XTAL_SHIFT   6           // Shift to the XTAL field
-#define SYSCTL_RCC_OSCSRC_SHIFT 4           // Shift to the OSCSRC field
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_PLLCFG
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_PLLCFG_OD_MASK   0x0000C000  // Output divider
-#define SYSCTL_PLLCFG_F_MASK    0x00003FE0  // PLL multiplier
-#define SYSCTL_PLLCFG_R_MASK    0x0000001F  // Input predivider
-#define SYSCTL_PLLCFG_F_SHIFT   5
-#define SYSCTL_PLLCFG_R_SHIFT   0
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_RCC2
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_RCC2_SYSDIV2_MSK 0x1F800000  // System clock divider
-#define SYSCTL_RCC2_OSCSRC2_MSK 0x00000070  // Oscillator input select
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// SYSCTL_DSLPCLKCFG register.
-//
-//*****************************************************************************
-#define SYSCTL_DSLPCLKCFG_D_MSK 0x1F800000  // Deep sleep system clock override
-#define SYSCTL_DSLPCLKCFG_O_MSK 0x00000070  // Deep sleep oscillator override
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// SYSCTL_CLKVCLR register.
-//
-//*****************************************************************************
-#define SYSCTL_CLKVCLR_CLR      0x00000001  // Clear clock verification fault
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the
-// SYSCTL_LDOARST register.
-//
-//*****************************************************************************
-#define SYSCTL_LDOARST_ARST     0x00000001  // Allow LDO to reset device
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_SRCR0
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_SRCR0_ADC        0x00010000  // ADC0 Reset Control.
-#define SYSCTL_SRCR0_WDT        0x00000008  // WDT Reset Control.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_RCGC0
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_RCGC0_ADC        0x00010000  // ADC0 Clock Gating Control.
-#define SYSCTL_RCGC0_WDT        0x00000008  // WDT Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_SCGC0
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_SCGC0_ADC        0x00010000  // ADC0 Clock Gating Control.
-#define SYSCTL_SCGC0_WDT        0x00000008  // WDT Clock Gating Control.
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the SYSCTL_DCGC0
-// register.
-//
-//*****************************************************************************
-#define SYSCTL_DCGC0_ADC        0x00010000  // ADC0 Clock Gating Control.
-#define SYSCTL_DCGC0_WDT        0x00000008  // WDT Clock Gating Control.
 
 #endif
 

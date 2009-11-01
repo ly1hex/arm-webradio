@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -1008,18 +1008,18 @@
 //*****************************************************************************
 #define UART_IFLS_RX_M          0x00000038  // UART Receive Interrupt FIFO
                                             // Level Select.
-#define UART_IFLS_RX1_8         0x00000000  // RX FIFO <= 1/8 full
-#define UART_IFLS_RX2_8         0x00000008  // RX FIFO <= 1/4 full
-#define UART_IFLS_RX4_8         0x00000010  // RX FIFO <= 1/2 full (default)
-#define UART_IFLS_RX6_8         0x00000018  // RX FIFO <= 3/4 full
-#define UART_IFLS_RX7_8         0x00000020  // RX FIFO <= 7/8 full
+#define UART_IFLS_RX1_8         0x00000000  // RX FIFO >= 1/8 full
+#define UART_IFLS_RX2_8         0x00000008  // RX FIFO >= 1/4 full
+#define UART_IFLS_RX4_8         0x00000010  // RX FIFO >= 1/2 full (default)
+#define UART_IFLS_RX6_8         0x00000018  // RX FIFO >= 3/4 full
+#define UART_IFLS_RX7_8         0x00000020  // RX FIFO >= 7/8 full
 #define UART_IFLS_TX_M          0x00000007  // UART Transmit Interrupt FIFO
                                             // Level Select.
-#define UART_IFLS_TX1_8         0x00000000  // TX FIFO >= 1/8 full
-#define UART_IFLS_TX2_8         0x00000001  // TX FIFO >= 1/4 full
-#define UART_IFLS_TX4_8         0x00000002  // TX FIFO >= 1/2 full (default)
-#define UART_IFLS_TX6_8         0x00000003  // TX FIFO >= 3/4 full
-#define UART_IFLS_TX7_8         0x00000004  // TX FIFO >= 7/8 full
+#define UART_IFLS_TX1_8         0x00000000  // TX FIFO <= 1/8 full
+#define UART_IFLS_TX2_8         0x00000001  // TX FIFO <= 1/4 full
+#define UART_IFLS_TX4_8         0x00000002  // TX FIFO <= 1/2 full (default)
+#define UART_IFLS_TX6_8         0x00000003  // TX FIFO <= 3/4 full
+#define UART_IFLS_TX7_8         0x00000004  // TX FIFO <= 7/8 full
 
 //*****************************************************************************
 //
@@ -2567,7 +2567,7 @@
 #define SYSCTL_DID0_VER_1       0x10000000  // Second version of the DID0
                                             // register format.
 #define SYSCTL_DID0_CLASS_M     0x00FF0000  // Device Class.
-#define SYSCTL_DID0_CLASS_FURY  0x00010000  // Stellaris(r) Fury-class devices.
+#define SYSCTL_DID0_CLASS_FURY  0x00010000  // Stellaris(R) Fury-class devices.
 #define SYSCTL_DID0_MAJ_M       0x0000FF00  // Major Revision.
 #define SYSCTL_DID0_MAJ_REVA    0x00000000  // Revision A (initial device)
 #define SYSCTL_DID0_MAJ_REVB    0x00000100  // Revision B (first base layer
@@ -2809,7 +2809,6 @@
 // The following are defines for the bit fields in the SYSCTL_RESC register.
 //
 //*****************************************************************************
-#define SYSCTL_RESC_LDO         0x00000020  // LDO Reset.
 #define SYSCTL_RESC_SW          0x00000010  // Software Reset.
 #define SYSCTL_RESC_WDT         0x00000008  // Watchdog Timer Reset.
 #define SYSCTL_RESC_BOR         0x00000004  // Brown-Out Reset.

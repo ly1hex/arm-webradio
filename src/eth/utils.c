@@ -45,10 +45,10 @@ unsigned int base64_decode(unsigned char *dst, const unsigned char *src, unsigne
       {
         buf[i++] = c-1;
       }
-      else if(*src == '=')
+      /*else if(*src == '=')
       {
         buf[i++] = 0;
-      }
+      }*/
       else
       {
         break;
@@ -318,13 +318,13 @@ unsigned long generate_id(void)
 
 
 //proto://user:password@xxx.xxx.xxx.xxx:port/file
-//proto://user:password@domain:port/file
-void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned int *port, char *file)
+//proto://user:password@host:port/file
+void atoaddr(char *s, char *proto, char *user, char *pwrd, char *host, unsigned int *port, char *file)
 {
   if(proto){ *proto = 0; }
   if(user) { *user  = 0; }
   if(pwrd) { *pwrd  = 0; }
-  if(ip)   { *ip    = 0; }
+  if(host) { *host  = 0; }
   if(port) { *port  = 0; }
   if(file) { *file++ = '/'; *file = 0; }
 
@@ -409,12 +409,16 @@ void atoaddr(char *s, char *proto, char *user, char* pwrd, IP_Addr *ip, unsigned
     s++; //skip "@"
   }
 
-  //get ip
-  if(ip)
+  //get host
+  while(*s && (*s!=':') && (*s!='/'))
   {
-    *ip = atoip(s);
+    if(host)
+    {
+      *host++ = *s;
+      *host   = 0;
+    }
+    s++;
   }
-  while(*s && (*s!=':') && (*s!='/')){ s++; }
 
   //get port
   if(*s==':')

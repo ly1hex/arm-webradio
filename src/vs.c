@@ -20,6 +20,146 @@
 
 unsigned int vs_playing=0;
 int vs_vol=0, vs_sbamp=0, vs_sbfreq=0, vs_stamp=0, vs_stfreq=0;
+VSBUFFER vs_buf;
+volatile unsigned int vs_bufhead=0, vs_buftail=0;
+
+
+void vs_requesthandler(void)
+{
+  unsigned int len, tail;
+
+  GPIOPinIntClear(GPIO_PORTA_BASE, GPIO_PIN_1);
+
+  len = vs_buflen();
+  if(len != 0)
+  {
+    if(len > 32)
+    {
+      len = 32;
+    }
+    vs_ssi_writewait(); //transmit fifo full?
+    VS_DCS_DISABLE();
+    tail = vs_buftail;
+    VS_DCS_ENABLE();
+    for(; len!=0; len--)
+    {
+      vs_ssi_write(vs_buf.b8[tail]);
+      if(++tail >= VS_BUFSIZE)
+      {
+        tail = 0;
+      }
+    }
+    vs_buftail = tail;
+  }
+  else
+  {
+    vs_pause();
+  }
+
+  return;
+}
+
+
+unsigned char vs_bufgetc(void)
+{
+  unsigned char c;
+  unsigned int head, tail;
+
+  head = vs_bufhead;
+  tail = vs_buftail;
+
+  if(head != tail)
+  {
+    c = vs_buf.b8[tail];
+    if(++tail >= VS_BUFSIZE)
+    {
+      tail = 0;
+    }
+    vs_buftail = tail;
+  }
+  else
+  {
+    c = 0;
+  }
+
+  return c;
+}
+
+
+void vs_bufputs(const unsigned char *s, unsigned int len)
+{
+  unsigned int head;
+
+  head = vs_bufhead;
+  while(len--)
+  {
+    vs_buf.b8[head] = *s++;
+    if(++head >= VS_BUFSIZE)
+    {
+      head = 0;
+    }
+  }
+  vs_bufhead = head;
+
+  return;
+}
+
+
+unsigned int vs_buffree(void)
+{
+  unsigned int head, tail;
+
+  head = vs_bufhead;
+  tail = vs_buftail;
+
+  if(head > tail)
+  {
+    return (VS_BUFSIZE-(head-tail))-1;
+  }
+  else if(head < tail)
+  {
+    return (tail-head)-1;
+  }
+
+  return (VS_BUFSIZE-1);
+}
+
+
+unsigned int vs_buflen(void)
+{
+  unsigned int head, tail;
+
+  head = vs_bufhead;
+  tail = vs_buftail;
+
+  if(head > tail)
+  {
+    return (head-tail);
+  }
+  else if(head < tail)
+  {
+    return (VS_BUFSIZE-(tail-head));
+  }
+
+  return 0;
+}
+
+
+void vs_bufsethead(unsigned int head)
+{
+  vs_bufhead = head;
+
+  return;
+}
+
+
+void vs_bufreset(void)
+{
+  vs_bufhead = 0;
+  vs_buftail = 0;
+
+  return;
+}
 
 
 int vs_gettreblefreq(void)
@@ -156,42 +296,6 @@ void vs_setvolume(int vol) //0 - 100%
 unsigned int vs_request(void)
 {
   return VS_DREQ_READ(); //1=ready, 0=buf full
-}
-
-
-void vs_requesthandler(void)
-{
-  unsigned int len, tail;
-
-  GPIOPinIntClear(GPIO_PORTA_BASE, GPIO_PIN_1);
-
-  len = vsbuf_len();
-  if(len != 0)
-  {
-    if(len > 32)
-    {
-      len = 32;
-    }
-    vs_ssi_writewait(); //transmit fifo full?
-    VS_DCS_DISABLE();
-    tail = vsbuf_tail;
-    VS_DCS_ENABLE();
-    for(; len!=0; len--)
-    {
-      vs_ssi_write(vsbuf.b8[tail++]);
-      if(tail >= VS_BUFSIZE)
-      {
-        tail = 0;
-      }
-    }
-    vsbuf_tail = tail;
-  }
-  else
-  {
-    vs_pause();
-  }
-
-  return;
 }
 
 
@@ -402,7 +506,7 @@ void vs_stopstream(void)
     VS_DCS_ENABLE();
     for(i=32; i!=0; i--)
     {
-      vs_ssi_write(vsbuf_getc());
+      vs_ssi_write(vs_bufgetc());
     }
     vs_ssi_writewait();
     VS_DCS_DISABLE();
@@ -437,7 +541,7 @@ void vs_stop(void)
   vs_setvolume(0);
   vs_stopstream();
 
-  vsbuf_reset();
+  buf_reset();
 
   return;
 }
@@ -452,7 +556,7 @@ void vs_start(void)
   vs_pause();
   vs_setvolume(vs_vol);
 
-  vsbuf_reset();
+  buf_reset();
 
   return;
 }
@@ -519,7 +623,7 @@ void vs_init(void)
   vs_playing = 0;
 
   //reset vs buffer
-  vsbuf_reset();
+  vs_bufreset();
 
   //reset vs
   vs_reset();

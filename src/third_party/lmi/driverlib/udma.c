@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1003,7 +1003,7 @@ uDMAChannelModeGet(unsigned long ulChannel)
 
 //*****************************************************************************
 //
-//! Select the secondary peripheral for a set of uDMA channels.
+//! Selects the secondary peripheral for a set of uDMA channels.
 //!
 //! \param ulSecPeriphs is the logical or of the uDMA channels for which to
 //! use the secondary peripheral, instead of the default peripheral.
@@ -1038,8 +1038,8 @@ uDMAChannelModeGet(unsigned long ulChannel)
 //! - \b UDMA_DEF_ADC03_SEC_RESERVED
 //! - \b UDMA_DEF_TMR0A_SEC_TMR1A
 //! - \b UDMA_DEF_TMR0B_SEC_TMR1B
-//! - \b UDMA_DEF_TMR1A_SEC_GPIORX
-//! - \b UDMA_DEF_TMR1B_SEC_GPIOTX
+//! - \b UDMA_DEF_TMR1A_SEC_EPI0RX
+//! - \b UDMA_DEF_TMR1B_SEC_EPI0TX
 //! - \b UDMA_DEF_UART1RX_SEC_RESERVED
 //! - \b UDMA_DEF_UART1TX_SEC_RESERVED
 //! - \b UDMA_DEF_SSI1RX_SEC_ADC10
@@ -1063,7 +1063,7 @@ uDMAChannelSelectSecondary(unsigned long ulSecPeriphs)
 
 //*****************************************************************************
 //
-//! Select the default peripheral for a set of uDMA channels.
+//! Selects the default peripheral for a set of uDMA channels.
 //!
 //! \param ulDefPeriphs is the logical or of the uDMA channels for which to
 //! use the default peripheral, instead of the secondary peripheral.
@@ -1096,8 +1096,8 @@ uDMAChannelSelectSecondary(unsigned long ulSecPeriphs)
 //! - \b UDMA_DEF_ADC03_SEC_RESERVED
 //! - \b UDMA_DEF_TMR0A_SEC_TMR1A
 //! - \b UDMA_DEF_TMR0B_SEC_TMR1B
-//! - \b UDMA_DEF_TMR1A_SEC_GPIORX
-//! - \b UDMA_DEF_TMR1B_SEC_GPIOTX
+//! - \b UDMA_DEF_TMR1A_SEC_EPI0RX
+//! - \b UDMA_DEF_TMR1B_SEC_EPI0TX
 //! - \b UDMA_DEF_UART1RX_SEC_RESERVED
 //! - \b UDMA_DEF_UART1TX_SEC_RESERVED
 //! - \b UDMA_DEF_SSI1RX_SEC_ADC10
@@ -1117,50 +1117,6 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
     // Select the default peripheral for the specified channels.
     //
     HWREG(UDMA_CHALT) &= ~ulDefPeriphs;
-}
-
-//*****************************************************************************
-//
-//! Gets the uDMA controller channel interrupt status.
-//!
-//! This function is used to get the interrupt status of the uDMA controller.
-//! The returned value is a 32-bit bit mask that indicates which channels are
-//! requesting an interrupt.  This function can be used from within an
-//! interrupt handler to determine or confirm which uDMA channel has requested
-//! an interrupt.
-//!
-//! \note This function is only available on devices that have the DMA Channel
-//! Interrupt Status Register (DMACHIS).
-//!
-//! \return Returns a 32-bit mask which indicates requesting uDMA channels.
-//! There is a bit for each channel, and a 1 in a bit indicates that channel
-//! is requesting an interrupt.  Multiple bits can be set.
-//
-//*****************************************************************************
-unsigned long
-uDMAIntStatus(void)
-{
-    return(HWREG(UDMA_CHIS));
-}
-
-//*****************************************************************************
-//
-//! Clears uDMA interrupt status.
-//!
-//! \param ulChanMask is a 32-bit mask with one bit for each uDMA channel.
-//!
-//! Clears bits in the uDMA interrupt status register according to which bits
-//! are set in \e ulChanMask.  There is one bit for each channel.  If a a bit
-//! is set in \e ulChanMask, then that corresponding channel's interrupt
-//! status will be cleared (if it was set).
-//!
-//! \return None.
-//
-//*****************************************************************************
-void
-uDMAIntClear(unsigned long ulChanMask)
-{
-    HWREG(UDMA_CHIS) = ulChanMask;
 }
 
 //*****************************************************************************

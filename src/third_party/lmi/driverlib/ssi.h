@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -98,6 +98,7 @@ extern unsigned long SSIIntStatus(unsigned long ulBase, tBoolean bMasked);
 extern void SSIIntUnregister(unsigned long ulBase);
 extern void SSIDMAEnable(unsigned long ulBase, unsigned long ulDMAFlags);
 extern void SSIDMADisable(unsigned long ulBase, unsigned long ulDMAFlags);
+extern tBoolean SSIBusy(unsigned long ulBase);
 
 //*****************************************************************************
 //

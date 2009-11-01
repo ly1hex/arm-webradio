@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -33,7 +33,7 @@
 // The following are defines for the QEI register offsets.
 //
 //*****************************************************************************
-#define QEI_O_CTL               0x00000000  // Configuration and control reg.
+#define QEI_O_CTL               0x00000000  // Configuration and control reg
 #define QEI_O_STAT              0x00000004  // Status register
 #define QEI_O_POS               0x00000008  // Current position register
 #define QEI_O_MAXPOS            0x0000000C  // Maximum position register
@@ -47,11 +47,11 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_CTL register.
+// The following are defines for the bit fields in the QEI_O_CTL register.
 //
 //*****************************************************************************
-#define QEI_CTL_FILTCNT_M       0x000F0000  // Input Filter Pre-Scale Count.
-#define QEI_CTL_FILTEN          0x00002000  // Enable Input Filter.
+#define QEI_CTL_FILTCNT_M       0x000F0000  // Input Filter Pre-Scale Count
+#define QEI_CTL_FILTEN          0x00002000  // Enable Input Filter
 #define QEI_CTL_STALLEN         0x00001000  // Stall enable
 #define QEI_CTL_INVI            0x00000800  // Invert Index input
 #define QEI_CTL_INVB            0x00000400  // Invert PhB input
@@ -75,7 +75,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_STAT register.
+// The following are defines for the bit fields in the QEI_O_STAT register.
 //
 //*****************************************************************************
 #define QEI_STAT_DIRECTION      0x00000002  // Direction of rotation
@@ -83,7 +83,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_POS register.
+// The following are defines for the bit fields in the QEI_O_POS register.
 //
 //*****************************************************************************
 #define QEI_POS_M               0xFFFFFFFF  // Current encoder position
@@ -91,7 +91,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_MAXPOS register.
+// The following are defines for the bit fields in the QEI_O_MAXPOS register.
 //
 //*****************************************************************************
 #define QEI_MAXPOS_M            0xFFFFFFFF  // Maximum encoder position
@@ -99,7 +99,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_LOAD register.
+// The following are defines for the bit fields in the QEI_O_LOAD register.
 //
 //*****************************************************************************
 #define QEI_LOAD_M              0xFFFFFFFF  // Velocity timer load value
@@ -107,7 +107,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_TIME register.
+// The following are defines for the bit fields in the QEI_O_TIME register.
 //
 //*****************************************************************************
 #define QEI_TIME_M              0xFFFFFFFF  // Velocity timer current value
@@ -115,7 +115,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_COUNT register.
+// The following are defines for the bit fields in the QEI_O_COUNT register.
 //
 //*****************************************************************************
 #define QEI_COUNT_M             0xFFFFFFFF  // Encoder running pulse count
@@ -123,7 +123,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_SPEED register.
+// The following are defines for the bit fields in the QEI_O_SPEED register.
 //
 //*****************************************************************************
 #define QEI_SPEED_M             0xFFFFFFFF  // Encoder pulse count
@@ -131,7 +131,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_INTEN register.
+// The following are defines for the bit fields in the QEI_O_INTEN register.
 //
 //*****************************************************************************
 #define QEI_INTEN_ERROR         0x00000008  // Phase error detected
@@ -141,7 +141,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the QEI_RIS register.
+// The following are defines for the bit fields in the QEI_O_RIS register.
 //
 //*****************************************************************************
 #define QEI_RIS_ERROR           0x00000008  // Phase error detected
@@ -154,11 +154,10 @@
 // The following are defines for the bit fields in the QEI_O_ISC register.
 //
 //*****************************************************************************
-#define QEI_ISC_ERROR           0x00000008  // Phase Error Interrupt.
-#define QEI_ISC_DIR             0x00000004  // Direction Change Interrupt.
-#define QEI_ISC_TIMER           0x00000002  // Velocity Timer Expired
-                                            // Interrupt.
-#define QEI_ISC_INDEX           0x00000001  // Index Pulse Interrupt.
+#define QEI_ISC_ERROR           0x00000008  // Phase Error Interrupt
+#define QEI_ISC_DIR             0x00000004  // Direction Change Interrupt
+#define QEI_ISC_TIMER           0x00000002  // Velocity Timer Expired Interrupt
+#define QEI_ISC_INDEX           0x00000001  // Index Pulse Interrupt
 
 //*****************************************************************************
 //
@@ -186,7 +185,7 @@
 //*****************************************************************************
 #define QEI_RV_POS              0x00000000  // Current position register
 #define QEI_RV_LOAD             0x00000000  // Velocity timer load register
-#define QEI_RV_CTL              0x00000000  // Configuration and control reg.
+#define QEI_RV_CTL              0x00000000  // Configuration and control reg
 #define QEI_RV_RIS              0x00000000  // Raw interrupt status register
 #define QEI_RV_ISC              0x00000000  // Interrupt status register
 #define QEI_RV_SPEED            0x00000000  // Velocity speed register

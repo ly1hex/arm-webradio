@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -670,6 +670,35 @@ SSIDMADisable(unsigned long ulBase, unsigned long ulDMAFlags)
     // Clear the requested bits in the UART DMA control register.
     //
     HWREG(ulBase + SSI_O_DMACTL) &= ~ulDMAFlags;
+}
+
+//*****************************************************************************
+//
+//! Determines whether the SSI transmitter is busy or not.
+//!
+//! \param ulBase is the base address of the SSI port.
+//!
+//! Allows the caller to determine whether all transmitted bytes have cleared
+//! the transmitter hardware.  If \b false is returned, then transmit FIFO is
+//! empty and all bits of the last transmitted word have left the hardware
+//! shift register.
+//!
+//! \return Returns \b true if the SSI is transmitting or \b false if all
+//! transmissions are complete.
+//
+//*****************************************************************************
+tBoolean
+SSIBusy(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == SSI0_BASE) || (ulBase == SSI1_BASE));
+
+    //
+    // Determine if the SSI is busy.
+    //
+    return((HWREG(ulBase + SSI_O_SR) & SSI_SR_BSY) ? true : false);
 }
 
 //*****************************************************************************

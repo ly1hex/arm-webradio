@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -44,11 +44,66 @@
 
 //*****************************************************************************
 //
-// The following are defines for the bit fields in the WDT_CTL register.
+// The following are defines for the bit fields in the WDT_O_LOAD register.
+//
+//*****************************************************************************
+#define WDT_LOAD_M              0xFFFFFFFF  // Watchdog Load Value
+#define WDT_LOAD_S              0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_VALUE register.
+//
+//*****************************************************************************
+#define WDT_VALUE_M             0xFFFFFFFF  // Watchdog Value
+#define WDT_VALUE_S             0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_CTL register.
 //
 //*****************************************************************************
 #define WDT_CTL_RESEN           0x00000002  // Enable reset output
 #define WDT_CTL_INTEN           0x00000001  // Enable the WDT counter and int
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_ICR register.
+//
+//*****************************************************************************
+#define WDT_ICR_M               0xFFFFFFFF  // Watchdog Interrupt Clear
+#define WDT_ICR_S               0
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_RIS register.
+//
+//*****************************************************************************
+#define WDT_RIS_WDTRIS          0x00000001  // Watchdog Raw Interrupt Status
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_MIS register.
+//
+//*****************************************************************************
+#define WDT_MIS_WDTMIS          0x00000001  // Watchdog Masked Interrupt Status
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_TEST register.
+//
+//*****************************************************************************
+#define WDT_TEST_STALL          0x00000100  // Watchdog stall enable
+
+//*****************************************************************************
+//
+// The following are defines for the bit fields in the WDT_O_LOCK register.
+//
+//*****************************************************************************
+#define WDT_LOCK_M              0xFFFFFFFF  // Watchdog Lock
+#define WDT_LOCK_UNLOCKED       0x00000000  // Watchdog timer is unlocked
+#define WDT_LOCK_LOCKED         0x00000001  // Watchdog timer is locked
+#define WDT_LOCK_UNLOCK         0x1ACCE551  // Unlocks the watchdog timer
 
 //*****************************************************************************
 //
@@ -57,62 +112,6 @@
 //
 //*****************************************************************************
 #define WDT_INT_TIMEOUT         0x00000001  // Watchdog timer expired
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_TEST register.
-//
-//*****************************************************************************
-#define WDT_TEST_STALL          0x00000100  // Watchdog stall enable
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_LOCK register.
-//
-//*****************************************************************************
-#define WDT_LOCK_M              0xFFFFFFFF  // Watchdog Lock.
-#define WDT_LOCK_UNLOCK         0x1ACCE551  // Unlocks the watchdog timer
-#define WDT_LOCK_LOCKED         0x00000001  // Watchdog timer is locked
-#define WDT_LOCK_UNLOCKED       0x00000000  // Watchdog timer is unlocked
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_O_LOAD register.
-//
-//*****************************************************************************
-#define WDT_LOAD_M              0xFFFFFFFF  // Watchdog Load Value.
-#define WDT_LOAD_S              0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_O_VALUE register.
-//
-//*****************************************************************************
-#define WDT_VALUE_M             0xFFFFFFFF  // Watchdog Value.
-#define WDT_VALUE_S             0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_O_ICR register.
-//
-//*****************************************************************************
-#define WDT_ICR_M               0xFFFFFFFF  // Watchdog Interrupt Clear.
-#define WDT_ICR_S               0
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_O_RIS register.
-//
-//*****************************************************************************
-#define WDT_RIS_WDTRIS          0x00000001  // Watchdog Raw Interrupt Status.
-
-//*****************************************************************************
-//
-// The following are defines for the bit fields in the WDT_O_MIS register.
-//
-//*****************************************************************************
-#define WDT_MIS_WDTMIS          0x00000001  // Watchdog Masked Interrupt
-                                            // Status.
 
 //*****************************************************************************
 //
@@ -142,7 +141,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the bit fields in the WDT_TEST
+// The following are deprecated defines for the bit fields in the WDT_O_TEST
 // register.
 //
 //*****************************************************************************

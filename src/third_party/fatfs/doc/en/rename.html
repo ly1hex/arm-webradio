@@ -15,8 +15,8 @@
 <p>Rename file or directory.</p>
 <pre>
 FRESULT f_rename (
-  const char* <em>OldName</em>, /* Pointer to old file/directory name */
-  const char* <em>NewName</em>  /* Pointer to new file/directory name */
+  const XCHAR* <em>OldName</em>, /* Pointer to old file/directory name */
+  const XCHAR* <em>NewName</em>  /* Pointer to new file/directory name */
 );
 </pre>
 </div>
@@ -27,7 +27,7 @@ FRESULT f_rename (
 <dt>OldName</dt>
 <dd>Pointer to a null-terminated string specifies the old <a href="filename.html">file/directory name</a> to be renamed.</dd>
 <dt>NewName</dt>
-<dd>Pointer to a null-terminated string specifies the new file/directory name without drive number. Existing object nannot be specified.</dd>
+<dd>Pointer to a null-terminated string specifies the new file/directory name without drive number.</dd>
 </dl>
 </div>
 
@@ -48,7 +48,7 @@ FRESULT f_rename (
 <dt>FR_NOT_READY</dt>
 <dd>The disk drive cannot work due to no medium in the drive or any other reason.</dd>
 <dt>FR_EXIST</dt>
-<dd>There is an object that have a name equal to new name.</dd>
+<dd>The new name is colliding with an existing name.</dd>
 <dt>FR_DENIED</dt>
 <dd>The new name could not be created due to any reason.</dd>
 <dt>FR_WRITE_PROTECTED</dt>
@@ -60,14 +60,20 @@ FRESULT f_rename (
 <dt>FR_NOT_ENABLED</dt>
 <dd>The logical drive has no work area.</dd>
 <dt>FR_NO_FILESYSTEM</dt>
-<dd>There is no valid FAT partition on the disk.</dd>
+<dd>There is no valid FAT volume on the disk.</dd>
 </dl>
 </div>
 
 
 <div class="para">
 <h4>Description</h4>
-<p>Rename a file or directory and can move it to other directory. Logical drive number is determined by old name, new name must not contain logical drive number. This function is not supported in read-only configuration or minimization level of &gt;= 1.</p>
+<p>Rename a file or directory and can move it to other directory. Logical drive number is determined by old name, new name must not contain logical drive number.</p>
+</div>
+
+
+<div class="para">
+<h4>QuickInfo</h4>
+<p>Available when <tt>_FS_READONLY == 0</tt> and <tt>_FS_MINIMIZE == 0</tt>.</p>
 </div>
 
 

@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -58,16 +58,26 @@ extern "C"
 // I2C Master commands.
 //
 //*****************************************************************************
-#define I2C_MASTER_CMD_SINGLE_SEND              0x00000007
-#define I2C_MASTER_CMD_SINGLE_RECEIVE           0x00000007
-#define I2C_MASTER_CMD_BURST_SEND_START         0x00000003
-#define I2C_MASTER_CMD_BURST_SEND_CONT          0x00000001
-#define I2C_MASTER_CMD_BURST_SEND_FINISH        0x00000005
-#define I2C_MASTER_CMD_BURST_SEND_ERROR_STOP    0x00000004
-#define I2C_MASTER_CMD_BURST_RECEIVE_START      0x0000000b
-#define I2C_MASTER_CMD_BURST_RECEIVE_CONT       0x00000009
-#define I2C_MASTER_CMD_BURST_RECEIVE_FINISH     0x00000005
-#define I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP 0x00000005
+#define I2C_MASTER_CMD_SINGLE_SEND                                            \
+                                0x00000007
+#define I2C_MASTER_CMD_SINGLE_RECEIVE                                         \
+                                0x00000007
+#define I2C_MASTER_CMD_BURST_SEND_START                                       \
+                                0x00000003
+#define I2C_MASTER_CMD_BURST_SEND_CONT                                        \
+                                0x00000001
+#define I2C_MASTER_CMD_BURST_SEND_FINISH                                      \
+                                0x00000005
+#define I2C_MASTER_CMD_BURST_SEND_ERROR_STOP                                  \
+                                0x00000004
+#define I2C_MASTER_CMD_BURST_RECEIVE_START                                    \
+                                0x0000000b
+#define I2C_MASTER_CMD_BURST_RECEIVE_CONT                                     \
+                                0x00000009
+#define I2C_MASTER_CMD_BURST_RECEIVE_FINISH                                   \
+                                0x00000005
+#define I2C_MASTER_CMD_BURST_RECEIVE_ERROR_STOP                               \
+                                0x00000004
 
 //*****************************************************************************
 //
