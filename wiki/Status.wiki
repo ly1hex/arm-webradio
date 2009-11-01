@@ -5,7 +5,7 @@
 || IR Receiver (RC5)                 || working ||
 || SD-Card                           || working ||
 || VS1033c/VS1033d/VS1053b           || working ||
-|| F-RAM (currently not needed)      || -       ||
+|| F-RAM (FM25Vxx)                   || working ||
 || *Ethernet Stack* ||
 || Protocols                         || ARP, IP, IP-MultiCast, ICMP, TCP, UDP ||
 || DHCP Client                       || working ||
