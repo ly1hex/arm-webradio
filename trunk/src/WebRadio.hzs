@@ -1,16 +1,7 @@
 <!DOCTYPE CrossStudio_for_ARM_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints>
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="BusFault" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="ExceptionEntryReturnFault" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="HardFault" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="MemManage" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="3" counter="0" expression="Reset" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_CheckingError" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_Coprocessor" />
-  <BreakpointListItem group="CM3 Exceptions" type="Exception" state="2" counter="0" expression="UsageFault_StateError" />
- </Breakpoints>
+ <Breakpoints/>
  <ExecutionCountWindow/>
  <Memory1>
   <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
@@ -28,8 +19,6 @@
   <ProjectSessionItem path="WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio;Source Files" name="unnamed" />
-  <ProjectSessionItem path="WebRadio;WebRadio;Source Files;third_party" name="unnamed" />
-  <ProjectSessionItem path="WebRadio;WebRadio;Source Files;third_party;fatfs" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -60,9 +49,7 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\readme.txt" y="39" path="D:\projects\WebRadio\svn\trunk\src\readme.txt" left="0" selected="0" name="unnamed" top="3" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\main.c" y="0" path="D:\projects\WebRadio\svn\trunk\src\main.c" left="0" selected="1" name="unnamed" top="0" />
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="2" debugPath="D:\projects\WebRadio\svn\trunk\src\main.h" y="6" path="D:\projects\WebRadio\svn\trunk\src\main.h" left="0" selected="0" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\readme.txt" y="0" path="D:\projects\WebRadio\svn\trunk\src\readme.txt" left="0" selected="1" name="unnamed" top="0" />
  </Files>
  <ARMCrossStudioWindow activeProject="WebRadio" autoConnectTarget="USB CrossConnect for ARM" debugSearchFileMap="" fileDialogInitialDirectory="D:\projects\WebRadio\svn\trunk\src\third_party\fatfs" fileDialogDefaultFilter="*" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>
