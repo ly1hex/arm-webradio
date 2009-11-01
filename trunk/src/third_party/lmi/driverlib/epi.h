@@ -2,7 +2,7 @@
 //
 // epi.h - Prototypes and macros for the EPI module.
 //
-// Copyright (c) 2008-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2009 Luminary Micro, Inc.  All rights reserved.
 // Software License Agreement
 // 
 // Luminary Micro, Inc. (LMI) is supplying this software for use solely and
@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -44,7 +44,7 @@ extern "C"
 // Values that can be passed to EPIModeSet()
 //
 //*****************************************************************************
-#define EPI_MODE_NONE                   0x00000010
+#define EPI_MODE_GENERAL                0x00000010
 #define EPI_MODE_SDRAM                  0x00000011
 #define EPI_MODE_HB8                    0x00000012
 #define EPI_MODE_DISABLE                0x00000000
@@ -64,29 +64,30 @@ extern "C"
 #define EPI_SDRAM_SIZE_128MBIT          0x00000001
 #define EPI_SDRAM_SIZE_256MBIT          0x00000002
 #define EPI_SDRAM_SIZE_512MBIT          0x00000003
+#define EPI_SDRAM_READ_CAPTURE          0x00010000
 
 //*****************************************************************************
 //
-// Values that can be passed to EPIConfigNoModeSet()
+// Values that can be passed to EPIConfigGPModeSet()
 //
 //*****************************************************************************
-#define EPI_NONMODE_CLKPIN              0x80000000
-#define EPI_NONMODE_CLKSTOP             0x40000000
-#define EPI_NONMODE_CLKENA              0x10000000
-#define EPI_NONMODE_FRAMEPIN            0x08000000
-#define EPI_NONMODE_FRAME50             0x04000000
-#define EPI_NONMODE_READWRITE           0x00200000
-#define EPI_NONMODE_WRITE2CYCLE         0x00080000
-#define EPI_NONMODE_READ2CYCLE          0x00040000
-#define EPI_NONMODE_ASIZE_NONE          0x00000000
-#define EPI_NONMODE_ASIZE_4             0x00000010
-#define EPI_NONMODE_ASIZE_12            0x00000020
-#define EPI_NONMODE_ASIZE_20            0x00000030
-#define EPI_NONMODE_DSIZE_8             0x00000000
-#define EPI_NONMODE_DSIZE_16            0x00000001
-#define EPI_NONMODE_DSIZE_24            0x00000002
-#define EPI_NONMODE_DSIZE_32            0x00000003
-#define EPI_NONMODE_WORD_ACCESS         0x00000100
+#define EPI_GPMODE_CLKPIN               0x80000000
+#define EPI_GPMODE_CLKGATE              0x40000000
+#define EPI_GPMODE_RDYEN                0x10000000
+#define EPI_GPMODE_FRAMEPIN             0x08000000
+#define EPI_GPMODE_FRAME50              0x04000000
+#define EPI_GPMODE_READWRITE            0x00200000
+#define EPI_GPMODE_WRITE2CYCLE          0x00080000
+#define EPI_GPMODE_READ2CYCLE           0x00040000
+#define EPI_GPMODE_ASIZE_NONE           0x00000000
+#define EPI_GPMODE_ASIZE_4              0x00000010
+#define EPI_GPMODE_ASIZE_12             0x00000020
+#define EPI_GPMODE_ASIZE_20             0x00000030
+#define EPI_GPMODE_DSIZE_8              0x00000000
+#define EPI_GPMODE_DSIZE_16             0x00000001
+#define EPI_GPMODE_DSIZE_24             0x00000002
+#define EPI_GPMODE_DSIZE_32             0x00000003
+#define EPI_GPMODE_WORD_ACCESS          0x00000100
 
 //*****************************************************************************
 //
@@ -110,7 +111,13 @@ extern "C"
 #define EPI_HB8_MODE_SRAM               0x00000002
 #define EPI_HB8_MODE_FIFO               0x00000003
 #define EPI_HB8_WORD_ACCESS             0x00000100
+#define EPI_HB8_CSCFG_ALE               0x00000000
 #define EPI_HB8_CSCFG_CS                0x00000200
+#define EPI_HB8_CSCFG_DUAL_CS           0x00000400
+#define EPI_HB8_CSCFG_ALE_DUAL_CS       0x00000600
+#define EPI_HB8_CSBAUD_DUAL             0x00000800
+
+#define EPI_HB8_CSCFG_MASK              0x00000600
 
 //*****************************************************************************
 //
@@ -120,14 +127,14 @@ extern "C"
 #define EPI_ADDR_PER_SIZE_256B          0x00000000
 #define EPI_ADDR_PER_SIZE_64KB          0x00000040
 #define EPI_ADDR_PER_SIZE_16MB          0x00000080
-#define EPI_ADDR_PER_SIZE_512MB         0x000000C0
+#define EPI_ADDR_PER_SIZE_256MB         0x000000C0
 #define EPI_ADDR_PER_BASE_NONE          0x00000000
 #define EPI_ADDR_PER_BASE_A             0x00000010
 #define EPI_ADDR_PER_BASE_C             0x00000020
 #define EPI_ADDR_RAM_SIZE_256B          0x00000000
 #define EPI_ADDR_RAM_SIZE_64KB          0x00000004
 #define EPI_ADDR_RAM_SIZE_16MB          0x00000008
-#define EPI_ADDR_RAM_SIZE_512MB         0x0000000C
+#define EPI_ADDR_RAM_SIZE_256MB         0x0000000C
 #define EPI_ADDR_RAM_BASE_NONE          0x00000000
 #define EPI_ADDR_RAM_BASE_6             0x00000001
 #define EPI_ADDR_RAM_BASE_8             0x00000002
@@ -188,7 +195,7 @@ void EPIModeSet(unsigned long ulBase, unsigned long ulMode);
 void EPIDividerSet(unsigned long ulBase, unsigned long ulDivider);
 void EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
                        unsigned long ulRefresh);
-void EPIConfigNoModeSet(unsigned long ulBase, unsigned long ulConfig,
+void EPIConfigGPModeSet(unsigned long ulBase, unsigned long ulConfig,
                         unsigned long ulFrameCount, unsigned long ulMaxWait);
 void EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
                      unsigned long ulMaxWait);
@@ -211,7 +218,7 @@ unsigned long EPINonBlockingReadGet8(unsigned long ulBase,
                                      unsigned long ulCount,
                                      unsigned char *pucBuf);
 void EPIFIFOConfig(unsigned long ulBase, unsigned long ulConfig);
-unsigned long EPINonBlockingWriteCount(unsigned long ulBase);
+unsigned long EPIWriteFIFOCountGet(unsigned long ulBase);
 void EPIIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
 void EPIIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
 unsigned long EPIIntStatus(unsigned long ulBase, tBoolean bMasked);
@@ -219,6 +226,36 @@ unsigned long EPIIntErrorStatus(unsigned long ulBase);
 void EPIIntErrorClear(unsigned long ulBase, unsigned long ulErrFlags);
 void EPIIntRegister(unsigned long ulBase, void (*pfnHandler)(void));
 void EPIIntUnregister(unsigned long ulBase);
+
+//*****************************************************************************
+//
+// Several EPI APIs and labels have been renamed, with the original definition
+// name being deprecated.  These defines provide backward compatibility.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+#define EPI_MODE_NONE           EPI_MODE_GENERAL
+#define EPI_NONMODE_CLKPIN      EPI_GPMODE_CLKPIN
+#define EPI_NONMODE_CLKSTOP     EPI_GPMODE_CLKGATE
+#define EPI_NONMODE_CLKENA      EPI_GPMODE_RDYEN
+#define EPI_NONMODE_FRAMEPIN    EPI_GPMODE_FRAMEPIN
+#define EPI_NONMODE_FRAME50     EPI_GPMODE_FRAME50
+#define EPI_NONMODE_READWRITE   EPI_GPMODE_READWRITE
+#define EPI_NONMODE_WRITE2CYCLE EPI_GPMODE_WRITE2CYCLE
+#define EPI_NONMODE_READ2CYCLE  EPI_GPMODE_READ2CYCLE
+#define EPI_NONMODE_ASIZE_NONE  EPI_GPMODE_ASIZE_NONE
+#define EPI_NONMODE_ASIZE_4     EPI_GPMODE_ASIZE_4
+#define EPI_NONMODE_ASIZE_12    EPI_GPMODE_ASIZE_12
+#define EPI_NONMODE_ASIZE_20    EPI_GPMODE_ASIZE_20
+#define EPI_NONMODE_DSIZE_8     EPI_GPMODE_DSIZE_8
+#define EPI_NONMODE_DSIZE_16    EPI_GPMODE_DSIZE_16
+#define EPI_NONMODE_DSIZE_24    EPI_GPMODE_DSIZE_24
+#define EPI_NONMODE_DSIZE_32    EPI_GPMODE_DSIZE_32
+#define EPI_NONMODE_WORD_ACCESS EPI_GPMODE_WORD_ACCESS
+
+#define EPINonBlockingWriteCount(a) EPIWriteFIFOCountGet(a)
+#define EPIConfigNoModeSet(a, b, c, d) EPIConfigGPModeSet((a), (b), (c), (d))
+#endif
 
 //*****************************************************************************
 //

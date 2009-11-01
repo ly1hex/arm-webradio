@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -31,7 +31,7 @@
 //*****************************************************************************
 //
 // The following are defines for the Inter-Integrated Circuit Sound (I2S)
-// Interface
+// Interface.
 //
 //*****************************************************************************
 #define I2S_O_TXFIFO            0x00000000  // I2S Transmit FIFO Data
@@ -60,7 +60,7 @@
 // The following are defines for the bit fields in the I2S_O_TXFIFO register.
 //
 //*****************************************************************************
-#define I2S_TXFIFO_M            0xFFFFFFFF  // TX Data.
+#define I2S_TXFIFO_M            0xFFFFFFFF  // TX Data
 #define I2S_TXFIFO_S            0
 
 //*****************************************************************************
@@ -69,26 +69,26 @@
 // register.
 //
 //*****************************************************************************
-#define I2S_TXFIFOCFG_CSS       0x00000002  // Compact Stereo Sample Size.
-#define I2S_TXFIFOCFG_LRS       0x00000001  // Left-Right Sample Indicator.
+#define I2S_TXFIFOCFG_CSS       0x00000002  // Compact Stereo Sample Size
+#define I2S_TXFIFOCFG_LRS       0x00000001  // Left-Right Sample Indicator
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_TXCFG register.
 //
 //*****************************************************************************
-#define I2S_TXCFG_JST           0x20000000  // Justification of Output Data.
-#define I2S_TXCFG_DLY           0x10000000  // Data Delay.
-#define I2S_TXCFG_SCP           0x08000000  // SCLK Polarity.
-#define I2S_TXCFG_LRP           0x04000000  // Left/Right Clock Polarity.
-#define I2S_TXCFG_WM_M          0x03000000  // Write Mode.
+#define I2S_TXCFG_JST           0x20000000  // Justification of Output Data
+#define I2S_TXCFG_DLY           0x10000000  // Data Delay
+#define I2S_TXCFG_SCP           0x08000000  // SCLK Polarity
+#define I2S_TXCFG_LRP           0x04000000  // Left/Right Clock Polarity
+#define I2S_TXCFG_WM_M          0x03000000  // Write Mode
 #define I2S_TXCFG_WM_DUAL       0x00000000  // Stereo mode
 #define I2S_TXCFG_WM_COMPACT    0x01000000  // Compact Stereo mode
 #define I2S_TXCFG_WM_MONO       0x02000000  // Mono mode
-#define I2S_TXCFG_FMT           0x00800000  // FIFO Empty.
-#define I2S_TXCFG_MSL           0x00400000  // SCLK Master/Slave.
-#define I2S_TXCFG_SSZ_M         0x0000FC00  // Sample Size.
-#define I2S_TXCFG_SDSZ_M        0x000003F0  // System Data Size.
+#define I2S_TXCFG_FMT           0x00800000  // FIFO Empty
+#define I2S_TXCFG_MSL           0x00400000  // SCLK Master/Slave
+#define I2S_TXCFG_SSZ_M         0x0000FC00  // Sample Size
+#define I2S_TXCFG_SDSZ_M        0x000003F0  // System Data Size
 #define I2S_TXCFG_SSZ_S         10
 #define I2S_TXCFG_SDSZ_S        4
 
@@ -97,7 +97,7 @@
 // The following are defines for the bit fields in the I2S_O_TXLIMIT register.
 //
 //*****************************************************************************
-#define I2S_TXLIMIT_LIMIT_M     0x0000001F  // FIFO Limit.
+#define I2S_TXLIMIT_LIMIT_M     0x0000001F  // FIFO Limit
 #define I2S_TXLIMIT_LIMIT_S     0
 
 //*****************************************************************************
@@ -106,15 +106,15 @@
 //
 //*****************************************************************************
 #define I2S_TXISM_FFI           0x00010000  // Transmit FIFO Service Request
-                                            // Interrupt.
-#define I2S_TXISM_FFM           0x00000001  // FIFO Interrupt Mask.
+                                            // Interrupt
+#define I2S_TXISM_FFM           0x00000001  // FIFO Interrupt Mask
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_TXLEV register.
 //
 //*****************************************************************************
-#define I2S_TXLEV_LEVEL_M       0x0000001F  // Number of Audio Samples.
+#define I2S_TXLEV_LEVEL_M       0x0000001F  // Number of Audio Samples
 #define I2S_TXLEV_LEVEL_S       0
 
 //*****************************************************************************
@@ -122,7 +122,7 @@
 // The following are defines for the bit fields in the I2S_O_RXFIFO register.
 //
 //*****************************************************************************
-#define I2S_RXFIFO_M            0xFFFFFFFF  // RX Data.
+#define I2S_RXFIFO_M            0xFFFFFFFF  // RX Data
 #define I2S_RXFIFO_S            0
 
 //*****************************************************************************
@@ -131,23 +131,23 @@
 // register.
 //
 //*****************************************************************************
-#define I2S_RXFIFOCFG_FMM       0x00000004  // FIFO Mono Mode.
-#define I2S_RXFIFOCFG_CSS       0x00000002  // Compact Stereo Sample Size.
-#define I2S_RXFIFOCFG_LRS       0x00000001  // Left-Right Sample Indicator.
+#define I2S_RXFIFOCFG_FMM       0x00000004  // FIFO Mono Mode
+#define I2S_RXFIFOCFG_CSS       0x00000002  // Compact Stereo Sample Size
+#define I2S_RXFIFOCFG_LRS       0x00000001  // Left-Right Sample Indicator
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_RXCFG register.
 //
 //*****************************************************************************
-#define I2S_RXCFG_JST           0x20000000  // Justification of Input Data.
-#define I2S_RXCFG_DLY           0x10000000  // Data Delay.
-#define I2S_RXCFG_SCP           0x08000000  // SCLK Polarity.
-#define I2S_RXCFG_LRP           0x04000000  // Left/Right Clock Polarity.
-#define I2S_RXCFG_RM            0x01000000  // Read Mode.
-#define I2S_RXCFG_MSL           0x00400000  // SCLK Master/Slave.
-#define I2S_RXCFG_SSZ_M         0x0000FC00  // Sample Size.
-#define I2S_RXCFG_SDSZ_M        0x000003F0  // System Data Size.
+#define I2S_RXCFG_JST           0x20000000  // Justification of Input Data
+#define I2S_RXCFG_DLY           0x10000000  // Data Delay
+#define I2S_RXCFG_SCP           0x08000000  // SCLK Polarity
+#define I2S_RXCFG_LRP           0x04000000  // Left/Right Clock Polarity
+#define I2S_RXCFG_RM            0x01000000  // Read Mode
+#define I2S_RXCFG_MSL           0x00400000  // SCLK Master/Slave
+#define I2S_RXCFG_SSZ_M         0x0000FC00  // Sample Size
+#define I2S_RXCFG_SDSZ_M        0x000003F0  // System Data Size
 #define I2S_RXCFG_SSZ_S         10
 #define I2S_RXCFG_SDSZ_S        4
 
@@ -156,7 +156,7 @@
 // The following are defines for the bit fields in the I2S_O_RXLIMIT register.
 //
 //*****************************************************************************
-#define I2S_RXLIMIT_LIMIT_M     0x0000001F  // FIFO Limit.
+#define I2S_RXLIMIT_LIMIT_M     0x0000001F  // FIFO Limit
 #define I2S_RXLIMIT_LIMIT_S     0
 
 //*****************************************************************************
@@ -165,15 +165,15 @@
 //
 //*****************************************************************************
 #define I2S_RXISM_FFI           0x00010000  // Receive FIFO Service Request
-                                            // Interrupt.
-#define I2S_RXISM_FFM           0x00000001  // FIFO Interrupt Mask.
+                                            // Interrupt
+#define I2S_RXISM_FFM           0x00000001  // FIFO Interrupt Mask
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_RXLEV register.
 //
 //*****************************************************************************
-#define I2S_RXLEV_LEVEL_M       0x0000001F  // Number of Audio Samples.
+#define I2S_RXLEV_LEVEL_M       0x0000001F  // Number of Audio Samples
 #define I2S_RXLEV_LEVEL_S       0
 
 //*****************************************************************************
@@ -184,50 +184,50 @@
 #define I2S_CFG_RXSLV           0x00000020  // When clear, this bit configures
                                             // the receiver to use the
                                             // externally driven I2S0RXMCLK
-                                            // signal.
+                                            // signal
 #define I2S_CFG_TXSLV           0x00000010  // When clear, this bit configures
                                             // the transmitter to use the
                                             // externally driven I2S0TXMCLK
-                                            // signal.
-#define I2S_CFG_RXEN            0x00000002  // Serial Receive Engine Enable.
-#define I2S_CFG_TXEN            0x00000001  // Serial Transmit Engine Enable.
+                                            // signal
+#define I2S_CFG_RXEN            0x00000002  // Serial Receive Engine Enable
+#define I2S_CFG_TXEN            0x00000001  // Serial Transmit Engine Enable
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_IM register.
 //
 //*****************************************************************************
-#define I2S_IM_RXRE             0x00000020  // Receive FIFO Read Error.
-#define I2S_IM_RXFSR            0x00000010  // Receive FIFO Service Request.
-#define I2S_IM_TXWE             0x00000002  // Transmit FIFO Write Error.
-#define I2S_IM_TXFSR            0x00000001  // Transmit FIFO Service Request.
+#define I2S_IM_RXRE             0x00000020  // Receive FIFO Read Error
+#define I2S_IM_RXFSR            0x00000010  // Receive FIFO Service Request
+#define I2S_IM_TXWE             0x00000002  // Transmit FIFO Write Error
+#define I2S_IM_TXFSR            0x00000001  // Transmit FIFO Service Request
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_RIS register.
 //
 //*****************************************************************************
-#define I2S_RIS_RXRE            0x00000020  // Receive FIFO Read Error.
-#define I2S_RIS_RXFSR           0x00000010  // Receive FIFO Service Request.
-#define I2S_RIS_TXWE            0x00000002  // Transmit FIFO Write Error.
-#define I2S_RIS_TXFSR           0x00000001  // Transmit FIFO Service Request.
+#define I2S_RIS_RXRE            0x00000020  // Receive FIFO Read Error
+#define I2S_RIS_RXFSR           0x00000010  // Receive FIFO Service Request
+#define I2S_RIS_TXWE            0x00000002  // Transmit FIFO Write Error
+#define I2S_RIS_TXFSR           0x00000001  // Transmit FIFO Service Request
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_MIS register.
 //
 //*****************************************************************************
-#define I2S_MIS_RXRE            0x00000020  // Receive FIFO Read Error.
-#define I2S_MIS_RXFSR           0x00000010  // Receive FIFO Service Request.
-#define I2S_MIS_TXWE            0x00000002  // Transmit FIFO Write Error.
-#define I2S_MIS_TXFSR           0x00000001  // Transmit FIFO Service Request.
+#define I2S_MIS_RXRE            0x00000020  // Receive FIFO Read Error
+#define I2S_MIS_RXFSR           0x00000010  // Receive FIFO Service Request
+#define I2S_MIS_TXWE            0x00000002  // Transmit FIFO Write Error
+#define I2S_MIS_TXFSR           0x00000001  // Transmit FIFO Service Request
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the I2S_O_IC register.
 //
 //*****************************************************************************
-#define I2S_IC_RXRE             0x00000020  // Receive FIFO Read Error.
-#define I2S_IC_TXWE             0x00000002  // Transmit FIFO Write Error.
+#define I2S_IC_RXRE             0x00000020  // Receive FIFO Read Error
+#define I2S_IC_TXWE             0x00000002  // Transmit FIFO Write Error
 
 #endif // __HW_I2S_H__

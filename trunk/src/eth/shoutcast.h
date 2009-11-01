@@ -9,16 +9,16 @@
 #define SHOUTCAST_CLIENTPORT3          (1003)
 
 #define SHOUTCAST_TIMEOUT              (10) //s
-
 #define SHOUTCAST_TRY                  (3)  //times
 
 #define SHOUTCAST_CLOSED               (0)
 #define SHOUTCAST_CLOSE                (1)
 #define SHOUTCAST_OPENED               (2)
-#define SHOUTCAST_ERROR                (3)
-#define SHOUTCAST_SERVERFULL           (4)
-#define SHOUTCAST_HEADER               (5)
-#define SHOUTCAST_OPEN                 (6)
+#define SHOUTCAST_HEADER               (3)
+#define SHOUTCAST_OPEN                 (4)
+#define SHOUTCAST_ERROR                (5)
+#define SHOUTCAST_ADDRMOVED            (6)
+#define SHOUTCAST_SERVERFULL           (7)
 
 
 //----- PROTOTYPES -----

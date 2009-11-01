@@ -32,6 +32,7 @@
 #include "eth.h"
 #include "eth/ntp.h"
 #include "eth/ssdp.h"
+#include "buffer.h"
 #include "menu.h"
 #include "alarm.h"
 #include "settings.h"
@@ -555,7 +556,7 @@ int main()
     }
   }
 
-  i = 60; //msg y start
+  i = 58; //msg y start
 
   //init mmc & mount filesystem
   lcd_puts(10,  i, "Init Memory Card...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
@@ -563,9 +564,12 @@ int main()
 
   //init fram
   lcd_puts(10,  i, "Init F-RAM...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  if(fm_init())
+  l = fm_init();
+  if(l)
   {
-    lcd_puts(10,  i, "Init F-RAM...found", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+    char tmp[8];
+    sprintf(tmp, "%ikb", (unsigned int)(unsigned long)(l/1024UL));
+    lcd_puts(120,  i, tmp, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   }
   i += 10;
 
@@ -604,27 +608,26 @@ int main()
   {
     eth_service();
 
-    if(!ethernet_data())
+    i = status;
+    status &= ~i;
+
+#if defined(DEBUG)
+    if(i & SEC_CHANGED)
     {
-      i = status;
-      status &= ~i;
-      if(i & MIN_CHANGED)
+      DEBUGOUT("buf: %i / rx %i\n", buf_free(), eth_rxfree());
+    }
+#endif
+    if(i & MIN_CHANGED)
+    {
+      if(i & DAY_CHANGED)
       {
-        if(i & DAY_CHANGED)
-        {
-          settime(sec_time);
-        }
-        if(alarm_check(&time))
-        {
-          DEBUGOUT("Ready...\n");
-          menu_alarm();
-        }
+        settime(sec_time);
       }
-      menu_service(i);
+      if(alarm_check(&time))
+      {
+        menu_alarm();
+      }
     }
-    else
-    {
-      menu_service(0);
-    }
+    menu_service(i);
   }
 }

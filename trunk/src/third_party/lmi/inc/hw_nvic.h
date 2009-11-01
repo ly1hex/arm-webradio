@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Firmware Development Package.
+// This is part of revision 5228 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -33,19 +33,19 @@
 // The following are defines for the NVIC register addresses.
 //
 //*****************************************************************************
-#define NVIC_INT_TYPE           0xE000E004  // Interrupt Controller Type Reg.
-#define NVIC_ST_CTRL            0xE000E010  // SysTick Control and Status Reg.
+#define NVIC_INT_TYPE           0xE000E004  // Interrupt Controller Type Reg
+#define NVIC_ST_CTRL            0xE000E010  // SysTick Control and Status Reg
 #define NVIC_ST_RELOAD          0xE000E014  // SysTick Reload Value Register
 #define NVIC_ST_CURRENT         0xE000E018  // SysTick Current Value Register
-#define NVIC_ST_CAL             0xE000E01C  // SysTick Calibration Value Reg.
+#define NVIC_ST_CAL             0xE000E01C  // SysTick Calibration Value Reg
 #define NVIC_EN0                0xE000E100  // IRQ 0 to 31 Set Enable Register
 #define NVIC_EN1                0xE000E104  // IRQ 32 to 63 Set Enable Register
-#define NVIC_DIS0               0xE000E180  // IRQ 0 to 31 Clear Enable Reg.
-#define NVIC_DIS1               0xE000E184  // IRQ 32 to 63 Clear Enable Reg.
+#define NVIC_DIS0               0xE000E180  // IRQ 0 to 31 Clear Enable Reg
+#define NVIC_DIS1               0xE000E184  // IRQ 32 to 63 Clear Enable Reg
 #define NVIC_PEND0              0xE000E200  // IRQ 0 to 31 Set Pending Register
-#define NVIC_PEND1              0xE000E204  // IRQ 32 to 63 Set Pending Reg.
-#define NVIC_UNPEND0            0xE000E280  // IRQ 0 to 31 Clear Pending Reg.
-#define NVIC_UNPEND1            0xE000E284  // IRQ 32 to 63 Clear Pending Reg.
+#define NVIC_PEND1              0xE000E204  // IRQ 32 to 63 Set Pending Reg
+#define NVIC_UNPEND0            0xE000E280  // IRQ 0 to 31 Clear Pending Reg
+#define NVIC_UNPEND1            0xE000E284  // IRQ 32 to 63 Clear Pending Reg
 #define NVIC_ACTIVE0            0xE000E300  // IRQ 0 to 31 Active Register
 #define NVIC_ACTIVE1            0xE000E304  // IRQ 32 to 63 Active Register
 #define NVIC_PRI0               0xE000E400  // IRQ 0 to 3 Priority Register
@@ -65,14 +65,14 @@
 #define NVIC_CPUID              0xE000ED00  // CPUID Base Register
 #define NVIC_INT_CTRL           0xE000ED04  // Interrupt Control State Register
 #define NVIC_VTABLE             0xE000ED08  // Vector Table Offset Register
-#define NVIC_APINT              0xE000ED0C  // App. Int & Reset Control Reg.
+#define NVIC_APINT              0xE000ED0C  // App. Int & Reset Control Reg
 #define NVIC_SYS_CTRL           0xE000ED10  // System Control Register
 #define NVIC_CFG_CTRL           0xE000ED14  // Configuration Control Register
 #define NVIC_SYS_PRI1           0xE000ED18  // Sys. Handlers 4 to 7 Priority
 #define NVIC_SYS_PRI2           0xE000ED1C  // Sys. Handlers 8 to 11 Priority
 #define NVIC_SYS_PRI3           0xE000ED20  // Sys. Handlers 12 to 15 Priority
 #define NVIC_SYS_HND_CTRL       0xE000ED24  // System Handler Control and State
-#define NVIC_FAULT_STAT         0xE000ED28  // Configurable Fault Status Reg.
+#define NVIC_FAULT_STAT         0xE000ED28  // Configurable Fault Status Reg
 #define NVIC_HFAULT_STAT        0xE000ED2C  // Hard Fault Status Register
 #define NVIC_DEBUG_STAT         0xE000ED30  // Debug Status Register
 #define NVIC_MM_ADDR            0xE000ED34  // Mem Manage Address Register
@@ -81,12 +81,12 @@
 #define NVIC_MPU_CTRL           0xE000ED94  // MPU Control Register
 #define NVIC_MPU_NUMBER         0xE000ED98  // MPU Region Number Register
 #define NVIC_MPU_BASE           0xE000ED9C  // MPU Region Base Address Register
-#define NVIC_MPU_ATTR           0xE000EDA0  // MPU Region Attribute & Size Reg.
-#define NVIC_DBG_CTRL           0xE000EDF0  // Debug Control and Status Reg.
+#define NVIC_MPU_ATTR           0xE000EDA0  // MPU Region Attribute & Size Reg
+#define NVIC_DBG_CTRL           0xE000EDF0  // Debug Control and Status Reg
 #define NVIC_DBG_XFER           0xE000EDF4  // Debug Core Reg. Transfer Select
 #define NVIC_DBG_DATA           0xE000EDF8  // Debug Core Register Data
 #define NVIC_DBG_INT            0xE000EDFC  // Debug Reset Interrupt Control
-#define NVIC_SW_TRIG            0xE000EF00  // Software Trigger Interrupt Reg.
+#define NVIC_SW_TRIG            0xE000EF00  // Software Trigger Interrupt Reg
 
 //*****************************************************************************
 //

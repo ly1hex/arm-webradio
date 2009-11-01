@@ -21,12 +21,12 @@
 #include "tools.h"
 #include "main.h"
 #include "io.h"
+#include "eth.h"
 
 
 volatile int sw_pressed=0, ir_data=0;
 unsigned long ir_address=0, ir_status=IR_DETECT, ir_1us=0;
-unsigned long ssi_defspeed=0;
-unsigned long fm_size=0;
+unsigned long fm_bytes=0;
 volatile unsigned long fm_head=0, fm_tail=0;
 
 
@@ -65,24 +65,55 @@ void ethernet_put(unsigned char *pkt, unsigned int len)
 
 unsigned int ethernet_get(unsigned char *pkt, unsigned int len)
 {
+/*
 #if defined(DEBUG)
-  unsigned long status = EthernetIntStatus(ETH_BASE, 0);
+  unsigned long status;
+  status = EthernetIntStatus(ETH_BASE, 0);
   if(status & ETH_INT_RXER)
   {
-    DEBUGOUT("Eth: Rx err\n");
+    DEBUGOUT("\nEth: Rx err\n\n");
   }
   if(status & ETH_INT_RXOF)
   {
-    DEBUGOUT("Eth: Rx overflow\n");
+    DEBUGOUT("\nEth: Rx overflow\n\n");
   }
   if(status & ETH_INT_TXER)
   {
-    DEBUGOUT("Eth: Tx err\n");
+    DEBUGOUT("\nEth: Tx err\n\n");
   }
   EthernetIntClear(ETH_BASE, status);
 #endif
-
+*/
   return EthernetPacketGetNonBlocking(ETH_BASE, pkt, len);
+}
+
+
+void ethernet_handler(void)
+{
+  unsigned long status;
+
+  status = EthernetIntStatus(ETH_BASE, 0);
+
+#if defined(DEBUG)
+  if(status & ETH_INT_RXER)
+  {
+    DEBUGOUT("\nEth: Rx err\n\n");
+  }
+  if(status & ETH_INT_RXOF)
+  {
+    DEBUGOUT("\nEth: Rx overflow\n\n");
+  }
+  if(status & ETH_INT_TXER)
+  {
+    DEBUGOUT("\nEth: Tx err\n\n");
+  }
+#endif
+
+  EthernetIntClear(ETH_BASE, status); //ETH_INT_RX
+
+  while(eth_rxput());
+
+  return;
 }
 
 
@@ -128,73 +159,31 @@ unsigned char vs_ssi_readwrite(unsigned char c)
 
 void vs_ssi_speed(unsigned long speed)
 {
-  if(speed == 0)
+  unsigned long clk;
+
+  clk = SysCtlClockGet();
+
+  if((speed == 0) ||
+     (speed > (clk/2)))
   {
-    speed = ssi_defspeed;
+    speed = clk/2;
+  }
+
+  if(speed > SSI_SPEED)
+  {
+    speed = SSI_SPEED;
   }
 
   SSIDisable(SSI0_BASE);
-  SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, speed, 8);
+  SSIConfigSetExpClk(SSI0_BASE, clk, SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, speed, 8);
   SSIEnable(SSI0_BASE);
 
   return;
 }
 
 
-unsigned long fm_free(void)
-{
-  unsigned long head, tail;
-
-  head = fm_head;
-  tail = fm_tail;
-
-  if(head > tail)
-  {
-    return (fm_size-(head-tail))-1;
-  }
-  else if(head < tail)
-  {
-    return (tail-head)-1;
-  }
-
-  return (fm_size-1);
-}
-
-
-unsigned long fm_len(void)
-{
-  unsigned int head, tail;
-
-  head = fm_head;
-  tail = fm_tail;
-
-  if(head > tail)
-  {
-    return (head-tail);
-  }
-  else if(head < tail)
-  {
-    return (fm_size-(tail-head));
-  }
-
-  return 0;
-}
-
-
 void fm_gets(unsigned char *s, unsigned long len)
 {
-  while(len--)
-  {
-    *s++ = fm_getc();
-  }
-
-  return;
-}
-
-
-unsigned char fm_getc(void)
-{
-  unsigned char c;
   unsigned long head, tail;
 
   head = fm_head;
@@ -208,21 +197,26 @@ unsigned char fm_getc(void)
     ssi_write(tail>>8);
     ssi_write(tail);
     ssi_wait();
-    c = ssi_readwrite(0xff);
-    FM_CS_DISABLE();
-
-    if(tail >= fm_size)
+    while(len--)
     {
-      tail = 0;
+      if(head != tail)
+      {
+        *s++ = ssi_readwrite(0xff);
+        if(++tail >= fm_bytes)
+        {
+          tail = 0;
+        }
+      }
+      else
+      {
+        break;
+      }
     }
+    FM_CS_DISABLE();
     fm_tail = tail;
   }
-  else
-  {
-    c = 0;
-  }
 
-  return c;
+  return;
 }
 
 
@@ -244,7 +238,7 @@ void fm_puts(const unsigned char *s, unsigned long len)
   while(len--)
   {
     ssi_write(*s++);
-    if(++head >= fm_size)
+    if(++head >= fm_bytes)
     {
       head = 0;
     }
@@ -258,32 +252,49 @@ void fm_puts(const unsigned char *s, unsigned long len)
 }
 
 
-void fm_putc(unsigned char c)
+unsigned long fm_size(void)
 {
-  unsigned long head;
+  return fm_bytes;
+}
+
+
+unsigned long fm_free(void)
+{
+  unsigned long head, tail;
 
   head = fm_head;
+  tail = fm_tail;
 
-  FM_CS_ENABLE();
-  ssi_readwrite(FM_WREN);
-  FM_CS_DISABLE();
-
-  FM_CS_ENABLE();
-  ssi_write(FM_WRITE);
-  ssi_write(head>>16);
-  ssi_write(head>>8);
-  ssi_write(head);
-  ssi_write(c);
-  ssi_wait();
-  FM_CS_DISABLE();
-
-  if(++head >= fm_size)
+  if(head > tail)
   {
-    head = 0;
+    return (fm_bytes-(head-tail))-1;
   }
-  fm_head = head;
+  else if(head < tail)
+  {
+    return (tail-head)-1;
+  }
 
-  return;
+  return (fm_bytes-1);
+}
+
+
+unsigned long fm_len(void)
+{
+  unsigned int head, tail;
+
+  head = fm_head;
+  tail = fm_tail;
+
+  if(head > tail)
+  {
+    return (head-tail);
+  }
+  else if(head < tail)
+  {
+    return (fm_bytes-(tail-head));
+  }
+
+  return 0;
 }
 
 
@@ -296,19 +307,13 @@ void fm_reset(void)
 }
 
 
-unsigned long fm_getsize(void)
-{
-  return fm_size;
-}
-
-
 unsigned long fm_init(void)
 {
   unsigned long i;
 
-  fm_size = 0;
-  fm_head = 0;
-  fm_tail = 0;
+  fm_bytes = 0;
+  fm_head  = 0;
+  fm_tail  = 0;
 
   FM_CS_ENABLE();
   ssi_readwrite(FM_WREN);
@@ -339,11 +344,11 @@ unsigned long fm_init(void)
 
   if((i != 0x00) && (i != 0xff))
   {
-    fm_size = (0x2000<<(i&0x1F)); // (0x2000<<(i&0x1F)) -> Byte, (64<<(i&0x1F)) -> kBit
-    DEBUGOUT("F-RAM: device-id=%i (%i byte)\n", i, fm_size);
+    fm_bytes = (0x2000<<(i&0x1F)); // (0x2000<<(i&0x1F)) -> Byte, (64<<(i&0x1F)) -> kBit
+    DEBUGOUT("F-RAM: device-id=%i (%i byte)\n", i, fm_bytes);
   }
 
-  return fm_size;
+  return fm_bytes;
 }
 
 
@@ -391,13 +396,23 @@ unsigned char ssi_readwrite(unsigned char c)
 
 void ssi_speed(unsigned long speed)
 {
-  if(speed == 0)
+  unsigned long clk;
+
+  clk = SysCtlClockGet();
+
+  if((speed == 0) ||
+     (speed > (clk/2)))
   {
-    speed = ssi_defspeed;
+    speed = clk/2;
+  }
+
+  if(speed > SSI_SPEED)
+  {
+    speed = SSI_SPEED;
   }
 
   SSIDisable(SSI1_BASE);
-  SSIConfigSetExpClk(SSI1_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, speed, 8);
+  SSIConfigSetExpClk(SSI1_BASE, clk, SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, speed, 8);
   SSIEnable(SSI1_BASE);
 
   return;
@@ -418,17 +433,6 @@ void ssi_off(void)
 void ssi_on(void)
 {
   GPIOPinTypeSSI(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_3); //SCK, SI = ssi
-
-  return;
-}
-
-
-void ssi_defaultspeed(unsigned long speed)
-{
-  ssi_defspeed = speed;
-
-  ssi_speed(ssi_defspeed);
-  vs_ssi_speed(ssi_defspeed);
 
   return;
 }
@@ -758,7 +762,8 @@ void cpu_speed(unsigned int low_speed)
     SysTickPeriodSet(SysCtlClockGet() / 1000); //1 kHz
     SysTickEnable();
     pwm_led(LCD_PWMSTANDBY);
-    ssi_defaultspeed(DEFAULT_SSILOWSPEED);
+    ssi_speed(0);
+    vs_ssi_speed(0);
   }
   else
   {
@@ -771,7 +776,8 @@ void cpu_speed(unsigned int low_speed)
     SysTickPeriodSet(SysCtlClockGet() / 1000); //1 kHz
     SysTickEnable();
     pwm_led(100);
-    ssi_defaultspeed(DEFAULT_SSISPEED);
+    ssi_speed(0);
+    vs_ssi_speed(0);
   }
 
   ir_init();
@@ -850,25 +856,24 @@ void init_periph(void)
   //init ssi0: VS
   SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
   SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
-  SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, DEFAULT_SSILOWSPEED, 8);
+  SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, SysCtlClockGet()/4, 8);
   SSIEnable(SSI0_BASE);
   SSIDataPut(SSI0_BASE, 0xff); SSIDataPut(SSI0_BASE, 0xff); SSIDataPut(SSI0_BASE, 0xff); //dummy write to set ssi fifo bits
 
   //init ssi1: LCD, SD, F-RAM
   SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI1);
   SysCtlPeripheralReset(SYSCTL_PERIPH_SSI1);
-  SSIConfigSetExpClk(SSI1_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, DEFAULT_SSILOWSPEED, 8);
+  SSIConfigSetExpClk(SSI1_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, SysCtlClockGet()/4, 8);
   SSIEnable(SSI1_BASE);
   SSIDataPut(SSI1_BASE, 0xff); SSIDataPut(SSI1_BASE, 0xff); SSIDataPut(SSI1_BASE, 0xff); //dummy write to set ssi fifo bits
-
-  //set default ssi speed
-  ssi_defaultspeed(DEFAULT_SSILOWSPEED);
 
   //init ethernet
   SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
   SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
   EthernetInitExpClk(ETH_BASE, SysCtlClockGet());
   EthernetConfigSet(ETH_BASE, ETH_CFG_TX_DPLXEN | ETH_CFG_TX_CRCEN | ETH_CFG_TX_PADEN | ETH_CFG_RX_BADCRCDIS | ETH_CFG_RX_AMULEN); //duplex, auto-crc, padding, crc-check, multicast
+  EthernetIntRegister(ETH_BASE, ethernet_handler);
+  EthernetIntEnable(ETH_BASE, ETH_INT_RX);
   EthernetEnable(ETH_BASE);
 
   return;

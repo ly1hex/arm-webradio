@@ -27,13 +27,13 @@ void card_service(void)
     return;
   }
 
-  while(vsbuf_free() >= CARD_READBUF)
+  while(vs_buffree() >= CARD_READBUF)
   {
     if(f_read(&gbuf.card.fsrc, gbuf.card.buf, CARD_READBUF, &rd) == FR_OK)
     {
       if(rd)
       {
-        vsbuf_puts(gbuf.card.buf, rd);
+        vs_bufputs(gbuf.card.buf, rd);
         card_timeout = getontime()+CARD_TIMEOUT;
       }
       else
@@ -47,7 +47,7 @@ void card_service(void)
     }
   }
 
-  if(vsbuf_len() < 32) //song end
+  if(vs_buflen() < 32) //song end
   {
     DEBUGOUT("Card: buf < 32\n");
     card_closeitem();

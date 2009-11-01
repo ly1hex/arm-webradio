@@ -8,14 +8,12 @@
 #define STATION_TIMEOUT                (12) //s (play->buffer->play)
 #define STATION_TRY                    (4)  //x times
 
-#define STATION_BUFMIN                 (VS_BUFSIZE*10UL/100UL) //10% go into buffer mode
-#define STATION_BUFPLAY                (VS_BUFSIZE*60UL/100UL) //60% go back to play mode
-#define STATION_BUFSTART               (VS_BUFSIZE*90UL/100UL) //90% 1st play buffer
-
 #define STATION_CLOSED                 (0)
 #define STATION_OPENED                 (1)
 #define STATION_BUFFER                 (2)
 #define STATION_OPEN                   (3)
+#define STATION_ERROR                  (4)
+#define STATION_ADDRMOVED              (5)
 
 
 //----- PROTOTYPES -----
@@ -25,7 +23,6 @@ unsigned int                           station_open(unsigned int item);
 void                                   station_service(void);
 void                                   station_closeitem(void);
 unsigned int                           station_openitem(unsigned int item);
-
 
 void                                   station_delitem(unsigned int item);
 void                                   station_moveitem(unsigned int item, unsigned direction);

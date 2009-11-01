@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -385,7 +385,7 @@ USBHostSpeedGet(unsigned long ulBase)
 //! interrupts.
 //!
 //! \note WARNING: This API cannot be used on endpoint numbers greater than
-//! endpoint 3 so the USBIntStatusControl() or USBIntStatusEndpoint() should be
+//! endpoint 3 so USBIntStatusControl() or USBIntStatusEndpoint() should be
 //! used instead.
 //!
 //! \return Returns the status of the sources for the USB controller's
@@ -470,9 +470,9 @@ USBIntStatus(unsigned long ulBase)
 //! \b USB_INT_DEV_IN, \b USB_INT_DEV_OUT, and \b USB_INT_STATUS.  If
 //! \b USB_INT_ALL is specified then all interrupts will be disabled.
 //!
-//! \note WARNING: This API cannot be used on endpoint nubmers greater than
-//! endpoint 3 so the USBIntDisableControl() or USBIntDisableEndpoint() should
-//! be used instead.
+//! \note WARNING: This API cannot be used on endpoint numbers greater than
+//! endpoint 3 so USBIntDisableControl() or USBIntDisableEndpoint() should be
+//! used instead.
 //!
 //! \return None.
 //
@@ -557,8 +557,8 @@ USBIntDisable(unsigned long ulBase, unsigned long ulFlags)
 //! are used then then a call to IntEnable() must be made in order to allow any
 //! USB interrupts to occur.
 //!
-//! \note WARNING: This API cannot be used on endpoint nubmers greater than
-//! endpoint 3 so the USBIntEnableControl() or USBIntEnableEndpoint() should be
+//! \note WARNING: This API cannot be used on endpoint numbers greater than
+//! endpoint 3 so USBIntEnableControl() or USBIntEnableEndpoint() should be
 //! used instead.
 //!
 //! \return None.
@@ -633,8 +633,8 @@ USBIntEnable(unsigned long ulBase, unsigned long ulFlags)
 //! This function will disable the control interrupts for the USB controller
 //! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
 //! which control interrupts to disable.  The flags passed in the \e ulFlags
-//! parameters should be the definitions that start with USB_INTCTRL_* and not
-//! any other USB_INT flags.
+//! parameters should be the definitions that start with \b USB_INTCTRL_* and
+//! not any other \b USB_INT flags.
 //!
 //! \return None.
 //
@@ -684,8 +684,8 @@ USBIntDisableControl(unsigned long ulBase, unsigned long ulFlags)
 //! This function will enable the control interrupts for the USB controller
 //! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
 //! which control interrupts to enable.  The flags passed in the \e ulFlags
-//! parameters should be the definitions that start with USB_INTCTRL_* and not
-//! any other USB_INT flags.
+//! parameters should be the definitions that start with \b USB_INTCTRL_* and
+//! not any other \b USB_INT flags.
 //!
 //! \return None.
 //
@@ -737,28 +737,29 @@ USBIntEnableControl(unsigned long ulBase, unsigned long ulFlags)
 //! The bit values returned should be compared against the \b USB_INTCTRL_*
 //! values.
 //!
-//! The following are the meanings of all USB_INCTRL_ flags and the modes that
-//! they are valid for.  These values apply to any calls to
+//! The following are the meanings of all \b USB_INCTRL_ flags and the modes
+//! for which they are valid.  These values apply to any calls to
 //! USBIntStatusControl(), USBIntEnableControl(), and USBIntDisableConrol().
 //! Some of these flags are only valid in the following modes as indicated in
-//! the parenthesis: Host, Device, and OTG.
+//! the parenthesis:  Host, Device, and OTG.
 //!
-//! - USB_INTCTRL_ALL - A full mask of all control interrupt sources.
-//! - USB_INTCTRL_VBUS_ERR - A VBUS error has occurred (Host Only).
-//! - USB_INTCTRL_SESSION - Session Start Detected on A-side of cable
-//!                         (OTG Only).
-//! - USB_INTCTRL_SESSION_END - Session End Detected (Device Only)
-//! - USB_INTCTRL_DISCONNECT - Device Disconnect Detected (Host Only)
-//! - USB_INTCTRL_CONNECT - Device Connect Detected (Host Only)
-//! - USB_INTCTRL_SOF - Start of Frame Detected.
-//! - USB_INTCTRL_BABBLE - USB controller detected a device signalling past the
-//!                        the end of a frame. (Host Only)
-//! - USB_INTCTRL_RESET - Reset signalling detected by device. (Device Only)
-//! - USB_INTCTRL_RESUME - Resume signalling detected.
-//! - USB_INTCTRL_SUSPEND - Suspend signalling detected by device (Device Only)
-//! - USB_INTCTRL_MODE_DETECT - OTG cable mode detection has completed
-//!                             (OTG Only)
-//! - USB_INTCTRL_POWER_FAULT - Power Fault detected. (Host Only)
+//! - \b USB_INTCTRL_ALL - A full mask of all control interrupt sources.
+//! - \b USB_INTCTRL_VBUS_ERR - A VBUS error has occurred (Host Only).
+//! - \b USB_INTCTRL_SESSION - Session Start Detected on A-side of cable
+//!                            (OTG Only).
+//! - \b USB_INTCTRL_SESSION_END - Session End Detected (Device Only)
+//! - \b USB_INTCTRL_DISCONNECT - Device Disconnect Detected (Host Only)
+//! - \b USB_INTCTRL_CONNECT - Device Connect Detected (Host Only)
+//! - \b USB_INTCTRL_SOF - Start of Frame Detected.
+//! - \b USB_INTCTRL_BABBLE - USB controller detected a device signalling past
+//!                           the end of a frame. (Host Only)
+//! - \b USB_INTCTRL_RESET - Reset signalling detected by device. (Device Only)
+//! - \b USB_INTCTRL_RESUME - Resume signalling detected.
+//! - \b USB_INTCTRL_SUSPEND - Suspend signalling detected by device (Device
+//!                            Only)
+//! - \b USB_INTCTRL_MODE_DETECT - OTG cable mode detection has completed
+//!                                (OTG Only)
+//! - \b USB_INTCTRL_POWER_FAULT - Power Fault detected. (Host Only)
 //!
 //! \note This call will clear the source of all of the control status
 //! interrupts.
@@ -827,8 +828,8 @@ USBIntStatusControl(unsigned long ulBase)
 //! This function will disable endpoint interrupts for the USB controller
 //! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
 //! which endpoint interrupts to disable.  The flags passed in the \e ulFlags
-//! parameters should be the definitions that start with USB_INTEP_* and not
-//! any other USB_INT flags.
+//! parameters should be the definitions that start with \b USB_INTEP_* and not
+//! any other \b USB_INT flags.
 //!
 //! \return None.
 //
@@ -867,8 +868,8 @@ USBIntDisableEndpoint(unsigned long ulBase, unsigned long ulFlags)
 //! This function will enable endpoint interrupts for the USB controller
 //! specified by the \e ulBase parameter.  The \e ulFlags parameter specifies
 //! which endpoint interrupts to enable.  The flags passed in the \e ulFlags
-//! parameters should be the definitions that start with USB_INTEP_* and not
-//! any other USB_INT flags.
+//! parameters should be the definitions that start with \b USB_INTEP_* and not
+//! any other \b USB_INT flags.
 //!
 //! \return None.
 //
@@ -2220,7 +2221,7 @@ USBDevEndpointConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
             // and control mode for the endpoint so we just set something
             // that isn't isochronous.  This ensures that anyone modifying
             // the returned flags in preparation for a call to
-            // USBDevEndpointConfigSet() will not see an unexpected mode change.
+            // USBDevEndpointConfigSet will not see an unexpected mode change.
             // If they decode the returned mode, however, they may be in for
             // a surprise.
             //
@@ -2285,7 +2286,7 @@ USBDevEndpointConfigGet(unsigned long ulBase, unsigned long ulEndpoint,
             // and control mode for the endpoint so we just set something
             // that isn't isochronous.  This ensures that anyone modifying
             // the returned flags in preparation for a call to
-            // USBDevEndpointConfigSet() will not see an unexpected mode change.
+            // USBDevEndpointConfigSet will not see an unexpected mode change.
             // If they decode the returned mode, however, they may be in for
             // a surprise.
             //
@@ -3723,7 +3724,7 @@ USBEndpointDMAChannel(unsigned long ulBase, unsigned long ulEndpoint,
     //
     // Clear out the current selection for the channel.
     //
-    ulMask = HWREG(ulBase + USB_O_EPS) & (~ulMask);
+    ulMask = HWREG(ulBase + USB_O_DMASEL) & (~ulMask);
 
     //
     // The input select is now shifted into the correct position based on the
@@ -3734,7 +3735,7 @@ USBEndpointDMAChannel(unsigned long ulBase, unsigned long ulEndpoint,
     //
     // Write the value out to the register.
     //
-    HWREG(ulBase + USB_O_EPS) = ulMask;
+    HWREG(ulBase + USB_O_DMASEL) = ulMask;
 }
 
 //*****************************************************************************

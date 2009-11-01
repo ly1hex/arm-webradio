@@ -27,25 +27,29 @@ unsigned int station_bufmin=0, station_bufplay=0, station_bufstart=0;
 
 void station_setbitrate(unsigned int bitrate) //bitrate kbit/s
 {
-  char tmp[8];
-  unsigned int len;
+  unsigned int size;
 
-  if((bitrate >= 64) || (bitrate == 0)) //bitrate >= 64
-  {
-    station_bufmin   = STATION_BUFMIN;
-    station_bufplay  = STATION_BUFPLAY;
-    station_bufstart = STATION_BUFSTART;
-  }
-  else
-  {
-    station_bufmin   = bitrate/8*512;
-    station_bufplay  = station_bufmin*4;
-    station_bufstart = station_bufmin*6;
-  }
+  DEBUGOUT("Station: %i kb/s\n", bitrate);
 
-  if((bitrate >= 8) && (bitrate <= 320))
+  if(bitrate >= 8)
   {
     menu_setbitrate(bitrate);
+  }
+
+  if(bitrate < 8)
+  {
+    bitrate = 128;
+  }
+  station_bufmin   = bitrate/8*512;
+  station_bufplay  = station_bufmin*4;
+  station_bufstart = station_bufmin*8;
+
+  size = buf_size();
+  if(station_bufstart >= size)
+  {
+    station_bufmin   = size*10UL/100UL; //10% go into buffer mode
+    station_bufplay  = size*50UL/100UL; //50% go back to play mode
+    station_bufstart = size*80UL/100UL; //80% 1st play buffer
   }
 
   return;
@@ -75,18 +79,24 @@ unsigned int station_open(unsigned int item)
 
   menu_drawpopup("Open Station...");
 
+  station_setbitrate(0);
   station_getitem(item, gbuf.menu.name);
   menu_setinfo("");
 
-  if(station_getitemaddr(item, gbuf.station.addr) != 0)
+  if(gbuf.station.addr[0] == 0)
   {
-    station_init();
-    return STATION_CLOSED;
+    if(station_getitemaddr(item, gbuf.station.addr) != 0)
+    {
+      station_init();
+      return STATION_CLOSED;
+    }
   }
 
   DEBUGOUT("Station: %i %s\n", station_try, gbuf.station.addr);
 
-  atoaddr(gbuf.station.addr, proto, 0, 0, &gbuf.station.ip, &gbuf.station.port, gbuf.station.file);
+  //get ip and mac
+  atoaddr(gbuf.station.addr, proto, 0, 0, gbuf.station.host, &gbuf.station.port, gbuf.station.file);
+  gbuf.station.ip  = atoip(gbuf.station.host);
   gbuf.station.mac = arp_getmac(gbuf.station.ip);
   if(gbuf.station.mac == 0ULL)
   {
@@ -100,44 +110,38 @@ unsigned int station_open(unsigned int item)
 
   vs_start();
 
-  if(strcmp(proto, "http") == 0)
+  if(strcmp(proto, "http") == 0) //shoutcast / icecast
   {
     r = shoutcast_open();
-    if(r == SHOUTCAST_OPENED)
-    {
-      station_timeout = getontime()+STATION_TIMEOUT;
-      menu_setstatus(MENU_STATE_BUF);
-      r = STATION_OPENED;
-    }
-    else if((r == SHOUTCAST_ERROR) ||
-            (r == SHOUTCAST_SERVERFULL))
-    {
-      station_closeitem(); //also clears addr
-      r = STATION_CLOSED;
-    }
-    else
-    {
-      r = STATION_OPEN;
-    }
   }
-  else if(strcmp(proto, "rtsp") == 0)
+  else if(strcmp(proto, "rtsp") == 0) //rtsp
   {
     r = rtsp_open();
-    if(r == RTSP_OPENED)
-    {
-      station_timeout = getontime()+STATION_TIMEOUT;
-      menu_setstatus(MENU_STATE_BUF);
-      r = STATION_OPENED;
-    }
-    else if(r == RTSP_ERROR)
-    {
-      station_closeitem(); //also clears addr
-      r = STATION_CLOSED;
-    }
-    else
-    {
-      r = STATION_OPEN;
-    }
+  }
+  else
+  {
+    r = STATION_ERROR;
+  }
+
+  if(r == STATION_OPENED) //play station
+  {
+    station_timeout = getontime()+STATION_TIMEOUT;
+    menu_setstatus(MENU_STATE_BUF);
+    r = STATION_OPENED;
+  }
+  else if(r == STATION_ERROR) //close station
+  {
+    station_closeitem(); //also clears addr
+    r = STATION_ERROR;
+  }
+  else if(r == STATION_ADDRMOVED) //open new addr
+  {
+    station_timeout = getontime();
+    r = STATION_OPEN;
+  }
+  else //try to open again after timeout
+  {
+    r = STATION_OPEN;
   }
 
   return r;
@@ -146,11 +150,13 @@ unsigned int station_open(unsigned int item)
 
 void station_service(void)
 {
+  buf_service();
+
   switch(station_status)
   {
     case STATION_OPENED:
       station_timeout = getontime()+STATION_TIMEOUT;
-      if(vsbuf_len() < station_bufmin) //buffer
+      if(buf_len() < station_bufmin) //buffer
       {
         station_status = STATION_BUFFER;
         vs_pause();
@@ -164,7 +170,7 @@ void station_service(void)
       break;
 
     case STATION_BUFFER:
-      if(vsbuf_len() > station_bufplay)
+      if(buf_len() > station_bufplay)
       {
         station_status = STATION_OPENED;
         vs_play();
@@ -180,7 +186,7 @@ void station_service(void)
       break;
 
     case STATION_OPEN:
-      if(vsbuf_len() > station_bufstart)
+      if(buf_len() > station_bufstart)
       {
         station_status = STATION_OPENED;
         vs_play();
@@ -225,7 +231,7 @@ unsigned int station_openitem(unsigned int item)
   else //play item
   {
     station_try = STATION_TRY;
-    if(station_open(item) != STATION_CLOSED)
+    if(station_open(item) != STATION_ERROR)
     {
       return MENU_PLAY;
     }
@@ -416,7 +422,6 @@ void station_init(void)
   station_item     = 0;
   station_status   = STATION_CLOSED;
   station_try      = STATION_TRY;
-  station_setbitrate(0);
 
   gbuf.station.name[0] = 0;
   gbuf.station.info[0] = 0;

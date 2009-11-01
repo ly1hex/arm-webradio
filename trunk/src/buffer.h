@@ -3,16 +3,8 @@
 
 
 //----- DEFINES -----
-#define VS_BUFSIZE                     (55000) //bytes (vs buffer)
-#define CARD_READBUF                   (512)   //bytes
+#define CARD_READBUF                   (1024)   //bytes
 
-
-typedef union
-{
-  uint8_t  b8[VS_BUFSIZE];
-  uint16_t b16[VS_BUFSIZE/2];
-  uint32_t b32[VS_BUFSIZE/4];
-} VSBUFFER;
 
 typedef struct
 {
@@ -26,6 +18,7 @@ typedef struct
   char         name[MAX_NAME];
   char         info[MAX_INFO];
   char         addr[MAX_ADDR];
+  char         host[MAX_ADDR];
   MAC_Addr     mac;
   IP_Addr      ip;
   unsigned int port;
@@ -58,20 +51,16 @@ typedef union
 
 
 //----- GLOBALS -----
-extern VSBUFFER vsbuf;
-extern volatile unsigned int vsbuf_head, vsbuf_tail;
 extern BUFFER gbuf;
 
 
 //----- PROTOTYPES -----
-unsigned int                           vsbuf_free(void);
-unsigned int                           vsbuf_len(void);
-void                                   vsbuf_gets(unsigned char *s, unsigned int len);
-unsigned char                          vsbuf_getc(void);
-void                                   vsbuf_puts(const unsigned char *s, unsigned int len);
-void                                   vsbuf_putc(unsigned char c);
-void                                   vsbuf_sethead(unsigned int head);
-void                                   vsbuf_reset(void);
+void                                   buf_service(void);
+void                                   buf_puts(const unsigned char *s, unsigned int len);
+unsigned int                           buf_size(void);
+unsigned int                           buf_free(void);
+unsigned int                           buf_len(void);
+void                                   buf_reset(void);
 
 
 #endif //_BUFFER_H_

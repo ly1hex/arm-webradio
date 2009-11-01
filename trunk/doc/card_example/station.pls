@@ -34,8 +34,8 @@ TITLE10=1Live
 FILE11=rtsp://gffstream-w1b.wm.llnwd.net/gffstream_w1a
 TITLE11=Bayern 1 (RTSP)
 
-FILE12=http://67.228.177.254:80/ny_nyfd
+FILE12=http://icecast.scanamerica.us/ny_nyfd
 TITLE12=NY Fire Dep.
 
-FILE13=http://79.99.69.130:80/kpsp
+FILE13=http://listen-west.liveatc.net:8011/kpsp
 TITLE13=LiveATC KPSP

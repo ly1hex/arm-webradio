@@ -6,138 +6,98 @@
 #include "third_party/fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
+#include "io.h"
+#include "vs.h"
 #include "eth.h"
 #include "buffer.h"
 
 
 BUFFER gbuf;
-VSBUFFER vsbuf;
-volatile unsigned int vsbuf_head=0, vsbuf_tail=0;
 
 
-unsigned int vsbuf_free(void)
+void buf_service(void)
 {
-  unsigned int head, tail;
+  unsigned int len;
 
-  head = vsbuf_head;
-  tail = vsbuf_tail;
-
-  if(head > tail)
+  if(fm_size())
   {
-    return (VS_BUFSIZE-(head-tail))-1;
-  }
-  else if(head < tail)
-  {
-    return (tail-head)-1;
-  }
-
-  return (VS_BUFSIZE-1);
-}
-
-
-unsigned int vsbuf_len(void)
-{
-  unsigned int head, tail;
-
-  head = vsbuf_head;
-  tail = vsbuf_tail;
-
-  if(head > tail)
-  {
-    return (head-tail);
-  }
-  else if(head < tail)
-  {
-    return (VS_BUFSIZE-(tail-head));
-  }
-
-  return 0;
-}
-
-
-void vsbuf_gets(unsigned char *s, unsigned int len)
-{
-  while(len--)
-  {
-    *s++ = vsbuf_getc();
-  }
-
-  return;
-}
-
-
-unsigned char vsbuf_getc(void)
-{
-  unsigned char c;
-  unsigned int head, tail;
-
-  head = vsbuf_head;
-  tail = vsbuf_tail;
-  if(head != tail)
-  {
-    c = vsbuf.b8[tail++];
-    if(tail >= VS_BUFSIZE)
+    len = fm_len();
+    while(len)
     {
-      tail = 0;
-    }
-    vsbuf_tail = tail;
-  }
-  else
-  {
-    c = 0;
-  }
-
-  return c;
-}
-
-
-void vsbuf_puts(const unsigned char *s, unsigned int len)
-{
-  unsigned int head;
-
-  head = vsbuf_head;
-  while(len--)
-  {
-    vsbuf.b8[head++] = *s++;
-    if(head >= VS_BUFSIZE)
-    {
-      head = 0;
+      if(vs_buffree() < 32)
+      {
+        break;
+      }
+      if(len < 32)
+      {
+        fm_gets(gbuf.card.buf, len);
+        vs_bufputs(gbuf.card.buf, len);
+        break;
+      }
+      else
+      {
+        fm_gets(gbuf.card.buf, 32);
+        vs_bufputs(gbuf.card.buf, 32);
+        len -= 32;
+      }
     }
   }
-  vsbuf_head = head;
 
   return;
 }
 
 
-void vsbuf_putc(unsigned char c)
+void buf_puts(const unsigned char *s, unsigned int len)
 {
-  unsigned int head;
-
-  head = vsbuf_head;
-  vsbuf.b8[head++] = c;
-  if(head >= VS_BUFSIZE)
+  if(fm_size())
   {
-    head = 0;
+    return fm_puts(s, len);
   }
-  vsbuf_head = head;
 
-  return;
+  return vs_bufputs(s, len);
 }
 
 
-void vsbuf_sethead(unsigned int head)
+unsigned int buf_size(void)
 {
-  vsbuf_head = head;
+  if(fm_size())
+  {
+    return fm_size();
+  }
 
-  return;
+  return VS_BUFSIZE;
 }
 
 
-void vsbuf_reset(void)
+unsigned int buf_free(void)
 {
-  vsbuf_head = 0;
-  vsbuf_tail = 0;
+  if(fm_size())
+  {
+    return fm_free();
+  }
+
+  return vs_buffree();
+}
+
+
+unsigned int buf_len(void)
+{
+  unsigned int len;
+
+  len = vs_buflen();
+  if(fm_size())
+  {
+    len += fm_len();
+  }
+
+  return len;
+}
+
+
+void buf_reset(void)
+{
+  fm_reset();
+  vs_bufreset();
 
   return;
 }

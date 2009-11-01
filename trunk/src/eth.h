@@ -13,14 +13,15 @@
 #define DEFAULT_TIMEDIFF               (3600) //seconds (3600sec = 1h = GMT+1)
 #define DEFAULT_SUMMER                 (0)    //summer time on
 
+#define ETH_RXFIFO                     (15) //rx fifo (x * ETH_MTUSIZE)
 #define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
-#define ETH_TIMEOUT                    (12) //seconds (ARP request, DHCP request, DNS request...)
+#define ETH_TIMEOUT                    (12) //seconds (ARP / DHCP / DNS request...)
 #define ETH_USE_DSCP                   //use Differentiated Services Code Point (QoS -> DSCP)
 
 #define TCP_MSS                        (ETH_MTUSIZE-ETH_HEADERLEN-IP_HEADERLEN-TCP_HEADERLEN) //Maximum Segment Size
-#define TCP_WINDOW                     (2048-256) //(2048-256) //window size (ARM has 2kByte Rx FIFO for up to 31 frames)
-#define TCP_ENTRIES                    (10) //max TCP Table Entries
-#define TCP_TIMEOUT                    (2) //seconds
+#define TCP_WINDOW                     ((ETH_RXFIFO*ETH_MTUSIZE)/2) //(2048-256) //window size (ARM has 2kByte Rx FIFO for up to 31 frames)
+#define TCP_ENTRIES                    (20) //max TCP Table Entries
+#define TCP_TIMEOUT                    (3) //seconds
 #define TCP_MAXERROR                   (3) //try x times
 #define TCP_CLOSED                     (0)
 #define TCP_OPENED                     (1)
@@ -93,7 +94,7 @@ typedef struct
 
 //Proto: Ethernet
 #define ETH_OFFSET                     (0x0000)
-#define        ETH_HEADERLEN                  (14)
+#define ETH_HEADERLEN                  (14)
 #define ETH_TYPE_IP                    SWAP16(0x0800)
 #define ETH_TYPE_ARP                   SWAP16(0x0806)
 typedef struct __attribute__((packed))
@@ -105,13 +106,13 @@ typedef struct __attribute__((packed))
 
 //Proto: ARP (Address Resolution Protocol)
 #define ARP_OFFSET                     (ETH_HEADERLEN)
-#define        ARP_HEADERLEN                  (28)
-#define        ARP_HW_TYPE                    SWAP16(0x0001)
-#define        ARP_PRO_TYPE                   SWAP16(0x0800)
-#define        ARP_HW_LEN                     (0x06)
-#define        ARP_PRO_LEN                    (0x04)
-#define        ARP_OP_REQUEST                 SWAP16(0x0001)
-#define        ARP_OP_REPLY                   SWAP16(0x0002)
+#define ARP_HEADERLEN                  (28)
+#define ARP_HW_TYPE                    SWAP16(0x0001)
+#define ARP_PRO_TYPE                   SWAP16(0x0800)
+#define ARP_HW_LEN                     (0x06)
+#define ARP_PRO_LEN                    (0x04)
+#define ARP_OP_REQUEST                 SWAP16(0x0001)
+#define ARP_OP_REPLY                   SWAP16(0x0002)
 typedef struct __attribute__((packed))
 {
   unsigned int     hw_type   : 16; //16bit Hardware Type
@@ -127,10 +128,10 @@ typedef struct __attribute__((packed))
 
 //Proto: IP v4 (Internet Protocol)
 #define IP_OFFSET                      (ETH_HEADERLEN)
-#define        IP_HEADERLEN                   (20)
-#define        IP_PROTO_ICMP                  (0x01)
-#define        IP_PROTO_TCP                   (0x06)
-#define        IP_PROTO_UDP                   (0x11)
+#define IP_HEADERLEN                   (20)
+#define IP_PROTO_ICMP                  (0x01)
+#define IP_PROTO_TCP                   (0x06)
+#define IP_PROTO_UDP                   (0x11)
 typedef struct __attribute__((packed))
 {
   unsigned int     hd_len    :  4; // 4bit Version
@@ -198,7 +199,7 @@ typedef struct __attribute__((packed))
 
 
 //----- GLOBALS -----
-extern unsigned char eth_rxbuf[], eth_txbuf[];
+extern unsigned char *eth_rxbuf, eth_txbuf[];
 
 
 //----- PROTOTYPES -----
@@ -254,6 +255,10 @@ IP_Addr                                eth_getrouter(void);
 IP_Addr                                eth_getnetmask(void);
 IP_Addr                                eth_getip(void);
 MAC_Addr                               eth_getmac(void);
+
+unsigned int                           eth_rxget(void);
+unsigned int                           eth_rxput(void);
+unsigned int                           eth_rxfree(void);
 
 void                                   eth_init(void);
 

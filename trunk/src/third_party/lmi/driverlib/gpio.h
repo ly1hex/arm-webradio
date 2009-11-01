@@ -21,7 +21,7 @@
 // LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
 // CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 4905 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -742,6 +742,7 @@ extern void GPIOPinConfigure(unsigned long ulPinConfig);
 extern void GPIOPinTypeADC(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeCAN(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeComparator(unsigned long ulPort, unsigned char ucPins);
+extern void GPIOPinTypeEthernetLED(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeGPIOInput(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeGPIOOutput(unsigned long ulPort, unsigned char ucPins);
 extern void GPIOPinTypeGPIOOutputOD(unsigned long ulPort,
