@@ -1,4 +1,4 @@
-FatFs Module Source Files R0.07d                        (C)ChaN, 2009
+FatFs Module Source Files R0.07e                        (C)ChaN, 2009
 
 
 FILES
@@ -103,7 +103,8 @@ REVISION HISTORY
                        Added f_chdrive().
                        Added proper case conversion for extended characters.
 
-  Nov 01,'2009 R0.07d  Separated out configuration options from ff.h to ffconf.h.
+  Nov 03,'2009 R0.07e  Separated out configuration options from ff.h to ffconf.h.
                        Added a configuration option, _LFN_UNICODE.
                        Fixed f_unlink() fails to remove a sub-dir on _FS_RPATH.
+                       Fixed name matching error on the 13 char boundary.
                        Changed f_readdir() to return the SFN with always upper case on non-LFN cfg.

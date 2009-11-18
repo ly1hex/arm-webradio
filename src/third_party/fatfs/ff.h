@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------/
-/  FatFs - FAT file system module include file  R0.07d       (C)ChaN, 2009
+/  FatFs - FAT file system module include file  R0.07e       (C)ChaN, 2009
 /----------------------------------------------------------------------------/
 / FatFs module is a generic FAT file system module for small embedded systems.
 / This is a free software that opened for education, research and commercial
@@ -14,7 +14,7 @@
 /----------------------------------------------------------------------------*/
 
 #ifndef _FATFS
-#define _FATFS	0x007D
+#define _FATFS	0x007E
 
 #include "integer.h"	/* Basic integer types */
 #include "ffconf.h"		/* FatFs configuration options */
@@ -224,21 +224,21 @@
 #define IsUpper(c)	(((c)>='A')&&((c)<='Z'))
 #define IsLower(c)	(((c)>='a')&&((c)<='z'))
 
-#if _DF1S	/* DBCS configuration */
+#if _DF1S		/* DBCS configuration */
 
-#if _DF2S	/* Two 1st byte areas */
+#ifdef _DF2S	/* Two 1st byte areas */
 #define IsDBCS1(c)	(((BYTE)(c) >= _DF1S && (BYTE)(c) <= _DF1E) || ((BYTE)(c) >= _DF2S && (BYTE)(c) <= _DF2E))
-#else		/* One 1st byte area */
+#else			/* One 1st byte area */
 #define IsDBCS1(c)	((BYTE)(c) >= _DF1S && (BYTE)(c) <= _DF1E)
 #endif
 
-#if _DS3S	/* Three 2nd byte areas */
+#ifdef _DS3S	/* Three 2nd byte areas */
 #define IsDBCS2(c)	(((BYTE)(c) >= _DS1S && (BYTE)(c) <= _DS1E) || ((BYTE)(c) >= _DS2S && (BYTE)(c) <= _DS2E) || ((BYTE)(c) >= _DS3S && (BYTE)(c) <= _DS3E))
-#else		/* Two 2nd byte areas */
+#else			/* Two 2nd byte areas */
 #define IsDBCS2(c)	(((BYTE)(c) >= _DS1S && (BYTE)(c) <= _DS1E) || ((BYTE)(c) >= _DS2S && (BYTE)(c) <= _DS2E))
 #endif
 
-#else		/* SBCS configuration */
+#else			/* SBCS configuration */
 
 #define IsDBCS1(c)	0
 #define IsDBCS2(c)	0

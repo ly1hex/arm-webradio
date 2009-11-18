@@ -303,7 +303,7 @@ void vs_data(unsigned int c)
 {
   VS_DCS_ENABLE();
 
-  vs_write(c);
+  vs_ssi_readwrite(c);
 
   VS_DCS_DISABLE();
 
@@ -382,10 +382,10 @@ void vs_write_reg(unsigned int reg, unsigned int data)
   vs_ssi_wait(); //wait for transfer complete
   VS_DCS_DISABLE();
   VS_CS_ENABLE();
-  vs_write(VS_WRITE);
-  vs_write(reg);
-  vs_write(data>>8);
-  vs_write(data);
+  vs_ssi_readwrite(VS_WRITE);
+  vs_ssi_readwrite(reg);
+  vs_ssi_readwrite(data>>8);
+  vs_ssi_readwrite(data);
   VS_CS_DISABLE();
 
   //execution -> DREQ low
@@ -423,10 +423,10 @@ unsigned int vs_read_reg(unsigned int reg)
   vs_ssi_wait(); //wait for transfer complete
   VS_DCS_DISABLE();
   VS_CS_ENABLE();
-  vs_write(VS_READ);
-  vs_write(reg);
-  ret  = vs_read()<<8;
-  ret |= vs_read();
+  vs_ssi_readwrite(VS_READ);
+  vs_ssi_readwrite(reg);
+  ret  = vs_ssi_readwrite(0xff)<<8;
+  ret |= vs_ssi_readwrite(0xff);
   VS_CS_DISABLE();
 
   //execution -> DREQ low
@@ -452,20 +452,6 @@ unsigned int vs_read_reg(unsigned int reg)
   IntMasterEnable();
 
   return ret;
-}
-
-
-void vs_write(unsigned int c)
-{
-  vs_ssi_readwrite(c);
-
-  return;
-}
-
-
-unsigned int vs_read(void)
-{
-  return vs_ssi_readwrite(0xff);
 }
 
 
@@ -508,7 +494,7 @@ void vs_stopstream(void)
     {
       vs_ssi_write(vs_bufgetc());
     }
-    vs_ssi_writewait();
+    vs_ssi_wait();
     VS_DCS_DISABLE();
   }
 
@@ -518,7 +504,7 @@ void vs_stopstream(void)
   {
     vs_ssi_write(0x00);
   }
-  vs_ssi_writewait();
+  vs_ssi_wait();
   VS_DCS_DISABLE();
 
   //check status -> reset
@@ -538,7 +524,6 @@ void vs_stop(void)
   vs_playing = 0;
 
   vs_pause();
-  vs_setvolume(0);
   vs_stopstream();
 
   buf_reset();
@@ -634,7 +619,6 @@ void vs_init(void)
   vs_setbassamp(DEFAULT_BASSAMP);
   vs_settreblefreq(DEFAULT_TREBLEFREQ); 
   vs_settrebleamp(DEFAULT_TREBLEAMP);
-  vs_setvolume(0); //0 -> analog power off
 
   //init pin interrupt
   GPIOIntTypeSet(GPIO_PORTA_BASE, GPIO_PIN_1, GPIO_HIGH_LEVEL);

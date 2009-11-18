@@ -101,13 +101,13 @@ unsigned int fs_isdir(const char *path, unsigned int item)
 /*
 MP3 ID3 Tag v1
 offset len
-0 	3 	TAG -> ID3v1
-3 	30 	Song title
-33 	30 	Artist
-63 	30 	Album
-93 	4 	Year
-97 	30 	Comment
-127 	1 	Genre
+0        3        TAG -> ID3v1
+3        30        Song title
+33        30        Artist
+63        30        Album
+93        4        Year
+97        30        Comment
+127        1        Genre
 */
 void fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int len)
 {

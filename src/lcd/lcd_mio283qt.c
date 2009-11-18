@@ -10,7 +10,7 @@
 #include "lcd_mio283qt.h"
 
 
-#if defined(MIO283QT)
+#ifdef MIO283QT
 
 
 void lcd_draw(unsigned int color)
@@ -47,22 +47,22 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y)
+void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
-#if defined(LCD_MIRROR)
-  lcd_cmd(0x50, (LCD_HEIGHT-1)-end_y);   //set y
-  lcd_cmd(0x51, (LCD_HEIGHT-1)-start_y); //set y
-  lcd_cmd(0x52, (LCD_WIDTH-1)-end_x);    //set x
-  lcd_cmd(0x53, (LCD_WIDTH-1)-start_x);  //set x
+#ifdef LCD_MIRROR
+  lcd_cmd(0x50, (LCD_HEIGHT-1)-y1); //set y0
+  lcd_cmd(0x51, (LCD_HEIGHT-1)-y0); //set y1
+  lcd_cmd(0x52, (LCD_WIDTH-1)-x1);  //set x0
+  lcd_cmd(0x53, (LCD_WIDTH-1)-x0);  //set x1
 #else
-  lcd_cmd(0x50, start_y); //set y
-  lcd_cmd(0x51, end_y);   //set y
-  lcd_cmd(0x52, start_x); //set x
-  lcd_cmd(0x53, end_x);   //set x
+  lcd_cmd(0x50, y0); //set y0
+  lcd_cmd(0x51, y1); //set y1
+  lcd_cmd(0x52, x0); //set x0
+  lcd_cmd(0x53, x1); //set x1
 #endif
 
   //set cursor
-  lcd_cursor(start_x, start_y);
+  lcd_cursor(x0, y0);
 
   return;
 }
@@ -70,7 +70,7 @@ void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, un
 
 void lcd_cursor(unsigned int x, unsigned int y)
 {
-#if defined(LCD_MIRROR)
+#ifdef LCD_MIRROR
   lcd_cmd(0x20, (LCD_HEIGHT-1)-y); //set y
   lcd_cmd(0x21, (LCD_WIDTH-1)-x);  //set x
 #else
@@ -115,7 +115,7 @@ void lcd_reset(void)
   //reset
   LCD_CS_DISABLE();
   LCD_RST_ENABLE();
-  delay_ms(100);
+  delay_ms(50);
   LCD_RST_DISABLE();
   delay_ms(100);
 
@@ -150,13 +150,13 @@ void lcd_reset(void)
   delay_ms(5);
 
   //display options
-#if defined(LCD_MIRROR)
+#ifdef LCD_MIRROR
   lcd_cmd(0x03, 0x1008); //entry mode
 #else
   lcd_cmd(0x03, 0x1038); //entry mode
 #endif
 
-  lcd_area(0x00, 0x00, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   return;
 }

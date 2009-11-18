@@ -63,7 +63,7 @@ const char clock_tab[60][3] =
 };
 
 
-#if defined(DEBUG)
+#ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine) //called if the DriverLib encounters an error
 {
   DEBUGOUT("DLib: %s:%i\n", pcFilename, ulLine);
@@ -183,13 +183,13 @@ void uart_puts(const char *s)
 
 void uart_putc(unsigned int c)
 {
-  UARTCharPut(UART1_BASE, c);
+  UARTCharPut(DEBUGUART, c);
 
   return;
 }
 
 
-#if defined(DEBUG)
+#ifdef DEBUG
 void nmi_fault(void)   { DEBUGOUT("NMI fault\n");    return; }
 void hard_fault(void)  { DEBUGOUT("HARD fault\n");   return; }
 void mpu_fault(void)   { DEBUGOUT("MPU fault\n");    return; }
@@ -370,6 +370,7 @@ unsigned int standby(unsigned int param)
   standby_active = 1;
 
   vs_stop();
+  vs_setvolume(0); //0 -> analog power off
   lcd_clear(RGB(0,0,0));
   tmp[0] = clock_str[0];
   tmp[1] = clock_str[1];
@@ -387,33 +388,27 @@ unsigned int standby(unsigned int param)
   {
     eth_service();
 
-    if(!ethernet_data())
+    i = status;
+    status &= ~i;
+    if(i & MIN_CHANGED)
     {
-      i = status;
-      status &= ~i;
-      if(i & MIN_CHANGED)
+      if(i & DAY_CHANGED)
       {
-        if(i & DAY_CHANGED)
-        {
-          settime(sec_time);
-        }
-        if(alarm_check(&time))
-        {
-          alarm = 1;
-        }
-        tmp[0] = clock_str[0];
-        tmp[1] = clock_str[1];
-        tmp[3] = clock_str[3];
-        tmp[4] = clock_str[4];
-        lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+        settime(sec_time);
       }
+      if(alarm_check(&time))
+      {
+        alarm = 1;
+        break;
+      }
+      tmp[0] = clock_str[0];
+      tmp[1] = clock_str[1];
+      tmp[3] = clock_str[3];
+      tmp[4] = clock_str[4];
+      lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
     }
 
-    if(alarm)
-    {
-      break;
-    }
-    else if(keys_sw() || (ir_cmd() == SW_POWER))
+    if(keys_sw() || (ir_cmd() == SW_POWER))
     {
       daytime(tmp, &time);
       lcd_puts(20, 20, tmp, NORMALFONT, RGB(255,255,255), RGB(0,0,0));
@@ -457,14 +452,14 @@ int main()
     SysCtlResetCauseClear(l);
   }
 
-  //init pins and peripherals
-  init_pins();
-
   //init brown-out reset
   init_bor(1);
 
+  //init pins and peripherals
+  init_pins();
+
   //init fault ints
-#if defined(DEBUG)
+#ifdef DEBUG
   IntRegister(FAULT_NMI,    nmi_fault);    IntEnable(FAULT_NMI);
   IntRegister(FAULT_HARD,   hard_fault);   IntEnable(FAULT_HARD);
   IntRegister(FAULT_MPU,    mpu_fault);    IntEnable(FAULT_MPU);
@@ -485,44 +480,46 @@ int main()
   //init peripherals
   init_periph();
 
-  //low speed
+  //low speed and enable interrupts
   cpu_speed(1);
 
-  //enable interrupts
-  IntMasterEnable();
-
   //show hardware config
-  #if defined(LM3S_REV_A1)             //LM3S Rev
+  #if defined LM3S_REV_A1              //LM3S Rev
   # define LM3S_NAME "LM3S-A1"
-  #elif defined(LM3S_REV_A2)
+  #elif defined LM3S_REV_A2
   # define LM3S_NAME "LM3S-A2"
-  #elif defined(LM3S_REV_B0)
+  #elif defined LM3S_REV_B0
   # define LM3S_NAME "LM3S-B0"
   #else
   # warning "LM3S Rev not defined"
   #endif
-  #if defined(LPH88)                   //LCD
-  # define LCD_NAME "S65-LPH88"
-  #elif defined(LS020)
-  # define LCD_NAME "S65-LS020"
-  #elif defined(L2F50)
+  #if defined L2F50                    //LCD
   # define LCD_NAME "S65-L2F50"
-  #elif defined(MIO283QT)
+  #elif defined LPH88
+  # define LCD_NAME "S65-LPH88"
+  #elif defined LS020
+  # define LCD_NAME "S65-LS020"
+  #elif defined MIO283QT
   # define LCD_NAME "MIO283QT"
   #else
   # warning "LCD not defined"
   #endif
-  DEBUGOUT("\n---\n");
-  DEBUGOUT(APPNAME" v"APPVERSION""APPRELEASE_SYM" ("__DATE__" "__TIME__")\n");
+  DEBUGOUT("\n"APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
   DEBUGOUT("Hardware: "LM3S_NAME", "LCD_NAME"\n");
 
   //init lcd
   lcd_init();
 
+/*
+lcd_clear(0);
+lcd_fillrect(10,10, 50, 40, DEFAULT_EDGECOLOR);
+lcd_puts(10, 10, APPNAME, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+while(1);
+*/
   //show start-up screen
   lcd_clear(DEFAULT_BGCOLOR);
   lcd_fillrect( 0, 0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
-  lcd_puts(10, 2, APPNAME" v"APPVERSION""APPRELEASE_SYM, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_puts(10, 2, APPNAME" v"APPVERSION, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_fillrect( 0, LCD_HEIGHT-14, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, LCD_HEIGHT-11, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_puts(10, 20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
@@ -583,7 +580,7 @@ int main()
 
   //set clock
   lcd_puts(10, i, "NTP: Get Time...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
-#if defined(DEBUG)
+#ifdef DEBUG
   settime(0);
 #else
   settime(ntp_gettime());
@@ -610,11 +607,10 @@ int main()
 
     i = status;
     status &= ~i;
-
-#if defined(DEBUG)
+#ifdef DEBUG
     if(i & SEC_CHANGED)
     {
-      DEBUGOUT("buf: %i / rx %i\n", buf_free(), eth_rxfree());
+//      DEBUGOUT("buf: %i / rx %i\n", buf_free(), eth_rxfree());
     }
 #endif
     if(i & MIN_CHANGED)

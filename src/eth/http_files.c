@@ -54,7 +54,7 @@ const unsigned char INDEX_HTM[] =
 
   "<br><br>\r\n" \
   "<pre>\r\n" \
-  "<b>"APPNAME" v"APPVERSION""APPRELEASE_SYM"</b> ("__DATE__" "__TIME__")\r\n" \
+  "<b>"APPNAME" v"APPVERSION"</b> ("__DATE__" "__TIME__")\r\n" \
   "visit <a href=\"http://www.watterott.net\">www.watterott.net</a> for updates\r\n" \
   "</pre>\r\n" \
 

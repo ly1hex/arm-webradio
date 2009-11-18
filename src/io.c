@@ -19,12 +19,20 @@
 #include "third_party/lmi/driverlib/uart.h"
 #include "third_party/lmi/driverlib/ethernet.h"
 #include "tools.h"
-#include "main.h"
+#ifdef LOADER
+# include "loader/main.h"
+#else
+# include "main.h"
+# include "eth.h"
+#endif
 #include "io.h"
-#include "eth.h"
 
 
-volatile int sw_pressed=0, ir_data=0;
+volatile int sw_pressed=0;
+
+#ifndef LOADER
+
+volatile int ir_data=0;
 unsigned long ir_address=0, ir_status=IR_DETECT, ir_1us=0;
 unsigned long fm_bytes=0;
 volatile unsigned long fm_head=0, fm_tail=0;
@@ -66,7 +74,7 @@ void ethernet_put(unsigned char *pkt, unsigned int len)
 unsigned int ethernet_get(unsigned char *pkt, unsigned int len)
 {
 /*
-#if defined(DEBUG)
+#ifdef DEBUG
   unsigned long status;
   status = EthernetIntStatus(ETH_BASE, 0);
   if(status & ETH_INT_RXER)
@@ -94,7 +102,7 @@ void ethernet_handler(void)
 
   status = EthernetIntStatus(ETH_BASE, 0);
 
-#if defined(DEBUG)
+#ifdef DEBUG
   if(status & ETH_INT_RXER)
   {
     DEBUGOUT("\nEth: Rx err\n\n");
@@ -352,6 +360,9 @@ unsigned long fm_init(void)
 }
 
 
+#endif //LOADER
+
+
 void ssi_wait(void)
 {
   unsigned long r;
@@ -470,6 +481,8 @@ void pwm_led(unsigned int power)
 }
 
 
+#ifndef LOADER
+
 int ir_cmd(void)
 {
   int data, cmd=0;
@@ -527,7 +540,6 @@ int ir_rawdata(void)
 
 void ir_timer(void)
 {
-#if defined(IR_RECEIVER)
   static unsigned int bit=0, data=0, last_data=0;
 
   TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
@@ -573,14 +585,13 @@ void ir_timer(void)
     TimerLoadSet(TIMER0_BASE, TIMER_A, 0xFFFFFFFFUL);
     GPIOPinIntEnable(GPIO_PORTD_BASE, GPIO_PIN_2);
   }
-#endif
+
   return;
 }
 
 
 void ir_edge(void)
 {
-#if defined(IR_RECEIVER)
   unsigned long time, delta;
   static unsigned long last_time=0UL;
 
@@ -648,7 +659,7 @@ void ir_edge(void)
       last_time = time;
       break;
   }
-#endif
+
   return;
 }
 
@@ -672,7 +683,6 @@ void ir_setaddr(unsigned int addr)
 
 void ir_init(void)
 {
-#if defined(IR_RECEIVER)
   ir_data    = 0;
   ir_status  = 0;
   ir_1us     = SysCtlClockGet() / 1000000UL;
@@ -682,9 +692,11 @@ void ir_init(void)
   TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
   TimerLoadSet(TIMER0_BASE, TIMER_A, 0xFFFFFFFFUL);
   GPIOPinIntEnable(GPIO_PORTD_BASE, GPIO_PIN_2);
-#endif
+
   return;
 }
+
+#endif //LOADER
 
 
 int keys_steps(void) //encoder: four step, qei config: two step (see errata)
@@ -754,7 +766,7 @@ void cpu_speed(unsigned int low_speed)
   if(low_speed)
   {
 //for rev A1 & A2 set LDO=2.75V for correct PLL function -> reset to 2.50V
-#if defined(LM3S_REV_A1) || defined(LM3S_REV_A2)
+#if defined LM3S_REV_A1 || defined LM3S_REV_A2
     SysCtlLDOSet(SYSCTL_LDO_2_50V);
 #endif
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ); //8 MHz
@@ -763,12 +775,14 @@ void cpu_speed(unsigned int low_speed)
     SysTickEnable();
     pwm_led(LCD_PWMSTANDBY);
     ssi_speed(0);
+#ifndef LOADER
     vs_ssi_speed(0);
+#endif
   }
   else
   {
 //for rev A1 & A2 set LDO=2.75V for correct PLL function
-#if defined(LM3S_REV_A1) || defined(LM3S_REV_A2)
+#if defined LM3S_REV_A1 || defined LM3S_REV_A2
     SysCtlLDOSet(SYSCTL_LDO_2_75V);
 #endif
     SysCtlClockSet(LM3S_SYSDIV | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ); //speed up
@@ -777,18 +791,22 @@ void cpu_speed(unsigned int low_speed)
     SysTickEnable();
     pwm_led(100);
     ssi_speed(0);
+#ifndef LOADER
     vs_ssi_speed(0);
+#endif
   }
 
+#ifndef LOADER
   ir_init();
+#endif
   IntMasterEnable();
 
   delay_ms(10);
 
-#if defined(DEBUG)
-  UARTDisable(UART1_BASE);
-  UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), DEBUGBAUD, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
-  UARTEnable(UART1_BASE);
+#ifdef DEBUG
+  UARTDisable(DEBUGUART);
+  UARTConfigSetExpClk(DEBUGUART, SysCtlClockGet(), DEBUGBAUD, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
+  UARTEnable(DEBUGUART);
 #endif
 
   return;
@@ -798,8 +816,6 @@ void cpu_speed(unsigned int low_speed)
 void init_bor(unsigned int on)
 {
   unsigned long reset;
-
-  SysCtlIntClear(SYSCTL_INT_BOR);
 
   if(on)
   {
@@ -818,12 +834,21 @@ void init_bor(unsigned int on)
 
 void init_periph(void)
 {
-  //init uart1 (debug output)
-#if defined(DEBUG)
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART1);
-  SysCtlPeripheralReset(SYSCTL_PERIPH_UART1);
-  UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), DEBUGBAUD, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
-  UARTEnable(UART1_BASE);
+  //init uart for debug output
+#ifdef DEBUG
+# if (DEBUGUART == UART0_BASE)
+#  define DEBUGUART_PERIPH SYSCTL_PERIPH_UART0
+# elif (DEBUGUART == UART1_BASE)
+#  define DEBUGUART_PERIPH SYSCTL_PERIPH_UART1
+# elif (DEBUGUART == UART2_BASE)
+#  define DEBUGUART_PERIPH SYSCTL_PERIPH_UART2
+# else
+#  warning "DEBUGUART unknown"
+# endif
+  SysCtlPeripheralEnable(DEBUGUART_PERIPH);
+  SysCtlPeripheralReset(DEBUGUART_PERIPH);
+  UARTConfigSetExpClk(DEBUGUART, SysCtlClockGet(), DEBUGBAUD, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
+  UARTEnable(DEBUGUART);
 #endif
 
   //init quadrature encoder
@@ -836,7 +861,7 @@ void init_periph(void)
   QEIEnable(QEI_BASE);
 
   //init ir receiver
-#if defined(IR_RECEIVER)
+#ifndef LOADER
   SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
   SysCtlPeripheralReset(SYSCTL_PERIPH_TIMER0);
   TimerConfigure(TIMER0_BASE, TIMER_CFG_32_BIT_PER); //32bit periodic timer
@@ -854,11 +879,13 @@ void init_periph(void)
   PWMGenConfigure(PWM_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
 
   //init ssi0: VS
+#ifndef LOADER
   SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
   SysCtlPeripheralReset(SYSCTL_PERIPH_SSI0);
   SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, SysCtlClockGet()/4, 8);
   SSIEnable(SSI0_BASE);
   SSIDataPut(SSI0_BASE, 0xff); SSIDataPut(SSI0_BASE, 0xff); SSIDataPut(SSI0_BASE, 0xff); //dummy write to set ssi fifo bits
+#endif
 
   //init ssi1: LCD, SD, F-RAM
   SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI1);
@@ -868,6 +895,7 @@ void init_periph(void)
   SSIDataPut(SSI1_BASE, 0xff); SSIDataPut(SSI1_BASE, 0xff); SSIDataPut(SSI1_BASE, 0xff); //dummy write to set ssi fifo bits
 
   //init ethernet
+#ifndef LOADER
   SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
   SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
   EthernetInitExpClk(ETH_BASE, SysCtlClockGet());
@@ -875,6 +903,7 @@ void init_periph(void)
   EthernetIntRegister(ETH_BASE, ethernet_handler);
   EthernetIntEnable(ETH_BASE, ETH_INT_RX);
   EthernetEnable(ETH_BASE);
+#endif
 
   return;
 }
@@ -895,7 +924,7 @@ void init_pins(void)
   GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6, GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_6); //SD_PWR, VS_RST = low / SD_CS, LCD_RS, LCD_CS = high
 
   //GPIO C: JTAG
-#if defined(LM3S_REV_A1) || defined(LM3S_REV_A2) //for rev A1 & A2 set JTAG pullups on
+#if defined LM3S_REV_A1 || defined LM3S_REV_A2 //for rev A1 & A2 set JTAG pullups on
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
   GPIOPadConfigSet(GPIO_PORTC_BASE, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU); //pullup
 #endif
@@ -903,8 +932,8 @@ void init_pins(void)
   //GPIO D: Encoder, IR
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
   GPIOSetInput(GPIO_PORTD_BASE, GPIO_PIN_1 | GPIO_PIN_2); //PHA, IR = input
-#if defined(DEBUG)
-  GPIOSetOutput(GPIO_PORTD_BASE, GPIO_PIN_3); //debug = output
+#if defined DEBUG && (DEBUGUART == UART1_BASE)
+  GPIOSetOutput(GPIO_PORTD_BASE, GPIO_PIN_3); //uart1-tx = output
   GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_3);
 #endif
 
@@ -922,6 +951,13 @@ void init_pins(void)
   GPIOSetOutputOD(GPIO_PORTF_BASE, GPIO_PIN_1); //USB_PWR = open-drain output
   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); //USB_PWR = high
   GPIODirModeSet(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_DIR_MODE_HW); //LED1, LED2 = ethernet
+
+  //GPIO G
+#if defined DEBUG && (DEBUGUART == UART2_BASE)
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
+  GPIOSetOutput(GPIO_PORTG_BASE, GPIO_PIN_1); //uart2-tx = output
+  GPIOPinTypeUART(GPIO_PORTG_BASE, GPIO_PIN_1);
+#endif
 
   return;
 }

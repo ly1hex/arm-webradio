@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "tools.h"
-#include "main.h"
 #include "io.h"
 #include "lcd.h"
 #include "lcd/lcd_l2f50.h"
@@ -11,8 +10,10 @@
 #include "lcd/lcd_lph88.h"
 #include "lcd/lcd_mio283qt.h"
 #include "lcd/font_8x8.h"
-#include "lcd/font_8x12.h"
-#include "lcd/font_clock.h"
+#ifndef LOADER
+# include "lcd/font_8x12.h"
+# include "lcd/font_clock.h"
+#endif
 
 
 void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
@@ -87,8 +88,10 @@ void lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsig
   switch(font)
   {
     case SMALLFONT:  font_height=SMALLFONT_HEIGHT-1;  break;
+#ifndef LOADER
     case NORMALFONT: font_height=NORMALFONT_HEIGHT-1; break;
     case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
+#endif
   }
 
   lcd_fillrect(0, y, x-1, (y+font_height), bgcolor); //clear before text
@@ -127,8 +130,10 @@ void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigne
   switch(font)
   {
     case SMALLFONT:  font_height=SMALLFONT_HEIGHT-1;  break;
+#ifndef LOADER
     case NORMALFONT: font_height=NORMALFONT_HEIGHT-1; break;
     case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
+#endif
   }
 
   lcd_fillrect(0, y, x-1, (y+font_height), bgcolor); //clear before text
@@ -177,6 +182,7 @@ unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned i
       width  = SMALLFONT_WIDTH;
       height = SMALLFONT_HEIGHT;
       break;
+#ifndef LOADER
     case NORMALFONT:
       c     -= NORMALFONT_START;
       ptr    = (unsigned long*)&NORMALFONT_NAME[c*(NORMALFONT_WIDTH*NORMALFONT_HEIGHT/8)];
@@ -189,6 +195,7 @@ unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned i
       width  = TIMEFONT_WIDTH;
       height = TIMEFONT_HEIGHT;
       break;
+#endif
   }
 
   ret = x+width;
