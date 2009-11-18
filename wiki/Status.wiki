@@ -26,4 +26,4 @@
 || Control via HTTP                  || -       ||
 || Control via UPnP                  || Volume control works ||
 || Alarm Clock                       || working ||
-|| Bootloader                        || -       ||
+|| Bootloader                        || working ||
