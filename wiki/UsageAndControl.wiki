@@ -1,4 +1,6 @@
+#summary General usage infos.
 #labels Featured
+
 == Rotary encoder ==
 || *Encoder*    || *Function*     ||
 || Left/right   || Scroll up/down ||
