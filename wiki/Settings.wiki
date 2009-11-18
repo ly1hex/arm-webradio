@@ -7,7 +7,7 @@ http://code.google.com/p/arm-webradio/source/browse/#svn/trunk/doc/card_example
 INI-File with settings:
 {{{
 [SETTINGS]
-PlayMode=       Play mode (for future use)
+PlayMode=       Play mode (0=normal, 1=one-by-one)
 AutoStart=      Auto start file (Station item number or path to Card file)
 IR=             IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
 
