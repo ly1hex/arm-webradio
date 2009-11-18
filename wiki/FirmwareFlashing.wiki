@@ -1,4 +1,4 @@
-#summary HowTo flash the WebRadio bootloader and firmware.
+#summary HowTo flash the bootloader and the firmware.
 #labels Featured
 
 === Program the Bootloader ===
