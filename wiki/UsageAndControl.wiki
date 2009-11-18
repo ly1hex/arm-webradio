@@ -15,10 +15,7 @@
 
 
 == Bootloader ==
-The new firmware has to be copied to the root directory of memory card
-and named * FIRMWARE.BIN *.
-Then start the loader: Hold the rotary encoder switch while power on the WebRadio.
-Now you see the loader menu...
+The new firmware has to be copied to the root directory of the memory card and named * FIRMWARE.BIN *. Then start the loader: Hold the rotary encoder switch while power on the WebRadio. Now you see the loader menu...
 
 
 == Webinterface ==
