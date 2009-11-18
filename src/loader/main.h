@@ -19,9 +19,9 @@
 #define VERSION                        "0.01"
 #define RELEASE                        //Release version
 #define APPNAME                        "Loader"
-#ifdef DEBUG
+#if defined DEBUG
 # define APPVERSION                    VERSION"d"
-#elifdef RELEASE
+#elif defined RELEASE
 # define APPVERSION                    VERSION
 #else
 # define APPVERSION                    VERSION"*"
