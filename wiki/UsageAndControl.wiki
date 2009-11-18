@@ -14,6 +14,13 @@
 || OK           || Select/Enter   ||
 
 
+== Bootloader ==
+The new firmware has to be copied to the root directory of memory card
+and named * FIRMWARE.BIN *.
+Then start the loader: Hold the rotary encoder switch while power on the WebRadio.
+Now you see the loader menu...
+
+
 == Webinterface ==
 Type in your browser * http://192.168.0.50 * or * http://webradio * to access the webinterface. (These are the default addresses.)
 
