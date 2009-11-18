@@ -19,12 +19,19 @@
 #define TIMEFONT_WIDTH                 FONT3_WIDTH
 #define TIMEFONT_HEIGHT                FONT3_HEIGHT
 
-#if defined(MIO283QT)
-# define LCD_WIDTH                     (320)
-# define LCD_HEIGHT                    (240)
+#ifdef MIO283QT
+# define _LCD_WIDTH                     (320)
+# define _LCD_HEIGHT                    (240)
+#else //S65 Displays
+# define _LCD_WIDTH                     (176)
+# define _LCD_HEIGHT                    (132)
+#endif
+#ifdef LCD_ROTATE
+# define LCD_WIDTH                     _LCD_HEIGHT
+# define LCD_HEIGHT                    _LCD_WIDTH
 #else
-# define LCD_WIDTH                     (176)
-# define LCD_HEIGHT                    (132)
+# define LCD_WIDTH                     _LCD_WIDTH
+# define LCD_HEIGHT                    _LCD_HEIGHT
 #endif
 
 #define RGB(r,g,b)                     (((r&0xF8)<<8)|((g&0xFC)<<3)|((b&0xF8)>>3)) //5 red | 6 green | 5 blue

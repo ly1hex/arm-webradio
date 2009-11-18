@@ -43,9 +43,9 @@ CPUcpsid(void)
     //
     // Read PRIMASK and disable interrupts.
     //
-    __asm("    mrs     %0, PRIMASK\n"
+    __asm("    mrs     %0, primask\n"
           "    cpsid   i\n"
-          "    bx      lr\n"
+          //"    bx      lr\n"
           : "=r" (ulRet));
 
     //
@@ -104,7 +104,7 @@ CPUcpsie(void)
     //
     // Read PRIMASK and enable interrupts.
     //
-    __asm("    mrs     %0, PRIMASK\n"
+    __asm("    mrs     %0, primask\n"
           "    cpsie   i\n"
           "    bx      lr\n"
           : "=r" (ulRet));

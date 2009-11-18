@@ -1,6 +1,6 @@
 WebRadio v0.03 (c) Andreas Watterott (www.watterott.net)
 ========================================================
-  Compiled with Rowley's CrossWorks for ARM 2.03
+  Compiled with Rowley's CrossWorks for ARM 2.04
                          CPU Support Pkg. Stellaris 1.1
 
 
@@ -13,13 +13,14 @@ Third party software
       lmi/driverlib/cpu.c:107: PRIMASK -> primask
       lmi/driverlib/interrupt.c:108: vtable -> .vectors_ram
 
-  ChaN's FatFs 0.07d
+  ChaN's FatFs 0.07e
     http://elm-chan.org/fsw/ff/00index_e.html
 
 
 History
 -------
-         2009  v0.03  Switched to CrossWorks CPU Support Pkg. Stellaris 1.1
+  Nov 18 2009  v0.03  Switched to CrossWorks CPU Support Pkg. Stellaris 1.1
+                      Bootloader added
                       New buffer system
                       F-RAM support
 

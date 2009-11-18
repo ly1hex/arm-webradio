@@ -3,26 +3,28 @@
 
 
 //----- DEFINES -----
-#if !defined(DEBUG)
+//Debug settings
+#ifndef DEBUG
 //# define DEBUG                        //switch debug output on
 #endif
-
-//Debug settings
-#if defined(DEBUG)
+#define DEBUGBAUD                       115200   //uart baud rate: 115200
+#define DEBUGUART                       UART2_BASE //uart: UART1_BASE UART2_BASE
+#ifdef DEBUG
 # define DEBUGOUT                       debugout //debugout
-# define DEBUGBAUD                      115200   //uart baud rate
 #else
 # define DEBUGOUT                       //do nothing
 #endif
 
 //Application settings
+#define VERSION                        "0.03"
+#define RELEASE                        //Release version
 #define APPNAME                        "WebRadio" //max 15 characters
-#define APPVERSION                     "0.03"
-//#define APPRELEASE                     //Release version
-#if defined(APPRELEASE)
-# define APPRELEASE_SYM ""
+#if defined DEBUG
+# define APPVERSION                    VERSION"d"
+#elif defined RELEASE
+# define APPVERSION                    VERSION
 #else
-# define APPRELEASE_SYM "*"
+# define APPVERSION                    VERSION"*"
 #endif
 
 //Max characters

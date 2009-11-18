@@ -150,8 +150,6 @@ void                                   vs_write_plugin(const unsigned short *plu
 unsigned int                           vs_read_ram(unsigned int addr);
 void                                   vs_write_reg(unsigned int reg, unsigned int data);
 unsigned int                           vs_read_reg(unsigned int reg);
-void                                   vs_write(unsigned int c);
-unsigned int                           vs_read(void);
 void                                   vs_pause(void);
 void                                   vs_play(void);
 void                                   vs_stopstream(void);

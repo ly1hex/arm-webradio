@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------/
-/  FatFs - FAT file system module  R0.07d                    (C)ChaN, 2009
+/  FatFs - FAT file system module  R0.07e                    (C)ChaN, 2009
 /-----------------------------------------------------------------------------/
 / FatFs module is a generic FAT file system module for small embedded systems.
 / This is a free software that opened for education, research and commercial
@@ -68,9 +68,10 @@
 /                   Added relative path feature.
 /                   Added f_chdir() and f_chdrive().
 /                   Added proper case conversion to extended char.
-/ Nov 01,'09 R0.07d Separated out configuration options from ff.h to ffconf.h.
-/                   Added a configuration option, _LFN_UNICODE.
+/ Nov 03,'09 R0.07e Separated out configuration options from ff.h to ffconf.h.
 /                   Fixed f_unlink() fails to remove a sub-dir on _FS_RPATH.
+/                   Fixed name matching error on the 13 char boundary.
+/                   Added a configuration option, _LFN_UNICODE.
 /                   Changed f_readdir() to return the SFN with always upper
 /                   case on non-LFN cfg.
 /---------------------------------------------------------------------------*/
@@ -84,7 +85,7 @@
 
 ---------------------------------------------------------------------------*/
 
-#if _FATFS != 0x007D
+#if _FATFS != 0x007E
 #error Wrong include file (ff.h).
 #endif
 
@@ -318,7 +319,7 @@ FRESULT sync (	/* FR_OK: successful, FR_DISK_ERR: failed */
 /* FAT access - Read value of a FAT entry                                */
 /*-----------------------------------------------------------------------*/
 
-static
+
 DWORD get_fat (	/* 0xFFFFFFFF:Disk error, 1:Interal error, Else:Cluster status */
 	FATFS *fs,	/* File system object */
 	DWORD clst	/* Cluster# to get the link information */
@@ -360,7 +361,7 @@ DWORD get_fat (	/* 0xFFFFFFFF:Disk error, 1:Interal error, Else:Cluster status *
 /* FAT access - Change value of a FAT entry                              */
 /*-----------------------------------------------------------------------*/
 #if !_FS_READONLY
-static
+
 FRESULT put_fat (
 	FATFS *fs,	/* File system object */
 	DWORD clst,	/* Cluster# to be changed in range of 2 to fs->max_clust - 1 */
@@ -522,7 +523,7 @@ DWORD create_chain (	/* 0:No free cluster, 1:Internal error, 0xFFFFFFFF:Disk err
 /* Get sector# from cluster#                                             */
 /*-----------------------------------------------------------------------*/
 
-static
+
 DWORD clust2sect (	/* !=0: Sector number, 0: Failed - invalid cluster# */
 	FATFS *fs,		/* File system object */
 	DWORD clst		/* Cluster# to be converted */
@@ -666,18 +667,26 @@ BOOL cmp_lfn (			/* TRUE:Matched, FALSE:Not matched */
 )
 {
 	int i, s;
-	WCHAR wc;
+	WCHAR wc, uc;
 
 
 	i = ((dir[LDIR_Ord] & 0xBF) - 1) * 13;	/* Get offset in the LFN buffer */
-	s = 0;
+	s = 0; wc = 1;
 	do {
-		wc = ff_wtoupper(LD_WORD(dir+LfnOfs[s]));	/* Get an LFN character */
-		if (i >= _MAX_LFN || wc != ff_wtoupper(lfnbuf[i++]))	/* Compare it with the reference character */
-			return FALSE;
-	} while (++s < 13 && wc);		/* Repeat until all chars in the entry or a NUL char is processed */
+		uc = LD_WORD(dir+LfnOfs[s]);	/* Pick an LFN character from the entry */
+		if (wc) {	/* Last char has not been processed */
+			wc = ff_wtoupper(uc);		/* Convert it to upper case */
+			if (i >= _MAX_LFN || wc != ff_wtoupper(lfnbuf[i++]))	/* Compare it */
+				return FALSE;			/* Not matched */
+		} else {
+			if (uc != 0xFFFF) return FALSE;	/* Check filler */
+		}
+	} while (++s < 13);				/* Repeat until all chars in the entry are checked */
 
-	return TRUE;					/* The LFN entry matched */
+	if ((dir[LDIR_Ord] & 0x40) && wc && lfnbuf[i])	/* Last segment matched but different length */
+		return FALSE;
+
+	return TRUE;					/* The part of LFN matched */
 }
 
 
@@ -689,18 +698,21 @@ BOOL pick_lfn (			/* TRUE:Succeeded, FALSE:Buffer overflow */
 )
 {
 	int i, s;
-	WCHAR wc;
+	WCHAR wc, uc;
 
 
 	i = ((dir[LDIR_Ord] & 0x3F) - 1) * 13;	/* Offset in the LFN buffer */
 
-	s = 0;
+	s = 0; wc = 1;
 	do {
-		if (i >= _MAX_LFN) return FALSE;	/* Buffer overflow? */
-		wc = LD_WORD(dir+LfnOfs[s]);		/* Get an LFN char */
-		if (!wc) break;						/* End of LFN? */
-		lfnbuf[i++] = wc;					/* Store it */
-	} while (++s < 13);						/* Repeat until last char is copied */
+		uc = LD_WORD(dir+LfnOfs[s]);			/* Pick an LFN character from the entry */
+		if (wc) {	/* Last char has not been processed */
+			if (i >= _MAX_LFN) return FALSE;	/* Buffer overflow? */
+			lfnbuf[i++] = wc = uc;				/* Store it */
+		} else {
+			if (uc != 0xFFFF) return FALSE;		/* Check filler */
+		}
+	} while (++s < 13);						/* Read all character in the entry */
 
 	if (dir[LDIR_Ord] & 0x40) {				/* Put terminator if it is the last LFN part */
 		if (i >= _MAX_LFN) return FALSE;	/* Buffer overflow? */
@@ -1448,8 +1460,8 @@ BYTE check_fs (	/* 0:The FAT boot record, 1:Valid boot record but not an FAT, 2:
 /* Make sure that the file system is valid                               */
 /*-----------------------------------------------------------------------*/
 
-static
-FRESULT auto_mount (	/* FR_OK(0): successful, !=0: any error occured */
+
+FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occured */
 	const XCHAR **path,	/* Pointer to pointer to the path name (drive number) */
 	FATFS **rfs,		/* Pointer to pointer to the found file system object */
 	BYTE chk_wp			/* !=0: Check media write protection for write access */
@@ -1461,7 +1473,6 @@ FRESULT auto_mount (	/* FR_OK(0): successful, !=0: any error occured */
 	DWORD bsect, fsize, tsect, mclst;
 	const XCHAR *p = *path;
 	FATFS *fs;
-
 
 	/* Get logical drive number from the path name */
 	vol = p[0] - '0';				/* Is there a drive number? */
@@ -1666,10 +1677,10 @@ FRESULT f_open (
 	fp->fs = NULL;		/* Clear file object */
 #if !_FS_READONLY
 	mode &= (FA_READ | FA_WRITE | FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_CREATE_NEW);
-	res = auto_mount(&path, &dj.fs, (BYTE)(mode & (FA_WRITE | FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_CREATE_NEW)));
+	res = chk_mounted(&path, &dj.fs, (BYTE)(mode & (FA_WRITE | FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_CREATE_NEW)));
 #else
 	mode &= FA_READ;
-	res = auto_mount(&path, &dj.fs, 0);
+	res = chk_mounted(&path, &dj.fs, 0);
 #endif
 	if (res != FR_OK) LEAVE_FF(dj.fs, res);
 	INITBUF(dj, sfn, lfn);
@@ -2058,7 +2069,7 @@ FRESULT f_chdir (
 	BYTE *dir;
 
 
-	res = auto_mount(&path, &dj.fs, 0);
+	res = chk_mounted(&path, &dj.fs, 0);
 	if (res == FR_OK) {
 		INITBUF(dj, sfn, lfn);
 		res = follow_path(&dj, path);		/* Follow the file path */
@@ -2197,7 +2208,7 @@ FRESULT f_opendir (
 	BYTE *dir;
 
 
-	res = auto_mount(&path, &dj->fs, 0);
+	res = chk_mounted(&path, &dj->fs, 0);
 	if (res == FR_OK) {
 		INITBUF((*dj), sfn, lfn);
 		res = follow_path(dj, path);			/* Follow the path to the directory */
@@ -2279,7 +2290,7 @@ FRESULT f_stat (
 	NAMEBUF(sfn, lfn);
 
 
-	res = auto_mount(&path, &dj.fs, 0);
+	res = chk_mounted(&path, &dj.fs, 0);
 	if (res == FR_OK) {
 		INITBUF(dj, sfn, lfn);
 		res = follow_path(&dj, path);	/* Follow the file path */
@@ -2314,7 +2325,7 @@ FRESULT f_getfree (
 
 
 	/* Get drive number */
-	res = auto_mount(&path, fatfs, 0);
+	res = chk_mounted(&path, fatfs, 0);
 	if (res != FR_OK) LEAVE_FF(*fatfs, res);
 
 	/* If number of free cluster is valid, return it without cluster scan. */
@@ -2424,7 +2435,7 @@ FRESULT f_unlink (
 	DWORD dclst;
 
 
-	res = auto_mount(&path, &dj.fs, 1);
+	res = chk_mounted(&path, &dj.fs, 1);
 	if (res != FR_OK) LEAVE_FF(dj.fs, res);
 
 	INITBUF(dj, sfn, lfn);
@@ -2479,7 +2490,7 @@ FRESULT f_mkdir (
 	DWORD dsect, dclst, pclst, tim;
 
 
-	res = auto_mount(&path, &dj.fs, 1);
+	res = chk_mounted(&path, &dj.fs, 1);
 	if (res != FR_OK) LEAVE_FF(dj.fs, res);
 
 	INITBUF(dj, sfn, lfn);
@@ -2559,7 +2570,7 @@ FRESULT f_chmod (
 	BYTE *dir;
 
 
-	res = auto_mount(&path, &dj.fs, 1);
+	res = chk_mounted(&path, &dj.fs, 1);
 	if (res == FR_OK) {
 		INITBUF(dj, sfn, lfn);
 		res = follow_path(&dj, path);		/* Follow the file path */
@@ -2599,7 +2610,7 @@ FRESULT f_utime (
 	BYTE *dir;
 
 
-	res = auto_mount(&path, &dj.fs, 1);
+	res = chk_mounted(&path, &dj.fs, 1);
 	if (res == FR_OK) {
 		INITBUF(dj, sfn, lfn);
 		res = follow_path(&dj, path);	/* Follow the file path */
@@ -2641,7 +2652,7 @@ FRESULT f_rename (
 
 
 	INITBUF(dj_old, sfn, lfn);
-	res = auto_mount(&path_old, &dj_old.fs, 1);
+	res = chk_mounted(&path_old, &dj_old.fs, 1);
 	if (res == FR_OK) {
 		dj_new.fs = dj_old.fs;
 		res = follow_path(&dj_old, path_old);	/* Check old object */

@@ -35,6 +35,7 @@ extern const SETTINGSMENU settingsmenu[];
 
 
 //----- PROTOTYPES -----
+unsigned int                           settings_getplaymode(void);
 void                                   settings_read(void);
 unsigned int                           settings_openitem(unsigned int item);
 void                                   settings_getitem(unsigned int item, char *name);

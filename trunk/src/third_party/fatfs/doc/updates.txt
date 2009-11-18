@@ -1,7 +1,8 @@
-R0.07d, Nov 1, 2009
+R0.07e, Nov 3, 2009
   Separated out configuration options from ff.h to ffconf.h.
   Added a configuration option, _LFN_UNICODE.
   Fixed f_unlink() fails to remove a sub-dir on _FS_RPATH.
+  Fixed name matching error on the 13 char boundary.
   Changed f_readdir() to return the SFN with always upper case on non-LFN cfg.
 
 R0.07c, Jun 21, 2009

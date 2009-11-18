@@ -217,7 +217,7 @@ void tcp_close(unsigned int index)
 
 unsigned int tcp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int dst_port, unsigned int src_port)
 {
-#if defined(TCP_MSS)
+#ifdef TCP_MSS
   TCP_Header *tx_tcp;
 #endif
 
@@ -250,7 +250,7 @@ unsigned int tcp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsi
     tcp_table[index].time       = 0;
     tcp_table[index].error      = 0;
   
-#if defined(TCP_MSS)
+#ifdef TCP_MSS
     tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
     tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
     tx_tcp->options[1] = 0x04; //len  = 4 bytes
@@ -369,7 +369,7 @@ void tcp_service(void)
         {
           tcp_table[index].acknum = swap32(rx_tcp->seqnum)+len+1;
           tcp_table[index].flags  = TCP_FLAG_SYN|TCP_FLAG_ACK;
-#if defined(TCP_MSS)
+#ifdef TCP_MSS
           tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
           tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
           tx_tcp->options[1] = 0x04; //len  = 4 bytes
@@ -539,7 +539,7 @@ void tcp_service(void)
       tcp_table[index].status     = TCP_OPENED;
       tcp_table[index].time       = 0;
       tcp_table[index].error      = 0;
-#if defined(TCP_MSS)
+#ifdef TCP_MSS
       tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
       tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
       tx_tcp->options[1] = 0x04; //len  = 4 bytes
@@ -832,7 +832,7 @@ void make_ip_header(MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int len, unsigned
 
   tx_ip->ver      = 0x04; //v4
   tx_ip->hd_len   = IP_HEADERLEN/4;
-#if defined(ETH_USE_DSCP)
+#ifdef ETH_USE_DSCP
   tx_ip->tos      = 0xB8; //0xB8 = Expedited Forwarding (QoS: DSCP)
 #else
   tx_ip->tos      = 0x00;
@@ -899,7 +899,7 @@ void make_eth_header(MAC_Addr dst_mac, unsigned int type)
 void eth_timerservice(void) //called every second
 {
   unsigned int index;
-#if defined(TCP_MSS)
+#ifdef TCP_MSS
   TCP_Header *tx_tcp;
 #endif
 
@@ -930,7 +930,7 @@ void eth_timerservice(void) //called every second
             break;
           case TCP_OPEN: //send syn
             tcp_table[index].flags = TCP_FLAG_SYN;
-#if defined(TCP_MSS)
+#ifdef TCP_MSS
             tx_tcp = (TCP_Header*) &eth_txbuf[TCP_OFFSET];
             tx_tcp->options[0] = 0x02; //kind = 2 (Maximum Segment Size)
             tx_tcp->options[1] = 0x04; //len  = 4 bytes

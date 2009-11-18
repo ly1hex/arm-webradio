@@ -10,7 +10,7 @@
 #include "lcd_lph88.h"
 
 
-#if defined(LPH88)
+#ifdef LPH88
 
 
 void lcd_draw(unsigned int color)
@@ -41,19 +41,19 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y)
+void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
   //set area
-#if defined(LCD_MIRROR)
-  lcd_cmd(0x16, (((LCD_HEIGHT-1)-start_y)<<8)|(((LCD_HEIGHT-1)-end_y))); //set y
-  lcd_cmd(0x17, (((LCD_WIDTH-1)-start_x)<<8)|(((LCD_WIDTH-1)-end_x))); //set x
+#ifdef LCD_MIRROR
+  lcd_cmd(0x16, (((LCD_HEIGHT-1)-y0)<<8)|(((LCD_HEIGHT-1)-y1))); //set y
+  lcd_cmd(0x17, (((LCD_WIDTH-1)-x0)<<8)|(((LCD_WIDTH-1)-x1)));  //set x
 #else
-  lcd_cmd(0x16, (end_y<<8)|(start_y)); //set y
-  lcd_cmd(0x17, (end_x<<8)|(start_x)); //set x
+  lcd_cmd(0x16, (y1<<8)|(y0)); //set y
+  lcd_cmd(0x17, (x1<<8)|(x0)); //set x
 #endif
 
   //set cursor
-  lcd_cursor(start_x, start_y);
+  lcd_cursor(x0, y0);
 
   return;
 }
@@ -61,7 +61,7 @@ void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, un
 
 void lcd_cursor(unsigned int x, unsigned int y)
 {
-#if defined(LCD_MIRROR)
+#ifdef LCD_MIRROR
   lcd_cmd(0x21, ((((LCD_WIDTH-1)-x)<<8)|((LCD_HEIGHT-1)-y))); //set cursor pos
 #else
   lcd_cmd(0x21, ((x<<8)|y)); //set cursor pos
@@ -112,7 +112,7 @@ void lcd_reset(void)
   LCD_CS_DISABLE();
   LCD_RS_DISABLE();
   LCD_RST_ENABLE();
-  delay_ms(100);
+  delay_ms(50);
   LCD_RST_DISABLE();
   delay_ms(100);
 
@@ -137,12 +137,12 @@ void lcd_reset(void)
   delay_ms(100);
 
   //display options
-#if defined(LCD_MIRROR)
+#ifdef LCD_MIRROR
   lcd_cmd(0x05, 0x0008); //Entry mode --
 #else
   lcd_cmd(0x05, 0x0038); //Entry mode ++
 #endif
-  lcd_area(0x00, 0x00, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   //display on sequence (bit2 = reversed colors)
   lcd_cmd(0x07, 0x0005); //display control: D0

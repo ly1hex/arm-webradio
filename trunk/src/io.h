@@ -19,9 +19,10 @@
 //Display: L2F50, LPH88, LS020, MIO283QT
 #define LS020
 //#define LCD_MIRROR                     //mirror display
+//#define LCD_ROTATE                     //rotate display
 #define LCD_PWMFREQ                    (60000) //60000 Hz LED PWM Freq
 #define LCD_PWMMIN                     (5)     // 5 % (1...100%)
-#define LCD_PWMSTANDBY                 (10)    //10 % (1...100%)
+#define LCD_PWMSTANDBY                 (15)    //15 % (1...100%)
 
 //Stand-By
 #define STANDBY_TIME                   (3*60)  //standby after x seconds
@@ -34,7 +35,6 @@
 #define SW_LONGTIME                    (120) //120*10ms = 1200ms
 
 //IR
-#define IR_RECEIVER                    //ir support on
 #define IR_BITTIME                     (1778) //1.778 ms
 #define IR_MAXERR                      (150)  //150 us (max. half bit time error)
 #define IR_DETECT                      (0)
@@ -109,6 +109,7 @@
 
 
 //----- PROTOTYPES -----
+#ifndef LOADER
 void                                   ethernet_setmac(uint64_t mac);
 unsigned int                           ethernet_link(void);
 unsigned int                           ethernet_data(void);
@@ -129,6 +130,7 @@ unsigned long                          fm_free(void);
 unsigned long                          fm_len(void);
 void                                   fm_reset(void);
 unsigned long                          fm_init(void);
+#endif //LOADER
 
 void                                   ssi_wait(void);
 void                                   ssi_write(unsigned char c);
@@ -139,6 +141,7 @@ void                                   ssi_on(void);
 
 void                                   pwm_led(unsigned int power);
 
+#ifndef LOADER
 int                                    ir_cmd(void);
 int                                    ir_rawdata(void);
 void                                   ir_timer(void);
@@ -146,6 +149,7 @@ void                                   ir_edge(void);
 unsigned int                           ir_getaddr(void);
 void                                   ir_setaddr(unsigned int addr);
 void                                   ir_init(void);
+#endif //LOADER
 
 int                                    keys_steps(void);
 int                                    keys_sw(void);

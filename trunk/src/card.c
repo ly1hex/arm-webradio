@@ -10,11 +10,12 @@
 #include "vs.h"
 #include "menu.h"
 #include "eth.h"
+#include "settings.h"
 #include "buffer.h"
 #include "card.h"
 
-
-unsigned int card_status=CARD_CLOSED;
+//0=normal, 1=one-by-one, 2=random, 3=repeat
+unsigned int card_status=CARD_CLOSED, card_item=0, card_playmode=0;
 long card_timeout=0;
 
 
@@ -47,15 +48,17 @@ void card_service(void)
     }
   }
 
-  if(vs_buflen() < 32) //song end
+  if(vs_buflen() <= 1) //song end
   {
-    DEBUGOUT("Card: buf < 32\n");
+    DEBUGOUT("Card: buf <= 1\n");
     card_closeitem();
+    card_nextitem();
   }
   else if(getdeltatime(card_timeout) > 0) //time out
   {
     DEBUGOUT("Card: timeout\n");
     card_closeitem();
+    card_nextitem();
   }
   else
   {
@@ -103,6 +106,48 @@ unsigned int card_openfile(const char *file)
 }
 
 
+unsigned int card_nextitem(void)
+{
+  unsigned int item, items;
+
+  item  = card_item;
+  items = card_items();
+
+  switch(card_playmode)
+  {
+    case 0: //normal
+      break;
+
+    case 1: //1=one-by-one
+      for(item++; item <= items; item++)
+      {
+        if(fs_isdir(gbuf.card.file, item-1) != 0) //open dir
+        {
+          break;
+        }
+      }
+      if(item <= item)
+      {
+        card_openitem(item);
+      }
+      break;
+
+    case 2: //2=random
+      break;
+
+    case 3: //3=repeat
+      card_openitem(item);
+      break;
+  }
+
+  menu_drawwnd(1);
+
+  card_item = item;
+
+  return 0;
+}
+
+
 unsigned int card_openitem(unsigned int item)
 {
   char tmp[MAX_ADDR];
@@ -121,6 +166,7 @@ unsigned int card_openitem(unsigned int item)
   }
   else
   {
+    card_item = item;
     item--;
     if(fs_isdir(gbuf.card.file, item) == 0) //open dir
     {
@@ -181,7 +227,9 @@ void card_init(void)
 {
   DEBUGOUT("Card: init\n");
 
-  card_status = CARD_CLOSED;
+  card_status   = CARD_CLOSED;
+  card_item     = 0;
+  card_playmode = settings_getplaymode();
 
   gbuf.card.name[0] = 0;
   gbuf.card.info[0] = 0;

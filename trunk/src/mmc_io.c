@@ -9,7 +9,11 @@
 #include "third_party/fatfs/ff.h"
 #include "third_party/fatfs/diskio.h"
 #include "tools.h"
-#include "main.h"
+#ifdef LOADER
+# include "loader/main.h"
+#else
+# include "main.h"
+#endif
 #include "io.h"
 #include "mmc_io.h"
 
@@ -223,12 +227,8 @@ DSTATUS disk_initialize(BYTE drv)
   MMC_SELECT();   //CS = low
   MMC_POWEROFF(); //sd power off
   delay_ms(100);
-  //init_bor(0);    //brown-out reset off
-  //delay_ms(10);
   MMC_POWERON();  //sd power on
   MMC_DESELECT(); //CS = high
-  //delay_ms(10);
-  //init_bor(1);    //brown-out reset on
   delay_ms(50);
 
   //80 dummy clocks
@@ -544,7 +544,11 @@ DWORD get_fattime(void) //User Provided Timer Function for FatFs module
 {
   TIME t;
 
+#ifdef LOADER
+  memset(&t, 0, sizeof(t));
+#else
   gettime(&t);
+#endif
 
   return  (((DWORD)(t.year-1980)) << 25) | // Year
           (((DWORD)      t.month) << 21) | // Month

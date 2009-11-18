@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------/
-/  FatFs - FAT file system module configuration file  R0.07d  (C)ChaN, 2009
+/  FatFs - FAT file system module configuration file  R0.07e  (C)ChaN, 2009
 /----------------------------------------------------------------------------/
 /
 / CAUTION! Do not forget to make clean the project after any changes to
@@ -7,7 +7,7 @@
 /
 /----------------------------------------------------------------------------*/
 #ifndef _FFCONFIG
-#define _FFCONFIG 0x007D
+#define _FFCONFIG 0x007E
 
 
 /*---------------------------------------------------------------------------/
@@ -139,7 +139,7 @@
 / System Configurations
 /----------------------------------------------------------------------------*/
 
-#define _WORD_ACCESS        0        /* 0 or 1 */
+#define _WORD_ACCESS        1        /* 0 or 1 */
 /* The _WORD_ACCESS option defines which access method is used to the word
 /  data on the FAT volume.
 /

@@ -264,7 +264,7 @@ void menu_down(void)
   switch(menu_mode)
   {
     case MODE_INFO:
-      vs_setvolume(vs_getvolume()-2);
+      vs_setvolume((vs_getvolume()<=2)?1:(vs_getvolume()-2));
       menu_drawvol();
       break;
 
@@ -369,7 +369,7 @@ void menu_service(unsigned int draw)
     case SW_VOL_M:
       switch(menu_mode)
       {
-        case MODE_INFO: vs_setvolume((vs_getvolume()<=4)?0:(vs_getvolume()-4)); menu_drawvol(); break;
+        case MODE_INFO: vs_setvolume((vs_getvolume()<=4)?1:(vs_getvolume()-4)); menu_drawvol(); break;
         case MODE_MAIN: menu_steps(-1);                                                         break;
         case MODE_SUB:  menu_steps(-MENU_LINES);                                                break;
       }
@@ -633,15 +633,15 @@ void menu_drawclock(unsigned int draw)
     clock = getclock();
     if(draw & HOUR_CHANGED)
     {
-      lcd_puts(25+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, bgcolor, fgcolor); //00:00:00
+      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, bgcolor, fgcolor); //00:00:00
     }
     else if(draw & MIN_CHANGED)
     {
-      lcd_puts(25+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, bgcolor, fgcolor); //---00:00
+      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, bgcolor, fgcolor); //---00:00
     }
     else if(draw & SEC_CHANGED)
     {
-      lcd_puts(25+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, bgcolor, fgcolor); //------00
+      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, bgcolor, fgcolor); //------00
     }
   }
 
@@ -653,7 +653,7 @@ void menu_drawdate(void)
 {
   if(menu_mode == MODE_INFO)
   {
-    lcd_puts(37, LCD_HEIGHT-42, getdate(), NORMALFONT, bgcolor, fgcolor);
+    lcd_puts(((LCD_WIDTH/2)-((13*NORMALFONT_WIDTH)/2)), LCD_HEIGHT-42, getdate(), NORMALFONT, bgcolor, fgcolor);
   }
 
   return;

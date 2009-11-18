@@ -26,7 +26,7 @@ const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
 {
   //name                ini-entry     format        p1     p2    p3  set-func
   {"Info...",           "",           F_INFO,       0,     0,    0, 0},
-  {"PlayMode ",         "PLAYMODE",   F_NONE,       0,     0,    0, 0},
+  {"PlayMode ",         "PLAYMODE",   F_NR,         0,     3,    1, 0},
   {"Volume   ",         "VOLUME",     F_NR,         0,   100,    1, (void*)vs_setvolume},
   {"AutoStart",         "AUTOSTART",  F_STR,        0,     0,    0, 0},
   {"--- Alarm ---",     "",           F_NONE,       0,     0,    0, 0},
@@ -60,6 +60,19 @@ const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
   {"Sel ",              "COLORSEL",   F_RGB,        0,     0,    0, (void*)menu_setselcolor},
   {"Edge",              "COLOREDGE",  F_RGB,        0,     0,    0, (void*)menu_setedgecolor}
 };
+
+
+unsigned int settings_getplaymode(void)
+{
+  char value[16];
+
+  if(ini_getentry(SETTINGS_FILE, "PLAYMODE", value, 16) == 0)
+  {
+    return atoui(value);
+  }
+
+  return 0;
+}
 
 
 #define INI_BUFLEN (64)
@@ -338,7 +351,7 @@ unsigned int settings_openitem(unsigned int item)
                  (eth_getrouter() >>0)&0xFF, (eth_getrouter() >>8)&0xFF, (eth_getrouter() >>16)&0xFF, (eth_getrouter() >>24)&0xFF,
                  (eth_getdns()    >>0)&0xFF, (eth_getdns()    >>8)&0xFF, (eth_getdns()    >>16)&0xFF, (eth_getdns()    >>24)&0xFF,
                  (eth_getntp()    >>0)&0xFF, (eth_getntp()    >>8)&0xFF, (eth_getntp()    >>16)&0xFF, (eth_getntp()    >>24)&0xFF);
-        dlg_msg(APPNAME" v"APPVERSION""APPRELEASE_SYM, buf);
+        dlg_msg(APPNAME" v"APPVERSION, buf);
         break;
     }
     if(abort == 0)

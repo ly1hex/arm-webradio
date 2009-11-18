@@ -10,7 +10,7 @@
 #include "lcd_ls020.h"
 
 
-#if defined(LS020)
+#ifdef LS020
 
 
 void lcd_draw(unsigned int color)
@@ -40,24 +40,38 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, unsigned int end_y)
+void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
   //set area
   lcd_cmd(0xEF, 0x90);
-#if defined(LCD_MIRROR)
-  lcd_cmd(0x08, (LCD_HEIGHT-1)-start_y); //set y1
-  lcd_cmd(0x09, (LCD_HEIGHT-1)-end_y);   //set y2
-  lcd_cmd(0x0A, start_x);                //set x1
-  lcd_cmd(0x0B, end_x);                  //set x2
+#ifdef LCD_ROTATE
+# ifdef LCD_MIRROR
+  lcd_cmd(0x08, (LCD_WIDTH-1)-x0);  //set x0
+  lcd_cmd(0x09, (LCD_WIDTH-1)-x1);  //set x1
+  lcd_cmd(0x0A, (LCD_HEIGHT-1)-y0); //set y0
+  lcd_cmd(0x0B, (LCD_HEIGHT-1)-y1); //set y1
+# else
+  lcd_cmd(0x08, x0);                //set x0
+  lcd_cmd(0x09, x1);                //set x1
+  lcd_cmd(0x0A, y0);                //set y0
+  lcd_cmd(0x0B, y1);                //set y1
+# endif
 #else
-  lcd_cmd(0x08, start_y);                //set y1
-  lcd_cmd(0x09, end_y);                  //set y2
-  lcd_cmd(0x0A, (LCD_WIDTH-1)-start_x);  //set x1
-  lcd_cmd(0x0B, (LCD_WIDTH-1)-end_x);    //set x2
+# ifdef LCD_MIRROR
+  lcd_cmd(0x08, (LCD_HEIGHT-1)-y0); //set y0
+  lcd_cmd(0x09, (LCD_HEIGHT-1)-y1); //set y1
+  lcd_cmd(0x0A, x0);                //set x0
+  lcd_cmd(0x0B, x1);                //set x1
+# else
+  lcd_cmd(0x08, y0);                //set y0
+  lcd_cmd(0x09, y1);                //set y1
+  lcd_cmd(0x0A, (LCD_WIDTH-1)-x0);  //set x0
+  lcd_cmd(0x0B, (LCD_WIDTH-1)-x1);  //set x1
+# endif
 #endif
 
   //set cursor
-  lcd_cursor(start_x, start_y);
+  lcd_cursor(x0, y0);
 
   return;
 }
@@ -65,13 +79,23 @@ void lcd_area(unsigned int start_x, unsigned int start_y, unsigned int end_x, un
 
 void lcd_cursor(unsigned int x, unsigned int y)
 {
-  //lcd_cmd(0xEF, 0x90);
-#if defined(LCD_MIRROR)
+  lcd_cmd(0xEF, 0x90);
+#ifdef LCD_ROTATE
+# ifdef LCD_MIRROR
+  lcd_cmd(0x06, (LCD_WIDTH-1)-x);  //set x cursor pos
+  lcd_cmd(0x07, (LCD_HEIGHT-1)-y); //set y cursor pos
+# else
+  lcd_cmd(0x06, x);                //set x cursor pos
+  lcd_cmd(0x07, y);                //set y cursor pos
+# endif
+#else
+# ifdef LCD_MIRROR
   lcd_cmd(0x06, (LCD_HEIGHT-1)-y); //set y cursor pos
   lcd_cmd(0x07, x);                //set x cursor pos
-#else
-  lcd_cmd(0x06, y);               //set y cursor pos
-  lcd_cmd(0x07, (LCD_WIDTH-1)-x); //set x cursor pos
+# else
+  lcd_cmd(0x06, y);                //set y cursor pos
+  lcd_cmd(0x07, (LCD_WIDTH-1)-x);  //set x cursor pos
+# endif
 #endif
 
   return;
@@ -110,7 +134,7 @@ void lcd_reset(void)
   LCD_CS_DISABLE();
   LCD_RS_DISABLE();
   LCD_RST_ENABLE();
-  delay_ms(100);
+  delay_ms(50);
   LCD_RST_DISABLE();
   delay_ms(100);
 
@@ -159,14 +183,24 @@ void lcd_reset(void)
 
   //display options
   lcd_cmd(0xEF, 0x90);
-#if defined(LCD_MIRROR)
-  lcd_cmd(0x01, 0x80); //x1->x2, y2->y1
-  lcd_cmd(0x05, 0x04); //0x04=rotate, 0x00=normal
+#ifdef LCD_ROTATE
+# ifdef LCD_MIRROR
+  lcd_cmd(0x01, 0xC0); //x1->x0, y1->y0
+  lcd_cmd(0x05, 0x00); //0x04=rotate, 0x00=normal
+# else
+  lcd_cmd(0x01, 0x00); //x0->x1, y0->y1
+  lcd_cmd(0x05, 0x00); //0x04=rotate, 0x00=normal
+# endif
 #else
-  lcd_cmd(0x01, 0x40); //x2->x1, y1->y2
+# ifdef LCD_MIRROR
+  lcd_cmd(0x01, 0x80); //x0->x1, y1->y0
   lcd_cmd(0x05, 0x04); //0x04=rotate, 0x00=normal
+# else
+  lcd_cmd(0x01, 0x40); //x1->x0, y0->y1
+  lcd_cmd(0x05, 0x04); //0x04=rotate, 0x00=normal
+# endif
 #endif
-  lcd_area(0x00, 0x00, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   return;
 }
