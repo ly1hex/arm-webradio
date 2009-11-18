@@ -1,4 +1,6 @@
+#summary Infos about the files on the memory card.
 #labels Featured
+
 = Files on the memory card (root directory) =
 For Examples have a look in the SVN repository:
 http://code.google.com/p/arm-webradio/source/browse/#svn/trunk/doc/card_example
