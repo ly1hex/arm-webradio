@@ -34,9 +34,10 @@ void rtsp_close(void)
 unsigned int rtsp_open(void)
 {
   long timeout;
-  unsigned int index, trying;
+  unsigned int index, trying, status;
 
   rtsp_status = RTSP_OPEN;
+
   //calc next local port
   switch(rtsp_localport)
   {
@@ -57,10 +58,11 @@ unsigned int rtsp_open(void)
   {
     eth_service();
 
-    if((rtsp_status == RTSP_CLOSED) || 
-       (rtsp_status == RTSP_OPENED) || 
-       (rtsp_status == RTSP_ERROR)  ||
-       (rtsp_status == RTSP_ADDRMOVED))
+    status = rtsp_status;
+    if((status == RTSP_CLOSED)     ||
+       (status == RTSP_OPENED)     ||
+       (status == RTSP_ADDRMOVED)  ||
+       (status == RTSP_ERROR))
     {
       break;
     }
@@ -80,18 +82,27 @@ unsigned int rtsp_open(void)
       }
       else
       {
-        rtsp_status = RTSP_CLOSED;
+        rtsp_status = RTSP_ERRTIMEOUT;
         tcp_abort(index);
         break;
       }
     }
   }
 
-       if(rtsp_status == RTSP_OPENED)     { return STATION_OPENED; }
-  else if(rtsp_status == RTSP_ERROR)      { return STATION_ERROR; }
-  else if(rtsp_status == RTSP_ADDRMOVED)  { return STATION_ADDRMOVED; }
+  if(rtsp_status == RTSP_OPENED)
+  {
+    return STATION_OPENED;
+  }
 
-  return STATION_OPEN;
+  status = rtsp_status;
+  rtsp_status = RTSP_CLOSED;
+  switch(status)
+  {
+    case RTSP_ADDRMOVED:  return STATION_ADDRMOVED;  break;
+    case RTSP_ERRTIMEOUT: return STATION_ERRTIMEOUT; break;
+  }
+
+  return STATION_ERROR;
 }
 
 
@@ -372,12 +383,7 @@ void rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
       DEBUGOUT("RTSP: TEARDOWN\n");
       break;
 
-    case RTSP_ERROR:
-    case RTSP_ADDRMOVED:
     case RTSP_CLOSED:
-      rtsp_status = RTSP_CLOSED;
-      tcp_abort(index);
-      tcp_send(index, 0, 0);
       break;
   }
 

@@ -16,9 +16,10 @@
 #define SHOUTCAST_OPENED               (2)
 #define SHOUTCAST_HEADER               (3)
 #define SHOUTCAST_OPEN                 (4)
-#define SHOUTCAST_ERROR                (5)
-#define SHOUTCAST_ADDRMOVED            (6)
-#define SHOUTCAST_SERVERFULL           (7)
+#define SHOUTCAST_ADDRMOVED            (5)
+#define SHOUTCAST_SERVERFULL           (6)
+#define SHOUTCAST_ERROR                (7)
+#define SHOUTCAST_ERRTIMEOUT           (8)
 
 
 //----- PROTOTYPES -----

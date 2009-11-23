@@ -1,4 +1,4 @@
-WebRadio v0.03 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.04 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.04
                          CPU Support Pkg. Stellaris 1.1
@@ -19,6 +19,8 @@ Third party software
 
 History
 -------
+         2009  v0.04  Changes in VS interface
+
   Nov 18 2009  v0.03  Switched to CrossWorks CPU Support Pkg. Stellaris 1.1
                       Bootloader added
                       New buffer system

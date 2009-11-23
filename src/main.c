@@ -371,6 +371,9 @@ unsigned int standby(unsigned int param)
 
   vs_stop();
   vs_setvolume(0); //0 -> analog power off
+  delay_ms(10);
+  USB_OFF();
+
   lcd_clear(RGB(0,0,0));
   tmp[0] = clock_str[0];
   tmp[1] = clock_str[1];
@@ -379,8 +382,6 @@ unsigned int standby(unsigned int param)
   tmp[4] = clock_str[4];
   tmp[5] = 0;
   lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
-
-  USB_OFF();
 
   cpu_speed(1); //low speed
 
@@ -509,11 +510,12 @@ int main()
 
   //init lcd
   lcd_init();
-
 /*
-lcd_clear(0);
+lcd_clear(DEFAULT_BGCOLOR);
 lcd_fillrect(10,10, 50, 40, DEFAULT_EDGECOLOR);
-lcd_puts(10, 10, APPNAME, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+lcd_puts(10, 10, APPNAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+lcd_fillcircle(80, 80, 20, DEFAULT_FGCOLOR);
+lcd_circle(80, 80, 24, DEFAULT_FGCOLOR);
 while(1);
 */
   //show start-up screen

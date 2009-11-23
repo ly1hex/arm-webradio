@@ -6,14 +6,15 @@
 #define STATION_FILE                   "STATION.PLS"
 
 #define STATION_TIMEOUT                (12) //s (play->buffer->play)
-#define STATION_TRY                    (4)  //x times
+#define STATION_TRY                    (3)  //x times
 
 #define STATION_CLOSED                 (0)
 #define STATION_OPENED                 (1)
 #define STATION_BUFFER                 (2)
 #define STATION_OPEN                   (3)
-#define STATION_ERROR                  (4)
-#define STATION_ADDRMOVED              (5)
+#define STATION_ADDRMOVED              (4)
+#define STATION_ERROR                  (5)
+#define STATION_ERRTIMEOUT             (6)
 
 
 //----- PROTOTYPES -----

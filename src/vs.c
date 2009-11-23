@@ -499,18 +499,30 @@ void vs_stopstream(void)
   }
 
   //flush buffer
-  VS_DCS_ENABLE();
-  for(i=12288; i!=0; i--) //for FLAC 12288 otherwise 2052
-  {
-    vs_ssi_write(0x00);
-  }
-  vs_ssi_wait();
-  VS_DCS_DISABLE();
-
-  //check status -> reset
   if(vs_read_reg(VS_HDAT0) || vs_read_reg(VS_HDAT1))
   {
-    vs_reset();
+    for(timeout=12288/32; timeout!=0; timeout--) //for FLAC 12288 otherwise 2052
+    {
+      VS_DCS_ENABLE();
+      for(i=32; i!=0; i--)
+      {
+        vs_ssi_write(0x00);
+      }
+      vs_ssi_wait();
+      VS_DCS_DISABLE();
+    }
+  }
+
+  //reset
+  if(vs_read_reg(VS_HDAT0) || vs_read_reg(VS_HDAT1))
+  {
+    vs_write_reg(VS_MODE, SM_SDINEW | SM_RESET); //soft-reset
+    delay_ms(10);
+    if(vs_read_reg(VS_HDAT0) || vs_read_reg(VS_HDAT1))
+    {
+      vs_setvolume(0); //0 -> analog power off
+      vs_reset(); //hard-reset
+    }
   }
 
   return;
@@ -521,12 +533,14 @@ void vs_stop(void)
 {
   DEBUGOUT("VS: stop\n");
 
-  vs_playing = 0;
-
-  vs_pause();
-  vs_stopstream();
+  if(vs_playing)
+  {
+    vs_stopstream();
+  }
 
   buf_reset();
+
+  vs_playing = 0;
 
   return;
 }
@@ -563,7 +577,7 @@ void vs_reset(void)
   VS_RST_ENABLE();
   delay_ms(5);
   VS_RST_DISABLE();
-  delay_ms(5);
+  delay_ms(10);
 
   //set registers
   vs_write_reg(VS_MODE, SM_SDINEW);

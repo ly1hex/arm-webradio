@@ -20,8 +20,9 @@
 #define RTSP_DESCRIBE1                 (6)
 #define RTSP_GET                       (7)
 #define RTSP_OPEN                      (8)
-#define RTSP_ERROR                     (9)
-#define RTSP_ADDRMOVED                 (10)
+#define RTSP_ADDRMOVED                 (9)
+#define RTSP_ERROR                     (10)
+#define RTSP_ERRTIMEOUT                (11)
 
 
 //Proto: RTSP (Real-Time Streaming Protocol)
