@@ -34,9 +34,10 @@ void shoutcast_close(void)
 unsigned int shoutcast_open(void)
 {
   long timeout;
-  unsigned int index, trying;
+  unsigned int index, trying, status;
 
   shoutcast_status = SHOUTCAST_OPEN;
+
   //calc next local port
   switch(shoutcast_localport)
   {
@@ -57,11 +58,12 @@ unsigned int shoutcast_open(void)
   {
     eth_service();
 
-    if((shoutcast_status == SHOUTCAST_CLOSED)    || 
-       (shoutcast_status == SHOUTCAST_OPENED)    || 
-       (shoutcast_status == SHOUTCAST_ERROR)     ||
-       (shoutcast_status == SHOUTCAST_ADDRMOVED) ||
-       (shoutcast_status == SHOUTCAST_SERVERFULL))
+    status = shoutcast_status;
+    if((status == SHOUTCAST_CLOSED)     ||
+       (status == SHOUTCAST_OPENED)     ||
+       (status == SHOUTCAST_ADDRMOVED)  ||
+       (status == SHOUTCAST_SERVERFULL) ||
+       (status == SHOUTCAST_ERROR))
     {
       break;
     }
@@ -81,19 +83,27 @@ unsigned int shoutcast_open(void)
       }
       else
       {
-        shoutcast_status = SHOUTCAST_CLOSED;
+        shoutcast_status = SHOUTCAST_ERRTIMEOUT;
         tcp_abort(index);
         break;
       }
     }
   }
 
-       if(shoutcast_status == SHOUTCAST_OPENED)     { return STATION_OPENED; }
-  else if(shoutcast_status == SHOUTCAST_ERROR)      { return STATION_ERROR; }
-  else if(shoutcast_status == SHOUTCAST_ADDRMOVED)  { return STATION_ADDRMOVED; }
-  else if(shoutcast_status == SHOUTCAST_SERVERFULL) { return STATION_ERROR; }
+  if(shoutcast_status == SHOUTCAST_OPENED)
+  {
+    return STATION_OPENED;
+  }
 
-  return STATION_OPEN;
+  status = shoutcast_status;
+  shoutcast_status = SHOUTCAST_CLOSED;
+  switch(status)
+  {
+    case SHOUTCAST_ADDRMOVED:  return STATION_ADDRMOVED;  break;
+    case SHOUTCAST_ERRTIMEOUT: return STATION_ERRTIMEOUT; break;
+  }
+
+  return STATION_ERROR;
 }
 
 
@@ -546,14 +556,13 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
       tcp_send(index, tx_len, 0);
       break;
 
-    case SHOUTCAST_ERROR:
-    case SHOUTCAST_ADDRMOVED:
-    case SHOUTCAST_SERVERFULL:
     case SHOUTCAST_CLOSE:
-    case SHOUTCAST_CLOSED:
       shoutcast_status = SHOUTCAST_CLOSED;
       tcp_abort(index);
       tcp_send(index, 0, 0);
+      break;
+
+    case SHOUTCAST_CLOSED:
       break;
   }
 

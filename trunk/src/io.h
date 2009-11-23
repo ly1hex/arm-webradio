@@ -101,7 +101,7 @@
 #define VS_DCS_DISABLE()               GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3)
 #define VS_DCS_ENABLE()                GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0)
 //USB Power
-#define USB_OFF()                      GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1)
+#define USB_OFF()                      GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); delay_ms(10)
 #define USB_ON()                       GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0); delay_ms(500)
 //FM
 #define FM_CS_DISABLE()                GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, GPIO_PIN_1)

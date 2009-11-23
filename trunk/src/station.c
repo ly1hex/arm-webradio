@@ -123,25 +123,21 @@ unsigned int station_open(unsigned int item)
     r = STATION_ERROR;
   }
 
-  if(r == STATION_OPENED) //play station
+  if(r == STATION_OPENED) //opened -> play station
   {
     station_timeout = getontime()+STATION_TIMEOUT;
     menu_setstatus(MENU_STATE_BUF);
     r = STATION_OPENED;
   }
-  else if(r == STATION_ERROR) //close station
-  {
-    station_closeitem(); //also clears addr
-    r = STATION_ERROR;
-  }
-  else if(r == STATION_ADDRMOVED) //open new addr
+  else if(r == STATION_ADDRMOVED) //addr moved -> open new addr
   {
     station_timeout = getontime();
     r = STATION_OPEN;
   }
-  else //try to open again after timeout
+  else //if((r == STATION_ERROR) || (r == STATION_ERRTIMEOUT)) //error -> close station
   {
-    r = STATION_OPEN;
+    station_closeitem(); //also clears addr
+    r = STATION_ERROR;
   }
 
   return r;

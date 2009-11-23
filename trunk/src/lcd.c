@@ -275,35 +275,50 @@ void lcd_rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1
 }
 
 
-void lcd_circle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color)
+void lcd_fillcircle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color)
 {
-  int f, ddF_x, ddF_y, x, y;
+  int err, x, y;
 
-  f     = 1 - radius;
-  ddF_x = 0;
-  ddF_y = -2 * radius;
-  x     = 0;
-  y     = radius;
+  err = -radius;
+  x   = radius;
+  y   = 0;
 
   lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
-  lcd_pixel(x0, y0 + radius, color);
-  lcd_pixel(x0, y0 - radius, color);
-  lcd_pixel(x0 + radius, y0, color);
-  lcd_pixel(x0 - radius, y0, color);
-  
-  while(x < y)
+  while(x >= y)
   {
-    if(f >= 0)
-    {
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f     += ddF_x + 1;
+    lcd_line(x0 - x, y0 + y, x0 + x, y0 + y, color);
+    lcd_line(x0 - x, y0 - y, x0 + x, y0 - y, color);
+    lcd_line(y0 - y, x0 + x, y0 + y, x0 + x, color);
+    lcd_line(y0 - y, x0 - x, y0 + y, x0 - x, color);
 
+    err += y;
+    y++;
+    err += y;
+    if(err >= 0)
+    {
+      x--;
+      err -= x;
+      err -= x;
+    }
+  }
+
+  return;
+}
+
+
+void lcd_circle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color)
+{
+  int err, x, y;
+
+  err = -radius;
+  x   = radius;
+  y   = 0;
+
+  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+
+  while(x >= y)
+  {
     lcd_pixel(x0 + x, y0 + y, color);
     lcd_pixel(x0 - x, y0 + y, color);
     lcd_pixel(x0 + x, y0 - y, color);
@@ -312,6 +327,16 @@ void lcd_circle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned 
     lcd_pixel(x0 - y, y0 + x, color);
     lcd_pixel(x0 + y, y0 - x, color);
     lcd_pixel(x0 - y, y0 - x, color);
+
+    err += y;
+    y++;
+    err += y;
+    if(err >= 0)
+    {
+      x--;
+      err -= x;
+      err -= x;
+    }
   }
 
   return;
