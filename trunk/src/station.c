@@ -74,7 +74,7 @@ void station_close(void)
 
 unsigned int station_open(unsigned int item)
 {
-  unsigned int r=STATION_CLOSED;
+  unsigned int r;
   char proto[8];
 
   menu_drawpopup("Open Station...");
@@ -88,7 +88,7 @@ unsigned int station_open(unsigned int item)
     if(station_getitemaddr(item, gbuf.station.addr) != 0)
     {
       station_init();
-      return STATION_CLOSED;
+      return STATION_ERROR;
     }
   }
 
@@ -101,7 +101,7 @@ unsigned int station_open(unsigned int item)
   if(gbuf.station.mac == 0ULL)
   {
     station_init();
-    return STATION_CLOSED;
+    return STATION_ERROR;
   }
 
   station_item    = item;
@@ -110,6 +110,7 @@ unsigned int station_open(unsigned int item)
 
   vs_start();
 
+  r = STATION_ERROR;
   if(strcmp(proto, "http") == 0) //shoutcast / icecast
   {
     r = shoutcast_open();
@@ -117,10 +118,6 @@ unsigned int station_open(unsigned int item)
   else if(strcmp(proto, "rtsp") == 0) //rtsp
   {
     r = rtsp_open();
-  }
-  else
-  {
-    r = STATION_ERROR;
   }
 
   if(r == STATION_OPENED) //opened -> play station
