@@ -23,6 +23,7 @@
 #include "main.h"
 #include "io.h"
 #include "lcd.h"
+#include "lcd/img.h"
 #include "lcd/font_8x8.h"
 #include "lcd/font_8x12.h"
 #include "lcd/font_clock.h"
@@ -510,18 +511,11 @@ int main()
 
   //init lcd
   lcd_init();
-/*
-lcd_clear(DEFAULT_BGCOLOR);
-lcd_fillrect(10,10, 50, 40, DEFAULT_EDGECOLOR);
-lcd_puts(10, 10, APPNAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-lcd_fillcircle(80, 80, 20, DEFAULT_FGCOLOR);
-lcd_circle(80, 80, 24, DEFAULT_FGCOLOR);
-while(1);
-*/
+
   //show start-up screen
   lcd_clear(DEFAULT_BGCOLOR);
   lcd_fillrect( 0, 0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
-  lcd_puts(10, 2, APPNAME" v"APPVERSION, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_puts(30, 2, APPNAME" v"APPVERSION, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_fillrect( 0, LCD_HEIGHT-14, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, LCD_HEIGHT-11, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_puts(10, 20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
@@ -610,10 +604,10 @@ while(1);
     i = status;
     status &= ~i;
 #ifdef DEBUG
-    if(i & SEC_CHANGED)
-    {
+//    if(i & SEC_CHANGED)
+//    {
 //      DEBUGOUT("buf: %i / rx %i\n", buf_free(), eth_rxfree());
-    }
+//    }
 #endif
     if(i & MIN_CHANGED)
     {

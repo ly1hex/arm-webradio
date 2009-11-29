@@ -16,53 +16,92 @@
 #endif
 
 
+unsigned int lcd_checkbit(unsigned long *data, unsigned int nr)
+{
+  return (data[nr/32] & (1<<(31-(nr&31)))); // (data[nr/32] & (1<<(nr&31)))
+}
+
+
 void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
 {
   int i, x0, y0, x1, y1;
-  unsigned long *ptr, data, mask, start_bit, end_bit;
+  unsigned long *ptr, start, end;
 
   if((x <= -32) || (x >= LCD_WIDTH))
   {
     return;
   }
 
+  ptr = (unsigned long*)img;
+
   if(x < 0)
   {
-    x0        = 0;
-    y0        = y;
-    x1        = 31+x;
-    y1        = y+31;
-    start_bit = 1UL<<(31+x);
-    end_bit   = 0UL;
+    x0    = 0;
+    y0    = y;
+    x1    = x+31;
+    y1    = y+31;
+    start = -x;
+    end   = 32;
   }
   else if(x > (LCD_WIDTH-32))
   {
-    x0        = x;
-    y0        = y;
-    x1        = LCD_WIDTH-1;
-    y1        = y+31;
-    start_bit = 1UL<<31;
-    end_bit   = 1UL<<(30-(x1-x0));
+    x0    = x;
+    y0    = y;
+    x1    = LCD_WIDTH-1;
+    y1    = y+31;
+    start = 0;
+    end   = (x1-x0)+1;
   }
   else
   {
-    x0        = x;
-    y0        = y;
-    x1        = x+31;
-    y1        = y+31;
-    start_bit = 1UL<<31;
-    end_bit   = 0UL;
+    x0    = x;
+    y0    = y;
+    x1    = x+31;
+    y1    = y+31;
+    start = 0;
+    end   = 32;
   }
 
   lcd_area(x0, y0, x1, y1);
 
   lcd_drawstart();
-  ptr = (unsigned long*)img;
-  for(i=32; i!=0; i--)
+
+#ifdef L2F50
+  unsigned int w, h;
+
+  for(w=start; w<end; w++)
+  {
+    for(h=w; h<(32*32); h+=32)
+    {
+      if(lcd_checkbit(ptr, h))
+      {
+        lcd_draw(color);
+      }
+      else
+      {
+        lcd_draw(bgcolor);
+      }
+    }
+  }
+
+#else
+  unsigned long data, mask;
+
+  start = 1UL<<(31-start);
+  if(end <= 31)
+  {
+    end = 1UL<<(31-end);
+  }
+  else
+  {
+    end = 0;
+  }
+
+  for(i=32; i!=0; i--) //height
   {
     data = *ptr++;
     //data = ((data&0xFF000000UL)>>24)|((data&0x00FF0000UL)>>8)|((data&0x0000FF00UL)<<8)|((data&0x000000FFUL)<<24); //swap32
-    for(mask=start_bit; mask>end_bit; mask>>=1)
+    for(mask=start; mask>end; mask>>=1) //width
     {
       if(data & mask)
       {
@@ -74,6 +113,8 @@ void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int col
       }
     }
   }
+#endif
+
   lcd_drawstop();
 
   return;
@@ -172,7 +213,7 @@ unsigned int lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, un
 unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned int font, unsigned int color, unsigned int bgcolor)
 {
   unsigned int ret, width, height, size;
-  unsigned long *ptr, data, mask;
+  unsigned long *ptr;
 
   switch(font)
   {
@@ -205,7 +246,32 @@ unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned i
   }
 
   lcd_area(x, y, (x+width-1), (y+height-1));
+
   lcd_drawstart();
+
+#ifdef L2F50
+  unsigned int w, h;
+  size = (width*height);
+  for(w=0; w<width; w++)
+  {
+# ifdef LCD_MIRROR
+    for(h=w+(size-width); h<size; h-=width)
+# else
+    for(h=w; h<size; h+=width)
+# endif
+    {
+      if(lcd_checkbit(ptr, h))
+      {
+        lcd_draw(color);
+      }
+      else
+      {
+        lcd_draw(bgcolor);
+      }
+    }
+  }
+#else
+  unsigned long data, mask;
   for(size=(width*height)/32; size!=0; size--)
   {
     data = *ptr++;
@@ -222,6 +288,8 @@ unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned i
       }
     }
   }
+#endif
+
   lcd_drawstop();
 
   return ret;

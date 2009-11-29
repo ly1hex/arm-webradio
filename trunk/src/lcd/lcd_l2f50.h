@@ -4,7 +4,6 @@
 
 #ifdef L2F50
 
-
 //----- PROTOTYPES -----
 void                                   lcd_draw(unsigned int color);
 void                                   lcd_drawstop(void);

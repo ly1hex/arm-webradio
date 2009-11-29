@@ -17,9 +17,9 @@
 #define LM3S_REV_A2
 
 //Display: L2F50, LPH88, LS020, MIO283QT
-#define LS020
+#define LPH88
 //#define LCD_MIRROR                     //mirror display
-//#define LCD_ROTATE                     //rotate display
+//#define LCD_ROTATE                     //rotate display (90 degree)
 #define LCD_PWMFREQ                    (60000) //60000 Hz LED PWM Freq
 #define LCD_PWMMIN                     (5)     // 5 % (1...100%)
 #define LCD_PWMSTANDBY                 (15)    //15 % (1...100%)

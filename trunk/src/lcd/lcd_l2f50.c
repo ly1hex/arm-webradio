@@ -43,31 +43,25 @@ void lcd_drawstart(void)
 
 void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
-  //set area
 #ifdef LCD_MIRROR
-  lcd_cmd(0x15);     //column address set 
-  lcd_data(0x08+x0); //start column
-  lcd_data(0x01);    //start column
-  lcd_data(0x08+x1); //end column
-  lcd_data(0x01);    //end column
-
+  lcd_cmd(0x15);                    //column address set 
+  lcd_data(0x08+(LCD_HEIGHT-1)-y1); //start column
+  lcd_data(0x01);                   //start column
+  lcd_data(0x08+(LCD_HEIGHT-1)-y0); //end column
+  lcd_data(0x01);                   //end column
   lcd_cmd(0x75); //page address set 
-  lcd_data(y0);  //start page
-  lcd_data(y1);  //end page
+  lcd_data(x0);  //start page
+  lcd_data(x1);  //end page
 #else
   lcd_cmd(0x15);     //column address set 
   lcd_data(0x08+y0); //start column
   lcd_data(0x01);    //start column
   lcd_data(0x08+y1); //end column
   lcd_data(0x01);    //end column
-
-  lcd_cmd(0x75);               //page address set 
-  lcd_data((LCD_WIDTH-1)-x1);  //start page
-  lcd_data((LCD_WIDTH-1)-x0);  //end page
+  lcd_cmd(0x75); //page address set 
+  lcd_data(x0);  //start page
+  lcd_data(x1);  //end page
 #endif
-
-  //set cursor
-  lcd_cursor(x0, y0);
 
   return;
 }
@@ -75,6 +69,26 @@ void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1
 
 void lcd_cursor(unsigned int x, unsigned int y)
 {
+#ifdef LCD_MIRROR
+  lcd_cmd(0x15);                   //column address set 
+  lcd_data(0x08+(LCD_HEIGHT-1)-y); //start column
+  lcd_data(0x01);                  //start column
+  lcd_data(0x08+(LCD_HEIGHT-1)-y); //end column
+  lcd_data(0x01);                  //end column
+  lcd_cmd(0x75); //page address set 
+  lcd_data(x);   //start page
+  lcd_data(x);   //end page
+#else
+  lcd_cmd(0x15);    //column address set 
+  lcd_data(0x08+y); //start column
+  lcd_data(0x01);   //start column
+  lcd_data(0x08+y); //end column
+  lcd_data(0x01);   //end column
+  lcd_cmd(0x75); //page address set 
+  lcd_data(x);   //start page
+  lcd_data(x);   //end page
+#endif
+
   return;
 }
 
@@ -115,8 +129,14 @@ void lcd_reset(void)
   LCD_RST_DISABLE();
   delay_ms(100);
 
+  lcd_cmd(0xAE); //display off
+
   lcd_cmd(0xBC);  //data control
-  lcd_data(0x2A); //565 mode
+#ifdef LCD_MIRROR
+  lcd_data(0x2A); //565 mode, 0x2A=normal, 0x2B=180
+#else
+  lcd_data(0x2B); //565 mode, 0x2A=normal, 0x2B=180
+#endif
 
   lcd_cmd(0xCA);  //display control 
   lcd_data(0x4C); //P1
@@ -128,14 +148,14 @@ void lcd_reset(void)
   lcd_data(0xB0); //P7
   lcd_data(0x02); //P8
   lcd_data(0x00); //P9
-  lcd_data(0x00); //P10
-  lcd_data(0x00); //P11
 
   lcd_cmd(0x94); //sleep out
 
-  delay_ms(2);
+  delay_ms(5);
 
   lcd_cmd(0xAF); //display on
+
+  delay_ms(5);
 
   lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
