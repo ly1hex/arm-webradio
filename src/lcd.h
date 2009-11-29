@@ -22,7 +22,7 @@
 #ifdef MIO283QT
 # define _LCD_WIDTH                     (320)
 # define _LCD_HEIGHT                    (240)
-#else //S65 Displays
+#else //S65 Displays: L2F50, LPH88, LS020
 # define _LCD_WIDTH                     (176)
 # define _LCD_HEIGHT                    (132)
 #endif
@@ -41,6 +41,7 @@
 
 
 //----- PROTOTYPES -----
+unsigned int                           lcd_checkbit(unsigned long *data, unsigned int nr);
 void                                   lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor);
 void                                   lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor);
 void                                   lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int color, unsigned int bgcolor);

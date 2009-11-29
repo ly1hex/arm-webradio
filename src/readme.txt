@@ -19,7 +19,8 @@ Third party software
 
 History
 -------
-         2009  v0.04  Changes in VS interface
+  Nov 29 2009  v0.04  Changes in VS interface
+                      LCD L2F50 support
 
   Nov 18 2009  v0.03  Switched to CrossWorks CPU Support Pkg. Stellaris 1.1
                       Bootloader added
