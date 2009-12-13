@@ -14,6 +14,7 @@
 || DNS Client                        || working ||
 || NTP Client                        || working ||
 || HTTP Server                       || working ||
+|| FTP Server                        || -       ||
 || UPnP Device                       || working ||
 || *FAT Stack* ||
 || ELM ChaN's FatFs with LFN         || working ||
