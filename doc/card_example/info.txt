@@ -8,7 +8,13 @@ settings.ini
   [SETTINGS]
   PlayMode=                  Play mode (0=normal, 1=one-by-one)
   AutoStart=                 Auto start file (Station item number or path to Card file)
-  IR=0                       IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
+  IRaddr=0                   IR Address (0=TV1, 1=TV2, 5=VCR2, 6=VCR2)
+  IRkeyPower=12              IR Power key
+  IRkeyUp=32                 IR Up key
+  IRkeyDown=33               IR Down key
+  IRkeyOK=38                 IR OK/Enter key
+  IRkeyVolP=16               IR Volume + key
+  IRkeyVolM=17               IR Volume - key
 
   Name=WEBRADIO              NetBios and UPnP Name (max 15 characters)
   MAC=00:1E:E5:12:34:56      MAC Address
@@ -67,5 +73,8 @@ alarm.ini
   TIME2=!09:00:Tu
   TIME3= 12:34:Mo
 
-  A "!" at the beginning shows that the alarm is off.
-  Su=Sunday, Mo=Monday, Tu=Tuesday, We=Wednesday, Th=Thursday, Fr=Friday, Sa=Saturday
+      !     -> Alarm is off / inactive
+      -     -> Alarm: go into Standby
+  all other -> Alarm: play the Alarm file
+
+  Mo=Monday, Tu=Tuesday, We=Wednesday, Th=Thursday, Fr=Friday, Sa=Saturday, Su=Sunday

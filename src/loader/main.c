@@ -10,16 +10,16 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "../third_party/lmi/inc/hw_types.h"
-#include "../third_party/lmi/inc/hw_memmap.h"
-#include "../third_party/lmi/inc/hw_ints.h"
-#include "../third_party/lmi/driverlib/sysctl.h"
-#include "../third_party/lmi/driverlib/gpio.h"
-#include "../third_party/lmi/driverlib/interrupt.h"
-#include "../third_party/lmi/driverlib/systick.h"
-#include "../third_party/lmi/driverlib/uart.h"
-#include "../third_party/lmi/driverlib/flash.h"
-#include "../third_party/fatfs/ff.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/inc/hw_ints.h"
+#include "lmi/driverlib/sysctl.h"
+#include "lmi/driverlib/gpio.h"
+#include "lmi/driverlib/interrupt.h"
+#include "lmi/driverlib/systick.h"
+#include "lmi/driverlib/uart.h"
+#include "lmi/driverlib/flash.h"
+#include "fatfs/ff.h"
 #include "main.h"
 #include "../tools.h"
 #include "../io.h"
@@ -28,6 +28,11 @@
 #include "../mmc_io.h"
 #include "../mmc.h"
 
+
+#define ITEMS                          (4)
+#define ITEM_X                         (15)
+#define ITEM_Y                         (36)
+#define ITEM_HEIGHT                    (20)
 
 
 volatile unsigned int ms_time=0;
@@ -208,14 +213,14 @@ long backup_app(const char* fname)
   unsigned int wr;
   long err=1;
 
-  lcd_putline(20, 30, "Open File...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+  lcd_putline(ITEM_X, ITEM_Y, "Open File...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
 
   FlashUsecSet(8); //cpu speed = 8 MHz
 
   if(f_open(&fileobj, fname, FA_CREATE_ALWAYS | FA_WRITE) == FR_OK)
   {
     err = 0;
-    lcd_putline(20, 30, "Save Flash...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "Save Flash...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     for(i=APPSTARTADDR; i<FLASHSIZE; i+=1024)
     {
       if(f_write(&fileobj, (unsigned char*)i, FLASHBUF, &wr) != FR_OK)
@@ -228,7 +233,7 @@ long backup_app(const char* fname)
   }
   else
   {
-    lcd_putline(20, 30, "ERROR", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "ERROR", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     delay_ms(1000);
   }
 
@@ -242,7 +247,7 @@ long flash_app(const char* fname)
   unsigned int rd;
   long err=1;
 
-  lcd_putline(20, 30, "Open File...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+  lcd_putline(ITEM_X, ITEM_Y, "Open File...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
 
   FlashUsecSet(8); //cpu speed = 8 MHz
 
@@ -251,7 +256,7 @@ long flash_app(const char* fname)
     err = 0;
     if(err == 0)
     {
-      lcd_putline(20, 30, "Erase Flash...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+      lcd_putline(ITEM_X, ITEM_Y, "Erase Flash...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
       for(i=APPSTARTADDR; i<FLASHSIZE; i+=1024)
       {
         if(FlashErase(i) != 0)
@@ -264,7 +269,7 @@ long flash_app(const char* fname)
 
     if(err == 0)
     {
-      lcd_putline(20, 30, "Flash App...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+      lcd_putline(ITEM_X, ITEM_Y, "Flash App...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
       for(i=APPSTARTADDR; i<=FLASHSIZE;)
       {
         if(f_read(&fileobj, flashbuf, FLASHBUF, &rd) == FR_OK)
@@ -295,7 +300,7 @@ long flash_app(const char* fname)
   }
   else
   {
-    lcd_putline(20, 30, "ERROR", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "ERROR", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     delay_ms(1000);
   }
 
@@ -362,35 +367,41 @@ int main()
   //init peripherals
   init_periph();
 
-  i = ENC_SW_READ();
+  i = ENC_SW_READ(); //read switch state
 
   //low speed and enable interrupts
   cpu_speed(1);
 
   DEBUGOUT("\n"APPNAME" v"APPVERSION"\n");
 
-  if(!ENC_SW_READ() && !i) //read switch 2 times
+#ifdef DEBUG
+  if(1)
+#else
+  if(!ENC_SW_READ() && !i) //read switch state twice
+#endif
   {
     //init lcd
     DEBUGOUT("Init LCD...\n");
     lcd_init();
     lcd_clear(RGB(0,0,0));
-    lcd_puts(10, 10, APPNAME" v"APPVERSION, SMALLFONT, RGB(255,255,255), RGB(0,0,0));
+    lcd_fillrect( 0, 0, LCD_WIDTH-1, 10, RGB(180,150,0));
+    lcd_puts(38,  2, APPNAME" v"APPVERSION, SMALLFONT, 1, RGB(0,0,0), RGB(180,150,0));
+    lcd_fillrect( 0, LCD_HEIGHT-1-10, LCD_WIDTH-1, LCD_HEIGHT-1, RGB(180,150,0));
+    lcd_puts(20, LCD_HEIGHT-1-8, "www.watterott.net", SMALLFONT, 1, RGB(0,0,0), RGB(180,150,0));
+    lcd_puts(10, 18, "HW:"LM3S_NAME","LCD_NAME, SMALLFONT, 1, RGB(140,140,140), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "Start Loader...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
 
     //init mmc & mount filesystem
     DEBUGOUT("Init Memory Card...\n");
-    lcd_putline(20, 30, "Init Memory Card...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "Init Memory Card...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     fs_mount();
 
     //menu
-    #define ITEMS      (4)
-    #define ITEMX      (8)
-    #define ITEMY      (30)
-    #define ITEMHEIGHT (20)
-    lcd_putline((ITEMX+8), (ITEMY+ITEMHEIGHT*0), "Start App", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
-    lcd_putline((ITEMX+8), (ITEMY+ITEMHEIGHT*1), "Flash "FIRMWARE_FILE, SMALLFONT, RGB(255,255,0), RGB(0,0,0));
-    lcd_putline((ITEMX+8), (ITEMY+ITEMHEIGHT*2), "Flash "FIRMWARE_BAKFILE, SMALLFONT, RGB(255,255,0), RGB(0,0,0));
-    lcd_putlinebr((ITEMX+8), (ITEMY+ITEMHEIGHT*3), "Backup Firmware to "FIRMWARE_BAKFILE, SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+    lcd_fillrect(ITEM_X-10, ITEM_Y, LCD_WIDTH-1, LCD_HEIGHT-1-11, RGB(0,0,0));
+    lcd_putlinebr(ITEM_X, ITEM_Y+(ITEM_HEIGHT*0), "Start Application", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
+    lcd_putlinebr(ITEM_X, ITEM_Y+(ITEM_HEIGHT*1), "Flash "FIRMWARE_FILE, SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
+    lcd_putlinebr(ITEM_X, ITEM_Y+(ITEM_HEIGHT*2), "Flash "FIRMWARE_BAKFILE, SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
+    lcd_putlinebr(ITEM_X, ITEM_Y+(ITEM_HEIGHT*3), "Backup Firmware to   "FIRMWARE_BAKFILE, SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     delay_ms(200);
     keys_sw(); //clear keys
     item = 0;
@@ -400,12 +411,12 @@ int main()
       {
              if((i > 0) && (item < (ITEMS-1))) { item++; }
         else if((i < 0) && (item > 0))         { item--; }
-        lcd_fillrect(ITEMX, ITEMY, (ITEMX+8), ITEMY+(ITEMS*ITEMHEIGHT), RGB(0,0,0));
-        lcd_puts(ITEMX, ITEMY+(item*ITEMHEIGHT), ">", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+        lcd_fillrect(ITEM_X-10, ITEM_Y, ITEM_X, ITEM_Y+(ITEMS*ITEM_HEIGHT), RGB(0,0,0));
+        lcd_putc(ITEM_X-10, ITEM_Y+(item*ITEM_HEIGHT)-1, 0xFC, SMALLFONT, 1, RGB(255,160,0), RGB(0,0,0)); //play icon
       }
       i = keys_steps();
     }
-    lcd_fillrect(ITEMX, ITEMY, (LCD_WIDTH-1),(LCD_HEIGHT-1), RGB(0,0,0));
+    lcd_fillrect(ITEM_X-10, ITEM_Y, LCD_WIDTH-1, LCD_HEIGHT-1-11, RGB(0,0,0));
 
     switch(item)
     {
@@ -414,10 +425,10 @@ int main()
       case 3: backup_app(FIRMWARE_BAKFILE); break;
     }
 
-    //unmount filesystem
+    //unmount file system
     fs_unmount();
 
-    lcd_putline(20, 30, "Start App...", SMALLFONT, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "Start App...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
   }
 
   //start application

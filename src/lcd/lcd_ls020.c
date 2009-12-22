@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include "../third_party/lmi/inc/hw_types.h"
-#include "../third_party/lmi/inc/hw_memmap.h"
-#include "../third_party/lmi/driverlib/gpio.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/driverlib/gpio.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../io.h"
@@ -10,7 +10,7 @@
 #include "lcd_ls020.h"
 
 
-#ifdef LS020
+#ifdef LCD_LS020
 
 
 void lcd_draw(unsigned int color)
@@ -40,7 +40,7 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
+void lcd_setarea(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
   //set area
   lcd_cmd(0xEF, 0x90);
@@ -71,13 +71,13 @@ void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1
 #endif
 
   //set cursor
-  lcd_cursor(x0, y0);
+  lcd_setcursor(x0, y0);
 
   return;
 }
 
 
-void lcd_cursor(unsigned int x, unsigned int y)
+void lcd_setcursor(unsigned int x, unsigned int y)
 {
   lcd_cmd(0xEF, 0x90);
 #ifdef LCD_ROTATE
@@ -200,10 +200,10 @@ void lcd_reset(void)
   lcd_cmd(0x05, 0x04); //0x04=rotate, 0x00=normal
 # endif
 #endif
-  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_setarea(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   return;
 }
 
 
-#endif //LS020
+#endif //LCD_LS020

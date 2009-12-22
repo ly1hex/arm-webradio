@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "third_party/lmi/inc/hw_types.h"
-#include "third_party/lmi/inc/hw_memmap.h"
-#include "third_party/lmi/driverlib/gpio.h"
-#include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/driverlib/gpio.h"
+#include "fatfs/ff.h"
+#include "fatfs/diskio.h"
 #include "tools.h"
 #ifdef LOADER
 # include "loader/main.h"

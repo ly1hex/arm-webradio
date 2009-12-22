@@ -64,7 +64,7 @@ void                                   menu_down(void);
 void                                   menu_steps(int steps);
 void                                   menu_service(unsigned int draw);
 
-void                                   menu_alarm(void);
+void                                   menu_alarm(unsigned int action);
 
 void                                   menu_drawwndsub(unsigned int redraw);
 

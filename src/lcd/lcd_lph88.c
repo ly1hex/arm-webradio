@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include "../third_party/lmi/inc/hw_types.h"
-#include "../third_party/lmi/inc/hw_memmap.h"
-#include "../third_party/lmi/driverlib/gpio.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/driverlib/gpio.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../io.h"
@@ -10,7 +10,7 @@
 #include "lcd_lph88.h"
 
 
-#ifdef LPH88
+#ifdef LCD_LPH88
 
 
 void lcd_draw(unsigned int color)
@@ -41,7 +41,7 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
+void lcd_setarea(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
   //set area
 #ifdef LCD_MIRROR
@@ -53,13 +53,13 @@ void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1
 #endif
 
   //set cursor
-  lcd_cursor(x0, y0);
+  lcd_setcursor(x0, y0);
 
   return;
 }
 
 
-void lcd_cursor(unsigned int x, unsigned int y)
+void lcd_setcursor(unsigned int x, unsigned int y)
 {
 #ifdef LCD_MIRROR
   lcd_cmd(0x21, ((((LCD_WIDTH-1)-x)<<8)|((LCD_HEIGHT-1)-y))); //set cursor pos
@@ -142,7 +142,7 @@ void lcd_reset(void)
 #else
   lcd_cmd(0x05, 0x0038); //Entry mode ++
 #endif
-  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_setarea(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   //display on sequence (bit2 = reversed colors)
   lcd_cmd(0x07, 0x0005); //display control: D0
@@ -156,4 +156,4 @@ void lcd_reset(void)
 }
 
 
-#endif //LPH88
+#endif //LCD_LPH88

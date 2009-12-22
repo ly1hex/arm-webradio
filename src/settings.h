@@ -7,7 +7,7 @@
 
 //settingsmenu[] infos
 #define F_NONE                         (0) //-
-#define F_NR                           (1) //p1-p2
+#define F_NR                           (1) //p1-p2, p3=step size
 #define F_OR                           (2) //p1 or p2
 #define F_STR                          (3) //p1=max len
 #define F_MAC                          (4) //-
@@ -16,7 +16,7 @@
 #define F_RUN                          (7) //-
 #define F_TIME                         (8) //-
 #define F_INFO                         (9) //-
-#define SETTINGSITEMS                  (34)
+#define SETTINGSITEMS                  (40)
 
 typedef struct
 {

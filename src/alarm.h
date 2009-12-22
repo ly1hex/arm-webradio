@@ -13,7 +13,7 @@ typedef struct
   unsigned int wdays;  //Bit0=Sunday, Bit1=Monday, Bit2=Tueday...
   unsigned int h;
   unsigned int m;
-  unsigned int on;
+  unsigned int action; //0=nothing, 1=play, 2=standby
 } ALARMTIME;
 
 

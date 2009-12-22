@@ -10,15 +10,16 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "third_party/lmi/inc/hw_types.h"
-#include "third_party/lmi/inc/hw_memmap.h"
-#include "third_party/lmi/inc/hw_ints.h"
-#include "third_party/lmi/driverlib/sysctl.h"
-#include "third_party/lmi/driverlib/gpio.h"
-#include "third_party/lmi/driverlib/interrupt.h"
-#include "third_party/lmi/driverlib/systick.h"
-#include "third_party/lmi/driverlib/uart.h"
-#include "third_party/fatfs/ff.h"
+#include <ctype.h>
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/inc/hw_ints.h"
+#include "lmi/driverlib/sysctl.h"
+#include "lmi/driverlib/gpio.h"
+#include "lmi/driverlib/interrupt.h"
+#include "lmi/driverlib/systick.h"
+#include "lmi/driverlib/uart.h"
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -285,9 +286,9 @@ void settime(unsigned long s)
 {
   TIME t;
 
-  sectotime(s, &t);
-
   SysTickIntDisable();
+  sectotime(s-1, &t);
+  sec_time   = s;
   time.year  = t.year;
   time.month = t.month;
   time.day   = t.day;
@@ -295,7 +296,6 @@ void settime(unsigned long s)
   time.h     = t.h;
   time.m     = t.m;
   time.s     = t.s;
-  sec_time   = s;
   SysTickIntEnable();
 
   date_str[0] = day_tab[time.wday][0];
@@ -355,7 +355,7 @@ unsigned int getmstime(void)
 }
 
 
-unsigned int standby_state(void)
+unsigned int standby_isactive(void)
 {
   return standby_active;
 }
@@ -363,7 +363,8 @@ unsigned int standby_state(void)
 
 unsigned int standby(unsigned int param)
 {
-  unsigned int i, alarm=0;
+  unsigned int i, alarm;
+  unsigned long t;
   char tmp[32];
 
   DEBUGOUT("Standby\n");
@@ -382,11 +383,17 @@ unsigned int standby(unsigned int param)
   tmp[3] = clock_str[3];
   tmp[4] = clock_str[4];
   tmp[5] = 0;
-  lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+  lcd_puts((LCD_WIDTH/2)-((5*(TIMEFONT_WIDTH*2))/2), (LCD_HEIGHT/2)-((TIMEFONT_HEIGHT*2)/2), tmp, TIMEFONT, 2, RGB(255,255,255), RGB(0,0,0));
+
+  //try to get time from ntp
+#ifndef DEBUG
+  t = ntp_gettime();
+  if(t){ settime(t); }
+#endif
 
   cpu_speed(1); //low speed
 
-  for(;;)
+  for(alarm=0; alarm == 0;)
   {
     eth_service();
 
@@ -398,22 +405,22 @@ unsigned int standby(unsigned int param)
       {
         settime(sec_time);
       }
-      if(alarm_check(&time))
+      i = alarm_check(&time);
+      if(i == 1) //alarm: play
       {
-        alarm = 1;
-        break;
+        alarm = i;
       }
       tmp[0] = clock_str[0];
       tmp[1] = clock_str[1];
       tmp[3] = clock_str[3];
       tmp[4] = clock_str[4];
-      lcd_puts((LCD_WIDTH/2)-((5*TIMEFONT_WIDTH)/2), (LCD_HEIGHT/2)-(TIMEFONT_HEIGHT/2), tmp, TIMEFONT, RGB(255,255,255), RGB(0,0,0));
+      lcd_puts((LCD_WIDTH/2)-((5*(TIMEFONT_WIDTH*2))/2), (LCD_HEIGHT/2)-((TIMEFONT_HEIGHT*2)/2), tmp, TIMEFONT, 2, RGB(255,255,255), RGB(0,0,0));
     }
 
     if(keys_sw() || (ir_cmd() == SW_POWER))
     {
       daytime(tmp, &time);
-      lcd_puts(20, 20, tmp, NORMALFONT, RGB(255,255,255), RGB(0,0,0));
+      lcd_puts(10, 20, tmp, NORMALFONT, 1, RGB(255,255,255), RGB(0,0,0));
       delay_ms(1000);
       break;
     }
@@ -422,21 +429,21 @@ unsigned int standby(unsigned int param)
   fs_unmount();
   fs_mount();
 
-  cpu_speed(0); //high speed
-
   USB_ON();
+
+  cpu_speed(0); //high speed
 
   //clear cmds
   keys_sw();
   keys_steps();
   ir_cmd();
 
-  if(alarm)
-  {
-    menu_alarm();
-  }
-
   standby_active = 0;
+
+  if(alarm != 0)
+  {
+    menu_alarm(alarm);
+  }
 
   return 0;
 }
@@ -444,7 +451,7 @@ unsigned int standby(unsigned int param)
 
 int main()
 {
-  unsigned int i;
+  unsigned int i, alarm;
   unsigned long l;
 
   //get reset cause
@@ -485,27 +492,6 @@ int main()
   //low speed and enable interrupts
   cpu_speed(1);
 
-  //show hardware config
-  #if defined LM3S_REV_A1              //LM3S Rev
-  # define LM3S_NAME "LM3S-A1"
-  #elif defined LM3S_REV_A2
-  # define LM3S_NAME "LM3S-A2"
-  #elif defined LM3S_REV_B0
-  # define LM3S_NAME "LM3S-B0"
-  #else
-  # warning "LM3S Rev not defined"
-  #endif
-  #if defined L2F50                    //LCD
-  # define LCD_NAME "S65-L2F50"
-  #elif defined LPH88
-  # define LCD_NAME "S65-LPH88"
-  #elif defined LS020
-  # define LCD_NAME "S65-LS020"
-  #elif defined MIO283QT
-  # define LCD_NAME "MIO283QT"
-  #else
-  # warning "LCD not defined"
-  #endif
   DEBUGOUT("\n"APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
   DEBUGOUT("Hardware: "LM3S_NAME", "LCD_NAME"\n");
 
@@ -515,76 +501,65 @@ int main()
   //show start-up screen
   lcd_clear(DEFAULT_BGCOLOR);
   lcd_fillrect( 0, 0, LCD_WIDTH-1, 10, DEFAULT_EDGECOLOR);
-  lcd_puts(30, 2, APPNAME" v"APPVERSION, SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_fillrect( 0, LCD_HEIGHT-14, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
-  lcd_puts(20, LCD_HEIGHT-11, "www.watterott.net", SMALLFONT, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
-  lcd_puts(10, 20, "Hardware:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  lcd_puts(15, 30, LM3S_NAME", "LCD_NAME, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
-  if(l)
+  lcd_puts(30, 2, APPNAME" v"APPVERSION, SMALLFONT, 1, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_fillrect( 0, LCD_HEIGHT-1-13, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
+  lcd_puts(20, LCD_HEIGHT-1-10, "www.watterott.net", SMALLFONT, 1, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
+  lcd_puts(10, 20, "HW:"LM3S_NAME","LCD_NAME, SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+  if(l) //l = reset cause
   {
-    i = lcd_puts(10,  45, "Reset:", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    if(l & SYSCTL_CAUSE_LDO)
-    {
-      i = lcd_puts(i, 45, "LDO", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    }
-    if(l & SYSCTL_CAUSE_SW)
-    {
-      i = lcd_puts(i, 45, "SW", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    }
-    if(l & SYSCTL_CAUSE_WDOG)
-    {
-      i = lcd_puts(i, 45, "WD", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    }
-    if(l & SYSCTL_CAUSE_BOR)
-    {
-      i = lcd_puts(i, 45, "BOR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    }
-    if(l & SYSCTL_CAUSE_POR)
-    {
-      i = lcd_puts(i, 45, "POR", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    }
-    if(l & SYSCTL_CAUSE_EXT)
-    {
-      i = lcd_puts(i, 45, "EXT", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR) + 4;
-    }
+    i = lcd_puts(10,  35, "Reset:", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
+    if(l & SYSCTL_CAUSE_LDO) { i = lcd_puts(i, 35, "LDO", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
+    if(l & SYSCTL_CAUSE_SW)  { i = lcd_puts(i, 35, "SW",  SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
+    if(l & SYSCTL_CAUSE_WDOG){ i = lcd_puts(i, 35, "WD",  SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
+    if(l & SYSCTL_CAUSE_BOR) { i = lcd_puts(i, 35, "BOR", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
+    if(l & SYSCTL_CAUSE_POR) { i = lcd_puts(i, 35, "POR", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
+    if(l & SYSCTL_CAUSE_EXT) { i = lcd_puts(i, 35, "EXT", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
   }
 
-  i = 58; //msg y start
+  i = 52; //msg y start
 
   //init mmc & mount filesystem
-  lcd_puts(10,  i, "Init Memory Card...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
+  lcd_puts(10,  i, "Init Memory Card...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   fs_mount();
 
   //init fram
-  lcd_puts(10,  i, "Init F-RAM...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  lcd_puts(10,  i, "Init F-RAM...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   l = fm_init();
   if(l)
   {
     char tmp[8];
     sprintf(tmp, "%ikb", (unsigned int)(unsigned long)(l/1024UL));
-    lcd_puts(120,  i, tmp, SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+    lcd_puts(120,  i, tmp, SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
   }
   i += 10;
 
   //init ethernet
-  lcd_puts(10,  i, "Init Ethernet...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
+  lcd_puts(10,  i, "Init Ethernet...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   eth_init();
 
   //load settings
-  lcd_puts(10, i, "Load Settings...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
+  lcd_puts(10, i, "Load Settings...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   settings_read();
 
-  //set clock
-  lcd_puts(10, i, "NTP: Get Time...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
-#ifdef DEBUG
-  settime(0);
-#else
-  settime(ntp_gettime());
-#endif
-
   //advertise UPnP device
-  lcd_puts(10, i, "SSDP: Advertise...", SMALLFONT, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
+  lcd_puts(10, i, "SSDP: Advertise...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
   ssdp_advertise();
+
+  //set clock
+  lcd_puts(10, i, "NTP: Get Time...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
+#ifdef DEBUG
+  settime(1);
+#else
+  l = ntp_gettime();
+  if(l)
+  {
+    settime(l);
+  }
+  else
+  {
+    settime(timetosec(0, 0, 0, COMPILE_DAY, COMPILE_MONTH, COMPILE_YEAR));
+  }
+#endif
 
   //cpu high speed
   cpu_speed(0);
@@ -594,6 +569,10 @@ int main()
 
   //usb power on
   USB_ON();
+
+  //check alarm
+  alarm = alarm_check(&time);
+  menu_alarm(alarm);
 
   DEBUGOUT("Ready...\n");
 
@@ -615,9 +594,15 @@ int main()
       {
         settime(sec_time);
       }
-      if(alarm_check(&time))
+      alarm = alarm_check(&time);
+      if(alarm == 2)
       {
-        menu_alarm();
+        standby(0);
+        i |= DRAWALL;
+      }
+      else if(alarm != 0)
+      {
+        menu_alarm(alarm);
       }
     }
     menu_service(i);
