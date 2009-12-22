@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "third_party/fatfs/ff.h"
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -266,7 +266,7 @@ void station_delitem(unsigned int item)
 }
 
 
-void station_moveitem(unsigned int item, unsigned direction)
+void station_moveitem(unsigned int item, unsigned int direction)
 {
   char entry[16], newentry[16];
 
@@ -377,7 +377,11 @@ void station_getitem(unsigned int item, char *name)
   else
   {
     sprintf(entry, "TITLE%i", item);
-    ini_getentry(STATION_FILE, entry, name, MAX_NAME);
+    if(ini_getentry(STATION_FILE, entry, name, MAX_NAME) != 0)
+    {
+      sprintf(entry, "FILE%i", item);
+      ini_getentry(STATION_FILE, entry, name, MAX_NAME);
+    }
   }
 
   return;

@@ -2,22 +2,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "third_party/lmi/inc/hw_types.h"
-#include "third_party/lmi/inc/hw_memmap.h"
-#include "third_party/lmi/inc/hw_ints.h"
-#include "third_party/lmi/inc/hw_ssi.h"
-#include "third_party/lmi/inc/hw_ethernet.h"
-#include "third_party/lmi/driverlib/sysctl.h"
-#include "third_party/lmi/driverlib/gpio.h"
-#include "third_party/lmi/driverlib/interrupt.h"
-#include "third_party/lmi/driverlib/systick.h"
-#include "third_party/lmi/driverlib/timer.h"
-#include "third_party/lmi/driverlib/watchdog.h"
-#include "third_party/lmi/driverlib/pwm.h"
-#include "third_party/lmi/driverlib/qei.h"
-#include "third_party/lmi/driverlib/ssi.h"
-#include "third_party/lmi/driverlib/uart.h"
-#include "third_party/lmi/driverlib/ethernet.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/inc/hw_ints.h"
+#include "lmi/inc/hw_ssi.h"
+#include "lmi/inc/hw_ethernet.h"
+#include "lmi/driverlib/sysctl.h"
+#include "lmi/driverlib/gpio.h"
+#include "lmi/driverlib/interrupt.h"
+#include "lmi/driverlib/systick.h"
+#include "lmi/driverlib/timer.h"
+#include "lmi/driverlib/watchdog.h"
+#include "lmi/driverlib/pwm.h"
+#include "lmi/driverlib/qei.h"
+#include "lmi/driverlib/ssi.h"
+#include "lmi/driverlib/uart.h"
+#include "lmi/driverlib/ethernet.h"
 #include "tools.h"
 #ifdef LOADER
 # include "loader/main.h"
@@ -34,6 +34,7 @@ volatile int sw_pressed=0;
 
 volatile int ir_data=0;
 unsigned long ir_address=0, ir_status=IR_DETECT, ir_1us=0;
+unsigned int ir_keypower=12, ir_keyup=32, ir_keydown=33, ir_keyok=38, ir_keyvolp=16, ir_keyvolm=17;
 unsigned long fm_bytes=0;
 volatile unsigned long fm_head=0, fm_tail=0;
 
@@ -495,31 +496,35 @@ int ir_cmd(void)
   {
     DEBUGOUT("IR: %i\n", (data&0x3F));
 
-    switch(data&0x3F)
+    if((data&0x3F) == ir_keypower)
     {
-      case 12: //standby
-        if((last_data^(1<<11)) == data)
-        {
-          cmd  = SW_POWER;
-          data = 0;
-        }
-        break;
-      case 16: //volume++
-        cmd = SW_VOL_P;
-        break;
-      case 17: //volume--
-        cmd = SW_VOL_M;
-        break;
-      case 32: //up
-        cmd = SW_UP;
-        break;
-      case 33: //down
-        cmd = SW_DOWN;
-        break;
-      case 38: //OK
-        cmd = SW_ENTER;
-        break;
+      if((last_data^(1<<11)) == data)
+      {
+        cmd  = SW_POWER;
+        data = 0;
+      }
     }
+    else if((data&0x3F) == ir_keyup)
+    {
+      cmd = SW_UP;
+    }
+    else if((data&0x3F) == ir_keydown)
+    {
+      cmd = SW_DOWN;
+    }
+    else if((data&0x3F) == ir_keyok)
+    {
+      cmd = SW_ENTER;
+    }
+    else if((data&0x3F) == ir_keyvolp)
+    {
+      cmd = SW_VOLP;
+    }
+    else if((data&0x3F) == ir_keyvolm)
+    {
+      cmd = SW_VOLM;
+    }
+
     last_data = data;
   }
 
@@ -662,6 +667,22 @@ void ir_edge(void)
 
   return;
 }
+
+
+unsigned int ir_getkeyvolm(void)  { return ir_keyvolm; }
+unsigned int ir_getkeyvolp(void)  { return ir_keyvolp; }
+unsigned int ir_getkeyok(void)    { return ir_keyok; }
+unsigned int ir_getkeydown(void)  { return ir_keydown; }
+unsigned int ir_getkeyup(void)    { return ir_keyup; }
+unsigned int ir_getkeypower(void) { return ir_keypower; }
+
+
+void ir_setkeyvolm(unsigned int key)  { ir_keyvolm  = key; return; }
+void ir_setkeyvolp(unsigned int key)  { ir_keyvolp  = key; return; }
+void ir_setkeyok(unsigned int key)    { ir_keyok    = key; return; }
+void ir_setkeydown(unsigned int key)  { ir_keydown  = key; return; }
+void ir_setkeyup(unsigned int key)    { ir_keyup    = key; return; }
+void ir_setkeypower(unsigned int key) { ir_keypower = key; return; }
 
 
 unsigned int ir_getaddr(void)

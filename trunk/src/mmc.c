@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "third_party/fatfs/ff.h"
-#include "third_party/fatfs/diskio.h"
+#include "fatfs/ff.h"
+#include "fatfs/diskio.h"
 #include "tools.h"
 #include "main.h"
 #include "mmc_io.h"
@@ -365,16 +365,21 @@ unsigned int ini_searchentry(FIL *file, const char *entry, unsigned int *entry_s
         i = 0;
         entry_pos = file->fptr;
         break;
+
       case '=': //value start
-        if(strncmp(buf, entry, entry_len) == 0)
+        if(i != 0)
         {
-          found = file->fptr;
+          if(strncmp(buf, entry, entry_len) == 0)
+          {
+            found = file->fptr;
+          }
         }
         break;
+
       case '#': //comment
-        if(i == 0)
+        if(i == 0) //line start
         {
-          while(1)
+          while(1) //skip comment
           {
             res = f_read(file, &c, 1, &rd);
             if((res != FR_OK) || (rd != 1))
@@ -386,8 +391,10 @@ unsigned int ini_searchentry(FIL *file, const char *entry, unsigned int *entry_s
               break;
             }
           }
-          break;
+          entry_pos = file->fptr;
         }
+        break;
+
       default:
         if(c != ' ')
         {
@@ -401,7 +408,7 @@ unsigned int ini_searchentry(FIL *file, const char *entry, unsigned int *entry_s
     }
   }while(found == 0);
 
-  if(entry_start)
+  if(entry_start && found)
   {
     *entry_start = entry_pos;
   }

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "third_party/fatfs/ff.h"
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -335,12 +335,12 @@ unsigned int dlg_or(const char* title, int *value, int p1, int p2)
             state = CTRL_SELECTION;
             break;
           case SW_UP:
-          case SW_VOL_P:
+          case SW_VOLP:
             if(*value == p1){ *value = p2; }
             else            { *value = p1; }
             break;
           case SW_DOWN:
-          case SW_VOL_M:
+          case SW_VOLM:
             if(*value == p1){ *value = p2; }
             else            { *value = p1; }
             break;
@@ -608,7 +608,7 @@ unsigned int dlg_alarmtime(ALARMTIME *time)
   menu_drawdlg("Alarm time", "");
   menu_createctrl(&ctrl[ 0], CTRL_BUTTON,    0, 100, 100, 0,                "  OK  ");
   menu_createctrl(&ctrl[ 1], CTRL_BUTTON,    1,  20, 100, 0,                " Abort ");
-  menu_createctrl(&ctrl[ 2], CTRL_CHECKBOX,  0,  65,  75, (t.on),           "  On  "); //on
+  menu_createctrl(&ctrl[ 2], CTRL_CHECKBOX,  0,  65,  75, (t.action),       "  On  "); //on
   menu_createctrl(&ctrl[ 3], CTRL_CHECKBOX,  0, 144,  50, (t.wdays&(1<<0)), "Su"); //Su 0
   menu_createctrl(&ctrl[ 4], CTRL_CHECKBOX,  0, 122,  50, (t.wdays&(1<<6)), "Sa"); //Sa 6
   menu_createctrl(&ctrl[ 5], CTRL_CHECKBOX,  0, 100,  50, (t.wdays&(1<<5)), "Fr"); //Fr 5
@@ -700,23 +700,23 @@ unsigned int dlg_alarmtime(ALARMTIME *time)
 
 
   //week days
-  t.wdays = (ctrl[3].p1<<0) | //Su
-            (ctrl[9].p1<<1) | //Mo
-            (ctrl[8].p1<<2) | //Tu
-            (ctrl[7].p1<<3) | //We
-            (ctrl[6].p1<<4) | //Th
-            (ctrl[5].p1<<5) | //Fr
-            (ctrl[4].p1<<6);  //Sa
-  t.h  = atoi(ctrl[11].val); //hour
-  t.m  = atoi(ctrl[10].val); //min
-  t.on = ctrl[2].p1; //on
+  t.wdays  = (ctrl[3].p1<<0) | //Su
+             (ctrl[9].p1<<1) | //Mo
+             (ctrl[8].p1<<2) | //Tu
+             (ctrl[7].p1<<3) | //We
+             (ctrl[6].p1<<4) | //Th
+             (ctrl[5].p1<<5) | //Fr
+             (ctrl[4].p1<<6);  //Sa
+  t.h      = atoi(ctrl[11].val); //hour
+  t.m      = atoi(ctrl[10].val); //min
+  t.action = ctrl[2].p1; //on
 
   if(close == 1) //1=OK, 2=ABORT
   {
-    if((t.wdays != time->wdays) ||
-       (t.h     != time->h)     ||
-       (t.m     != time->m)     ||
-       (t.on    != time->on))
+    if((t.wdays  != time->wdays) ||
+       (t.h      != time->h)     ||
+       (t.m      != time->m)     ||
+       (t.action != time->action))
     {
       memcpy(time, &t, sizeof(ALARMTIME));
       return 0;
@@ -789,8 +789,8 @@ int dlg_service(void)
     else
     {
       sw = ir_cmd();
-      if     (sw == SW_VOL_P){ sw = SW_UP; }
-      else if(sw == SW_VOL_M){ sw = SW_DOWN; }
+      if     (sw == SW_VOLP){ sw = SW_UP; }
+      else if(sw == SW_VOLM){ sw = SW_DOWN; }
     }
   }
 

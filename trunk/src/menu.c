@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "third_party/fatfs/ff.h"
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -50,7 +50,7 @@ const MAINMENUITEM mainmenu[MAINITEMS] =
 #define MODE_MAIN (1) //animated main menu
 #define MODE_SUB  (2) //list menu
 unsigned int menu_mode=0, menu_sub=0, menu_items=0, menu_first=0, menu_last=0, menu_sel=0, menu_lastsel=0;
-unsigned int menu_status=0, menu_format=0, menu_bitrate=0, menu_standbytimer=0;
+unsigned int menu_status=0, menu_format=0, menu_bitrate=0;
 unsigned int bgcolor=0, fgcolor=0, selcolor=0, edgecolor=0;
 
 
@@ -341,6 +341,7 @@ void menu_steps(int steps)
 void menu_service(unsigned int draw)
 {
   unsigned int redraw=0;
+  static unsigned int menu_standbytimer=0;
 
   menu_steps(keys_steps());
 
@@ -358,7 +359,7 @@ void menu_service(unsigned int draw)
   //ir remote control
   switch(ir_cmd())
   {
-    case SW_VOL_P:
+    case SW_VOLP:
       switch(menu_mode)
       {
         case MODE_INFO: vs_setvolume(vs_getvolume()+4); menu_drawvol();                         break;
@@ -366,7 +367,7 @@ void menu_service(unsigned int draw)
         case MODE_SUB:  menu_steps(+MENU_LINES);                                                break;
       }
       break;
-    case SW_VOL_M:
+    case SW_VOLM:
       switch(menu_mode)
       {
         case MODE_INFO: vs_setvolume((vs_getvolume()<=4)?1:(vs_getvolume()-4)); menu_drawvol(); break;
@@ -396,28 +397,34 @@ void menu_service(unsigned int draw)
   if(redraw == 0)
   {
     menu_drawwnd(0);
-    if(draw & SEC_CHANGED)
+    if(draw & DRAWALL)
     {
-      if(menu_status == MENU_STATE_STOP)
-      {
-        if(++menu_standbytimer > STANDBY_TIME)
-        {
-          menu_standbytimer = 0;
-          standby(0);
-          menu_drawwnd(1);
-        }
-      }
-      menu_drawclock(draw);
+      redraw = 1;
     }
-    if(draw & DAY_CHANGED)
+    else
     {
-      menu_drawdate();
+      if(draw & SEC_CHANGED)
+      {
+        if(menu_status == MENU_STATE_STOP)
+        {
+          if(++menu_standbytimer > STANDBY_TIME)
+          {
+            standby(0);
+            redraw = 1;
+          }
+        }
+        menu_drawclock(draw);
+      }
+      if(draw & DAY_CHANGED)
+      {
+        menu_drawdate();
+      }
     }
   }
-  else
+  if(redraw)
   {
-    menu_drawwnd(1);
     menu_standbytimer = 0;
+    menu_drawwnd(1);
   }
 
   if(mainmenu[menu_sub].service)
@@ -429,31 +436,34 @@ void menu_service(unsigned int draw)
 }
 
 
-void menu_alarm(void)
+void menu_alarm(unsigned int action)
 {
   unsigned int i;
 
   DEBUGOUT("Alarm\n");
 
-  //set alarm volume
-  i = alarm_getvol();
-  if(i)
+  if(action == 1) //play
   {
-    vs_setvolume(i);
-    menu_drawvol();
-  }
-
-  //open alarm file
-  if(menu_status == MENU_STATE_STOP)
-  {
-    menu_drawpopup("Alarm");
-    for(i=1; i<=ALARM_FILEITEMS; i++) //open alarm file
+    //set alarm volume
+    i = alarm_getvol();
+    if(i)
     {
-      if(alarm_getfile(gbuf.menu.file, i) == 0)
+      vs_setvolume(i);
+      menu_drawvol();
+    }
+  
+    //open alarm file
+    if(menu_status == MENU_STATE_STOP)
+    {
+      menu_drawpopup("Alarm");
+      for(i=1; i<=ALARM_FILEITEMS; i++) //open alarm file
       {
-        if(menu_openfile(gbuf.menu.file) == 0)
+        if(alarm_getfile(gbuf.menu.file, i) == 0)
         {
-          break;
+          if(menu_openfile(gbuf.menu.file) == 0)
+          {
+            break;
+          }
         }
       }
     }
@@ -481,11 +491,11 @@ void menu_drawwndsub(unsigned int redraw)
 
   //clear last selection
   i = ITEM_TOP + ((menu_lastsel-last_first)*MENU_LINEHEIGHT);
-  lcd_rect(ITEM_LEFT, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, bgcolor);
+  lcd_drawrect(ITEM_LEFT, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, bgcolor);
 
   //selection
   i = ITEM_TOP + ((menu_sel-menu_first)*MENU_LINEHEIGHT);
-  lcd_rect(ITEM_LEFT, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, selcolor);
+  lcd_drawrect(ITEM_LEFT, i, LCD_WIDTH-5, i+MENU_LINEHEIGHT, selcolor);
 
   //draw items
   if((menu_first != last_first) || redraw)
@@ -494,7 +504,7 @@ void menu_drawwndsub(unsigned int redraw)
     for(i=0; (i < MENU_LINES) && ((menu_first+i) < menu_items); i++)
     {
       mainmenu[menu_sub].get(menu_first+i, tmp);
-      x = lcd_puts(ITEM_LEFT+2, ITEM_TOP+2+(i*MENU_LINEHEIGHT), tmp, NORMALFONT, fgcolor, bgcolor);
+      x = lcd_puts(ITEM_LEFT+2, ITEM_TOP+2+(i*MENU_LINEHEIGHT), tmp, NORMALFONT, 1, fgcolor, bgcolor);
       if(x < (LCD_WIDTH-5))
       {
         y = ITEM_TOP+2+(i*MENU_LINEHEIGHT);
@@ -616,7 +626,7 @@ void menu_drawwndmain(unsigned int redraw)
   }
 
   i = (LCD_WIDTH/2)-(strlen(mainmenu[menu_sel].name)*NORMALFONT_WIDTH/2);
-  lcd_putline(i, IMG_TOP+32+15, mainmenu[menu_sel].name, NORMALFONT, fgcolor, bgcolor);
+  lcd_putline(i, IMG_TOP+32+15, mainmenu[menu_sel].name, NORMALFONT, 1, fgcolor, bgcolor);
 
   menu_lastsel = menu_sel;
 
@@ -633,15 +643,15 @@ void menu_drawclock(unsigned int draw)
     clock = getclock();
     if(draw & HOUR_CHANGED)
     {
-      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, bgcolor, fgcolor); //00:00:00
+      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(0*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+0, TIMEFONT, 1, bgcolor, fgcolor); //00:00:00
     }
     else if(draw & MIN_CHANGED)
     {
-      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, bgcolor, fgcolor); //---00:00
+      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(3*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+3, TIMEFONT, 1, bgcolor, fgcolor); //---00:00
     }
     else if(draw & SEC_CHANGED)
     {
-      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, bgcolor, fgcolor); //------00
+      lcd_puts(((LCD_WIDTH/2)-((8*TIMEFONT_WIDTH)/2))+(6*TIMEFONT_WIDTH), LCD_HEIGHT-24, clock+6, TIMEFONT, 1, bgcolor, fgcolor); //------00
     }
   }
 
@@ -653,7 +663,7 @@ void menu_drawdate(void)
 {
   if(menu_mode == MODE_INFO)
   {
-    lcd_puts(((LCD_WIDTH/2)-((13*NORMALFONT_WIDTH)/2)), LCD_HEIGHT-42, getdate(), NORMALFONT, bgcolor, fgcolor);
+    lcd_puts(((LCD_WIDTH/2)-((13*NORMALFONT_WIDTH)/2)), LCD_HEIGHT-42, getdate(), NORMALFONT, 1, bgcolor, fgcolor);
   }
 
   return;
@@ -686,7 +696,7 @@ void menu_drawstatus(void)
     case MENU_STATE_PLAY: c = 0xFC; break;
     default:              c = ' ';  break;
   }
-  lcd_putc(LCD_WIDTH-1-5-38, 1, c, SMALLFONT, bgcolor, edgecolor);
+  lcd_putc(LCD_WIDTH-1-5-38, 1, c, SMALLFONT, 1, bgcolor, edgecolor);
 
   switch(menu_format)
   {
@@ -696,9 +706,9 @@ void menu_drawstatus(void)
     case FORMAT_OGG:  strcpy(buf, "OGG"); break;
     case FORMAT_WMA:  strcpy(buf, "WMA"); break;
     case FORMAT_FLAC: strcpy(buf, "FLA"); break;
-    default:              strcpy(buf, "   ");  break;
+    default:          strcpy(buf, "   ");  break;
   }
-  lcd_puts(LCD_WIDTH-1-5-65, 2, buf, SMALLFONT, bgcolor, edgecolor);
+  lcd_puts(LCD_WIDTH-1-5-65, 2, buf, SMALLFONT, 1, bgcolor, edgecolor);
 
   if(menu_bitrate)
   {
@@ -708,7 +718,7 @@ void menu_drawstatus(void)
   {
     strcpy(buf, "   ");
   }
-  lcd_puts(LCD_WIDTH-1-5-93, 2, buf, SMALLFONT, bgcolor, edgecolor);
+  lcd_puts(LCD_WIDTH-1-5-93, 2, buf, SMALLFONT, 1, bgcolor, edgecolor);
 
   return;
 }
@@ -794,8 +804,8 @@ void menu_drawwndinfo(unsigned int redraw)
     menu_drawdate();
     menu_drawclock(HOUR_CHANGED);
   
-    lcd_putline(5, 18, gbuf.menu.name, NORMALFONT, fgcolor, bgcolor);
-    lcd_putlinebr(5, 40, gbuf.menu.info, SMALLFONT, fgcolor, bgcolor);
+    lcd_putline(5, 18, gbuf.menu.name, NORMALFONT, 1, fgcolor, bgcolor);
+    lcd_putlinebr(5, 40, gbuf.menu.info, SMALLFONT, 1, fgcolor, bgcolor);
   }
 
   return;
@@ -805,6 +815,11 @@ void menu_drawwndinfo(unsigned int redraw)
 void menu_drawwnd(unsigned int redraw)
 {
   unsigned int i;
+
+  if(standby_isactive())
+  {
+    return;
+  }
 
   //draw background
   if(redraw)
@@ -819,22 +834,22 @@ void menu_drawwnd(unsigned int redraw)
     switch(menu_mode)
     {
       case MODE_INFO:
-        lcd_puts(4, 2, APPNAME, SMALLFONT, bgcolor, edgecolor);
-        lcd_line(0, 35, LCD_WIDTH-1, 35, edgecolor);
+        lcd_puts(4, 2, APPNAME, SMALLFONT, 1, bgcolor, edgecolor);
+        lcd_drawline(0, 35, LCD_WIDTH-1, 35, edgecolor);
         lcd_fillrect(0, LCD_HEIGHT-46, LCD_WIDTH-1, LCD_HEIGHT-1, fgcolor);
-        lcd_line(0, 35, LCD_WIDTH-1, 35, edgecolor);       break;
+        break;
       case MODE_MAIN:
-        lcd_puts( 4, 2, APPNAME, SMALLFONT, bgcolor, edgecolor);
+        lcd_puts( 4, 2, APPNAME, SMALLFONT, 1, bgcolor, edgecolor);
         break;
       case MODE_SUB:
         if(gbuf.menu.file[0] != 0)
         {
           for(i=0; (strlen(gbuf.menu.file+i)*SMALLFONT_WIDTH+5) > (LCD_WIDTH-1); i++);
-          lcd_puts(4, 2, gbuf.menu.file+i, SMALLFONT, bgcolor, edgecolor);
+          lcd_puts(4, 2, gbuf.menu.file+i, SMALLFONT, 1, bgcolor, edgecolor);
         }
         else
         {
-          lcd_puts(4, 2, mainmenu[menu_sub].name, SMALLFONT, bgcolor, edgecolor);
+          lcd_puts(4, 2, mainmenu[menu_sub].name, SMALLFONT, 1, bgcolor, edgecolor);
         }
         break;
     }
@@ -860,20 +875,20 @@ void menu_drawctrl(CONTROL *ctrl)
   switch(ctrl->type)
   {
     case CTRL_TEXT:
-      x = lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, bgcolor);
+      x = lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, 1, fgcolor, bgcolor);
       lcd_fillrect(x, ctrl->y1+2, ctrl->x2-2, ctrl->y2-2, bgcolor);
       break;
 
     case CTRL_BUTTON:
       lcd_fillrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
-      lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, fgcolor, edgecolor);
+      lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, 1, fgcolor, edgecolor);
       if(ctrl->sel)
       {
-        lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+        lcd_drawrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
       }
       else
       {
-        lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+        lcd_drawrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
       }
       break;
 
@@ -881,19 +896,19 @@ void menu_drawctrl(CONTROL *ctrl)
       lcd_fillrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
       if(ctrl->p1) //checked
       {
-        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, selcolor, edgecolor);
+        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, 1, selcolor, edgecolor);
       }
       else
       {
-        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, bgcolor, edgecolor);
+        lcd_puts(ctrl->x1+2, ctrl->y1+2, ctrl->val, NORMALFONT, 1, bgcolor, edgecolor);
       }
       if(ctrl->sel)
       {
-        lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+        lcd_drawrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
       }
       else
       {
-        lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+        lcd_drawrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
       }
       break;
 
@@ -903,25 +918,25 @@ void menu_drawctrl(CONTROL *ctrl)
       {
         if(ctrl->sel && (ctrl->p2 == 0xFFFF)) //select all
         {
-          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, edgecolor);
+          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, 1, fgcolor, edgecolor);
         }
         else if(ctrl->sel && ((ctrl->p1+i) == ctrl->p2))
         {
-          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, edgecolor);
+          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, 1, fgcolor, edgecolor);
         }
         else
         {
-          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, fgcolor, bgcolor);
+          x = lcd_putc(x, ctrl->y1+2, *ptr++, NORMALFONT, 1, fgcolor, bgcolor);
         }
       }
       lcd_fillrect(x, ctrl->y1+2, ctrl->x2-2, ctrl->y2-2, bgcolor);
       if(ctrl->sel)
       {
-        lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
+        lcd_drawrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, selcolor);
       }
       else
       {
-        lcd_rect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
+        lcd_drawrect(ctrl->x1, ctrl->y1, ctrl->x2, ctrl->y2, edgecolor);
       }
       break;
   }
@@ -973,10 +988,10 @@ void menu_createctrl(CONTROL *ctrl, unsigned int type, unsigned int sel, unsigne
 void menu_drawdlg(const char *title, const char *msg)
 {
   lcd_fillrect(0, 0, LCD_WIDTH-1, NORMALFONT_HEIGHT+2, edgecolor);
-  lcd_puts(2, 1, title, NORMALFONT, bgcolor, edgecolor);
+  lcd_puts(2, 1, title, NORMALFONT, 1, bgcolor, edgecolor);
 
   lcd_fillrect(0, NORMALFONT_HEIGHT+2, LCD_WIDTH-1, LCD_HEIGHT-1, bgcolor);
-  lcd_putlinebr(2, 20, msg, NORMALFONT, fgcolor, bgcolor);
+  lcd_putlinebr(2, 20, msg, NORMALFONT, 1, fgcolor, bgcolor);
 
   return;
 }
@@ -984,9 +999,9 @@ void menu_drawdlg(const char *title, const char *msg)
 
 void menu_drawpopup(const char *msg)
 {
-  lcd_rect(4, (LCD_HEIGHT/2)-11, LCD_WIDTH-1-4, (LCD_HEIGHT/2)+11, edgecolor);
+  lcd_drawrect(4, (LCD_HEIGHT/2)-11, LCD_WIDTH-1-4, (LCD_HEIGHT/2)+11, edgecolor);
   lcd_fillrect(5, (LCD_HEIGHT/2)-10, LCD_WIDTH-1-5, (LCD_HEIGHT/2)+10, fgcolor);
-  lcd_puts(10, (LCD_HEIGHT/2)- 4, msg, SMALLFONT, bgcolor, fgcolor);
+  lcd_puts(10, (LCD_HEIGHT/2)- 4, msg, SMALLFONT, 1, bgcolor, fgcolor);
 
   return;
 }

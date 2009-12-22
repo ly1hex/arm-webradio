@@ -55,11 +55,13 @@ const unsigned char INDEX_HTM[] =
   "<br><br>\r\n" \
   "<pre>\r\n" \
   "<b>"APPNAME" v"APPVERSION"</b> ("__DATE__" "__TIME__")\r\n" \
+  "Hardware: "LM3S_NAME", "LCD_NAME"\r\n" \
   "visit <a href=\"http://www.watterott.net\">www.watterott.net</a> for updates\r\n" \
   "</pre>\r\n" \
 
   "</div>\r\n" \
   "</div>\r\n" \
+  "<img src=\"/load.gif\" width=\"1\" height=\"1\" border=\"0\" style=\"visibility:hidden;display:none;\">\r\n" \
   "</body>\r\n" \
   "</html>\r\n"
 };
@@ -104,6 +106,7 @@ const unsigned char STATION_HTM[] =
   "</script>\r\n" \
   "</div>\r\n" \
   "</div>\r\n" \
+  "<img src=\"/load.gif\" width=\"1\" height=\"1\" border=\"0\" style=\"visibility:hidden;display:none;\">\r\n" \
   "</body>\r\n" \
   "</html>\r\n"
 };
@@ -142,13 +145,21 @@ const unsigned char ALARM_HTM[] =
   "<pre><b>Edit Alarm</b><form name=\"edit\" id=\"edit\" method=\"post\">\r\n" \
   "Time <input type=\"text\"   name=\"time\" id=\"time\" value=\"\" size=\"40\">\r\n" \
   "     <input type=\"submit\" name=\"save\" id=\"save\" value=\"Save\">\r\n" \
-  "     <input type=\"hidden\" name=\"item\" id=\"item\" value=\"\"></form></pre>\r\n" \
+  "     <input type=\"hidden\" name=\"item\" id=\"item\" value=\"\"></form>\r\n" \
+  "      !     -> Alarm is off / inactive\r\n" \
+  "      -     -> Alarm: go into Standby\r\n" \
+  "  all other -> Alarm: play the Alarm file\r\n" \
+  "\r\n" \
+  "  Mo=Monday, Tu=Tuesday, We=Wednesday, Th=Thursday,\r\n" \
+  "  Fr=Friday, Sa=Saturday, Su=Sunday\r\n" \
+  "</pre>\r\n" \
   "</td></tr></table>\r\n" \
   "<script type=\"text/javascript\">\r\n" \
   "  window.onload = getAlarmList;\r\n" \
   "</script>\r\n" \
   "</div>\r\n" \
   "</div>\r\n" \
+  "<img src=\"/load.gif\" width=\"1\" height=\"1\" border=\"0\" style=\"visibility:hidden;display:none;\">\r\n" \
   "</body>\r\n" \
   "</html>\r\n"
 };
@@ -191,7 +202,12 @@ const unsigned char SETTINGS_HTM[] =
   "Treble-Freq <input type=\"text\" name=\"treblefreq\" id=\"treblefreq\" value=\"$TREBLEFREQ\"> Hz\r\n" \
   "Treble-Amp  <input type=\"text\" name=\"trebleamp\"  id=\"trebleamp\"  value=\"$TREBLEAMP\"> dB\r\n" \
   "<input type=\"reset\" name=\"reset\" value=\"Reset\"> <input type=\"submit\" name=\"save\" value=\"Save\"></form>\r\n" \
-  "\r\n* Restart required\r\n" \
+  "<b>Colors</b><form method=\"post\">\r\n" \
+  "BG          <input type=\"text\" name=\"colorbg\"    id=\"colorbg\"    value=\"$COLORBG\">\r\n" \
+  "FG          <input type=\"text\" name=\"colorfg\"    id=\"colorfg\"    value=\"$COLORFG\">\r\n" \
+  "Sel         <input type=\"text\" name=\"colorsel\"   id=\"colorsel\"   value=\"$COLORSEL\">\r\n" \
+  "Edge        <input type=\"text\" name=\"coloredge\"  id=\"coloredge\"  value=\"$COLOREDGE\">\r\n" \
+  "<input type=\"reset\" name=\"reset\" value=\"Reset\"> <input type=\"submit\" name=\"save\" value=\"Save\"></form>\r\n" \
   "</pre></td><td valign=\"top\"><pre>" \
   "<b>Ethernet</b><form method=\"post\">\r\n" \
   "Name        <input type=\"text\" name=\"name\"       id=\"name\"       value=\"$NAME\">\r\n" \
@@ -206,17 +222,19 @@ const unsigned char SETTINGS_HTM[] =
   "Summer      <input type=\"text\" name=\"summer\"     id=\"summer\"     value=\"$SUMMER\">\r\n" \
   "<input type=\"reset\" name=\"reset\" value=\"Reset\"> <input type=\"submit\" name=\"save\" value=\"Save\"></form>\r\n" \
   "<b>IR</b><form method=\"post\">\r\n" \
-  "IR Addr     <input type=\"text\" name=\"ir\"         id=\"ir\"         value=\"$IR\">\r\n" \
+  "IR Addr     <input type=\"text\" name=\"iraddr\"     id=\"iraddr\"     value=\"$IRADDR\">\r\n" \
+  "IR Key Power<input type=\"text\" name=\"irkeypower\" id=\"irkeypower\" value=\"$IRKEYPOWER\">\r\n" \
+  "IR Key Up   <input type=\"text\" name=\"irkeyup\"    id=\"irkeyup\"    value=\"$IRKEYUP\">\r\n" \
+  "IR Key Down <input type=\"text\" name=\"irkeydown\"  id=\"irkeydown\"  value=\"$IRKEYDOWN\">\r\n" \
+  "IR Key OK   <input type=\"text\" name=\"irkeyok\"    id=\"irkeyok\"    value=\"$IRKEYOK\">\r\n" \
+  "IR Key Vol+ <input type=\"text\" name=\"irkeyvolp\"  id=\"irkeyvolp\"  value=\"$IRKEYVOLP\">\r\n" \
+  "IR Key Vol- <input type=\"text\" name=\"irkeyvolm\"  id=\"irkeyvolm\"  value=\"$IRKEYVOLM\">\r\n" \
   "<input type=\"reset\" name=\"reset\" value=\"Reset\"> <input type=\"submit\" name=\"save\" value=\"Save\"></form>\r\n" \
-  "<b>Colors</b><form method=\"post\">\r\n" \
-  "BG          <input type=\"text\" name=\"colorbg\"    id=\"colorbg\"    value=\"$COLORBG\">\r\n" \
-  "FG          <input type=\"text\" name=\"colorfg\"    id=\"colorfg\"    value=\"$COLORFG\">\r\n" \
-  "Sel         <input type=\"text\" name=\"colorsel\"   id=\"colorsel\"   value=\"$COLORSEL\">\r\n" \
-  "Edge        <input type=\"text\" name=\"coloredge\"  id=\"coloredge\"  value=\"$COLOREDGE\">\r\n" \
-  "<input type=\"reset\" name=\"reset\" value=\"Reset\"> <input type=\"submit\" name=\"save\" value=\"Save\"></form>\r\n" \
+  "\r\n* Restart required\r\n" \
   "</pre></td></tr></table>\r\n" \
   "</div>\r\n" \
   "</div>\r\n" \
+  "<img src=\"/load.gif\" width=\"1\" height=\"1\" border=\"0\" style=\"visibility:hidden;display:none;\">\r\n" \
   "</body>\r\n" \
   "</html>\r\n"
 };
@@ -608,7 +626,7 @@ const HTTPFILE httpfiles[HTTPFILES] =
 #define VAR_STN  (8)
 #define VAR_STA  (9)
 #define VAR_ALA  (10)
-#define HTTPVARS (35)
+#define HTTPVARS (41)
 const HTTPVAR httpvars[HTTPVARS] =
 {
   {"ONTIME",      VAR_NR,  (void*)getontime},
@@ -647,7 +665,13 @@ const HTTPVAR httpvars[HTTPVARS] =
   {"UPNP_UUID",   VAR_STR, (void*)upnp_getuuid},
   {"UPNP_PORT",   VAR_NR,  (void*)upnp_getport},
 
-  {"IR",          VAR_NR,  (void*)ir_getaddr},
+  {"IRADDR",      VAR_NR,  (void*)ir_getaddr},
+  {"IRKEYPOWER",  VAR_NR,  (void*)ir_getkeypower},
+  {"IRKEYUP",     VAR_NR,  (void*)ir_getkeyup},
+  {"IRKEYDOWN",   VAR_NR,  (void*)ir_getkeydown},
+  {"IRKEYOK",     VAR_NR,  (void*)ir_getkeyok},
+  {"IRKEYVOLP",   VAR_NR,  (void*)ir_getkeyvolp},
+  {"IRKEYVOLM",   VAR_NR,  (void*)ir_getkeyvolm},
 
   {"COLORBG",     VAR_RGB, (void*)menu_getbgcolor},
   {"COLORFG",     VAR_RGB, (void*)menu_getfgcolor},

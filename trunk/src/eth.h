@@ -15,12 +15,12 @@
 
 #define ETH_RXFIFO                     (15) //rx fifo (x * ETH_MTUSIZE)
 #define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
-#define ETH_TIMEOUT                    (12) //seconds (ARP / DHCP / DNS request...)
+#define ETH_TIMEOUT                    (15) //seconds (ARP / DHCP / DNS request...)
 #define ETH_USE_DSCP                   //use Differentiated Services Code Point (QoS -> DSCP)
 
 #define TCP_MSS                        (ETH_MTUSIZE-ETH_HEADERLEN-IP_HEADERLEN-TCP_HEADERLEN) //Maximum Segment Size
 #define TCP_WINDOW                     ((ETH_RXFIFO*ETH_MTUSIZE)/2) //(2048-256) //window size (ARM has 2kByte Rx FIFO for up to 31 frames)
-#define TCP_ENTRIES                    (20) //max TCP Table Entries
+#define TCP_ENTRIES                    (15) //max TCP Table Entries
 #define TCP_TIMEOUT                    (3) //seconds
 #define TCP_MAXERROR                   (3) //try x times
 #define TCP_CLOSED                     (0)

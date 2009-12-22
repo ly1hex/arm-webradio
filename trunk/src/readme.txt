@@ -1,4 +1,4 @@
-WebRadio v0.04 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.05 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.04
                          CPU Support Pkg. Stellaris 1.1
@@ -17,8 +17,16 @@ Third party software
     http://elm-chan.org/fsw/ff/00index_e.html
 
 
+License
+-------
+  See license.txt
+
+
 History
 -------
+  Dec 22 2009  v0.05  IR commands changeable
+                      Different Alarm actions
+
   Nov 29 2009  v0.04  Changes in VS interface
                       LCD L2F50 support
 
@@ -36,8 +44,3 @@ History
                       DNS client
 
   Mar 16 2009  v0.01  First release
-
-
-License
--------
-  See license.txt

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "lcd.h"
 #include "tools.h"
 
@@ -261,8 +262,22 @@ unsigned int atorgb(const char *s)
 }
 
 
-void sectotime(unsigned long s, TIME *time) //seconds from 1970
+void sectotime(unsigned long s, TIME *time) //s = seconds from 1970
 {
+  struct tm t;
+
+  gmtime_r(&s, &t);
+
+  time->s     = t.tm_sec;
+  time->m     = t.tm_min;
+  time->h     = t.tm_hour;
+  time->day   = t.tm_mday;
+  time->month = t.tm_mon + 1;
+  time->year  = t.tm_year + 1900;
+  time->wday  = t.tm_wday;
+
+
+/*
   unsigned long t;
   const unsigned int month_start[12] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
                                       //31 28  31  30   31   30   31   31   30   31   30   31
@@ -307,11 +322,29 @@ void sectotime(unsigned long s, TIME *time) //seconds from 1970
   }
   time->month = t;
 
-
   //day of month
   time->day = (s-month_start[t-1]) + 1;
+*/
 
   return;
+}
+
+
+unsigned long timetosec(unsigned int s, unsigned int m, unsigned int h, unsigned int day, unsigned int month, unsigned int year)
+{
+  unsigned long sec;
+  struct tm t;
+
+  t.tm_sec  = s;
+  t.tm_min  = m;
+  t.tm_hour = h;
+  t.tm_mday = day;
+  t.tm_mon  = month- 1;
+  t.tm_year = year - 1900;
+
+  sec = mktime(&t);
+
+  return sec;
 }
 
 

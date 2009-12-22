@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include "../third_party/lmi/inc/hw_types.h"
-#include "../third_party/lmi/inc/hw_memmap.h"
-#include "../third_party/lmi/driverlib/gpio.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/driverlib/gpio.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../io.h"
@@ -10,7 +10,7 @@
 #include "lcd_mio283qt.h"
 
 
-#ifdef MIO283QT
+#ifdef LCD_MIO283QT
 
 
 void lcd_draw(unsigned int color)
@@ -47,7 +47,7 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
+void lcd_setarea(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
 #ifdef LCD_MIRROR
   lcd_cmd(0x50, (LCD_HEIGHT-1)-y1); //set y0
@@ -62,13 +62,13 @@ void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1
 #endif
 
   //set cursor
-  lcd_cursor(x0, y0);
+  lcd_setcursor(x0, y0);
 
   return;
 }
 
 
-void lcd_cursor(unsigned int x, unsigned int y)
+void lcd_setcursor(unsigned int x, unsigned int y)
 {
 #ifdef LCD_MIRROR
   lcd_cmd(0x20, (LCD_HEIGHT-1)-y); //set y
@@ -156,10 +156,10 @@ void lcd_reset(void)
   lcd_cmd(0x03, 0x1038); //entry mode
 #endif
 
-  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_setarea(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   return;
 }
 
 
-#endif //MIO283QT
+#endif //LCD_MIO283QT

@@ -8,7 +8,7 @@
 #define SHOUTCAST_CLIENTPORT2          (1002)
 #define SHOUTCAST_CLIENTPORT3          (1003)
 
-#define SHOUTCAST_TIMEOUT              (10) //s
+#define SHOUTCAST_TIMEOUT              (15) //s
 #define SHOUTCAST_TRY                  (3)  //times
 
 #define SHOUTCAST_CLOSED               (0)

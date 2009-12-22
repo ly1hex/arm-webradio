@@ -16,21 +16,21 @@
 //LM3S6950 Revision: LM3S_REV_A1, LM3S_REV_A2 or LM3S_REV_B0
 #define LM3S_REV_A2
 
-//Display: L2F50, LPH88, LS020, MIO283QT
-#define LPH88
+//Display: LCD_L2F50, LCD_LPH88, LCD_LS020, LCD_MIO283QT
+#define LCD_L2F50
 //#define LCD_MIRROR                     //mirror display
 //#define LCD_ROTATE                     //rotate display (90 degree)
 #define LCD_PWMFREQ                    (60000) //60000 Hz LED PWM Freq
 #define LCD_PWMMIN                     (5)     // 5 % (1...100%)
 #define LCD_PWMSTANDBY                 (15)    //15 % (1...100%)
 
-//Stand-By
+//Standby
 #define STANDBY_TIME                   (3*60)  //standby after x seconds
 
 //SSI Speed: LCD, SD, F-RAM, VS
 #define SSI_SPEED                      (8000000UL) //8 MHz (max ssi speed)
 
-//Rotary encoder switch
+//Rotary Encoder switch times
 #define SW_SHORTTIME                   (8)   //  8*10ms =   80ms
 #define SW_LONGTIME                    (120) //120*10ms = 1200ms
 
@@ -47,11 +47,11 @@
 #define IR_VCR2                        (6)
 #define IR_ALLADDR                     (0x1F)
 
-//Commandos
+//IR and Rotary Encoder Commandos
 #define SW_PRESSED                     (1)
 #define SW_PRESSEDLONG                 (2)
-#define SW_VOL_P                       (3)
-#define SW_VOL_M                       (4)
+#define SW_VOLP                        (3)
+#define SW_VOLM                        (4)
 #define SW_UP                          (5)
 #define SW_DOWN                        (6)
 #define SW_ENTER                       (7)
@@ -68,6 +68,28 @@
 #define FM_SLEEP                       (0xB9) //Enter Sleep Mode
 #define FM_RDID                        (0x9F) //Read Device ID
 #define FM_SNR                         (0xC3) //Read S/N 
+
+//Check hardware config
+#if defined LM3S_REV_A1                //LM3S Rev
+# define LM3S_NAME "LM3S-A1"
+#elif defined LM3S_REV_A2
+# define LM3S_NAME "LM3S-A2"
+#elif defined LM3S_REV_B0
+# define LM3S_NAME "LM3S-B0"
+#else
+# warning "LM3S Rev not defined"
+#endif
+#if defined LCD_L2F50                  //LCD
+# define LCD_NAME "S65-L2F50"
+#elif defined LCD_LPH88
+# define LCD_NAME "S65-LPH88"
+#elif defined LCD_LS020
+# define LCD_NAME "S65-LS020"
+#elif defined LCD_MIO283QT
+# define LCD_NAME "MIO283QT"
+#else
+# warning "LCD not defined"
+#endif
 
 //--- Pins ---
 //Encoder
@@ -101,8 +123,8 @@
 #define VS_DCS_DISABLE()               GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3)
 #define VS_DCS_ENABLE()                GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0)
 //USB Power
-#define USB_OFF()                      GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); delay_ms(10)
-#define USB_ON()                       GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0); delay_ms(500)
+#define USB_ON()                       GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);          GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_4MA, GPIO_PIN_TYPE_OD); delay_ms(400)
+#define USB_OFF()                      GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_OD); delay_ms(10)
 //FM
 #define FM_CS_DISABLE()                GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, GPIO_PIN_1)
 #define FM_CS_ENABLE()                 GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0)
@@ -146,6 +168,21 @@ int                                    ir_cmd(void);
 int                                    ir_rawdata(void);
 void                                   ir_timer(void);
 void                                   ir_edge(void);
+
+unsigned int                           ir_getkeyvolm(void);
+unsigned int                           ir_getkeyvolp(void);
+unsigned int                           ir_getkeyok(void);
+unsigned int                           ir_getkeydown(void);
+unsigned int                           ir_getkeyup(void);
+unsigned int                           ir_getkeypower(void);
+
+void                                   ir_setkeyvolm(unsigned int key);
+void                                   ir_setkeyvolp(unsigned int key);
+void                                   ir_setkeyok(unsigned int key);
+void                                   ir_setkeydown(unsigned int key);
+void                                   ir_setkeyup(unsigned int key);
+void                                   ir_setkeypower(unsigned int key);
+
 unsigned int                           ir_getaddr(void);
 void                                   ir_setaddr(unsigned int addr);
 void                                   ir_init(void);

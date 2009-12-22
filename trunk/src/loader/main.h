@@ -16,7 +16,7 @@
 #endif
 
 //Application settings
-#define VERSION                        "0.01"
+#define VERSION                        "0.02"
 #define RELEASE                        //Release version
 #define APPNAME                        "Loader"
 #if defined DEBUG

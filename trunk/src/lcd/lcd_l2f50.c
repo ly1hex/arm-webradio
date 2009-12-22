@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include "../third_party/lmi/inc/hw_types.h"
-#include "../third_party/lmi/inc/hw_memmap.h"
-#include "../third_party/lmi/driverlib/gpio.h"
+#include "lmi/inc/hw_types.h"
+#include "lmi/inc/hw_memmap.h"
+#include "lmi/driverlib/gpio.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../io.h"
@@ -10,7 +10,7 @@
 #include "lcd_l2f50.h"
 
 
-#ifdef L2F50
+#ifdef LCD_L2F50
 
 
 void lcd_draw(unsigned int color)
@@ -41,7 +41,7 @@ void lcd_drawstart(void)
 }
 
 
-void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
+void lcd_setarea(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1)
 {
 #ifdef LCD_MIRROR
   lcd_cmd(0x15);                    //column address set 
@@ -67,7 +67,7 @@ void lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1
 }
 
 
-void lcd_cursor(unsigned int x, unsigned int y)
+void lcd_setcursor(unsigned int x, unsigned int y)
 {
 #ifdef LCD_MIRROR
   lcd_cmd(0x15);                   //column address set 
@@ -157,10 +157,10 @@ void lcd_reset(void)
 
   delay_ms(5);
 
-  lcd_area(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
+  lcd_setarea(0, 0, (LCD_WIDTH-1), (LCD_HEIGHT-1));
 
   return;
 }
 
 
-#endif //L2F50
+#endif //LCD_L2F50

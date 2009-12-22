@@ -2,7 +2,7 @@
 #define _LCD_MIO283QT_H_
 
 
-#ifdef MIO283QT
+#ifdef LCD_MIO283QT
 
 //----- DEFINES -----
 #define LCD_ID                         (0)

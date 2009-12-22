@@ -8,8 +8,8 @@
 #define RTSP_CLIENTPORT2               (1012)
 #define RTSP_CLIENTPORT3               (1013)
 
-#define RTSP_TIMEOUT                   (10) //s
-#define RTSP_TRY                       (3) //times
+#define RTSP_TIMEOUT                   (15) //s
+#define RTSP_TRY                       (3)  //times
 
 #define RTSP_CLOSED                    (0)
 #define RTSP_CLOSE                     (1)

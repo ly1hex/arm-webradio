@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "third_party/fatfs/ff.h"
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -52,7 +52,13 @@ const SETTINGSMENU settingsmenu[SETTINGSITEMS] =
   {"Summer-Time  ",     "SUMMER",     F_OR,         0,     1,    0, (void*)eth_setsummer},
   {"Get Time from NTP", "",           F_TIME,       0,     0,    0, 0},
   {"--- IR ---",        "",           F_NONE,       0,     0,    0, 0},
-  {"IR Addr",           "IR",         F_NR,         0,    31,    1, (void*)ir_setaddr},
+  {"IR Addr",           "IRADDR",     F_NR,         0,    31,    1, (void*)ir_setaddr},
+  {"IR Key Power",      "IRKEYPOWER", F_NR,         1,    99,    1, (void*)ir_setkeypower},
+  {"IR Key Up   ",      "IRKEYUP",    F_NR,         1,    99,    1, (void*)ir_setkeyup},
+  {"IR Key Down ",      "IRKEYDOWN",  F_NR,         1,    99,    1, (void*)ir_setkeydown},
+  {"IR Key OK   ",      "IRKEYOK",    F_NR,         1,    99,    1, (void*)ir_setkeyok},
+  {"IR Key Vol+ ",      "IRKEYVOLP",  F_NR,         1,    99,    1, (void*)ir_setkeyvolp},
+  {"IR Key Vol- ",      "IRKEYVOLM",  F_NR,         1,    99,    1, (void*)ir_setkeyvolm},
   {"Show raw IR Data",  "",           F_RUN,        0,     0,    0, (void*)dlg_rawir},
   {"--- Colors ---",    "",           F_NONE,       0,     0,    0, 0},
   {"BG  ",              "COLORBG",    F_RGB,        0,     0,    0, (void*)menu_setbgcolor},
@@ -107,9 +113,33 @@ void settings_read(void)
   alarm_load();
 
   //ir
-  if(ini_getentry(SETTINGS_FILE, "IR", buf, INI_BUFLEN) == 0)
+  if(ini_getentry(SETTINGS_FILE, "IRADDR", buf, INI_BUFLEN) == 0)
   {
     ir_setaddr(atoi(buf));
+  }
+  if(ini_getentry(SETTINGS_FILE, "IRKEYPOWER", buf, INI_BUFLEN) == 0)
+  {
+    ir_setkeypower(atoi(buf));
+  }
+  if(ini_getentry(SETTINGS_FILE, "IRKEYUP", buf, INI_BUFLEN) == 0)
+  {
+    ir_setkeyup(atoi(buf));
+  }
+  if(ini_getentry(SETTINGS_FILE, "IRKEYDOWN", buf, INI_BUFLEN) == 0)
+  {
+    ir_setkeydown(atoi(buf));
+  }
+  if(ini_getentry(SETTINGS_FILE, "IRKEYOK", buf, INI_BUFLEN) == 0)
+  {
+    ir_setkeyok(atoi(buf));
+  }
+  if(ini_getentry(SETTINGS_FILE, "IRVOLP", buf, INI_BUFLEN) == 0)
+  {
+    ir_setkeyvolp(atoi(buf));
+  }
+  if(ini_getentry(SETTINGS_FILE, "IRVOLM", buf, INI_BUFLEN) == 0)
+  {
+    ir_setkeyvolm(atoi(buf));
   }
   ir_init();
 

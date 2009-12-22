@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "third_party/fatfs/ff.h"
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "main.h"
 #include "mmc.h"
