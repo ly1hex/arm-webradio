@@ -420,7 +420,7 @@ unsigned int standby(unsigned int param)
     if(keys_sw() || (ir_cmd() == SW_POWER))
     {
       daytime(tmp, &time);
-      lcd_puts(10, 20, tmp, NORMALFONT, 1, RGB(255,255,255), RGB(0,0,0));
+      lcd_puts(10, 10, tmp, NORMALFONT, 1, RGB(255,255,255), RGB(0,0,0));
       delay_ms(1000);
       break;
     }

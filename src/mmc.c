@@ -301,16 +301,19 @@ void ini_extendfile(FIL *file, unsigned int pos, unsigned int len)
   unsigned int i, rd;
   unsigned char c;
 
-  for(i=file->fsize-1; i>pos; i--)
+  if(pos < file->fsize)
   {
-    f_lseek(file, i);
-    res = f_read(file, &c, 1, &rd);
-    if((res != FR_OK) || (rd != 1))
+    for(i=file->fsize-1; i>pos; i--)
     {
-      break;
+      f_lseek(file, i);
+      res = f_read(file, &c, 1, &rd);
+      if((res != FR_OK) || (rd != 1))
+      {
+        break;
+      }
+      f_lseek(file, i+len);
+      f_putc(c, file);
     }
-    f_lseek(file, i+len);
-    f_putc(c, file);
   }
 
   return;
@@ -324,16 +327,19 @@ void ini_delspace(FIL *file)
   unsigned int i, rd;
   unsigned char c;
 
-  for(i=file->fsize-1, c=0; ((c == 0) || (c == '\r') || (c == '\n'));)
+  if(file->fsize)
   {
-    f_lseek(file, i--);
-    res = f_read(file, &c, 1, &rd);
-    if((res != FR_OK) || (rd != 1))
+    for(i=file->fsize-1, c=0; ((c == 0) || (c == '\r') || (c == '\n'));)
     {
-      break;
+      f_lseek(file, i--);
+      res = f_read(file, &c, 1, &rd);
+      if((res != FR_OK) || (rd != 1))
+      {
+        break;
+      }
     }
+    f_truncate(file);
   }
-  f_truncate(file);
 
   return;
 }
@@ -348,6 +354,12 @@ unsigned int ini_searchentry(FIL *file, const char *entry, unsigned int *entry_s
 
   entry_len = strlen(entry);
   entry_pos = file->fptr;
+
+  if(entry_len >= file->fsize)
+  {
+    return 0;
+  }
+
   found     = 0;
   i         = 0;
   do
