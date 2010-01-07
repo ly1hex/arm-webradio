@@ -1033,7 +1033,6 @@ void menu_init(void)
   gbuf.menu.file[MAX_ADDR-1]    = 0;
 
   menu_setstatus(MENU_STATE_STOP);
-  //menu_setname("Hello, World!");
   gettime(&t);
   daytime(gbuf.menu.name, &t);
   menu_drawwnd(1);

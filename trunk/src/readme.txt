@@ -1,4 +1,4 @@
-WebRadio v0.05 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.06 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.04
                          CPU Support Pkg. Stellaris 1.1
@@ -24,6 +24,8 @@ License
 
 History
 -------
+  Jan 07 2009  v0.06  Bugfix release
+
   Dec 22 2009  v0.05  IR commands changeable
                       Different Alarm actions
 
