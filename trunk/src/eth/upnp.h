@@ -9,7 +9,7 @@
 //----- PROTOTYPES -----
 unsigned int                           upnp_getport(void);
 char*                                  upnp_getuuid(void);
-void                                   upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
+void                                   upnp_tcpapp(unsigned int idx, const char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_UPNP_H_

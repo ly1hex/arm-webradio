@@ -2,26 +2,23 @@
 //
 // hw_usb.h - Macros for use in accessing the USB registers.
 //
-// Copyright (c) 2007-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,8 +27,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the Univeral Serial Bus (USB) Controller
-// offsets.
+// The following are defines for the Univeral Serial Bus register offsets.
 //
 //*****************************************************************************
 #define USB_O_FADDR             0x00000000  // USB Device Functional Address
@@ -67,7 +63,7 @@
 #define USB_O_TXFIFOADD         0x00000064  // USB Transmit FIFO Start Address
 #define USB_O_RXFIFOADD         0x00000066  // USB Receive FIFO Start Address
 #define USB_O_CONTIM            0x0000007A  // USB Connect Timing
-#define USB_O_VPLEN             0x0000007B  // USB OTG VBus Pulse Timing
+#define USB_O_VPLEN             0x0000007B  // USB OTG VBUS Pulse Timing
 #define USB_O_FSEOF             0x0000007D  // USB Full-Speed Last Transaction
                                             // to End of Frame Timing
 #define USB_O_LSEOF             0x0000007E  // USB Low-Speed Last Transaction
@@ -612,10 +608,10 @@
                                             // Interrupt Mask
 #define USB_O_EPCISC            0x0000040C  // USB External Power Control
                                             // Interrupt Status and Clear
-#define USB_O_DRRIS             0x00000410  // USB Device Resume Raw Interrupt
+#define USB_O_DRRIS             0x00000410  // USB Device RESUME Raw Interrupt
                                             // Status
-#define USB_O_DRIM              0x00000414  // USB Device Resume Interrupt Mask
-#define USB_O_DRISC             0x00000418  // USB Device Resume Interrupt
+#define USB_O_DRIM              0x00000414  // USB Device RESUME Interrupt Mask
+#define USB_O_DRISC             0x00000418  // USB Device RESUME Interrupt
                                             // Status and Clear
 #define USB_O_GPCS              0x0000041C  // USB General-Purpose Control and
                                             // Status
@@ -647,11 +643,11 @@
 // The following are defines for the bit fields in the USB_O_POWER register.
 //
 //*****************************************************************************
-#define USB_POWER_ISOUP         0x00000080  // ISO Update
+#define USB_POWER_ISOUP         0x00000080  // Isochronous Update
 #define USB_POWER_SOFTCONN      0x00000040  // Soft Connect/Disconnect
-#define USB_POWER_RESET         0x00000008  // Reset
-#define USB_POWER_RESUME        0x00000004  // Resume Signaling
-#define USB_POWER_SUSPEND       0x00000002  // Suspend Mode
+#define USB_POWER_RESET         0x00000008  // RESET Signaling
+#define USB_POWER_RESUME        0x00000004  // RESUME Signaling
+#define USB_POWER_SUSPEND       0x00000002  // SUSPEND Mode
 #define USB_POWER_PWRDNPHY      0x00000001  // Power Down PHY
 
 //*****************************************************************************
@@ -746,15 +742,15 @@
 // The following are defines for the bit fields in the USB_O_IS register.
 //
 //*****************************************************************************
-#define USB_IS_VBUSERR          0x00000080  // VBus Error
-#define USB_IS_SESREQ           0x00000040  // Session Request
+#define USB_IS_VBUSERR          0x00000080  // VBUS Error
+#define USB_IS_SESREQ           0x00000040  // SESSION REQUEST
 #define USB_IS_DISCON           0x00000020  // Session Disconnect
 #define USB_IS_CONN             0x00000010  // Session Connect
 #define USB_IS_SOF              0x00000008  // Start of Frame
 #define USB_IS_BABBLE           0x00000004  // Babble Detected
-#define USB_IS_RESET            0x00000004  // Reset Signal Detected
-#define USB_IS_RESUME           0x00000002  // Resume Signal Detected
-#define USB_IS_SUSPEND          0x00000001  // Suspend Signal Detected
+#define USB_IS_RESET            0x00000004  // RESET Signaling Detected
+#define USB_IS_RESUME           0x00000002  // RESUME Signaling Detected
+#define USB_IS_SUSPEND          0x00000001  // SUSPEND Signaling Detected
 
 //*****************************************************************************
 //
@@ -762,14 +758,14 @@
 //
 //*****************************************************************************
 #define USB_IE_VBUSERR          0x00000080  // Enable VBUS Error Interrupt
-#define USB_IE_SESREQ           0x00000040  // Enable Session Request Interrupt
+#define USB_IE_SESREQ           0x00000040  // Enable Session Request
 #define USB_IE_DISCON           0x00000020  // Enable Disconnect Interrupt
 #define USB_IE_CONN             0x00000010  // Enable Connect Interrupt
 #define USB_IE_SOF              0x00000008  // Enable Start-of-Frame Interrupt
 #define USB_IE_BABBLE           0x00000004  // Enable Babble Interrupt
-#define USB_IE_RESET            0x00000004  // Enable Reset Interrupt
-#define USB_IE_RESUME           0x00000002  // Enable Resume Interrupt
-#define USB_IE_SUSPND           0x00000001  // Enable Suspend Interrupt
+#define USB_IE_RESET            0x00000004  // Enable RESET Interrupt
+#define USB_IE_RESUME           0x00000002  // Enable RESUME Interrupt
+#define USB_IE_SUSPND           0x00000001  // Enable SUSPEND Interrupt
 
 //*****************************************************************************
 //
@@ -794,7 +790,7 @@
 //*****************************************************************************
 #define USB_TEST_FORCEH         0x00000080  // Force Host Mode
 #define USB_TEST_FIFOACC        0x00000040  // FIFO Access
-#define USB_TEST_FORCEFS        0x00000020  // Force Full Speed
+#define USB_TEST_FORCEFS        0x00000020  // Force Full-Speed Mode
 
 //*****************************************************************************
 //
@@ -932,11 +928,11 @@
 #define USB_DEVCTL_DEV          0x00000080  // Device Mode
 #define USB_DEVCTL_FSDEV        0x00000040  // Full-Speed Device Detected
 #define USB_DEVCTL_LSDEV        0x00000020  // Low-Speed Device Detected
-#define USB_DEVCTL_VBUS_M       0x00000018  // VBus Level
+#define USB_DEVCTL_VBUS_M       0x00000018  // VBUS Level
 #define USB_DEVCTL_VBUS_NONE    0x00000000  // Below SessionEnd
 #define USB_DEVCTL_VBUS_SEND    0x00000008  // Above SessionEnd, below AValid
-#define USB_DEVCTL_VBUS_AVALID  0x00000010  // Above AValid, below VBusValid
-#define USB_DEVCTL_VBUS_VALID   0x00000018  // Above VBusValid
+#define USB_DEVCTL_VBUS_AVALID  0x00000010  // Above AValid, below VBUSValid
+#define USB_DEVCTL_VBUS_VALID   0x00000018  // Above VBUSValid
 #define USB_DEVCTL_HOST         0x00000004  // Host Mode
 #define USB_DEVCTL_HOSTREQ      0x00000002  // Host Request
 #define USB_DEVCTL_SESSION      0x00000001  // Session Start/End
@@ -982,16 +978,7 @@
 //
 //*****************************************************************************
 #define USB_TXFIFOADD_ADDR_M    0x00001FFF  // Transmit/Receive Start Address
-#define USB_TXFIFOADD_ADDR_0    0x00000000  // 0
-#define USB_TXFIFOADD_ADDR_8    0x00000001  // 8
-#define USB_TXFIFOADD_ADDR_16   0x00000002  // 16
-#define USB_TXFIFOADD_ADDR_32   0x00000003  // 32
-#define USB_TXFIFOADD_ADDR_64   0x00000004  // 64
-#define USB_TXFIFOADD_ADDR_128  0x00000005  // 128
-#define USB_TXFIFOADD_ADDR_256  0x00000006  // 256
-#define USB_TXFIFOADD_ADDR_512  0x00000007  // 512
-#define USB_TXFIFOADD_ADDR_1024 0x00000008  // 1024
-#define USB_TXFIFOADD_ADDR_2048 0x00000009  // 2048
+#define USB_TXFIFOADD_ADDR_S    0
 
 //*****************************************************************************
 //
@@ -1000,16 +987,7 @@
 //
 //*****************************************************************************
 #define USB_RXFIFOADD_ADDR_M    0x00001FFF  // Transmit/Receive Start Address
-#define USB_RXFIFOADD_ADDR_0    0x00000000  // 0
-#define USB_RXFIFOADD_ADDR_8    0x00000001  // 8
-#define USB_RXFIFOADD_ADDR_16   0x00000002  // 16
-#define USB_RXFIFOADD_ADDR_32   0x00000003  // 32
-#define USB_RXFIFOADD_ADDR_64   0x00000004  // 64
-#define USB_RXFIFOADD_ADDR_128  0x00000005  // 128
-#define USB_RXFIFOADD_ADDR_256  0x00000006  // 256
-#define USB_RXFIFOADD_ADDR_512  0x00000007  // 512
-#define USB_RXFIFOADD_ADDR_1024 0x00000008  // 1024
-#define USB_RXFIFOADD_ADDR_2048 0x00000009  // 2048
+#define USB_RXFIFOADD_ADDR_S    0
 
 //*****************************************************************************
 //
@@ -1026,7 +1004,7 @@
 // The following are defines for the bit fields in the USB_O_VPLEN register.
 //
 //*****************************************************************************
-#define USB_VPLEN_VPLEN_M       0x000000FF  // VBus Pulse Length
+#define USB_VPLEN_VPLEN_M       0x000000FF  // VBUS Pulse Length
 #define USB_VPLEN_VPLEN_S       0
 
 //*****************************************************************************
@@ -1932,7 +1910,7 @@
 //*****************************************************************************
 #define USB_CSRL0_NAKTO         0x00000080  // NAK Timeout
 #define USB_CSRL0_SETENDC       0x00000080  // Setup End Clear
-#define USB_CSRL0_STATUS        0x00000040  // Status Packet
+#define USB_CSRL0_STATUS        0x00000040  // STATUS Packet
 #define USB_CSRL0_RXRDYC        0x00000040  // RXRDY Clear
 #define USB_CSRL0_REQPKT        0x00000020  // Request Packet
 #define USB_CSRL0_STALL         0x00000020  // Send Stall
@@ -1958,7 +1936,7 @@
 // The following are defines for the bit fields in the USB_O_COUNT0 register.
 //
 //*****************************************************************************
-#define USB_COUNT0_COUNT_M      0x0000007F  // Count
+#define USB_COUNT0_COUNT_M      0x0000007F  // FIFO Count
 #define USB_COUNT0_COUNT_S      0
 
 //*****************************************************************************
@@ -1994,7 +1972,7 @@
 #define USB_TXCSRL1_NAKTO       0x00000080  // NAK Timeout
 #define USB_TXCSRL1_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL1_STALLED     0x00000020  // Endpoint Stalled
-#define USB_TXCSRL1_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL1_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL1_SETUP       0x00000010  // Setup Packet
 #define USB_TXCSRL1_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL1_ERROR       0x00000004  // Error
@@ -2008,7 +1986,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH1_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH1_ISO         0x00000040  // ISO
+#define USB_TXCSRH1_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH1_MODE        0x00000020  // Mode
 #define USB_TXCSRH1_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH1_FDT         0x00000008  // Force Data Toggle
@@ -2031,7 +2009,7 @@
 //*****************************************************************************
 #define USB_RXCSRL1_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL1_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL1_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL1_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL1_REQPKT      0x00000020  // Request Packet
 #define USB_RXCSRL1_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL1_DATAERR     0x00000008  // Data Error
@@ -2048,7 +2026,7 @@
 //*****************************************************************************
 #define USB_RXCSRH1_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH1_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH1_ISO         0x00000040  // ISO
+#define USB_RXCSRH1_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH1_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH1_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH1_PIDERR      0x00000010  // PID Error
@@ -2145,7 +2123,7 @@
 #define USB_TXCSRL2_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL2_STALLED     0x00000020  // Endpoint Stalled
 #define USB_TXCSRL2_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL2_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL2_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL2_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL2_ERROR       0x00000004  // Error
 #define USB_TXCSRL2_UNDRN       0x00000004  // Underrun
@@ -2158,7 +2136,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH2_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH2_ISO         0x00000040  // ISO
+#define USB_TXCSRH2_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH2_MODE        0x00000020  // Mode
 #define USB_TXCSRH2_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH2_FDT         0x00000008  // Force Data Toggle
@@ -2182,7 +2160,7 @@
 #define USB_RXCSRL2_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL2_STALLED     0x00000040  // Endpoint Stalled
 #define USB_RXCSRL2_REQPKT      0x00000020  // Request Packet
-#define USB_RXCSRL2_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL2_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL2_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL2_DATAERR     0x00000008  // Data Error
 #define USB_RXCSRL2_NAKTO       0x00000008  // NAK Timeout
@@ -2198,7 +2176,7 @@
 //*****************************************************************************
 #define USB_RXCSRH2_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH2_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH2_ISO         0x00000040  // ISO
+#define USB_RXCSRH2_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH2_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH2_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH2_PIDERR      0x00000010  // PID Error
@@ -2295,7 +2273,7 @@
 #define USB_TXCSRL3_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL3_STALLED     0x00000020  // Endpoint Stalled
 #define USB_TXCSRL3_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL3_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL3_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL3_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL3_ERROR       0x00000004  // Error
 #define USB_TXCSRL3_UNDRN       0x00000004  // Underrun
@@ -2308,7 +2286,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH3_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH3_ISO         0x00000040  // ISO
+#define USB_TXCSRH3_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH3_MODE        0x00000020  // Mode
 #define USB_TXCSRH3_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH3_FDT         0x00000008  // Force Data Toggle
@@ -2331,7 +2309,7 @@
 //*****************************************************************************
 #define USB_RXCSRL3_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL3_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL3_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL3_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL3_REQPKT      0x00000020  // Request Packet
 #define USB_RXCSRL3_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL3_DATAERR     0x00000008  // Data Error
@@ -2348,7 +2326,7 @@
 //*****************************************************************************
 #define USB_RXCSRH3_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH3_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH3_ISO         0x00000040  // ISO
+#define USB_RXCSRH3_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH3_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH3_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH3_PIDERR      0x00000010  // PID Error
@@ -2445,7 +2423,7 @@
 #define USB_TXCSRL4_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL4_STALLED     0x00000020  // Endpoint Stalled
 #define USB_TXCSRL4_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL4_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL4_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL4_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL4_ERROR       0x00000004  // Error
 #define USB_TXCSRL4_UNDRN       0x00000004  // Underrun
@@ -2458,7 +2436,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH4_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH4_ISO         0x00000040  // ISO
+#define USB_TXCSRH4_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH4_MODE        0x00000020  // Mode
 #define USB_TXCSRH4_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH4_FDT         0x00000008  // Force Data Toggle
@@ -2481,7 +2459,7 @@
 //*****************************************************************************
 #define USB_RXCSRL4_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL4_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL4_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL4_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL4_REQPKT      0x00000020  // Request Packet
 #define USB_RXCSRL4_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL4_NAKTO       0x00000008  // NAK Timeout
@@ -2498,7 +2476,7 @@
 //*****************************************************************************
 #define USB_RXCSRH4_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH4_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH4_ISO         0x00000040  // ISO
+#define USB_RXCSRH4_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH4_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH4_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH4_PIDERR      0x00000010  // PID Error
@@ -2595,7 +2573,7 @@
 #define USB_TXCSRL5_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL5_STALLED     0x00000020  // Endpoint Stalled
 #define USB_TXCSRL5_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL5_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL5_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL5_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL5_ERROR       0x00000004  // Error
 #define USB_TXCSRL5_UNDRN       0x00000004  // Underrun
@@ -2608,7 +2586,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH5_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH5_ISO         0x00000040  // ISO
+#define USB_TXCSRH5_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH5_MODE        0x00000020  // Mode
 #define USB_TXCSRH5_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH5_FDT         0x00000008  // Force Data Toggle
@@ -2631,7 +2609,7 @@
 //*****************************************************************************
 #define USB_RXCSRL5_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL5_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL5_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL5_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL5_REQPKT      0x00000020  // Request Packet
 #define USB_RXCSRL5_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL5_NAKTO       0x00000008  // NAK Timeout
@@ -2648,7 +2626,7 @@
 //*****************************************************************************
 #define USB_RXCSRH5_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH5_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH5_ISO         0x00000040  // ISO
+#define USB_RXCSRH5_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH5_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH5_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH5_PIDERR      0x00000010  // PID Error
@@ -2744,7 +2722,7 @@
 #define USB_TXCSRL6_NAKTO       0x00000080  // NAK Timeout
 #define USB_TXCSRL6_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL6_STALLED     0x00000020  // Endpoint Stalled
-#define USB_TXCSRL6_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL6_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL6_SETUP       0x00000010  // Setup Packet
 #define USB_TXCSRL6_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL6_ERROR       0x00000004  // Error
@@ -2758,7 +2736,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH6_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH6_ISO         0x00000040  // ISO
+#define USB_TXCSRH6_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH6_MODE        0x00000020  // Mode
 #define USB_TXCSRH6_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH6_FDT         0x00000008  // Force Data Toggle
@@ -2782,7 +2760,7 @@
 #define USB_RXCSRL6_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL6_STALLED     0x00000040  // Endpoint Stalled
 #define USB_RXCSRL6_REQPKT      0x00000020  // Request Packet
-#define USB_RXCSRL6_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL6_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL6_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL6_NAKTO       0x00000008  // NAK Timeout
 #define USB_RXCSRL6_DATAERR     0x00000008  // Data Error
@@ -2798,7 +2776,7 @@
 //*****************************************************************************
 #define USB_RXCSRH6_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH6_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH6_ISO         0x00000040  // ISO
+#define USB_RXCSRH6_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH6_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH6_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH6_PIDERR      0x00000010  // PID Error
@@ -2894,7 +2872,7 @@
 #define USB_TXCSRL7_NAKTO       0x00000080  // NAK Timeout
 #define USB_TXCSRL7_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL7_STALLED     0x00000020  // Endpoint Stalled
-#define USB_TXCSRL7_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL7_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL7_SETUP       0x00000010  // Setup Packet
 #define USB_TXCSRL7_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL7_ERROR       0x00000004  // Error
@@ -2908,7 +2886,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH7_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH7_ISO         0x00000040  // ISO
+#define USB_TXCSRH7_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH7_MODE        0x00000020  // Mode
 #define USB_TXCSRH7_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH7_FDT         0x00000008  // Force Data Toggle
@@ -2932,7 +2910,7 @@
 #define USB_RXCSRL7_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL7_STALLED     0x00000040  // Endpoint Stalled
 #define USB_RXCSRL7_REQPKT      0x00000020  // Request Packet
-#define USB_RXCSRL7_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL7_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL7_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL7_DATAERR     0x00000008  // Data Error
 #define USB_RXCSRL7_NAKTO       0x00000008  // NAK Timeout
@@ -2947,7 +2925,7 @@
 //
 //*****************************************************************************
 #define USB_RXCSRH7_AUTOCL      0x00000080  // Auto Clear
-#define USB_RXCSRH7_ISO         0x00000040  // ISO
+#define USB_RXCSRH7_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH7_AUTORQ      0x00000040  // Auto Request
 #define USB_RXCSRH7_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH7_PIDERR      0x00000010  // PID Error
@@ -3044,7 +3022,7 @@
 #define USB_TXCSRL8_NAKTO       0x00000080  // NAK Timeout
 #define USB_TXCSRL8_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL8_STALLED     0x00000020  // Endpoint Stalled
-#define USB_TXCSRL8_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL8_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL8_SETUP       0x00000010  // Setup Packet
 #define USB_TXCSRL8_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL8_ERROR       0x00000004  // Error
@@ -3058,7 +3036,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH8_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH8_ISO         0x00000040  // ISO
+#define USB_TXCSRH8_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH8_MODE        0x00000020  // Mode
 #define USB_TXCSRH8_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH8_FDT         0x00000008  // Force Data Toggle
@@ -3081,7 +3059,7 @@
 //*****************************************************************************
 #define USB_RXCSRL8_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL8_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL8_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL8_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL8_REQPKT      0x00000020  // Request Packet
 #define USB_RXCSRL8_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL8_NAKTO       0x00000008  // NAK Timeout
@@ -3098,7 +3076,7 @@
 //*****************************************************************************
 #define USB_RXCSRH8_AUTOCL      0x00000080  // Auto Clear
 #define USB_RXCSRH8_AUTORQ      0x00000040  // Auto Request
-#define USB_RXCSRH8_ISO         0x00000040  // ISO
+#define USB_RXCSRH8_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH8_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH8_DISNYET     0x00000010  // Disable NYET
 #define USB_RXCSRH8_PIDERR      0x00000010  // PID Error
@@ -3195,7 +3173,7 @@
 #define USB_TXCSRL9_CLRDT       0x00000040  // Clear Data Toggle
 #define USB_TXCSRL9_STALLED     0x00000020  // Endpoint Stalled
 #define USB_TXCSRL9_SETUP       0x00000010  // Setup Packet
-#define USB_TXCSRL9_STALL       0x00000010  // Send Stall
+#define USB_TXCSRL9_STALL       0x00000010  // Send STALL
 #define USB_TXCSRL9_FLUSH       0x00000008  // Flush FIFO
 #define USB_TXCSRL9_ERROR       0x00000004  // Error
 #define USB_TXCSRL9_UNDRN       0x00000004  // Underrun
@@ -3208,7 +3186,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH9_AUTOSET     0x00000080  // Auto Set
-#define USB_TXCSRH9_ISO         0x00000040  // ISO
+#define USB_TXCSRH9_ISO         0x00000040  // Isochronous Transfers
 #define USB_TXCSRH9_MODE        0x00000020  // Mode
 #define USB_TXCSRH9_DMAEN       0x00000010  // DMA Request Enable
 #define USB_TXCSRH9_FDT         0x00000008  // Force Data Toggle
@@ -3231,7 +3209,7 @@
 //*****************************************************************************
 #define USB_RXCSRL9_CLRDT       0x00000080  // Clear Data Toggle
 #define USB_RXCSRL9_STALLED     0x00000040  // Endpoint Stalled
-#define USB_RXCSRL9_STALL       0x00000020  // Send Stall
+#define USB_RXCSRL9_STALL       0x00000020  // Send STALL
 #define USB_RXCSRL9_REQPKT      0x00000020  // Request Packet
 #define USB_RXCSRL9_FLUSH       0x00000010  // Flush FIFO
 #define USB_RXCSRL9_DATAERR     0x00000008  // Data Error
@@ -3247,7 +3225,7 @@
 //
 //*****************************************************************************
 #define USB_RXCSRH9_AUTOCL      0x00000080  // Auto Clear
-#define USB_RXCSRH9_ISO         0x00000040  // ISO
+#define USB_RXCSRH9_ISO         0x00000040  // Isochronous Transfers
 #define USB_RXCSRH9_AUTORQ      0x00000040  // Auto Request
 #define USB_RXCSRH9_DMAEN       0x00000020  // DMA Request Enable
 #define USB_RXCSRH9_PIDERR      0x00000010  // PID Error
@@ -3345,7 +3323,7 @@
 #define USB_TXCSRL10_CLRDT      0x00000040  // Clear Data Toggle
 #define USB_TXCSRL10_STALLED    0x00000020  // Endpoint Stalled
 #define USB_TXCSRL10_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL10_STALL      0x00000010  // Send Stall
+#define USB_TXCSRL10_STALL      0x00000010  // Send STALL
 #define USB_TXCSRL10_FLUSH      0x00000008  // Flush FIFO
 #define USB_TXCSRL10_UNDRN      0x00000004  // Underrun
 #define USB_TXCSRL10_ERROR      0x00000004  // Error
@@ -3358,7 +3336,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH10_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH10_ISO        0x00000040  // ISO
+#define USB_TXCSRH10_ISO        0x00000040  // Isochronous Transfers
 #define USB_TXCSRH10_MODE       0x00000020  // Mode
 #define USB_TXCSRH10_DMAEN      0x00000010  // DMA Request Enable
 #define USB_TXCSRH10_FDT        0x00000008  // Force Data Toggle
@@ -3381,7 +3359,7 @@
 //*****************************************************************************
 #define USB_RXCSRL10_CLRDT      0x00000080  // Clear Data Toggle
 #define USB_RXCSRL10_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL10_STALL      0x00000020  // Send Stall
+#define USB_RXCSRL10_STALL      0x00000020  // Send STALL
 #define USB_RXCSRL10_REQPKT     0x00000020  // Request Packet
 #define USB_RXCSRL10_FLUSH      0x00000010  // Flush FIFO
 #define USB_RXCSRL10_NAKTO      0x00000008  // NAK Timeout
@@ -3398,7 +3376,7 @@
 //*****************************************************************************
 #define USB_RXCSRH10_AUTOCL     0x00000080  // Auto Clear
 #define USB_RXCSRH10_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH10_ISO        0x00000040  // ISO
+#define USB_RXCSRH10_ISO        0x00000040  // Isochronous Transfers
 #define USB_RXCSRH10_DMAEN      0x00000020  // DMA Request Enable
 #define USB_RXCSRH10_PIDERR     0x00000010  // PID Error
 #define USB_RXCSRH10_DISNYET    0x00000010  // Disable NYET
@@ -3495,7 +3473,7 @@
 #define USB_TXCSRL11_NAKTO      0x00000080  // NAK Timeout
 #define USB_TXCSRL11_CLRDT      0x00000040  // Clear Data Toggle
 #define USB_TXCSRL11_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL11_STALL      0x00000010  // Send Stall
+#define USB_TXCSRL11_STALL      0x00000010  // Send STALL
 #define USB_TXCSRL11_SETUP      0x00000010  // Setup Packet
 #define USB_TXCSRL11_FLUSH      0x00000008  // Flush FIFO
 #define USB_TXCSRL11_ERROR      0x00000004  // Error
@@ -3509,7 +3487,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH11_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH11_ISO        0x00000040  // ISO
+#define USB_TXCSRH11_ISO        0x00000040  // Isochronous Transfers
 #define USB_TXCSRH11_MODE       0x00000020  // Mode
 #define USB_TXCSRH11_DMAEN      0x00000010  // DMA Request Enable
 #define USB_TXCSRH11_FDT        0x00000008  // Force Data Toggle
@@ -3532,7 +3510,7 @@
 //*****************************************************************************
 #define USB_RXCSRL11_CLRDT      0x00000080  // Clear Data Toggle
 #define USB_RXCSRL11_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL11_STALL      0x00000020  // Send Stall
+#define USB_RXCSRL11_STALL      0x00000020  // Send STALL
 #define USB_RXCSRL11_REQPKT     0x00000020  // Request Packet
 #define USB_RXCSRL11_FLUSH      0x00000010  // Flush FIFO
 #define USB_RXCSRL11_DATAERR    0x00000008  // Data Error
@@ -3548,7 +3526,7 @@
 //
 //*****************************************************************************
 #define USB_RXCSRH11_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH11_ISO        0x00000040  // ISO
+#define USB_RXCSRH11_ISO        0x00000040  // Isochronous Transfers
 #define USB_RXCSRH11_AUTORQ     0x00000040  // Auto Request
 #define USB_RXCSRH11_DMAEN      0x00000020  // DMA Request Enable
 #define USB_RXCSRH11_DISNYET    0x00000010  // Disable NYET
@@ -3647,7 +3625,7 @@
 #define USB_TXCSRL12_CLRDT      0x00000040  // Clear Data Toggle
 #define USB_TXCSRL12_STALLED    0x00000020  // Endpoint Stalled
 #define USB_TXCSRL12_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL12_STALL      0x00000010  // Send Stall
+#define USB_TXCSRL12_STALL      0x00000010  // Send STALL
 #define USB_TXCSRL12_FLUSH      0x00000008  // Flush FIFO
 #define USB_TXCSRL12_UNDRN      0x00000004  // Underrun
 #define USB_TXCSRL12_ERROR      0x00000004  // Error
@@ -3660,7 +3638,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH12_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH12_ISO        0x00000040  // ISO
+#define USB_TXCSRH12_ISO        0x00000040  // Isochronous Transfers
 #define USB_TXCSRH12_MODE       0x00000020  // Mode
 #define USB_TXCSRH12_DMAEN      0x00000010  // DMA Request Enable
 #define USB_TXCSRH12_FDT        0x00000008  // Force Data Toggle
@@ -3683,7 +3661,7 @@
 //*****************************************************************************
 #define USB_RXCSRL12_CLRDT      0x00000080  // Clear Data Toggle
 #define USB_RXCSRL12_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL12_STALL      0x00000020  // Send Stall
+#define USB_RXCSRL12_STALL      0x00000020  // Send STALL
 #define USB_RXCSRL12_REQPKT     0x00000020  // Request Packet
 #define USB_RXCSRL12_FLUSH      0x00000010  // Flush FIFO
 #define USB_RXCSRL12_NAKTO      0x00000008  // NAK Timeout
@@ -3699,7 +3677,7 @@
 //
 //*****************************************************************************
 #define USB_RXCSRH12_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH12_ISO        0x00000040  // ISO
+#define USB_RXCSRH12_ISO        0x00000040  // Isochronous Transfers
 #define USB_RXCSRH12_AUTORQ     0x00000040  // Auto Request
 #define USB_RXCSRH12_DMAEN      0x00000020  // DMA Request Enable
 #define USB_RXCSRH12_PIDERR     0x00000010  // PID Error
@@ -3798,7 +3776,7 @@
 #define USB_TXCSRL13_CLRDT      0x00000040  // Clear Data Toggle
 #define USB_TXCSRL13_STALLED    0x00000020  // Endpoint Stalled
 #define USB_TXCSRL13_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL13_STALL      0x00000010  // Send Stall
+#define USB_TXCSRL13_STALL      0x00000010  // Send STALL
 #define USB_TXCSRL13_FLUSH      0x00000008  // Flush FIFO
 #define USB_TXCSRL13_UNDRN      0x00000004  // Underrun
 #define USB_TXCSRL13_ERROR      0x00000004  // Error
@@ -3811,7 +3789,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH13_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH13_ISO        0x00000040  // ISO
+#define USB_TXCSRH13_ISO        0x00000040  // Isochronous Transfers
 #define USB_TXCSRH13_MODE       0x00000020  // Mode
 #define USB_TXCSRH13_DMAEN      0x00000010  // DMA Request Enable
 #define USB_TXCSRH13_FDT        0x00000008  // Force Data Toggle
@@ -3835,7 +3813,7 @@
 #define USB_RXCSRL13_CLRDT      0x00000080  // Clear Data Toggle
 #define USB_RXCSRL13_STALLED    0x00000040  // Endpoint Stalled
 #define USB_RXCSRL13_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL13_STALL      0x00000020  // Send Stall
+#define USB_RXCSRL13_STALL      0x00000020  // Send STALL
 #define USB_RXCSRL13_FLUSH      0x00000010  // Flush FIFO
 #define USB_RXCSRL13_NAKTO      0x00000008  // NAK Timeout
 #define USB_RXCSRL13_DATAERR    0x00000008  // Data Error
@@ -3850,7 +3828,7 @@
 //
 //*****************************************************************************
 #define USB_RXCSRH13_AUTOCL     0x00000080  // Auto Clear
-#define USB_RXCSRH13_ISO        0x00000040  // ISO
+#define USB_RXCSRH13_ISO        0x00000040  // Isochronous Transfers
 #define USB_RXCSRH13_AUTORQ     0x00000040  // Auto Request
 #define USB_RXCSRH13_DMAEN      0x00000020  // DMA Request Enable
 #define USB_RXCSRH13_DISNYET    0x00000010  // Disable NYET
@@ -3948,7 +3926,7 @@
 #define USB_TXCSRL14_NAKTO      0x00000080  // NAK Timeout
 #define USB_TXCSRL14_CLRDT      0x00000040  // Clear Data Toggle
 #define USB_TXCSRL14_STALLED    0x00000020  // Endpoint Stalled
-#define USB_TXCSRL14_STALL      0x00000010  // Send Stall
+#define USB_TXCSRL14_STALL      0x00000010  // Send STALL
 #define USB_TXCSRL14_SETUP      0x00000010  // Setup Packet
 #define USB_TXCSRL14_FLUSH      0x00000008  // Flush FIFO
 #define USB_TXCSRL14_ERROR      0x00000004  // Error
@@ -3962,7 +3940,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH14_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH14_ISO        0x00000040  // ISO
+#define USB_TXCSRH14_ISO        0x00000040  // Isochronous Transfers
 #define USB_TXCSRH14_MODE       0x00000020  // Mode
 #define USB_TXCSRH14_DMAEN      0x00000010  // DMA Request Enable
 #define USB_TXCSRH14_FDT        0x00000008  // Force Data Toggle
@@ -3986,7 +3964,7 @@
 #define USB_RXCSRL14_CLRDT      0x00000080  // Clear Data Toggle
 #define USB_RXCSRL14_STALLED    0x00000040  // Endpoint Stalled
 #define USB_RXCSRL14_REQPKT     0x00000020  // Request Packet
-#define USB_RXCSRL14_STALL      0x00000020  // Send Stall
+#define USB_RXCSRL14_STALL      0x00000020  // Send STALL
 #define USB_RXCSRL14_FLUSH      0x00000010  // Flush FIFO
 #define USB_RXCSRL14_DATAERR    0x00000008  // Data Error
 #define USB_RXCSRL14_NAKTO      0x00000008  // NAK Timeout
@@ -4002,7 +3980,7 @@
 //*****************************************************************************
 #define USB_RXCSRH14_AUTOCL     0x00000080  // Auto Clear
 #define USB_RXCSRH14_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH14_ISO        0x00000040  // ISO
+#define USB_RXCSRH14_ISO        0x00000040  // Isochronous Transfers
 #define USB_RXCSRH14_DMAEN      0x00000020  // DMA Request Enable
 #define USB_RXCSRH14_PIDERR     0x00000010  // PID Error
 #define USB_RXCSRH14_DISNYET    0x00000010  // Disable NYET
@@ -4100,7 +4078,7 @@
 #define USB_TXCSRL15_CLRDT      0x00000040  // Clear Data Toggle
 #define USB_TXCSRL15_STALLED    0x00000020  // Endpoint Stalled
 #define USB_TXCSRL15_SETUP      0x00000010  // Setup Packet
-#define USB_TXCSRL15_STALL      0x00000010  // Send Stall
+#define USB_TXCSRL15_STALL      0x00000010  // Send STALL
 #define USB_TXCSRL15_FLUSH      0x00000008  // Flush FIFO
 #define USB_TXCSRL15_UNDRN      0x00000004  // Underrun
 #define USB_TXCSRL15_ERROR      0x00000004  // Error
@@ -4113,7 +4091,7 @@
 //
 //*****************************************************************************
 #define USB_TXCSRH15_AUTOSET    0x00000080  // Auto Set
-#define USB_TXCSRH15_ISO        0x00000040  // ISO
+#define USB_TXCSRH15_ISO        0x00000040  // Isochronous Transfers
 #define USB_TXCSRH15_MODE       0x00000020  // Mode
 #define USB_TXCSRH15_DMAEN      0x00000010  // DMA Request Enable
 #define USB_TXCSRH15_FDT        0x00000008  // Force Data Toggle
@@ -4136,7 +4114,7 @@
 //*****************************************************************************
 #define USB_RXCSRL15_CLRDT      0x00000080  // Clear Data Toggle
 #define USB_RXCSRL15_STALLED    0x00000040  // Endpoint Stalled
-#define USB_RXCSRL15_STALL      0x00000020  // Send Stall
+#define USB_RXCSRL15_STALL      0x00000020  // Send STALL
 #define USB_RXCSRL15_REQPKT     0x00000020  // Request Packet
 #define USB_RXCSRL15_FLUSH      0x00000010  // Flush FIFO
 #define USB_RXCSRL15_DATAERR    0x00000008  // Data Error
@@ -4153,7 +4131,7 @@
 //*****************************************************************************
 #define USB_RXCSRH15_AUTOCL     0x00000080  // Auto Clear
 #define USB_RXCSRH15_AUTORQ     0x00000040  // Auto Request
-#define USB_RXCSRH15_ISO        0x00000040  // ISO
+#define USB_RXCSRH15_ISO        0x00000040  // Isochronous Transfers
 #define USB_RXCSRH15_DMAEN      0x00000020  // DMA Request Enable
 #define USB_RXCSRH15_PIDERR     0x00000010  // PID Error
 #define USB_RXCSRH15_DISNYET    0x00000010  // Disable NYET
@@ -4503,21 +4481,21 @@
 // The following are defines for the bit fields in the USB_O_DRRIS register.
 //
 //*****************************************************************************
-#define USB_DRRIS_RESUME        0x00000001  // Resume Interrupt Status
+#define USB_DRRIS_RESUME        0x00000001  // RESUME Interrupt Status
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the USB_O_DRIM register.
 //
 //*****************************************************************************
-#define USB_DRIM_RESUME         0x00000001  // Resume Interrupt Mask
+#define USB_DRIM_RESUME         0x00000001  // RESUME Interrupt Mask
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the USB_O_DRISC register.
 //
 //*****************************************************************************
-#define USB_DRISC_RESUME        0x00000001  // Resume Interrupt Status and
+#define USB_DRISC_RESUME        0x00000001  // RESUME Interrupt Status and
                                             // Clear
 
 //*****************************************************************************
@@ -4525,6 +4503,7 @@
 // The following are defines for the bit fields in the USB_O_GPCS register.
 //
 //*****************************************************************************
+#define USB_GPCS_DEVMODOTG      0x00000002  // Enable Device Mode
 #define USB_GPCS_DEVMOD         0x00000001  // Device Mode
 
 //*****************************************************************************
@@ -4594,5 +4573,48 @@
 #define USB_DMASEL_DMABRX_S     8
 #define USB_DMASEL_DMAATX_S     4
 #define USB_DMASEL_DMAARX_S     0
+
+//*****************************************************************************
+//
+// The following definitions are deprecated.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the
+// USB_O_TXFIFOADD register.
+//
+//*****************************************************************************
+#define USB_TXFIFOADD_ADDR_2048 0x00000009  // 2048
+#define USB_TXFIFOADD_ADDR_1024 0x00000008  // 1024
+#define USB_TXFIFOADD_ADDR_512  0x00000007  // 512
+#define USB_TXFIFOADD_ADDR_256  0x00000006  // 256
+#define USB_TXFIFOADD_ADDR_128  0x00000005  // 128
+#define USB_TXFIFOADD_ADDR_64   0x00000004  // 64
+#define USB_TXFIFOADD_ADDR_32   0x00000003  // 32
+#define USB_TXFIFOADD_ADDR_16   0x00000002  // 16
+#define USB_TXFIFOADD_ADDR_8    0x00000001  // 8
+#define USB_TXFIFOADD_ADDR_0    0x00000000  // 0
+
+//*****************************************************************************
+//
+// The following are deprecated defines for the bit fields in the
+// USB_O_RXFIFOADD register.
+//
+//*****************************************************************************
+#define USB_RXFIFOADD_ADDR_2048 0x00000009  // 2048
+#define USB_RXFIFOADD_ADDR_1024 0x00000008  // 1024
+#define USB_RXFIFOADD_ADDR_512  0x00000007  // 512
+#define USB_RXFIFOADD_ADDR_256  0x00000006  // 256
+#define USB_RXFIFOADD_ADDR_128  0x00000005  // 128
+#define USB_RXFIFOADD_ADDR_64   0x00000004  // 64
+#define USB_RXFIFOADD_ADDR_32   0x00000003  // 32
+#define USB_RXFIFOADD_ADDR_16   0x00000002  // 16
+#define USB_RXFIFOADD_ADDR_8    0x00000001  // 8
+#define USB_RXFIFOADD_ADDR_0    0x00000000  // 0
+
+#endif
 
 #endif // __HW_USB_H__

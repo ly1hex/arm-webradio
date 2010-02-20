@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -136,6 +135,7 @@ const char* strstri(const char *s, const char *pattern)
 }
 
 
+#ifndef strncmpi
 int strncmpi(const char *s1, const char *s2, size_t n)
 {
   unsigned char c1, c2;
@@ -158,38 +158,132 @@ int strncmpi(const char *s1, const char *s2, size_t n)
   
   return c1-c2;
 }
+#endif
 
 
-void uitoa(unsigned long n, char *str)
+#ifndef itoa
+char* itoa(int val, char *buf, int radix)
 {
-  char *ptr, c;
+  char *p;
+  unsigned u;
 
-  ptr = str;
-
-  //generate digits in reverse order
-  do
+  p = buf;
+  if(radix == 0)
   {
-    *ptr++ = '0' + n%10;
-    n /= 10;
-  }while(n > 0); 
-  *ptr = 0;
-
-  //reverse
-  ptr--;
-  while(ptr>str)
-  {
-   c = *ptr;
-   *ptr-- = *str;
-   *str++ = c;
+    radix = 10;
   }
+  if(buf == NULL)
+  {
+    return NULL;
+  }
+  if(val < 0)
+  {
+    *p++ = '-';
+    u = -val;
+  }
+  else
+  {
+    u = val;
+  }
+  utoa(u, p, radix);
 
-  return;
+  return buf;
 }
+#endif
 
 
-unsigned long atoui_hex(const char *s)
+#ifndef utoa
+char* utoa(unsigned val, char *buf, int radix)
 {
-  unsigned long value=0;
+  char *s, *p;
+  s = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+  if(radix == 0)
+  {
+    radix = 10;
+  }
+  if(buf == NULL)
+  {
+    return NULL;
+  }
+  if(val < (unsigned)radix)
+  {
+     buf[0] = s[val];
+     buf[1] = '\0';
+   }
+   else
+   {
+     for(p = utoa(val / ((unsigned)radix), buf, radix); *p; p++);
+     utoa(val % ((unsigned)radix), p, radix);
+  }
+  return buf;
+}
+#endif
+
+
+#ifndef ltoa
+char* ltoa(long val, char *buf, int radix)
+{
+  char *p;
+  unsigned long u;
+
+  p = buf;
+  if(radix == 0)
+  {
+    radix = 10;
+  }
+  if(buf == NULL)
+  {
+    return NULL;
+  }
+  if(val < 0)
+  {
+    *p++ = '-';
+    u = -val;
+  }
+  else
+  {
+    u = val;
+  }
+  ultoa(u, p, radix);
+
+  return buf;
+}
+#endif
+
+
+#ifndef ultoa
+char* ultoa(unsigned long val, char *buf, int radix)
+{
+  char *s, *p;
+  s = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+  if(radix == 0)
+  {
+    radix = 10;
+  }
+  if(buf == NULL)
+  {
+    return NULL;
+  }
+  if(val < (unsigned)radix)
+  {
+     buf[0] = s[val];
+     buf[1] = '\0';
+   }
+   else
+   {
+     for(p = ultoa(val / ((unsigned)radix), buf, radix); *p; p++);
+     ultoa(val % ((unsigned)radix), p, radix);
+  }
+  return buf;
+}
+#endif
+
+
+unsigned int atou_hex(const char *s)
+{
+  unsigned int value=0;
 
   if(!s)
   {
@@ -221,9 +315,9 @@ unsigned long atoui_hex(const char *s)
 }
 
 
-unsigned long atoui(const char *s)
+unsigned int atou(const char *s)
 {
-  unsigned long value=0;
+  unsigned int value=0;
 
   if(!s)
   {
@@ -262,69 +356,19 @@ unsigned int atorgb(const char *s)
 }
 
 
-void sectotime(unsigned long s, TIME *time) //s = seconds from 1970
+void sectotime(unsigned long s, TIME *t) //s = seconds from 1970
 {
-  struct tm t;
+  struct tm t_struct;
 
-  gmtime_r(&s, &t);
+  gmtime_r((time_t*)&s, &t_struct);
 
-  time->s     = t.tm_sec;
-  time->m     = t.tm_min;
-  time->h     = t.tm_hour;
-  time->day   = t.tm_mday;
-  time->month = t.tm_mon + 1;
-  time->year  = t.tm_year + 1900;
-  time->wday  = t.tm_wday;
-
-
-/*
-  unsigned long t;
-  const unsigned int month_start[12] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
-                                      //31 28  31  30   31   30   31   31   30   31   30   31
-
-  //seconds
-  t           = s / 60;
-  time->s     = s - (t*60);
-  s           = t;
-
-  //minutes
-  t           = s / 60;
-  time->m     = s - (t*60);
-  s           = t;
-
-  //hours
-  t           = s / 24;
-  time->h     = s - (t*24);
-  s           = t;
-
-  //day of week
-  time->wday   = (s+4) % 7; //day 0 was thursday
-
-  //leap years since 1968
-  s += 366 + 365;
-  t = s / ((4*365)+1);
-  if((s - (t * ((4*365)+1))) > (31+29))
-  {
-      t++;
-  }
-
-  //year
-  time->year = ((s-t) / 365) + 1968;
-  s -= ((time->year-1968) * 365) + t;
-
-  //month
-  for(t=0; t<12; t++)
-  {
-      if(month_start[t] > s)
-      {
-          break;
-      }
-  }
-  time->month = t;
-
-  //day of month
-  time->day = (s-month_start[t-1]) + 1;
-*/
+  t->s     = t_struct.tm_sec;
+  t->m     = t_struct.tm_min;
+  t->h     = t_struct.tm_hour;
+  t->day   = t_struct.tm_mday;
+  t->month = t_struct.tm_mon + 1;
+  t->year  = t_struct.tm_year + 1900;
+  t->wday  = t_struct.tm_wday;
 
   return;
 }
@@ -348,25 +392,25 @@ unsigned long timetosec(unsigned int s, unsigned int m, unsigned int h, unsigned
 }
 
 
-void daytime(char *s, TIME *time)
+void daytime(char *s, TIME *t)
 {
-  if((time->h >= 19) || (time->h <= 4))
+  if((t->h >= 19) || (t->h <= 4))
   {
     strcpy(s, "Good Night !");
   }
-  else if(time->h >= 17)
+  else if(t->h >= 17)
   {
     strcpy(s, "Good Evening !");
   }
-  else if(time->h >= 12)
+  else if(t->h >= 12)
   {
     strcpy(s, "Good Afternoon !");
   }
-  else if(time->h >= 10)
+  else if(t->h >= 10)
   {
     strcpy(s, "Good Day !");
   }
-  else if(time->h >= 5)
+  else if(t->h >= 5)
   {
     strcpy(s, "Good Morning !");
   }

@@ -1,10 +1,7 @@
 #include <stdint.h>
-#include <stdlib.h>
 #include "lmi/inc/hw_types.h"
 #include "lmi/inc/hw_memmap.h"
 #include "lmi/driverlib/gpio.h"
-#include "../tools.h"
-#include "../main.h"
 #include "../io.h"
 #include "../lcd.h"
 #include "lcd_ls020.h"
@@ -150,7 +147,7 @@ void lcd_reset(void)
   lcd_cmd(0xEE, 0x04);
   lcd_cmd(0x43, 0x06);
 
-  delay_ms(7); //important: 7-8 ms
+  delay_ms(6); //important: 6-7 ms
 
   //init 2
   lcd_cmd(0xEF, 0x90);

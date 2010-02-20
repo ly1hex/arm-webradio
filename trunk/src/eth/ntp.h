@@ -27,9 +27,9 @@ typedef struct __attribute__((packed))
 
 
 //----- PROTOTYPES -----
-unsigned int                           ntp_request(unsigned int index);
+unsigned int                           ntp_request(unsigned int idx);
 unsigned long                          ntp_gettime(void);
-void                                   ntp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
+void                                   ntp_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_NTP_H_

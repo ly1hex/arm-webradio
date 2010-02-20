@@ -3,20 +3,8 @@
 
 
 //----- DEFINES -----
-//Debug settings
-#ifndef DEBUG
-//# define DEBUG                        //switch debug output on
-#endif
-#define DEBUGBAUD                       115200   //uart baud rate: 115200
-#define DEBUGUART                       UART2_BASE //uart: UART1_BASE UART2_BASE
-#ifdef DEBUG
-# define DEBUGOUT                       debugout //debugout
-#else
-# define DEBUGOUT                       //do nothing
-#endif
-
 //Application settings
-#define VERSION                        "0.02"
+#define VERSION                        "0.03"
 #define RELEASE                        //Release version
 #define APPNAME                        "Loader"
 #if defined DEBUG
@@ -36,12 +24,7 @@
 
 
 //----- PROTOTYPES -----
-void                                   debugout(const char *s, ...);
-void                                   uart_puts(const char *s);
-void                                   uart_putc(unsigned int c);
-
 void                                   systick(void);
-void                                   delay_ms(unsigned int ms);
 
 long                                   backup_app(const char* fname);
 long                                   flash_app(const char* fname);

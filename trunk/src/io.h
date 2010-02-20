@@ -17,7 +17,7 @@
 #define LM3S_REV_A2
 
 //Display: LCD_L2F50, LCD_LPH88, LCD_LS020, LCD_MIO283QT
-#define LCD_L2F50
+#define LCD_LPH88
 //#define LCD_MIRROR                     //mirror display
 //#define LCD_ROTATE                     //rotate display (90 degree)
 #define LCD_PWMFREQ                    (60000) //60000 Hz LED PWM Freq
@@ -106,8 +106,10 @@
 #define LCD_RS_DISABLE()               GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_4, GPIO_PIN_4)
 #define LCD_RS_ENABLE()                GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_4, 0)
 //SD
-#define MMC_POWERON()                  GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0);          GPIOPadConfigSet(GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_STRENGTH_4MA, GPIO_PIN_TYPE_STD_WPD)
-#define MMC_POWEROFF()                 GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_PIN_0); GPIOPadConfigSet(GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD)
+#define MMC_POWERON()                  GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0); \
+                                       GPIOPadConfigSet(GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_STRENGTH_4MA, GPIO_PIN_TYPE_STD)
+#define MMC_POWEROFF()                 GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_PIN_0); \
+                                       GPIOPadConfigSet(GPIO_PORTB_BASE, GPIO_PIN_0, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU)
 #define MMC_SELECT()                   GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0)
 #define MMC_DESELECT()                 GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, GPIO_PIN_1)
 #define MMC_SCK_LOW()                  GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_0, 0)
@@ -123,8 +125,14 @@
 #define VS_DCS_DISABLE()               GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, GPIO_PIN_3)
 #define VS_DCS_ENABLE()                GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3, 0)
 //USB Power
-#define USB_ON()                       GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);          GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_4MA, GPIO_PIN_TYPE_OD); delay_ms(400)
-#define USB_OFF()                      GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_OD); delay_ms(10)
+#define USB_ON()                       GPIOPinTypeGPIOOutputOD(GPIO_PORTF_BASE, GPIO_PIN_1); \
+                                       GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0); \
+                                       GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_4MA, GPIO_PIN_TYPE_OD); \
+                                       delay_ms(400)
+#define USB_OFF()                      GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); \
+                                       GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_1); \
+                                       GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD); \
+                                       delay_ms(10)
 //FM
 #define FM_CS_DISABLE()                GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, GPIO_PIN_1)
 #define FM_CS_ENABLE()                 GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0)
@@ -135,7 +143,7 @@
 void                                   ethernet_setmac(uint64_t mac);
 unsigned int                           ethernet_link(void);
 unsigned int                           ethernet_data(void);
-void                                   ethernet_put(unsigned char *pkt, unsigned int len);
+unsigned int                           ethernet_put(unsigned char *pkt, unsigned int len);
 unsigned int                           ethernet_get(unsigned char *pkt, unsigned int len);
 void                                   ethernet_handler(void);
 
@@ -196,6 +204,9 @@ void                                   cpu_speed(unsigned int low_speed);
 void                                   init_bor(unsigned int on);
 void                                   init_periph(void);
 void                                   init_pins(void);
+
+void                                   delay_ms(unsigned long ms);
+void                                   delay_1ms(void);
 
 void                                   GPIOSetOutputOD(unsigned long port, unsigned char pins);
 void                                   GPIOSetOutput(unsigned long port, unsigned char pins);

@@ -2,26 +2,23 @@
 //
 // hw_comp.h - Macros used when accessing the comparator hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,7 +27,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the comparator register offsets.
+// The following are defines for the Comparator register offsets.
 //
 //*****************************************************************************
 #define COMP_O_ACMIS            0x00000000  // Analog Comparator Masked
@@ -41,12 +38,12 @@
                                             // Enable
 #define COMP_O_ACREFCTL         0x00000010  // Analog Comparator Reference
                                             // Voltage Control
-#define COMP_O_ACSTAT0          0x00000020  // Comp0 status register
-#define COMP_O_ACCTL0           0x00000024  // Comp0 control register
-#define COMP_O_ACSTAT1          0x00000040  // Comp1 status register
-#define COMP_O_ACCTL1           0x00000044  // Comp1 control register
-#define COMP_O_ACSTAT2          0x00000060  // Comp2 status register
-#define COMP_O_ACCTL2           0x00000064  // Comp2 control register
+#define COMP_O_ACSTAT0          0x00000020  // Analog Comparator Status 0
+#define COMP_O_ACCTL0           0x00000024  // Analog Comparator Control 0
+#define COMP_O_ACSTAT1          0x00000040  // Analog Comparator Status 1
+#define COMP_O_ACCTL1           0x00000044  // Analog Comparator Control 1
+#define COMP_O_ACSTAT2          0x00000060  // Analog Comparator Status 2
+#define COMP_O_ACCTL2           0x00000064  // Analog Comparator Control 2
 
 //*****************************************************************************
 //
@@ -103,9 +100,10 @@
 //*****************************************************************************
 #define COMP_ACCTL0_TOEN        0x00000800  // Trigger Output Enable
 #define COMP_ACCTL0_ASRCP_M     0x00000600  // Analog Source Positive
-#define COMP_ACCTL0_ASRCP_PIN   0x00000000  // Pin value
+#define COMP_ACCTL0_ASRCP_PIN   0x00000000  // Pin value of Cn+
 #define COMP_ACCTL0_ASRCP_PIN0  0x00000200  // Pin value of C0+
 #define COMP_ACCTL0_ASRCP_REF   0x00000400  // Internal voltage reference
+                                            // (VIREF)
 #define COMP_ACCTL0_TSLVAL      0x00000080  // Trigger Sense Level Value
 #define COMP_ACCTL0_TSEN_M      0x00000060  // Trigger Sense
 #define COMP_ACCTL0_TSEN_LEVEL  0x00000000  // Level sense, see TSLVAL
@@ -134,9 +132,10 @@
 //*****************************************************************************
 #define COMP_ACCTL1_TOEN        0x00000800  // Trigger Output Enable
 #define COMP_ACCTL1_ASRCP_M     0x00000600  // Analog Source Positive
-#define COMP_ACCTL1_ASRCP_PIN   0x00000000  // Pin value
+#define COMP_ACCTL1_ASRCP_PIN   0x00000000  // Pin value of Cn+
 #define COMP_ACCTL1_ASRCP_PIN0  0x00000200  // Pin value of C0+
 #define COMP_ACCTL1_ASRCP_REF   0x00000400  // Internal voltage reference
+                                            // (VIREF)
 #define COMP_ACCTL1_TSLVAL      0x00000080  // Trigger Sense Level Value
 #define COMP_ACCTL1_TSEN_M      0x00000060  // Trigger Sense
 #define COMP_ACCTL1_TSEN_LEVEL  0x00000000  // Level sense, see TSLVAL
@@ -165,9 +164,10 @@
 //*****************************************************************************
 #define COMP_ACCTL2_TOEN        0x00000800  // Trigger Output Enable
 #define COMP_ACCTL2_ASRCP_M     0x00000600  // Analog Source Positive
-#define COMP_ACCTL2_ASRCP_PIN   0x00000000  // Pin value
+#define COMP_ACCTL2_ASRCP_PIN   0x00000000  // Pin value of Cn+
 #define COMP_ACCTL2_ASRCP_PIN0  0x00000200  // Pin value of C0+
 #define COMP_ACCTL2_ASRCP_REF   0x00000400  // Internal voltage reference
+                                            // (VIREF)
 #define COMP_ACCTL2_TSLVAL      0x00000080  // Trigger Sense Level Value
 #define COMP_ACCTL2_TSEN_M      0x00000060  // Trigger Sense
 #define COMP_ACCTL2_TSEN_LEVEL  0x00000000  // Level sense, see TSLVAL
@@ -191,7 +191,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the comparator register offsets.
+// The following are deprecated defines for the Comparator register offsets.
 //
 //*****************************************************************************
 #define COMP_O_MIS              0x00000000  // Interrupt status register

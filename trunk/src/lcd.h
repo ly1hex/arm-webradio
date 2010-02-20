@@ -41,11 +41,11 @@
 
 
 //----- PROTOTYPES -----
-unsigned int                           lcd_checkbit(unsigned long *data, unsigned int nr);
+unsigned int                           lcd_checkbit(const unsigned long *data, unsigned int nr);
 void                                   lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor);
-void                                   lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
-void                                   lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
-unsigned int                           lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
+void                                   lcd_putlinebr(unsigned int x, unsigned int y, const char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
+void                                   lcd_putline(unsigned int x, unsigned int y, const char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
+unsigned int                           lcd_puts(unsigned int x, unsigned int y, const char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
 unsigned int                           lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor);
 void                                   lcd_fillcircle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color);
 void                                   lcd_drawcircle(unsigned int x0, unsigned int y0, unsigned int radius, unsigned int color);

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -13,7 +14,7 @@
 
 void ssdp_advertise(void)
 {
-  unsigned int index, len;
+  unsigned int idx, len;
   char *ssdp;
 
   if(uuid_test(upnp_getuuid()) == 0)
@@ -30,10 +31,16 @@ void ssdp_advertise(void)
                       "NT: upnp:rootdevice\r\n"
                       "USN: uuid:%s::upnp:rootdevice\r\n"
                       "NTS: ssdp:alive\r\n"
-                      "Server: "APPNAME"/"APPVERSION" UPnP/1.0 %s\r\n\r\n", ((SSDP_MULTICAST>>0)&0xff), ((SSDP_MULTICAST>>8)&0xff), ((SSDP_MULTICAST>>16)&0xff), ((SSDP_MULTICAST>>24)&0xff), SSDP_PORT, ((eth_getip()>>0)&0xff), ((eth_getip()>>8)&0xff), ((eth_getip()>>16)&0xff), ((eth_getip()>>24)&0xff), UPNP_PORT, upnp_getuuid(), eth_getname());
+                      "Server: "APPNAME"/"APPVERSION" UPnP/1.0 %s\r\n\r\n",
+                      (int)((SSDP_MULTICAST>>0)&0xff), (int)((SSDP_MULTICAST>>8)&0xff), (int)((SSDP_MULTICAST>>16)&0xff), (int)((SSDP_MULTICAST>>24)&0xff),
+                      SSDP_PORT,
+                      (int)((eth_getip()>>0)&0xff), (int)((eth_getip()>>8)&0xff), (int)((eth_getip()>>16)&0xff), (int)((eth_getip()>>24)&0xff),
+                      UPNP_PORT,
+                      upnp_getuuid(),
+                      eth_getname());
 
-  index = udp_open(UDP_ENTRIES, MULTICAST_MAC(SSDP_MULTICAST), SSDP_MULTICAST, SSDP_PORT, SSDP_PORT, 0, len);
-  udp_close(index);
+  idx = udp_open(UDP_ENTRIES, MULTICAST_MAC(SSDP_MULTICAST), SSDP_MULTICAST, SSDP_PORT, SSDP_PORT, 0, len);
+  udp_close(idx);
 
   DEBUGOUT("SSDP: advertise\n");
 
@@ -41,15 +48,11 @@ void ssdp_advertise(void)
 }
 
 
-void ssdp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void ssdp_udpapp(unsigned int idx, const char *rx, unsigned int rx_len, unsigned char *tx)
 {
-  char *ssdp;
-
   DEBUGOUT("SSDP: UDP app\n");
 
-  ssdp = (char*) rx;
-
-  if(strncmpi(ssdp, "M-SEARCH *", 10) == 0)
+  if(strncmpi(rx, "M-SEARCH *", 10) == 0)
   {
     ssdp_advertise();
   }

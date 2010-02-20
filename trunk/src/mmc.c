@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include "fatfs/ff.h"
 #include "fatfs/diskio.h"
+#include "debug.h"
 #include "tools.h"
 #include "main.h"
 #include "mmc_io.h"
@@ -247,10 +247,9 @@ void fs_mount(void)
 {
   unsigned int mount_try=3;
 
-  DEBUGOUT("MMC: init\n");
-
   if(disk_status(0) & STA_NOINIT)
   {
+    DEBUGOUT("MMC: init\n");
     while((disk_initialize(0) & STA_NOINIT) && --mount_try);
   }
 
@@ -432,7 +431,7 @@ unsigned int ini_searchentry(FIL *file, const char *entry, unsigned int *entry_s
 unsigned int ini_getentry(const char *filename, const char *entry, char *value, unsigned int len) //entry in upper case
 {
   FRESULT res;
-  unsigned int i, found, rd;
+  unsigned int found, rd;
   char c, *ptr;
 
   ptr  = value;

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -21,7 +22,7 @@ IP_Addr dhcp_dns=0UL;
 IP_Addr dhcp_ntp=0UL;
 
 
-unsigned int dhcp_request(unsigned int index, unsigned int msg)
+unsigned int dhcp_request(unsigned int idx, unsigned int msg)
 {
   DHCP_Header *tx_dhcp;
   unsigned int i=0;
@@ -78,15 +79,15 @@ unsigned int dhcp_request(unsigned int index, unsigned int msg)
 
   tx_dhcp->options[i++] = DHCP_OPTION_HOSTNAME; //Host Name
   tx_dhcp->options[i++] = strlen(eth_getname()); //Len
-  i += sprintf(&tx_dhcp->options[i], "%s", eth_getname()); //Name
+  i += sprintf((char*)&tx_dhcp->options[i], "%s", eth_getname()); //Name
 
   tx_dhcp->options[i++] = 0xff; //END Option
   tx_dhcp->options[i++] = 0x00;
   tx_dhcp->options[i++] = 0x00;
 
-  index = udp_open(index, 0x000000000000ULL, 0xFFFFFFFFUL, DHCPSERVER_PORT, DHCPCLIENT_PORT, 0, DHCP_HEADERLEN+4+i); //header + mcookie + options
+  idx = udp_open(idx, 0x000000000000ULL, 0xFFFFFFFFUL, DHCPSERVER_PORT, DHCPCLIENT_PORT, 0, DHCP_HEADERLEN+4+i); //header + mcookie + options
 
-  return index;
+  return idx;
 }
 
 
@@ -94,7 +95,7 @@ unsigned int dhcp_getcfg(void)
 {
   long timeout;
   IP_Addr ip;
-  unsigned int index;
+  unsigned int idx;
 
   ip = eth_getip(); //save current device ip
   eth_setip(0UL); //set device ip to zero
@@ -109,9 +110,9 @@ unsigned int dhcp_getcfg(void)
   dhcp_dns       = 0UL;
   dhcp_ntp       = 0UL;
 
-  index = dhcp_request(UDP_ENTRIES, DHCP_MSG_DISCOVER); 
+  idx = dhcp_request(UDP_ENTRIES, DHCP_MSG_DISCOVER); 
 
-  if(index < UDP_ENTRIES)
+  if(idx < UDP_ENTRIES)
   {
     timeout = getontime()+ETH_TIMEOUT;
     for(;;)
@@ -127,10 +128,10 @@ unsigned int dhcp_getcfg(void)
         switch(dhcp_status)
         {
           case DHCP_DISCOVER:
-            index = dhcp_request(index, DHCP_MSG_DISCOVER); 
+            idx = dhcp_request(idx, DHCP_MSG_DISCOVER); 
             break;
           case DHCP_REQUEST:
-            index = dhcp_request(index, DHCP_MSG_REQUEST);
+            idx = dhcp_request(idx, DHCP_MSG_REQUEST);
             break;
         }
       }
@@ -140,7 +141,7 @@ unsigned int dhcp_getcfg(void)
       }
     }
   
-    udp_close(index);
+    udp_close(idx);
   }
 
   if(dhcp_status == DHCP_ACK) //DHCP request successful
@@ -182,14 +183,15 @@ unsigned int dhcp_getcfg(void)
 }
 
 
-void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void dhcp_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
-  DHCP_Header *rx_dhcp;
-  unsigned char *ptr, c, len, msg;
+  const DHCP_Header *rx_dhcp;
+  const unsigned char *ptr;
+  unsigned char c, len, msg;
 
   DEBUGOUT("DHCP: UDP app\n");
 
-  rx_dhcp = (DHCP_Header*) rx;
+  rx_dhcp = (const DHCP_Header*) rx;
 
   if((rx_dhcp->op              == DHCP_OP_REPLY)   &&
      (rx_dhcp->htype           == DHCP_HTYPE_ETH)  &&
@@ -231,7 +233,7 @@ void dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
         if(msg == DHCP_MSG_OFFER)
         {
           dhcp_ip = rx_dhcp->yiaddr; //get ip
-          dhcp_request(index, DHCP_MSG_REQUEST);
+          dhcp_request(idx, DHCP_MSG_REQUEST);
           dhcp_status = DHCP_REQUEST;
         }
         break;

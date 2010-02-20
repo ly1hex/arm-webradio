@@ -1,13 +1,12 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "lmi/inc/hw_types.h"
 #include "lmi/inc/hw_memmap.h"
 #include "lmi/driverlib/gpio.h"
 #include "lmi/driverlib/interrupt.h"
 #include "lmi/driverlib/ssi.h"
 #include "fatfs/ff.h"
+#include "debug.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"

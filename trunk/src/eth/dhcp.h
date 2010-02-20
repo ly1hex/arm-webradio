@@ -66,9 +66,9 @@ typedef struct __attribute__((packed))
 
 
 //----- PROTOTYPES -----
-unsigned int                           dhcp_request(unsigned int index, unsigned int msg);
+unsigned int                           dhcp_request(unsigned int idx, unsigned int msg);
 unsigned int                           dhcp_getcfg(void);
-void                                   dhcp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
+void                                   dhcp_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_DHCP_H_

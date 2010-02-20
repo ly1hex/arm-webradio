@@ -2,26 +2,23 @@
 //
 // epi.c - Driver for the EPI module.
 //
-// Copyright (c) 2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -151,12 +148,6 @@ EPIDividerSet(unsigned long ulBase, unsigned long ulDivider)
 //! - \b EPI_SDRAM_SIZE_256MBIT - 256 Mbit device (32 MB)
 //! - \b EPI_SDRAM_SIZE_512MBIT - 512 Mbit device (64 MB)
 //!
-//! Additionally, Read Capture Mode may be specified by setting \b
-//! EPI_SDRAM_READ_CAPTURE.  When set, read data is captured on the rising edge
-//! of the fed-back SDRAM clock (EPI0S31), adding one clock of internal latency
-//! on the first read access.  If this flag is not present, data is captured on
-//! the rising edge of the SDRAM clock.
-//!
 //! The parameter \e ulRefresh sets the refresh counter in units of core
 //! clock ticks.  It is an 11-bit value with a range of 0 - 2047 counts.
 //!
@@ -172,12 +163,6 @@ EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
     //
     ASSERT(ulBase == EPI0_BASE);
     ASSERT(ulRefresh < 2048);
-
-    //
-    // Set the Read Capture Mode bit appropriately
-    //
-    HWREG(ulBase + EPI_O_HB8CFG2) = ((ulConfig & EPI_SDRAM_READ_CAPTURE) ?
-                                    EPI_SDRAMCFG2_RCM : 0);
 
     //
     // Fill in the refresh count field of the configuration word.

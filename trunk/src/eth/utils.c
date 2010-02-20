@@ -90,21 +90,25 @@ unsigned int uuid_test(char *uuid) //uuid: xxxx-xx-xx-xx-xxxxxx
 
 void uuid_generate(char *uuid) //uuid: xxxx-xx-xx-xx-xxxxxx
 {
-  unsigned long a, b, c, d, e;
+  unsigned long r;
+  unsigned int a, b, c, d, e, f;
 
-  a = generate_id();
-  b = generate_id()>>8;
-  c = generate_id()>>16;
-  d = generate_id()>>24;
-  e = generate_id();
+  r = generate_id();
+  a = (r>> 0) & 0xFFFF;
+  b = (r>>16) & 0xFF;
+  c = (r>>24) & 0xFF;
+  r = generate_id();
+  d = (r>> 0) & 0xFF;
+  e = (r>> 8) & 0xFFFF;
+  f = (r>>24) & 0xFF;
 
-  sprintf(uuid, "%04X-%02X-%02X-%02X-%06X", (a&0xFFFF), (b&0xFF), (c&0xFF), (d&0xFF), (e&0xFFFFFFUL));
+  sprintf(uuid, "%04X-%02X-%02X-%02X-%04X%02X", (a&0xFFFF), (b&0xFF), (c&0xFF), (d&0xFF), (e&0xFFFF), (f&0xFF));
 
   return;
 }
 
 
-unsigned int nbns_decode(char *dst, char *src)
+unsigned int nbns_decode(char *dst, const char *src)
 {
   unsigned int i, j;
   char c;
@@ -125,7 +129,7 @@ unsigned int nbns_decode(char *dst, char *src)
 }
 
 
-void nbns_encode(char *dst, char *src, unsigned int type)
+void nbns_encode(char *dst, const char *src, unsigned int type)
 {
   char c;
   unsigned int i, j;
@@ -175,7 +179,7 @@ unsigned int url_decode(char *dst, const char *src, unsigned int len)
     {
       buf[0] = *src++; i++;
       buf[1] = *src++; i++;
-      *dst++ = (unsigned char)atoui_hex(buf);
+      *dst++ = (unsigned char)atou_hex(buf);
     }
     else if(c == '+')
     {
@@ -196,7 +200,7 @@ unsigned int url_decode(char *dst, const char *src, unsigned int len)
 }
 
 
-char* http_skiphd(char *src, unsigned int *len)
+char* http_skiphd(const char *src, unsigned int *len)
 {
   unsigned int i;
  
@@ -215,7 +219,7 @@ char* http_skiphd(char *src, unsigned int *len)
 
   *len = i;
 
-  return src;
+  return (char*)src;
 }
 
 
@@ -242,7 +246,7 @@ unsigned long http_hdparamul(const char *src, const char *param)
   if(http_hdparam(buf, 16-1, src, param) == 0)
   {
     for(i=0; buf[i] && !isdigit(buf[i]); i++);//skip non-digits
-    return atoui(&buf[i]);
+    return atou(&buf[i]);
   }
 
   return 0;
@@ -304,16 +308,16 @@ unsigned int http_response(const char *src)
 
 unsigned long generate_id(void)
 {
-  srand(getontime()+getmstime());
-
-  if(getmstime()&0x01)
+  if(getontime()&1)
   {
-    return eth_getmac()+rand();
+    srand(getontime()+rand());
   }
   else
   {
-    return eth_getmac()-rand();
+    srand(getontime()-rand());
   }
+
+  return eth_getmac()+rand();
 }
 
 
@@ -467,22 +471,22 @@ MAC_Addr atomac(char *s)
   MAC_Addr mac=0;
   uint64_t i;
 
-  i = atoui_hex(s);
+  i = atou_hex(s);
   mac |= i<<0;
   while(isxdigit(*s)){ s++; }; while(!isxdigit(*s)){ s++; };
-  i = atoui_hex(s);
+  i = atou_hex(s);
   mac |= i<<8;
   while(isxdigit(*s)){ s++; }; while(!isxdigit(*s)){ s++; };
-  i = atoui_hex(s);
+  i = atou_hex(s);
   mac |= i<<16;
   while(isxdigit(*s)){ s++; }; while(!isxdigit(*s)){ s++; };
-  i = atoui_hex(s);
+  i = atou_hex(s);
   mac |= i<<24;
   while(isxdigit(*s)){ s++; }; while(!isxdigit(*s)){ s++; };
-  i = atoui_hex(s);
+  i = atou_hex(s);
   mac |= i<<32;
   while(isxdigit(*s)){ s++; }; while(!isxdigit(*s)){ s++; };
-  i = atoui_hex(s);
+  i = atou_hex(s);
   mac |= i<<40;
 
   return mac;
@@ -507,13 +511,13 @@ IP_Addr atoip(char *s)
 
   if(isdigit(*s)) //ip
   {
-    ip |= atoui(s)<<0;
+    ip |= atou(s)<<0;
     while(isdigit(*s)){ s++; }; while(!isdigit(*s)){ s++; };
-    ip |= atoui(s)<<8;
+    ip |= atou(s)<<8;
     while(isdigit(*s)){ s++; }; while(!isdigit(*s)){ s++; };
-    ip |= atoui(s)<<16;
+    ip |= atou(s)<<16;
     while(isdigit(*s)){ s++; }; while(!isdigit(*s)){ s++; };
-    ip |= atoui(s)<<24;
+    ip |= atou(s)<<24;
   }
   else //get ip -> dns resolve
   {

@@ -2,26 +2,23 @@
 //
 // hw_gpio.h - Defines and Macros for GPIO hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,29 +27,29 @@
 
 //*****************************************************************************
 //
-// The following are defines for the GPIO Register offsets.
+// The following are defines for the GPIO register offsets.
 //
 //*****************************************************************************
-#define GPIO_O_DATA             0x00000000  // Data register
-#define GPIO_O_DIR              0x00000400  // Data direction register
-#define GPIO_O_IS               0x00000404  // Interrupt sense register
-#define GPIO_O_IBE              0x00000408  // Interrupt both edges register
-#define GPIO_O_IEV              0x0000040C  // Interrupt event register
-#define GPIO_O_IM               0x00000410  // Interrupt mask register
-#define GPIO_O_RIS              0x00000414  // Raw interrupt status register
-#define GPIO_O_MIS              0x00000418  // Masked interrupt status reg
-#define GPIO_O_ICR              0x0000041C  // Interrupt clear register
-#define GPIO_O_AFSEL            0x00000420  // Mode control select register
-#define GPIO_O_DR2R             0x00000500  // 2ma drive select register
-#define GPIO_O_DR4R             0x00000504  // 4ma drive select register
-#define GPIO_O_DR8R             0x00000508  // 8ma drive select register
-#define GPIO_O_ODR              0x0000050C  // Open drain select register
-#define GPIO_O_PUR              0x00000510  // Pull up select register
-#define GPIO_O_PDR              0x00000514  // Pull down select register
-#define GPIO_O_SLR              0x00000518  // Slew rate control enable reg
-#define GPIO_O_DEN              0x0000051C  // Digital input enable register
-#define GPIO_O_LOCK             0x00000520  // Lock register
-#define GPIO_O_CR               0x00000524  // Commit register
+#define GPIO_O_DATA             0x00000000  // GPIO Data
+#define GPIO_O_DIR              0x00000400  // GPIO Direction
+#define GPIO_O_IS               0x00000404  // GPIO Interrupt Sense
+#define GPIO_O_IBE              0x00000408  // GPIO Interrupt Both Edges
+#define GPIO_O_IEV              0x0000040C  // GPIO Interrupt Event
+#define GPIO_O_IM               0x00000410  // GPIO Interrupt Mask
+#define GPIO_O_RIS              0x00000414  // GPIO Raw Interrupt Status
+#define GPIO_O_MIS              0x00000418  // GPIO Masked Interrupt Status
+#define GPIO_O_ICR              0x0000041C  // GPIO Interrupt Clear
+#define GPIO_O_AFSEL            0x00000420  // GPIO Alternate Function Select
+#define GPIO_O_DR2R             0x00000500  // GPIO 2-mA Drive Select
+#define GPIO_O_DR4R             0x00000504  // GPIO 4-mA Drive Select
+#define GPIO_O_DR8R             0x00000508  // GPIO 8-mA Drive Select
+#define GPIO_O_ODR              0x0000050C  // GPIO Open Drain Select
+#define GPIO_O_PUR              0x00000510  // GPIO Pull-Up Select
+#define GPIO_O_PDR              0x00000514  // GPIO Pull-Down Select
+#define GPIO_O_SLR              0x00000518  // GPIO Slew Rate Control Select
+#define GPIO_O_DEN              0x0000051C  // GPIO Digital Enable
+#define GPIO_O_LOCK             0x00000520  // GPIO Lock
+#define GPIO_O_CR               0x00000524  // GPIO Commit
 #define GPIO_O_AMSEL            0x00000528  // GPIO Analog Mode Select
 #define GPIO_O_PCTL             0x0000052C  // GPIO Port Control
 
@@ -62,8 +59,10 @@
 //
 //*****************************************************************************
 #define GPIO_LOCK_M             0xFFFFFFFF  // GPIO Lock
-#define GPIO_LOCK_UNLOCKED      0x00000000  // GPIO_CR register is unlocked
-#define GPIO_LOCK_LOCKED        0x00000001  // GPIO_CR register is locked
+#define GPIO_LOCK_UNLOCKED      0x00000000  // The GPIOCR register is unlocked
+                                            // and may be modified
+#define GPIO_LOCK_LOCKED        0x00000001  // The GPIOCR register is locked
+                                            // and may not be modified
 #define GPIO_LOCK_KEY           0x1ACCE551  // Unlocks the GPIO_CR register
 #define GPIO_LOCK_KEY_DD        0x4C4F434B  // Unlocks the GPIO_CR register on
                                             // DustDevil-class devices and
@@ -535,7 +534,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the GPIO Register offsets.
+// The following are deprecated defines for the GPIO register offsets.
 //
 //*****************************************************************************
 #define GPIO_O_PeriphID4        0x00000FD0

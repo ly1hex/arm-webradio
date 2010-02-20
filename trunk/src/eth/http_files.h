@@ -33,7 +33,7 @@ typedef struct
 //----- PROTOTYPES -----
 unsigned int                           http_printf(char *dst, unsigned int format, unsigned int param, ...);
 unsigned int                           http_fparse(char *dst, unsigned int file, unsigned int *start, unsigned int len, unsigned int param);
-unsigned int                           http_fdata(char *dst, unsigned int file, unsigned int start, unsigned int len);
+unsigned int                           http_fdata(unsigned char *dst, unsigned int file, unsigned int start, unsigned int len);
 unsigned int                           http_flen(unsigned int file, unsigned int param);
 unsigned int                           http_ftype(unsigned int file);
 unsigned int                           http_fid(const char *name, unsigned int *param);

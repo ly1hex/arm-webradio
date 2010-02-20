@@ -747,7 +747,7 @@ unsigned int http_printf(char *dst, unsigned int format, unsigned int param, ...
 
     case VAR_RGB:
       i = va_arg(ap, long);
-      sprintf(buf, "%03i,%03i,%03i", GET_RED(i), GET_GREEN(i), GET_BLUE(i));
+      sprintf(buf, "%03i,%03i,%03i", (int)GET_RED(i), (int)GET_GREEN(i), (int)GET_BLUE(i));
       len = strlen(buf);
       if(dst)
       {
@@ -812,7 +812,7 @@ unsigned int http_fparse(char *dst, unsigned int file, unsigned int *start, unsi
     return 0;
   }
 
-  src = httpfiles[file].data;
+  src = (const char*)httpfiles[file].data;
 
   if(len == 0) //calc file size
   {
@@ -918,7 +918,7 @@ unsigned int http_fparse(char *dst, unsigned int file, unsigned int *start, unsi
 }
 
 
-unsigned int http_fdata(char *dst, unsigned int file, unsigned int start, unsigned int len)
+unsigned int http_fdata(unsigned char *dst, unsigned int file, unsigned int start, unsigned int len)
 {
   if(file >= HTTPFILES)
   {

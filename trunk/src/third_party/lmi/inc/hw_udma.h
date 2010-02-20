@@ -2,26 +2,23 @@
 //
 // hw_udma.h - Macros for use in accessing the UDMA registers.
 //
-// Copyright (c) 2007-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2007-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,7 +27,8 @@
 
 //*****************************************************************************
 //
-// The following are defines for the Micro Direct Memory Access (uDMA) offsets.
+// The following are defines for the Micro Direct Memory Access register
+// addresses.
 //
 //*****************************************************************************
 #define UDMA_STAT               0x400FF000  // DMA Status
@@ -38,7 +36,7 @@
 #define UDMA_CTLBASE            0x400FF008  // DMA Channel Control Base Pointer
 #define UDMA_ALTBASE            0x400FF00C  // DMA Alternate Channel Control
                                             // Base Pointer
-#define UDMA_WAITSTAT           0x400FF010  // DMA Channel Wait on Request
+#define UDMA_WAITSTAT           0x400FF010  // DMA Channel Wait-on-Request
                                             // Status
 #define UDMA_SWREQ              0x400FF014  // DMA Channel Software Request
 #define UDMA_USEBURSTSET        0x400FF018  // DMA Channel Useburst Set
@@ -61,8 +59,8 @@
 // The following are defines for the bit fields in the UDMA_STAT register.
 //
 //*****************************************************************************
-#define UDMA_STAT_DMACHANS_M    0x001F0000  // Available DMA Channels Minus 1
-#define UDMA_STAT_STATE_M       0x000000F0  // Control State Machine State
+#define UDMA_STAT_DMACHANS_M    0x001F0000  // Available uDMA Channels Minus 1
+#define UDMA_STAT_STATE_M       0x000000F0  // Control State Machine Status
 #define UDMA_STAT_STATE_IDLE    0x00000000  // Idle
 #define UDMA_STAT_STATE_RD_CTRL 0x00000010  // Reading channel controller data
 #define UDMA_STAT_STATE_RD_SRCENDP \
@@ -73,12 +71,13 @@
                                 0x00000040  // Reading source data
 #define UDMA_STAT_STATE_WR_DSTDAT \
                                 0x00000050  // Writing destination data
-#define UDMA_STAT_STATE_WAIT    0x00000060  // Waiting for DMA request to clear
+#define UDMA_STAT_STATE_WAIT    0x00000060  // Waiting for uDMA request to
+                                            // clear
 #define UDMA_STAT_STATE_WR_CTRL 0x00000070  // Writing channel controller data
 #define UDMA_STAT_STATE_STALL   0x00000080  // Stalled
 #define UDMA_STAT_STATE_DONE    0x00000090  // Done
 #define UDMA_STAT_STATE_UNDEF   0x000000A0  // Undefined
-#define UDMA_STAT_MASTEN        0x00000001  // Master Enable
+#define UDMA_STAT_MASTEN        0x00000001  // Master Enable Status
 #define UDMA_STAT_DMACHANS_S    16
 
 //*****************************************************************************
@@ -163,7 +162,7 @@
 // The following are defines for the bit fields in the UDMA_ENACLR register.
 //
 //*****************************************************************************
-#define UDMA_ENACLR_CLR_M       0xFFFFFFFF  // Clear Channel [n] Enable
+#define UDMA_ENACLR_CLR_M       0xFFFFFFFF  // Clear Channel [n] Enable Clear
 
 //*****************************************************************************
 //
@@ -198,7 +197,7 @@
 // The following are defines for the bit fields in the UDMA_ERRCLR register.
 //
 //*****************************************************************************
-#define UDMA_ERRCLR_ERRCLR      0x00000001  // DMA Bus Error Status
+#define UDMA_ERRCLR_ERRCLR      0x00000001  // uDMA Bus Error Status
 
 //*****************************************************************************
 //
@@ -272,7 +271,7 @@
 #define UDMA_CHCTL_ARBSIZE_1024 0x00028000  // 1024 Transfers
 #define UDMA_CHCTL_XFERSIZE_M   0x00003FF0  // Transfer Size (minus 1)
 #define UDMA_CHCTL_NXTUSEBURST  0x00000008  // Next Useburst
-#define UDMA_CHCTL_XFERMODE_M   0x00000007  // DMA Transfer Mode
+#define UDMA_CHCTL_XFERMODE_M   0x00000007  // uDMA Transfer Mode
 #define UDMA_CHCTL_XFERMODE_STOP \
                                 0x00000000  // Stop
 #define UDMA_CHCTL_XFERMODE_BASIC \

@@ -1,30 +1,25 @@
-/*---------------------------------------------------
+/*-------------------------------------------------
  * Loader (c) Andreas Watterott (www.watterott.net)
- *---------------------------------------------------
+ *-------------------------------------------------
  * For more information, see readme.txt
  */
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
 #include "lmi/inc/hw_types.h"
 #include "lmi/inc/hw_memmap.h"
-#include "lmi/inc/hw_ints.h"
 #include "lmi/driverlib/sysctl.h"
 #include "lmi/driverlib/gpio.h"
-#include "lmi/driverlib/interrupt.h"
 #include "lmi/driverlib/systick.h"
 #include "lmi/driverlib/uart.h"
 #include "lmi/driverlib/flash.h"
 #include "fatfs/ff.h"
-#include "main.h"
+#include "../debug.h"
 #include "../tools.h"
+#include "main.h"
 #include "../io.h"
 #include "../lcd.h"
-#include "../lcd/font_8x12.h"
 #include "../mmc_io.h"
 #include "../mmc.h"
 
@@ -35,173 +30,14 @@
 #define ITEM_HEIGHT                    (20)
 
 
-volatile unsigned int ms_time=0;
 FIL fileobj;
 unsigned char flashbuf[FLASHBUF];
 
 
-#ifdef DEBUG
-void __error__(char *pcFilename, unsigned long ulLine) //called if the DriverLib encounters an error
+void systick(void) //100 Hz
 {
-  DEBUGOUT("DLib: %s:%i\n", pcFilename, ulLine);
-
-  return;
-}
-#endif
-
-
-void debugout(const char *s, ...)
-{
-  unsigned int i, move;
-  char c, str[16], *ptr;
-  va_list ap;
-
-  va_start(ap, s);
-
-  for(;;)
-  {
-    c = *s++;
-
-    if(c == 0)
-    {
-      break;
-    }
-    else if(c == '%')
-    {
-      c = *s++;
-      if(isdigit(c) > 0)
-      {
-        move = c-'0';
-        c = *s++;
-      }
-      else
-      {
-        move = 0;
-      }
-
-      switch(c)
-      {
-        case 's':
-          ptr = va_arg(ap, char *);
-          uart_puts(ptr);
-          break;
-        case 'b': //bin
-          itoa(va_arg(ap, long), str, 2);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-        case 'i': //dec
-          itoa(va_arg(ap, long), str, 10);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-        case 'u': //unsigned dec
-          uitoa(va_arg(ap, unsigned long), str);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-        case 'x': //hex
-          itoa(va_arg(ap, long), str, 16);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-      }
-    }
-    else
-    {
-      uart_putc(c);
-    }
-  }
-
-  va_end(ap);
-
-  return;
-}
-
-
-void uart_puts(const char *s)
-{
-  while(*s)
-  {
-    uart_putc(*s++);
-  }
-
-  return;
-}
-
-
-void uart_putc(unsigned int c)
-{
-  UARTCharPut(DEBUGUART, c);
-
-  return;
-}
-
-
-#ifdef DEBUG
-void nmi_fault(void)   { DEBUGOUT("NMI fault\n");    return; }
-void hard_fault(void)  { DEBUGOUT("HARD fault\n");   return; }
-void mpu_fault(void)   { DEBUGOUT("MPU fault\n");    return; }
-void bus_fault(void)   { DEBUGOUT("BUS fault\n");    return; }
-void usage_fault(void) { DEBUGOUT("USAGE fault\n");  return; }
-void svcall_fault(void){ DEBUGOUT("SVCALL fault\n"); return; }
-void debug_fault(void) { DEBUGOUT("DEBUG fault\n");  return; }
-void pendsv_fault(void){ DEBUGOUT("PENDSV fault\n"); return; }
-#endif
-
-
-void systick(void) //1000 Hz
-{
-  static unsigned long mmc=1;
-
-  //1000 Hz
-  ms_time++;
-
-  //100 Hz
-  if(--mmc == 0)
-  {
-    mmc = 10;
-    disk_timerproc();
-    keys_timerservice();
-  }
-
-  return;
-}
-
-
-void delay_ms(unsigned int ms)
-{
-  ms += ms_time;
-
-  while(ms_time != ms);
+  disk_timerproc();
+  keys_timerservice();
 
   return;
 }
@@ -233,7 +69,7 @@ long backup_app(const char* fname)
   }
   else
   {
-    lcd_putline(ITEM_X, ITEM_Y, "ERROR", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "ERROR: Cannot Open File", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     delay_ms(1000);
   }
 
@@ -300,7 +136,7 @@ long flash_app(const char* fname)
   }
   else
   {
-    lcd_putline(ITEM_X, ITEM_Y, "ERROR", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
+    lcd_putline(ITEM_X, ITEM_Y, "ERROR: Cannot Open File", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     delay_ms(1000);
   }
 
@@ -312,22 +148,25 @@ void start_app(void)
 {
   DEBUGOUT("Start App...\n");
 
-  //__asm("cpsid   i\n");  //disable interrupts
+  //disable interrupts
+  __asm("cpsid   i\n");
 
+  //disable systick
   SysTickDisable();
   SysTickIntDisable();
   SysTickIntUnregister();
+  delay_ms(1);
 
-  __asm("ldr     r0, =%0\n"         //load application start address
+  __asm("ldr     r0, =%0\n"         //load app start address
 
-        "ldr     r1, =0xe000ed08\n" //set vector table address to the beginning of the application
+        "ldr     r1, =0xe000ed08\n" //set vector table addr to the beginning of the app
         "str     r0, [r1]\n"
 
-        "ldr     r1, [r0]\n"        //load stack pointer from the application's vector table
+        "ldr     r1, [r0]\n"        //load stack ptr from the app's vector table
         "mov     sp, r1\n"
 
-        "ldr     r0, [r0, #4]\n"    //load the initial PC from the application's vector table and
-        "bx      r0\n"              //branch to the application's entry point
+        "ldr     r0, [r0, #4]\n"    //load the initial PC from the app's vector table and
+        "bx      r0\n"              //branch to the app's entry point
         :
         : "i" (APPSTARTADDR));
 
@@ -337,42 +176,49 @@ void start_app(void)
 
 int main()
 {
+  unsigned long l;
   int i, item;
 
+  //init debug output
+  debug_init();
+
+  DEBUGOUT("\n"APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
+  DEBUGOUT("Hardware: "LM3S_NAME", "LCD_NAME"\n");
+
+  //get reset cause
+  l = SysCtlResetCauseGet();
+  if(l)
+  {
+    SysCtlResetCauseClear(l);
+    DEBUGOUT("Reset: %i\n", l);
+  }
+
   //init brown-out reset
+  DEBUGOUT("Init BOR...\n");
   init_bor(1);
 
-  //init pins and peripherals
+  //init pins
+  DEBUGOUT("Init Pins...\n");
   init_pins();
 
-  //init fault ints
-#ifdef DEBUG
-  IntRegister(FAULT_NMI,    nmi_fault);    IntEnable(FAULT_NMI);
-  IntRegister(FAULT_HARD,   hard_fault);   IntEnable(FAULT_HARD);
-  IntRegister(FAULT_MPU,    mpu_fault);    IntEnable(FAULT_MPU);
-  IntRegister(FAULT_BUS,    bus_fault);    IntEnable(FAULT_BUS);
-  IntRegister(FAULT_USAGE,  usage_fault);  IntEnable(FAULT_USAGE);
-  IntRegister(FAULT_SVCALL, svcall_fault); IntEnable(FAULT_SVCALL);
-  IntRegister(FAULT_DEBUG,  debug_fault);  IntEnable(FAULT_DEBUG);
-  IntRegister(FAULT_PENDSV, pendsv_fault); IntEnable(FAULT_PENDSV);
-#endif
-
   //init systick
+  DEBUGOUT("Init SysTick...\n");
   SysTickDisable();
-  SysTickPeriodSet(SysCtlClockGet() / 1000); //1 kHz
+  SysTickPeriodSet(SysCtlClockGet() / 100); //100 Hz
   SysTickIntRegister(systick);
   SysTickIntEnable();
   SysTickEnable();
 
   //init peripherals
+  DEBUGOUT("Init Peripherals...\n");
   init_periph();
 
-  i = ENC_SW_READ(); //read switch state
+  //read switch state
+  i = ENC_SW_READ(); 
 
   //low speed and enable interrupts
+  DEBUGOUT("Low speed and IRQs on...\n");
   cpu_speed(1);
-
-  DEBUGOUT("\n"APPNAME" v"APPVERSION"\n");
 
 #ifdef DEBUG
   if(1)
@@ -392,7 +238,6 @@ int main()
     lcd_putline(ITEM_X, ITEM_Y, "Start Loader...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
 
     //init mmc & mount filesystem
-    DEBUGOUT("Init Memory Card...\n");
     lcd_putline(ITEM_X, ITEM_Y, "Init Memory Card...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
     fs_mount();
 
@@ -434,7 +279,7 @@ int main()
   //start application
   start_app();
 
-  DEBUGOUT("ERROR\n");
+  DEBUGOUT("ERROR: No App \n");
 
   while(1);
 }

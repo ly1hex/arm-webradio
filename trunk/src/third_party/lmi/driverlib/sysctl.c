@@ -2,26 +2,23 @@
 //
 // sysctl.c - Driver for the system controller.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1286,6 +1283,21 @@ SysCtlDelay(unsigned long ulCount)
     bx      lr;
 }
 #endif
+#if defined(ccs)
+volatile unsigned long g_ulInlineCCSWorkaround;
+void
+SysCtlDelay(unsigned long ulCount)
+{
+    __asm("delay?: subs    r0, #1\n"
+          "    bne.n   delay?\n"
+          "    bx lr\n");
+
+    //
+    // This is needed to keep TI compiler from optimizing away this code.
+    //
+    g_ulInlineCCSWorkaround += ulCount;
+}
+#endif
 
 //*****************************************************************************
 //
@@ -1485,15 +1497,15 @@ SysCtlClockSet(unsigned long ulConfig)
                          SYSCTL_RCC_IOSCDIS | SYSCTL_RCC_MOSCDIS);
     ulRCC2 &= ~(SYSCTL_RCC2_SYSDIV2_M);
     ulRCC2 |= ulConfig & SYSCTL_RCC2_SYSDIV2_M;
-    if(ulConfig & SYSCTL_RCC2_USEFRACT)
+    if(ulConfig & SYSCTL_RCC2_DIV400)
     {
         ulRCC |= SYSCTL_RCC_USESYSDIV;
         ulRCC2 &= ~(SYSCTL_RCC_USESYSDIV);
-        ulRCC2 |= ulConfig & (SYSCTL_RCC2_USEFRACT | SYSCTL_RCC2_FRACT);
+        ulRCC2 |= ulConfig & (SYSCTL_RCC2_DIV400 | SYSCTL_RCC2_SYSDIV2LSB);
     }
     else
     {
-        ulRCC2 &= ~(SYSCTL_RCC2_USEFRACT);
+        ulRCC2 &= ~(SYSCTL_RCC2_DIV400);
     }
 
     //
@@ -1761,7 +1773,7 @@ SysCtlClockGet(void)
         //
         if(ulRCC2 & SYSCTL_RCC2_USERCC2)
         {
-            if((ulRCC2 & SYSCTL_RCC2_USEFRACT) &&
+            if((ulRCC2 & SYSCTL_RCC2_DIV400) &&
                (((ulRCC2 & SYSCTL_RCC2_USERCC2) &&
                  !(ulRCC2 & SYSCTL_RCC2_BYPASS2)) ||
                 (!(ulRCC2 & SYSCTL_RCC2_USERCC2) &&
@@ -1769,7 +1781,7 @@ SysCtlClockGet(void)
 
             {
                 ulClk = ((ulClk * 2) / (((ulRCC2 & (SYSCTL_RCC2_SYSDIV2_M |
-                                                    SYSCTL_RCC2_FRACT)) >>
+                                                    SYSCTL_RCC2_SYSDIV2LSB)) >>
                                          (SYSCTL_RCC2_SYSDIV2_S - 1)) + 1));
             }
             else

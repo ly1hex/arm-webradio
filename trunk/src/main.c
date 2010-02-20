@@ -7,24 +7,17 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <ctype.h>
 #include "lmi/inc/hw_types.h"
 #include "lmi/inc/hw_memmap.h"
-#include "lmi/inc/hw_ints.h"
 #include "lmi/driverlib/sysctl.h"
 #include "lmi/driverlib/gpio.h"
-#include "lmi/driverlib/interrupt.h"
 #include "lmi/driverlib/systick.h"
-#include "lmi/driverlib/uart.h"
 #include "fatfs/ff.h"
+#include "debug.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
 #include "lcd.h"
-#include "lcd/img.h"
 #include "lcd/font_8x8.h"
 #include "lcd/font_8x12.h"
 #include "lcd/font_clock.h"
@@ -38,6 +31,7 @@
 #include "menu.h"
 #include "alarm.h"
 #include "settings.h"
+#include "chucknorris.h"
 
 
 volatile unsigned int status=0, standby_active=0;
@@ -65,164 +59,18 @@ const char clock_tab[60][3] =
 };
 
 
-#ifdef DEBUG
-void __error__(char *pcFilename, unsigned long ulLine) //called if the DriverLib encounters an error
+void systick(void) //100 Hz
 {
-  DEBUGOUT("DLib: %s:%i\n", pcFilename, ulLine);
-
-  return;
-}
-#endif
-
-
-void debugout(const char *s, ...)
-{
-  unsigned int i, move;
-  char c, str[16], *ptr;
-  va_list ap;
-
-  va_start(ap, s);
-
-  for(;;)
-  {
-    c = *s++;
-
-    if(c == 0)
-    {
-      break;
-    }
-    else if(c == '%')
-    {
-      c = *s++;
-      if(isdigit(c) > 0)
-      {
-        move = c-'0';
-        c = *s++;
-      }
-      else
-      {
-        move = 0;
-      }
-
-      switch(c)
-      {
-        case 's':
-          ptr = va_arg(ap, char *);
-          uart_puts(ptr);
-          break;
-        case 'b': //bin
-          itoa(va_arg(ap, long), str, 2);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-        case 'i': //dec
-          itoa(va_arg(ap, long), str, 10);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-        case 'u': //unsigned dec
-          uitoa(va_arg(ap, unsigned long), str);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-        case 'x': //hex
-          itoa(va_arg(ap, long), str, 16);
-          if(move)
-          {
-            for(i=0; str[i]; i++);
-            for(; move>i; move--)
-            {
-              uart_putc('0');
-            }
-          }
-          uart_puts(str);
-          break;
-      }
-    }
-    else
-    {
-      uart_putc(c);
-    }
-  }
-
-  va_end(ap);
-
-  return;
-}
-
-
-void uart_puts(const char *s)
-{
-  while(*s)
-  {
-    uart_putc(*s++);
-  }
-
-  return;
-}
-
-
-void uart_putc(unsigned int c)
-{
-  UARTCharPut(DEBUGUART, c);
-
-  return;
-}
-
-
-#ifdef DEBUG
-void nmi_fault(void)   { DEBUGOUT("NMI fault\n");    return; }
-void hard_fault(void)  { DEBUGOUT("HARD fault\n");   return; }
-void mpu_fault(void)   { DEBUGOUT("MPU fault\n");    return; }
-void bus_fault(void)   { DEBUGOUT("BUS fault\n");    return; }
-void usage_fault(void) { DEBUGOUT("USAGE fault\n");  return; }
-void svcall_fault(void){ DEBUGOUT("SVCALL fault\n"); return; }
-void debug_fault(void) { DEBUGOUT("DEBUG fault\n");  return; }
-void pendsv_fault(void){ DEBUGOUT("PENDSV fault\n"); return; }
-#endif
-
-
-void systick(void) //1000 Hz
-{
-  static unsigned long mmc=1, sec=1;
+  static unsigned long sec=1;
   unsigned int s;
 
-  //1000 Hz
-  ms_time++;
-
-  //100 Hz
-  if(--mmc == 0)
-  {
-    mmc = 10;
-    disk_timerproc();
-    keys_timerservice();
-  }
+  disk_timerproc();
+  keys_timerservice();
 
   //1 Hz
   if(--sec == 0)
   {
-    sec = 1000;
+    sec = 100;
     on_time++;
     sec_time++;
 
@@ -339,22 +187,6 @@ long getontime(void)
 }
 
 
-void delay_ms(unsigned int ms)
-{
-  ms += ms_time;
-
-  while(ms_time != ms);
-
-  return;
-}
-
-
-unsigned int getmstime(void)
-{
-  return ms_time;
-}
-
-
 unsigned int standby_isactive(void)
 {
   return standby_active;
@@ -376,6 +208,7 @@ unsigned int standby(unsigned int param)
   delay_ms(10);
   USB_OFF();
 
+  //draw clock
   lcd_clear(RGB(0,0,0));
   tmp[0] = clock_str[0];
   tmp[1] = clock_str[1];
@@ -419,13 +252,20 @@ unsigned int standby(unsigned int param)
 
     if(keys_sw() || (ir_cmd() == SW_POWER))
     {
-      daytime(tmp, &time);
-      lcd_puts(10, 10, tmp, NORMALFONT, 1, RGB(255,255,255), RGB(0,0,0));
-      delay_ms(1000);
+      if(alarm == 0)
+      {
+        pwm_led(80);
+        daytime(tmp, &time);
+        lcd_puts(10, 10, tmp, NORMALFONT, 1, RGB(255,255,255), RGB(0,0,0));
+
+        chucknorris_rfact();
+        pwm_led(100);
+      }
       break;
     }
   }
 
+  //re-mount card
   fs_unmount();
   fs_mount();
 
@@ -454,48 +294,46 @@ int main()
   unsigned int i, alarm;
   unsigned long l;
 
+  //init debug output
+  debug_init();
+
+  DEBUGOUT("\n"APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
+  DEBUGOUT("Hardware: "LM3S_NAME", "LCD_NAME"\n");
+
   //get reset cause
   l = SysCtlResetCauseGet();
   if(l)
   {
     SysCtlResetCauseClear(l);
+    DEBUGOUT("Reset: %i\n", l);
   }
 
   //init brown-out reset
+  DEBUGOUT("Init BOR...\n");
   init_bor(1);
 
-  //init pins and peripherals
+  //init pins
+  DEBUGOUT("Init Pins...\n");
   init_pins();
 
-  //init fault ints
-#ifdef DEBUG
-  IntRegister(FAULT_NMI,    nmi_fault);    IntEnable(FAULT_NMI);
-  IntRegister(FAULT_HARD,   hard_fault);   IntEnable(FAULT_HARD);
-  IntRegister(FAULT_MPU,    mpu_fault);    IntEnable(FAULT_MPU);
-  IntRegister(FAULT_BUS,    bus_fault);    IntEnable(FAULT_BUS);
-  IntRegister(FAULT_USAGE,  usage_fault);  IntEnable(FAULT_USAGE);
-  IntRegister(FAULT_SVCALL, svcall_fault); IntEnable(FAULT_SVCALL);
-  IntRegister(FAULT_DEBUG,  debug_fault);  IntEnable(FAULT_DEBUG);
-  IntRegister(FAULT_PENDSV, pendsv_fault); IntEnable(FAULT_PENDSV);
-#endif
-
   //init systick
+  DEBUGOUT("Init SysTick...\n");
   SysTickDisable();
-  SysTickPeriodSet(SysCtlClockGet() / 1000); //1 kHz
+  SysTickPeriodSet(SysCtlClockGet() / 100); //100 Hz
   SysTickIntRegister(systick);
   SysTickIntEnable();
   SysTickEnable();
 
   //init peripherals
+  DEBUGOUT("Init Peripherals...\n");
   init_periph();
 
   //low speed and enable interrupts
+  DEBUGOUT("Low speed and IRQs on...\n");
   cpu_speed(1);
 
-  DEBUGOUT("\n"APPNAME" v"APPVERSION" ("__DATE__" "__TIME__")\n");
-  DEBUGOUT("Hardware: "LM3S_NAME", "LCD_NAME"\n");
-
   //init lcd
+  DEBUGOUT("Init LCD...\n");
   lcd_init();
 
   //show start-up screen

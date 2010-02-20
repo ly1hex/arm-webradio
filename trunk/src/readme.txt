@@ -1,20 +1,23 @@
-WebRadio v0.06 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.07 (c) Andreas Watterott (www.watterott.net)
 ========================================================
-  Compiled with Rowley's CrossWorks for ARM 2.04
-                         CPU Support Pkg. Stellaris 1.1
+  Compiled with Rowley's CrossWorks for ARM 2.05
+                         CPU Support Pkg. Stellaris 1.3
 
 
 Third party software
 --------------------
-  Luminary Micro StellarisWare Driver Library 5228
+  Luminary Micro StellarisWare Driver Library 5570
     http://www.luminarymicro.com
     Modifications:
-      lmi/driverlib/cpu.c: 46: PRIMASK -> primask
-      lmi/driverlib/cpu.c:107: PRIMASK -> primask
+      lmi/driverlib/cpu.c: 43: PRIMASK -> primask
+      lmi/driverlib/cpu.c:125: PRIMASK -> primask
       lmi/driverlib/interrupt.c:108: vtable -> .vectors_ram
 
   ChaN's FatFs 0.07e
     http://elm-chan.org/fsw/ff/00index_e.html
+
+  Makefile from WinARM (by Martin Thomas)
+    http://www.siwawi.arubi.uni-kl.de/avr_projects/arm_projects/
 
 
 License
@@ -24,7 +27,12 @@ License
 
 History
 -------
-  Jan 07 2009  v0.06  Bugfix release
+  Feb 20 2010  v0.07  CodeSourcery Toolchain support
+                      (Thanks to Daniel Buergin)
+                      Added Chuck Norris Facts
+                      Some Bugfixes
+
+  Jan 07 2010  v0.06  Bugfix release
 
   Dec 22 2009  v0.05  IR commands changeable
                       Different Alarm actions

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -13,7 +14,7 @@
 volatile unsigned long ntp_time=0UL;
 
 
-unsigned int ntp_request(unsigned int index)
+unsigned int ntp_request(unsigned int idx)
 {
   MAC_Addr mac;
   NTP_Header *tx_ntp;
@@ -26,22 +27,22 @@ unsigned int ntp_request(unsigned int index)
 
   tx_ntp->flags = (0<<6)|(1<<3)|(3<<0); //LI=0 | VN=1 | Mode=3 -> Client
 
-  index = udp_open(index, mac, eth_getntp(), NTP_PORT, NTP_PORT, 0, NTP_HEADERLEN);
+  idx = udp_open(idx, mac, eth_getntp(), NTP_PORT, NTP_PORT, 0, NTP_HEADERLEN);
 
-  return index;
+  return idx;
 }
 
 
 unsigned long ntp_gettime(void)
 {
   long timeout, timeout_ntp;
-  unsigned int index;
+  unsigned int idx;
 
   ntp_time = 0UL;
 
-  index = ntp_request(UDP_ENTRIES);
+  idx = ntp_request(UDP_ENTRIES);
 
-  if(index < UDP_ENTRIES)
+  if(idx < UDP_ENTRIES)
   {
     timeout     = getontime()+ETH_TIMEOUT;
     timeout_ntp = getontime()+NTP_TIMEOUT;
@@ -56,7 +57,7 @@ unsigned long ntp_gettime(void)
       if(getdeltatime(timeout_ntp) > 0)
       {
         timeout_ntp = getontime()+NTP_TIMEOUT;
-        index = ntp_request(index);
+        idx = ntp_request(idx);
       }
       if(getdeltatime(timeout) > 0)
       {
@@ -64,21 +65,21 @@ unsigned long ntp_gettime(void)
       }
     }
   
-    udp_close(index);
+    udp_close(idx);
   }
 
   return ntp_time;
 }
 
 
-void ntp_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void ntp_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
-  NTP_Header *rx_ntp;
+  const NTP_Header *rx_ntp;
   unsigned long time;
 
   DEBUGOUT("NTP: UDP app\n");
   
-  rx_ntp = (NTP_Header*) rx;
+  rx_ntp = (const NTP_Header*) rx;
 
   if((rx_ntp->flags&0x07) == 4) //Mode=4 -> Server
   {

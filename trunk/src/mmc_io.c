@@ -1,6 +1,4 @@
 #include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include "lmi/inc/hw_types.h"
@@ -9,11 +7,7 @@
 #include "fatfs/ff.h"
 #include "fatfs/diskio.h"
 #include "tools.h"
-#ifdef LOADER
-# include "loader/main.h"
-#else
-# include "main.h"
-#endif
+#include "main.h"
 #include "io.h"
 #include "mmc_io.h"
 
@@ -227,8 +221,12 @@ DSTATUS disk_initialize(BYTE drv)
   MMC_SELECT();   //CS = low
   MMC_POWEROFF(); //sd power off
   delay_ms(100);
+  init_bor(0);    //BOR off
+  delay_ms(2);
   MMC_POWERON();  //sd power on
   MMC_DESELECT(); //CS = high
+  delay_ms(2);
+  init_bor(1);    //BOR on
   delay_ms(50);
 
   //80 dummy clocks
@@ -304,7 +302,7 @@ DSTATUS disk_initialize(BYTE drv)
 }
 
 
-DSTATUS disk_status (BYTE drv)
+DSTATUS disk_status(BYTE drv)
 {
   if(drv) return STA_NOINIT; //Supports only single drive
 
@@ -312,7 +310,7 @@ DSTATUS disk_status (BYTE drv)
 }
 
 
-DRESULT disk_read (BYTE drv, BYTE *buff, DWORD sector, BYTE count)
+DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, BYTE count)
 {
   if(drv || !count) return RES_PARERR;
   if(Stat & STA_NOINIT) return RES_NOTRDY;

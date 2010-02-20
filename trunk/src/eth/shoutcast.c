@@ -34,7 +34,7 @@ void shoutcast_close(void)
 unsigned int shoutcast_open(void)
 {
   long timeout;
-  unsigned int index, trying, status;
+  unsigned int idx, trying, status;
 
   shoutcast_status = SHOUTCAST_OPEN;
 
@@ -51,7 +51,7 @@ unsigned int shoutcast_open(void)
     gbuf.station.port = SHOUTCAST_SERVERPORT;
   }
 
-  index   = tcp_open(TCP_ENTRIES, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
+  idx     = tcp_open(TCP_ENTRIES, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
   timeout = getontime()+SHOUTCAST_TIMEOUT;
   trying  = SHOUTCAST_TRY;
   for(;;)
@@ -70,7 +70,7 @@ unsigned int shoutcast_open(void)
     if(keys_sw() || (ir_cmd() == SW_ENTER))
     {
         shoutcast_status = SHOUTCAST_ERROR;
-        tcp_abort(index);
+        tcp_abort(idx);
         break;
     }
     if(getdeltatime(timeout) > 0)
@@ -79,12 +79,12 @@ unsigned int shoutcast_open(void)
       if(--trying)
       {
         shoutcast_status = SHOUTCAST_OPEN;
-        index = tcp_open(index, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
+        idx = tcp_open(idx, gbuf.station.mac, gbuf.station.ip, gbuf.station.port, shoutcast_localport);
       }
       else
       {
         shoutcast_status = SHOUTCAST_ERRTIMEOUT;
-        tcp_abort(index);
+        tcp_abort(idx);
         break;
       }
     }
@@ -115,7 +115,7 @@ void shoutcast_putogg(const unsigned char *s, unsigned int len)
 {
   static unsigned int state=0;
   unsigned char c, buf[WORKINGBUF];
-  unsigned int buf_len=0;
+  unsigned int buflen=0;
   long timeout;
 
   timeout = getontime()+2;
@@ -149,10 +149,10 @@ void shoutcast_putogg(const unsigned char *s, unsigned int len)
           break;
       }
     }
-    buf[buf_len++] = c;
-    if(buf_len == WORKINGBUF)
+    buf[buflen++] = c;
+    if(buflen == WORKINGBUF)
     {
-      buf_len = 0;
+      buflen = 0;
       while(WORKINGBUF > buf_free()) //wait for free buffer
       {
         buf_service();
@@ -165,7 +165,7 @@ void shoutcast_putogg(const unsigned char *s, unsigned int len)
       buf_puts(buf, WORKINGBUF);
     }
   }
-  buf_puts(buf, buf_len);
+  buf_puts(buf, buflen);
 
   return;
 }
@@ -173,7 +173,7 @@ void shoutcast_putogg(const unsigned char *s, unsigned int len)
 
 void shoutcast_putdata(const unsigned char *s, unsigned int len)
 {
-  unsigned int free;
+  unsigned int f;
   long timeout;
 
   timeout = getontime()+2;
@@ -181,12 +181,12 @@ void shoutcast_putdata(const unsigned char *s, unsigned int len)
   {
     buf_service();
 
-    free = buf_free();
-    if(free < len)
+    f = buf_free();
+    if(f < len)
     {
-      buf_puts(s, free);
-      s   += free;
-      len -= free;
+      buf_puts(s, f);
+      s   += f;
+      len -= f;
       if(getdeltatime(timeout) > 0)
       {
         shoutcast_close();
@@ -204,7 +204,7 @@ void shoutcast_putdata(const unsigned char *s, unsigned int len)
 }
 
 
-void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void shoutcast_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
   unsigned int tx_len, i;
   char buf[32], *ptr;
@@ -214,7 +214,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
   {
     case SHOUTCAST_OPENED:
       //send ack
-      tcp_send(index, 0, 0);
+      tcp_send(idx, 0, 0);
       //save audio data
       if(format == FORMAT_OGG) //ogg stream
       {
@@ -230,11 +230,11 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
       if(rx_len)
       {
         //send ack
-        tcp_send(index, 0, 0);
+        tcp_send(idx, 0, 0);
         //search http header
         if(parse_header == 0)
         {
-          i = http_response(rx);
+          i = http_response((const char*)rx);
           if(i == 200) //200 OK
           {
             parse_header = 1;
@@ -247,7 +247,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
               case 301: //301 Moved Permanently
               case 302: //302 Moved Temporarily
               case 303: //303 See Other
-                if(http_hdparam(gbuf.station.addr, MAX_ADDR-1, rx, "LOCATION:") == 0)
+                if(http_hdparam(gbuf.station.addr, MAX_ADDR-1, (const char*)rx, "LOCATION:") == 0)
                 {
                   shoutcast_status = SHOUTCAST_ADDRMOVED;
                 }
@@ -276,7 +276,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             }
             parse_header = 0;
             rx_len       = 0;
-            tcp_abort(index);
+            tcp_abort(idx);
             delay_ms(1000); //for reading popup
           }
         }
@@ -285,7 +285,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
         if(parse_header == 1)
         {
           //get stream bitrate
-          if(http_hdparam(buf, 32-1, rx, "ICY-BR:") == 0)
+          if(http_hdparam(buf, 32-1, (const char*)rx, "ICY-BR:") == 0)
           {
             i = atoi(buf);
             if(fm_size() == 0)
@@ -310,7 +310,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             station_setbitrate(i);
           }
           //get stream format
-          if(http_hdparam(buf, 32-1, rx, "CONTENT-TYPE:") == 0)
+          if(http_hdparam(buf, 32-1, (const char*)rx, "CONTENT-TYPE:") == 0)
           {
             ptr = buf;
             if(strncmpi(buf, "AUDIO/", 6) == 0)
@@ -352,7 +352,7 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
             menu_setformat(format);
           }
           //get stream name
-          http_hdparam(gbuf.menu.info, MAX_INFO-1, rx, "ICY-NAME:");
+          http_hdparam(gbuf.menu.info, MAX_INFO-1, (const char*)rx, "ICY-NAME:");
           //search http header end
           for(; rx_len!=0; rx_len--, rx++)
           {
@@ -547,19 +547,20 @@ void shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int 
       }
       station_setbitrate(0); //set default bitrate / buffer limits
       menu_setformat(FORMAT_UNKNOWN);
-      tx_len = sprintf(tx, "GET %s HTTP/1.0\r\n"
-                           "Host: %s\r\n"
-                           "User-Agent: "APPNAME"\r\n"
-                           "Icy-MetaData: 0\r\n"
-                           "Connection: Keep-Alive\r\n"
-                           "\r\n", gbuf.station.file, gbuf.station.host);
-      tcp_send(index, tx_len, 0);
+      tx_len = sprintf((char*)tx, "GET %s HTTP/1.0\r\n"
+                                  "Host: %s\r\n"
+                                  "User-Agent: "APPNAME"\r\n"
+                                  "Icy-MetaData: 0\r\n"
+                                  "Connection: Keep-Alive\r\n"
+                                  "\r\n",
+                                  gbuf.station.file, gbuf.station.host);
+      tcp_send(idx, tx_len, 0);
       break;
 
     case SHOUTCAST_CLOSE:
       shoutcast_status = SHOUTCAST_CLOSED;
-      tcp_abort(index);
-      tcp_send(index, 0, 0);
+      tcp_abort(idx);
+      tcp_send(idx, 0, 0);
       break;
 
     case SHOUTCAST_CLOSED:

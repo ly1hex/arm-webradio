@@ -2,26 +2,23 @@
 //
 // hw_i2s.h - Macros for use in accessing the I2S registers.
 //
-// Copyright (c) 2008-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2008-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,8 +27,8 @@
 
 //*****************************************************************************
 //
-// The following are defines for the Inter-Integrated Circuit Sound (I2S)
-// Interface.
+// The following are defines for the Inter-Integrated Circuit Sound register
+// offsets.
 //
 //*****************************************************************************
 #define I2S_O_TXFIFO            0x00000000  // I2S Transmit FIFO Data
@@ -181,14 +178,8 @@
 // The following are defines for the bit fields in the I2S_O_CFG register.
 //
 //*****************************************************************************
-#define I2S_CFG_RXSLV           0x00000020  // When clear, this bit configures
-                                            // the receiver to use the
-                                            // externally driven I2S0RXMCLK
-                                            // signal
-#define I2S_CFG_TXSLV           0x00000010  // When clear, this bit configures
-                                            // the transmitter to use the
-                                            // externally driven I2S0TXMCLK
-                                            // signal
+#define I2S_CFG_RXSLV           0x00000020  // Use External I2S0RXMCLK
+#define I2S_CFG_TXSLV           0x00000010  // Use External I2S0TXMCLK
 #define I2S_CFG_RXEN            0x00000002  // Serial Receive Engine Enable
 #define I2S_CFG_TXEN            0x00000001  // Serial Transmit Engine Enable
 

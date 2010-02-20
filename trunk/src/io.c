@@ -1,10 +1,9 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "lmi/inc/hw_types.h"
 #include "lmi/inc/hw_memmap.h"
 #include "lmi/inc/hw_ints.h"
+#include "lmi/inc/hw_sysctl.h"
 #include "lmi/inc/hw_ssi.h"
 #include "lmi/inc/hw_ethernet.h"
 #include "lmi/driverlib/sysctl.h"
@@ -18,11 +17,9 @@
 #include "lmi/driverlib/ssi.h"
 #include "lmi/driverlib/uart.h"
 #include "lmi/driverlib/ethernet.h"
+#include "debug.h"
 #include "tools.h"
-#ifdef LOADER
-# include "loader/main.h"
-#else
-# include "main.h"
+#ifndef LOADER
 # include "eth.h"
 #endif
 #include "io.h"
@@ -61,14 +58,17 @@ unsigned int ethernet_data(void)
 }
 
 
-void ethernet_put(unsigned char *pkt, unsigned int len)
+unsigned int ethernet_put(unsigned char *pkt, unsigned int len)
 {
-  if(EthernetPacketPut(ETH_BASE, pkt, len) != len)
+  unsigned int r;
+
+  r = EthernetPacketPut(ETH_BASE, pkt, len);
+  if(r != len)
   {
     DEBUGOUT("Eth: Tx put err\n");
   }
 
-  return;
+  return r;
 }
 
 
@@ -792,7 +792,7 @@ void cpu_speed(unsigned int low_speed)
 #endif
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ); //8 MHz
     SysTickDisable();
-    SysTickPeriodSet(SysCtlClockGet() / 1000); //1 kHz
+    SysTickPeriodSet(SysCtlClockGet() / 100); //100 Hz
     SysTickEnable();
     pwm_led(LCD_PWMSTANDBY);
     ssi_speed(0);
@@ -808,7 +808,7 @@ void cpu_speed(unsigned int low_speed)
 #endif
     SysCtlClockSet(LM3S_SYSDIV | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ); //speed up
     SysTickDisable();
-    SysTickPeriodSet(SysCtlClockGet() / 1000); //1 kHz
+    SysTickPeriodSet(SysCtlClockGet() / 100); //100 Hz
     SysTickEnable();
     pwm_led(100);
     ssi_speed(0);
@@ -855,23 +855,6 @@ void init_bor(unsigned int on)
 
 void init_periph(void)
 {
-  //init uart for debug output
-#ifdef DEBUG
-# if (DEBUGUART == UART0_BASE)
-#  define DEBUGUART_PERIPH SYSCTL_PERIPH_UART0
-# elif (DEBUGUART == UART1_BASE)
-#  define DEBUGUART_PERIPH SYSCTL_PERIPH_UART1
-# elif (DEBUGUART == UART2_BASE)
-#  define DEBUGUART_PERIPH SYSCTL_PERIPH_UART2
-# else
-#  warning "DEBUGUART unknown"
-# endif
-  SysCtlPeripheralEnable(DEBUGUART_PERIPH);
-  SysCtlPeripheralReset(DEBUGUART_PERIPH);
-  UARTConfigSetExpClk(DEBUGUART, SysCtlClockGet(), DEBUGBAUD, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE);
-  UARTEnable(DEBUGUART);
-#endif
-
   //init quadrature encoder
   SysCtlPeripheralEnable(SYSCTL_PERIPH_QEI);
   SysCtlPeripheralReset(SYSCTL_PERIPH_QEI);
@@ -953,10 +936,6 @@ void init_pins(void)
   //GPIO D: Encoder, IR
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
   GPIOSetInput(GPIO_PORTD_BASE, GPIO_PIN_1 | GPIO_PIN_2); //PHA, IR = input
-#if defined DEBUG && (DEBUGUART == UART1_BASE)
-  GPIOSetOutput(GPIO_PORTD_BASE, GPIO_PIN_3); //uart1-tx = output
-  GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_3);
-#endif
 
   //GPIO E: LCD, SD, F-RAM, Switch
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
@@ -973,12 +952,54 @@ void init_pins(void)
   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1); //USB_PWR = high
   GPIODirModeSet(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_DIR_MODE_HW); //LED1, LED2 = ethernet
 
-  //GPIO G
-#if defined DEBUG && (DEBUGUART == UART2_BASE)
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOG);
-  GPIOSetOutput(GPIO_PORTG_BASE, GPIO_PIN_1); //uart2-tx = output
-  GPIOPinTypeUART(GPIO_PORTG_BASE, GPIO_PIN_1);
+  return;
+}
+
+
+void delay_ms(unsigned long ms)
+{
+  for(; ms!=0; ms--)
+  {
+    delay_1ms();
+  }
+
+  return;
+}
+
+
+void delay_1ms(void)
+{
+  unsigned long t, rcc, rcc2;
+
+  rcc  = HWREG(SYSCTL_RCC);
+  rcc2 = HWREG(SYSCTL_RCC2);
+
+  if(((rcc2 & SYSCTL_RCC2_USERCC2) && !(rcc2 & SYSCTL_RCC2_BYPASS2)) ||
+     (!(rcc2 & SYSCTL_RCC2_USERCC2) && !(rcc & SYSCTL_RCC_BYPASS))) //PLL on?
+  {
+#if   LM3S_SYSDIV == SYSCTL_SYSDIV_4  //50.0 MHz
+    #define DELAY_100US_MHZ (200000000/4)
+#elif LM3S_SYSDIV == SYSCTL_SYSDIV_5  //40.0 MHz
+    #define DELAY_100US_MHZ (200000000/5)
+#elif LM3S_SYSDIV == SYSCTL_SYSDIV_6  //33.3 MHz
+    #define DELAY_100US_MHZ (200000000/6)
+#elif LM3S_SYSDIV == SYSCTL_SYSDIV_7  //28.6 MHz
+    #define DELAY_100US_MHZ (200000000/7)
+#elif LM3S_SYSDIV == SYSCTL_SYSDIV_8  //25.0 MHz
+    #define DELAY_100US_MHZ (200000000/8)
+#elif LM3S_SYSDIV == SYSCTL_SYSDIV_9  //22.2 MHz
+    #define DELAY_100US_MHZ (200000000/9)
+#elif LM3S_SYSDIV == SYSCTL_SYSDIV_10 //20.0 MHz
+    #define DELAY_100US_MHZ (200000000/10)
 #endif
+    t = (unsigned long)(double)(((double)DELAY_100US_MHZ/1000) / 3);
+  }
+  else
+  {
+    t = (unsigned long)(double)((8000000/1000) / 3); //8 MHz
+  }
+
+  SysCtlDelay(t); //3 cycles
 
   return;
 }

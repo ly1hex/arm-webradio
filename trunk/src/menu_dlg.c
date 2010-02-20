@@ -75,9 +75,8 @@ char next_char(char c, unsigned int dir) //char, direction (0=-, 1=+)
 
 unsigned int dlg_ip(const char* title, IP_Addr *value)
 {
-  unsigned int i, close, state;
-  int sel, sw;
-  const unsigned int ctrls=6;
+  int i, close, state, sel, sw;
+  const int ctrls=6;
   CONTROL ctrl[ctrls];
   IP_Addr old_val;
   char buf[4][4];
@@ -175,9 +174,8 @@ unsigned int dlg_ip(const char* title, IP_Addr *value)
 
 unsigned int dlg_rgb(const char* title, unsigned int *value)
 {
-  unsigned int i, close, state;
-  int sel, sw;
-  const unsigned int ctrls=5;
+  int i, close, state, sel, sw;
+  const int ctrls=5;
   CONTROL ctrl[ctrls];
   unsigned int old_val;
   char buf_r[4], buf_g[4], buf_b[4];
@@ -275,9 +273,8 @@ unsigned int dlg_rgb(const char* title, unsigned int *value)
 
 unsigned int dlg_or(const char* title, int *value, int p1, int p2)
 {
-  unsigned int i, close, state;
-  int sel, sw, old_val;
-  const unsigned int ctrls=3;
+  int i, close, state, sel, sw, old_val;
+  const int ctrls=3;
   CONTROL ctrl[ctrls];
   char buf[32];
 
@@ -366,9 +363,8 @@ unsigned int dlg_or(const char* title, int *value, int p1, int p2)
 
 unsigned int dlg_nr(const char* title, int *value, int min, int max, int step)
 {
-  unsigned int i, close, state;
-  int sel, sw, old_val;
-  const unsigned int ctrls=3;
+  int i, close, state, sel, sw, old_val;
+  const int ctrls=3;
   CONTROL ctrl[ctrls];
   char buf[32];
 
@@ -457,9 +453,8 @@ unsigned int dlg_nr(const char* title, int *value, int min, int max, int step)
 
 unsigned int dlg_str(const char* title, const char *value, unsigned int len, char *buf, unsigned int buf_len)
 {
-  unsigned int i, close, state;
-  int sel, sw;
-  const unsigned int ctrls=3;
+  int i, close, state, sel, sw;
+  const int ctrls=3;
   CONTROL ctrl[ctrls];
 
   if(len == 0)
@@ -592,9 +587,8 @@ unsigned int dlg_str(const char* title, const char *value, unsigned int len, cha
 
 unsigned int dlg_alarmtime(ALARMTIME *time)
 {
-  unsigned int i, close, state;
-  int sel, sw;
-  const unsigned int ctrls=12;
+  int i, close, state, sel, sw;
+  const int ctrls=12;
   CONTROL ctrl[ctrls];
   ALARMTIME t;
   char buf[2][4];

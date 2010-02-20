@@ -61,7 +61,7 @@ typedef struct __attribute__((packed))
 void                                   rtsp_close(void);
 unsigned int                           rtsp_open(void);
 void                                   rtsp_putdata(const unsigned char *s, unsigned int len);
-void                                   rtsp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
+void                                   rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_RTSP_H_

@@ -99,12 +99,6 @@
           <file file_name="third_party/lmi/EULA.txt"/>
           <file file_name="third_party/lmi/license.html"/>
           <folder Name="driverlib">
-            <file file_name="third_party/lmi/driverlib/adc.c"/>
-            <file file_name="third_party/lmi/driverlib/adc.h"/>
-            <file file_name="third_party/lmi/driverlib/can.c"/>
-            <file file_name="third_party/lmi/driverlib/can.h"/>
-            <file file_name="third_party/lmi/driverlib/comp.c"/>
-            <file file_name="third_party/lmi/driverlib/comp.h"/>
             <file file_name="third_party/lmi/driverlib/cpu.c"/>
             <file file_name="third_party/lmi/driverlib/cpu.h"/>
             <file file_name="third_party/lmi/driverlib/debug.h"/>
@@ -144,18 +138,11 @@
             <file file_name="third_party/lmi/driverlib/timer.h"/>
             <file file_name="third_party/lmi/driverlib/uart.c"/>
             <file file_name="third_party/lmi/driverlib/uart.h"/>
-            <file file_name="third_party/lmi/driverlib/udma.c"/>
-            <file file_name="third_party/lmi/driverlib/udma.h"/>
-            <file file_name="third_party/lmi/driverlib/usb.c"/>
-            <file file_name="third_party/lmi/driverlib/usb.h"/>
             <file file_name="third_party/lmi/driverlib/watchdog.c"/>
             <file file_name="third_party/lmi/driverlib/watchdog.h"/>
           </folder>
           <folder Name="inc">
             <file file_name="third_party/lmi/inc/asmdefs.h"/>
-            <file file_name="third_party/lmi/inc/hw_adc.h"/>
-            <file file_name="third_party/lmi/inc/hw_can.h"/>
-            <file file_name="third_party/lmi/inc/hw_comp.h"/>
             <file file_name="third_party/lmi/inc/hw_epi.h"/>
             <file file_name="third_party/lmi/inc/hw_ethernet.h"/>
             <file file_name="third_party/lmi/inc/hw_flash.h"/>
@@ -173,14 +160,16 @@
             <file file_name="third_party/lmi/inc/hw_timer.h"/>
             <file file_name="third_party/lmi/inc/hw_types.h"/>
             <file file_name="third_party/lmi/inc/hw_uart.h"/>
-            <file file_name="third_party/lmi/inc/hw_udma.h"/>
-            <file file_name="third_party/lmi/inc/hw_usb.h"/>
             <file file_name="third_party/lmi/inc/hw_watchdog.h"/>
             <file file_name="third_party/lmi/inc/lm3s6950.h"/>
           </folder>
         </folder>
         <file file_name="third_party/readme.txt"/>
       </folder>
+      <file file_name="chucknorris.c"/>
+      <file file_name="chucknorris.h"/>
+      <file file_name="debug.h"/>
+      <file file_name="debug.c"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>
@@ -190,6 +179,8 @@
       </file>
       <file file_name="flash_placement.xml"/>
     </folder>
+    <configuration Name="Release" gcc_optimization_level="Optimize For Size"/>
+    <configuration Name="Debug" build_treat_warnings_as_errors="Yes"/>
   </project>
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>
@@ -239,12 +230,6 @@
         </folder>
         <folder Name="lmi">
           <folder Name="driverlib">
-            <file file_name="../third_party/lmi/driverlib/adc.c"/>
-            <file file_name="../third_party/lmi/driverlib/adc.h"/>
-            <file file_name="../third_party/lmi/driverlib/can.c"/>
-            <file file_name="../third_party/lmi/driverlib/can.h"/>
-            <file file_name="../third_party/lmi/driverlib/comp.c"/>
-            <file file_name="../third_party/lmi/driverlib/comp.h"/>
             <file file_name="../third_party/lmi/driverlib/cpu.c"/>
             <file file_name="../third_party/lmi/driverlib/cpu.h"/>
             <file file_name="../third_party/lmi/driverlib/debug.h"/>
@@ -283,18 +268,11 @@
             <file file_name="../third_party/lmi/driverlib/timer.h"/>
             <file file_name="../third_party/lmi/driverlib/uart.c"/>
             <file file_name="../third_party/lmi/driverlib/uart.h"/>
-            <file file_name="../third_party/lmi/driverlib/udma.c"/>
-            <file file_name="../third_party/lmi/driverlib/udma.h"/>
-            <file file_name="../third_party/lmi/driverlib/usb.c"/>
-            <file file_name="../third_party/lmi/driverlib/usb.h"/>
             <file file_name="../third_party/lmi/driverlib/watchdog.c"/>
             <file file_name="../third_party/lmi/driverlib/watchdog.h"/>
           </folder>
           <folder Name="inc">
             <file file_name="../third_party/lmi/inc/asmdefs.h"/>
-            <file file_name="../third_party/lmi/inc/hw_adc.h"/>
-            <file file_name="../third_party/lmi/inc/hw_can.h"/>
-            <file file_name="../third_party/lmi/inc/hw_comp.h"/>
             <file file_name="../third_party/lmi/inc/hw_epi.h"/>
             <file file_name="../third_party/lmi/inc/hw_ethernet.h"/>
             <file file_name="../third_party/lmi/inc/hw_flash.h"/>
@@ -312,8 +290,6 @@
             <file file_name="../third_party/lmi/inc/hw_timer.h"/>
             <file file_name="../third_party/lmi/inc/hw_types.h"/>
             <file file_name="../third_party/lmi/inc/hw_uart.h"/>
-            <file file_name="../third_party/lmi/inc/hw_udma.h"/>
-            <file file_name="../third_party/lmi/inc/hw_usb.h"/>
             <file file_name="../third_party/lmi/inc/hw_watchdog.h"/>
             <file file_name="../third_party/lmi/inc/lm3s6950.h"/>
           </folder>
@@ -331,6 +307,8 @@
       <file file_name="../mmc_io.h"/>
       <file file_name="../tools.c"/>
       <file file_name="../tools.h"/>
+      <file file_name="../debug.c"/>
+      <file file_name="../debug.h"/>
     </folder>
     <folder Name="System Files">
       <file file_name="$(StudioDir)/source/thumb_crt0.s"/>
