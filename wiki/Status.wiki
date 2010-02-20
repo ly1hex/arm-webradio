@@ -3,7 +3,6 @@
 
 ==Roadmap for 2010==
  * new ethernet stack: lwIP
- * free GCC compiler support
 
 ==Status==
 || *Hardware* ||
