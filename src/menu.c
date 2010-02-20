@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include "fatfs/ff.h"
+#include "debug.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -56,7 +56,7 @@ unsigned int bgcolor=0, fgcolor=0, selcolor=0, edgecolor=0;
 
 unsigned int menu_openfile(char *file)
 {
-  unsigned int ret, nr;
+  unsigned int ret;
   char tmp[MAX_ADDR];
 
   if(file[0] == 0)

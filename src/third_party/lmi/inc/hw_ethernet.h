@@ -2,26 +2,23 @@
 //
 // hw_ethernet.h - Macros used when accessing the Ethernet hardware.
 //
-// Copyright (c) 2006-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,29 +27,34 @@
 
 //*****************************************************************************
 //
-// The following are defines for the MAC register offsets in the Ethernet
-// Controller.
+// The following are defines for the Ethernet MAC register offsets.
 //
 //*****************************************************************************
 #define MAC_O_RIS               0x00000000  // Ethernet MAC Raw Interrupt
-                                            // Status
-#define MAC_O_IACK              0x00000000  // Interrupt Acknowledge Register
-#define MAC_O_IM                0x00000004  // Interrupt Mask Register
-#define MAC_O_RCTL              0x00000008  // Receive Control Register
-#define MAC_O_TCTL              0x0000000C  // Transmit Control Register
-#define MAC_O_DATA              0x00000010  // Data Register
-#define MAC_O_IA0               0x00000014  // Individual Address Register 0
-#define MAC_O_IA1               0x00000018  // Individual Address Register 1
-#define MAC_O_THR               0x0000001C  // Threshold Register
-#define MAC_O_MCTL              0x00000020  // Management Control Register
-#define MAC_O_MDV               0x00000024  // Management Divider Register
-#define MAC_O_MTXD              0x0000002C  // Management Transmit Data Reg
-#define MAC_O_MRXD              0x00000030  // Management Receive Data Reg
-#define MAC_O_NP                0x00000034  // Number of Packets Register
-#define MAC_O_TR                0x00000038  // Transmission Request Register
-#define MAC_O_TS                0x0000003C  // Timer Support Register
+                                            // Status/Acknowledge
+#define MAC_O_IACK              0x00000000  // Ethernet MAC Raw Interrupt
+                                            // Status/Acknowledge
+#define MAC_O_IM                0x00000004  // Ethernet MAC Interrupt Mask
+#define MAC_O_RCTL              0x00000008  // Ethernet MAC Receive Control
+#define MAC_O_TCTL              0x0000000C  // Ethernet MAC Transmit Control
+#define MAC_O_DATA              0x00000010  // Ethernet MAC Data
+#define MAC_O_IA0               0x00000014  // Ethernet MAC Individual Address
+                                            // 0
+#define MAC_O_IA1               0x00000018  // Ethernet MAC Individual Address
+                                            // 1
+#define MAC_O_THR               0x0000001C  // Ethernet MAC Threshold
+#define MAC_O_MCTL              0x00000020  // Ethernet MAC Management Control
+#define MAC_O_MDV               0x00000024  // Ethernet MAC Management Divider
+#define MAC_O_MTXD              0x0000002C  // Ethernet MAC Management Transmit
+                                            // Data
+#define MAC_O_MRXD              0x00000030  // Ethernet MAC Management Receive
+                                            // Data
+#define MAC_O_NP                0x00000034  // Ethernet MAC Number of Packets
+#define MAC_O_TR                0x00000038  // Ethernet MAC Transmission
+                                            // Request
+#define MAC_O_TS                0x0000003C  // Ethernet MAC Timer Support
 #define MAC_O_LED               0x00000040  // Ethernet MAC LED Encoding
-#define MAC_O_MDIX              0x00000044  // MDIX Register
+#define MAC_O_MDIX              0x00000044  // Ethernet PHY MDIX
 
 //*****************************************************************************
 //
@@ -62,7 +64,7 @@
 #define MAC_RIS_PHYINT          0x00000040  // PHY Interrupt
 #define MAC_RIS_MDINT           0x00000020  // MII Transaction Complete
 #define MAC_RIS_RXER            0x00000010  // Receive Error
-#define MAC_RIS_FOV             0x00000008  // FIFO Overrrun
+#define MAC_RIS_FOV             0x00000008  // FIFO Overrun
 #define MAC_RIS_TXEMP           0x00000004  // Transmit FIFO Empty
 #define MAC_RIS_TXER            0x00000002  // Transmit Error
 #define MAC_RIS_RXINT           0x00000001  // Packet Received
@@ -73,12 +75,12 @@
 //
 //*****************************************************************************
 #define MAC_IACK_PHYINT         0x00000040  // Clear PHY Interrupt
-#define MAC_IACK_MDINT          0x00000020  // Clear MDI Transaction Complete
-#define MAC_IACK_RXER           0x00000010  // Clear RX Error
-#define MAC_IACK_FOV            0x00000008  // Clear RX FIFO Overrun
-#define MAC_IACK_TXEMP          0x00000004  // Clear TX FIFO Empy
-#define MAC_IACK_TXER           0x00000002  // Clear TX Error
-#define MAC_IACK_RXINT          0x00000001  // Clear RX Packet Available
+#define MAC_IACK_MDINT          0x00000020  // Clear MII Transaction Complete
+#define MAC_IACK_RXER           0x00000010  // Clear Receive Error
+#define MAC_IACK_FOV            0x00000008  // Clear FIFO Overrun
+#define MAC_IACK_TXEMP          0x00000004  // Clear Transmit FIFO Empty
+#define MAC_IACK_TXER           0x00000002  // Clear Transmit Error
+#define MAC_IACK_RXINT          0x00000001  // Clear Packet Received
 
 //*****************************************************************************
 //
@@ -87,32 +89,32 @@
 //*****************************************************************************
 #define MAC_IM_PHYINTM          0x00000040  // Mask PHY Interrupt
 #define MAC_IM_MDINTM           0x00000020  // Mask MII Transaction Complete
-#define MAC_IM_RXERM            0x00000010  // Mask RX Error
-#define MAC_IM_FOVM             0x00000008  // Mask RX FIFO Overrun
-#define MAC_IM_TXEMPM           0x00000004  // Mask TX FIFO Empy
-#define MAC_IM_TXERM            0x00000002  // Mask TX Error
-#define MAC_IM_RXINTM           0x00000001  // Mask RX Packet Available
+#define MAC_IM_RXERM            0x00000010  // Mask Receive Error
+#define MAC_IM_FOVM             0x00000008  // Mask FIFO Overrun
+#define MAC_IM_TXEMPM           0x00000004  // Mask Transmit FIFO Empty
+#define MAC_IM_TXERM            0x00000002  // Mask Transmit Error
+#define MAC_IM_RXINTM           0x00000001  // Mask Packet Received
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the MAC_O_RCTL register.
 //
 //*****************************************************************************
-#define MAC_RCTL_RSTFIFO        0x00000010  // Clear the Receive FIFO
-#define MAC_RCTL_BADCRC         0x00000008  // Reject Packets With Bad CRC
+#define MAC_RCTL_RSTFIFO        0x00000010  // Clear Receive FIFO
+#define MAC_RCTL_BADCRC         0x00000008  // Enable Reject Bad CRC
 #define MAC_RCTL_PRMS           0x00000004  // Enable Promiscuous Mode
-#define MAC_RCTL_AMUL           0x00000002  // Enable Multicast Packets
-#define MAC_RCTL_RXEN           0x00000001  // Enable Ethernet Receiver
+#define MAC_RCTL_AMUL           0x00000002  // Enable Multicast Frames
+#define MAC_RCTL_RXEN           0x00000001  // Enable Receiver
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the MAC_O_TCTL register.
 //
 //*****************************************************************************
-#define MAC_TCTL_DUPLEX         0x00000010  // Enable Duplex mode
+#define MAC_TCTL_DUPLEX         0x00000010  // Enable Duplex Mode
 #define MAC_TCTL_CRC            0x00000004  // Enable CRC Generation
-#define MAC_TCTL_PADEN          0x00000002  // Enable Automatic Padding
-#define MAC_TCTL_TXEN           0x00000001  // Enable Ethernet Transmitter
+#define MAC_TCTL_PADEN          0x00000002  // Enable Packet Padding
+#define MAC_TCTL_TXEN           0x00000001  // Enable Transmitter
 
 //*****************************************************************************
 //
@@ -162,8 +164,8 @@
 //
 //*****************************************************************************
 #define MAC_MCTL_REGADR_M       0x000000F8  // MII Register Address
-#define MAC_MCTL_WRITE          0x00000002  // Next MII Transaction is Write
-#define MAC_MCTL_START          0x00000001  // Start MII Transaction
+#define MAC_MCTL_WRITE          0x00000002  // MII Register Transaction Type
+#define MAC_MCTL_START          0x00000001  // MII Register Transaction Enable
 #define MAC_MCTL_REGADR_S       3
 
 //*****************************************************************************
@@ -204,14 +206,14 @@
 // The following are defines for the bit fields in the MAC_O_TR register.
 //
 //*****************************************************************************
-#define MAC_TR_NEWTX            0x00000001  // Start an Ethernet Transmission
+#define MAC_TR_NEWTX            0x00000001  // New Transmission
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the MAC_O_TS register.
 //
 //*****************************************************************************
-#define MAC_TS_TSEN             0x00000001  // Enable Timestamp Logic
+#define MAC_TS_TSEN             0x00000001  // Time Stamp Enable
 
 //*****************************************************************************
 //
@@ -266,7 +268,7 @@
 #define PHY_MR16                0x00000010  // Ethernet PHY Management Register
                                             // 16 - Vendor-Specific
 #define PHY_MR17                0x00000011  // Ethernet PHY Management Register
-                                            // 17 - Interrupt Control/Status
+                                            // 17 - Mode Control/Status
 #define PHY_MR18                0x00000012  // Ethernet PHY Management Register
                                             // 18 - Diagnostic
 #define PHY_MR19                0x00000013  // Ethernet PHY Management Register
@@ -276,7 +278,7 @@
 #define PHY_MR24                0x00000018  // Ethernet PHY Management Register
                                             // 24 -MDI/MDIX Control
 #define PHY_MR27                0x0000001B  // Ethernet PHY Management Register
-                                            // 27 -Special Control/Status
+                                            // 27 - Special Control/Status
 #define PHY_MR29                0x0000001D  // Ethernet PHY Management Register
                                             // 29 - Interrupt Status
 #define PHY_MR30                0x0000001E  // Ethernet PHY Management Register
@@ -346,10 +348,10 @@
 //*****************************************************************************
 #define PHY_MR4_NP              0x00008000  // Next Page
 #define PHY_MR4_RF              0x00002000  // Remote Fault
-#define PHY_MR4_A3              0x00000100  // Technology Ability Field[3]
-#define PHY_MR4_A2              0x00000080  // Technology Ability Field[2]
-#define PHY_MR4_A1              0x00000040  // Technology Ability Field[1]
-#define PHY_MR4_A0              0x00000020  // Technology Ability Field[0]
+#define PHY_MR4_A3              0x00000100  // Technology Ability Field [3]
+#define PHY_MR4_A2              0x00000080  // Technology Ability Field [2]
+#define PHY_MR4_A1              0x00000040  // Technology Ability Field [1]
+#define PHY_MR4_A0              0x00000020  // Technology Ability Field [0]
 #define PHY_MR4_S_M             0x0000001F  // Selector Field
 #define PHY_MR4_S_S             0
 
@@ -549,8 +551,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the MAC register offsets in the
-// Ethernet Controller.
+// The following are deprecated defines for the Ethernet MAC register offsets.
 //
 //*****************************************************************************
 #define MAC_O_IS                0x00000000  // Interrupt Status Register
@@ -640,6 +641,19 @@
 
 //*****************************************************************************
 //
+// The following are deprecated defines for the bit fields in the PHY_MR23
+// register.
+//
+//*****************************************************************************
+#define PHY_MR23_LED1_TX        0x00000020  // TX Activity
+#define PHY_MR23_LED1_RX        0x00000030  // RX Activity
+#define PHY_MR23_LED1_COL       0x00000040  // Collision
+#define PHY_MR23_LED0_TX        0x00000002  // TX Activity
+#define PHY_MR23_LED0_RX        0x00000003  // RX Activity
+#define PHY_MR23_LED0_COL       0x00000004  // Collision
+
+//*****************************************************************************
+//
 // The following are deprecated defines for the reset values of the MAC
 // registers.
 //
@@ -660,19 +674,6 @@
 #define MAC_RV_IA1              0x00000000
 #define MAC_RV_IACK             0x00000000
 #define MAC_RV_MADD             0x00000000
-
-//*****************************************************************************
-//
-// The following are deprecated defines for the bit fields in the PHY_MR23
-// register.
-//
-//*****************************************************************************
-#define PHY_MR23_LED1_TX        0x00000020  // TX Activity
-#define PHY_MR23_LED1_RX        0x00000030  // RX Activity
-#define PHY_MR23_LED1_COL       0x00000040  // Collision
-#define PHY_MR23_LED0_TX        0x00000002  // TX Activity
-#define PHY_MR23_LED0_RX        0x00000003  // RX Activity
-#define PHY_MR23_LED0_COL       0x00000004  // Collision
 
 #endif
 

@@ -1,10 +1,7 @@
 #include <stdint.h>
-#include <stdlib.h>
 #include "lmi/inc/hw_types.h"
 #include "lmi/inc/hw_memmap.h"
 #include "lmi/driverlib/gpio.h"
-#include "../tools.h"
-#include "../main.h"
 #include "../io.h"
 #include "../lcd.h"
 #include "lcd_l2f50.h"

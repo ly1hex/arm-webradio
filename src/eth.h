@@ -13,7 +13,7 @@
 #define DEFAULT_TIMEDIFF               (3600) //seconds (3600sec = 1h = GMT+1)
 #define DEFAULT_SUMMER                 (0)    //summer time on
 
-#define ETH_RXFIFO                     (15) //rx fifo (x * ETH_MTUSIZE)
+#define ETH_RXFIFO                     (14) //rx fifo (x * ETH_MTUSIZE)
 #define ETH_MTUSIZE                    (1500+ETH_HEADERLEN) //1500 bytes (rx and tx buffer)
 #define ETH_TIMEOUT                    (15) //seconds (ARP / DHCP / DNS request...)
 #define ETH_USE_DSCP                   //use Differentiated Services Code Point (QoS -> DSCP)
@@ -203,17 +203,17 @@ extern unsigned char *eth_rxbuf, eth_txbuf[];
 
 
 //----- PROTOTYPES -----
-void                                   udp_close(unsigned int index);
-unsigned int                           udp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int dst_port, unsigned int src_port, unsigned char *data, unsigned int len);
-void                                   udp_send(unsigned int index, unsigned int len);
-void                                   udp_app(unsigned int index);
+void                                   udp_close(unsigned int idx);
+unsigned int                           udp_open(unsigned int idx, MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int dst_port, unsigned int src_port, unsigned char *data, unsigned int len);
+void                                   udp_send(unsigned int idx, unsigned int len);
+void                                   udp_app(unsigned int idx);
 void                                   udp_service(void);
 
-void                                   tcp_abort(unsigned int index);
-void                                   tcp_close(unsigned int index);
-unsigned int                           tcp_open(unsigned int index, MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int dst_port, unsigned int src_port);
-void                                   tcp_send(unsigned int index, unsigned int len, unsigned int options);
-void                                   tcp_app(unsigned int index);
+void                                   tcp_abort(unsigned int idx);
+void                                   tcp_close(unsigned int idx);
+unsigned int                           tcp_open(unsigned int idx, MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int dst_port, unsigned int src_port);
+void                                   tcp_send(unsigned int idx, unsigned int len, unsigned int options);
+void                                   tcp_app(unsigned int idx);
 void                                   tcp_service(void);
 
 void                                   icmp_service(void);
@@ -221,9 +221,9 @@ void                                   arp_request(IP_Addr ip);
 MAC_Addr                               arp_getmac(IP_Addr ip);
 void                                   arp_service(void);
 
-void                                   make_udp_header(unsigned int index, unsigned int len);
+void                                   make_udp_header(unsigned int idx, unsigned int len);
 unsigned int                           checksum_tcp(unsigned char *s, unsigned int len, IP_Addr dst_ip);
-void                                   make_tcp_header(unsigned int index, unsigned int len, unsigned int options);
+void                                   make_tcp_header(unsigned int idx, unsigned int len, unsigned int options);
 unsigned int                           checksum_ip(unsigned char *s, unsigned int len);
 void                                   make_ip_header(MAC_Addr dst_mac, IP_Addr dst_ip, unsigned int len, unsigned int proto);
 void                                   make_arp_header(MAC_Addr dst_mac, MAC_Addr arp_dst_mac, IP_Addr arp_dst_ip, unsigned int op);

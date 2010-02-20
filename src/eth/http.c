@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../lcd.h"
@@ -185,7 +186,7 @@ void http_settings(char *rx, unsigned int rx_len)
 
           case F_STR: //p1=max len
             if((settingsmenu[item].p1 != 0) &&
-              (strlen(rx) > settingsmenu[item].p1))
+              (strlen(rx) > (unsigned)settingsmenu[item].p1))
             {
               rx[settingsmenu[item].p1] = 0;
             }
@@ -229,76 +230,76 @@ void http_settings(char *rx, unsigned int rx_len)
 }
 
 
-unsigned int http_sendfile(unsigned int index, const char *name, unsigned char *tx)
+unsigned int http_sendfile(unsigned int idx, const char *name, unsigned char *tx)
 {
   unsigned int len=0, i;
 
   if(name) //start transfer -> add http header
   {
-    http_table[index].status = HTTP_SEND;
-    http_table[index].file   = http_fid(name, &http_table[index].fparam);
-    http_table[index].ftype  = http_ftype(http_table[index].file);
-    http_table[index].flen   = http_flen(http_table[index].file, http_table[index].fparam);
-    http_table[index].fpos   = 0;
-    http_table[index].fparse = 0;
+    http_table[idx].status = HTTP_SEND;
+    http_table[idx].file   = http_fid(name, &http_table[idx].fparam);
+    http_table[idx].ftype  = http_ftype(http_table[idx].file);
+    http_table[idx].flen   = http_flen(http_table[idx].file, http_table[idx].fparam);
+    http_table[idx].fpos   = 0;
+    http_table[idx].fparse = 0;
 
-    if(http_table[index].flen == 0) //file not found
+    if(http_table[idx].flen == 0) //file not found
     {
-      http_table[index].status = HTTP_CLOSED;
-      len = sprintf(tx, HTTP_404_HEADER"Error 404 Not found\r\n\r\n");
-      tcp_send(index, len, 0);
-      tcp_close(index);
+      http_table[idx].status = HTTP_CLOSED;
+      len = sprintf((char*)tx, HTTP_404_HEADER"Error 404 Not found\r\n\r\n");
+      tcp_send(idx, len, 0);
+      tcp_close(idx);
       return len;
     }
     else //file found -> send http header
     {
-      switch(http_table[index].ftype)
+      switch(http_table[idx].ftype)
       {
         case HTML_FILE:
-          len = sprintf(tx, HTTP_HTML_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_HTML_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case XML_FILE:
-          len = sprintf(tx, HTTP_XML_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_XML_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case JS_FILE:
-          len = sprintf(tx, HTTP_JS_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_JS_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case CSS_FILE:
-          len = sprintf(tx, HTTP_CSS_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_CSS_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case TXT_FILE:
-          len = sprintf(tx, HTTP_TXT_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_TXT_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case ICON_FILE:
-          len = sprintf(tx, HTTP_ICON_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_ICON_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case GIF_FILE:
-          len = sprintf(tx, HTTP_GIF_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_GIF_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
         case JPEG_FILE:
-          len = sprintf(tx, HTTP_JPEG_HEADER"%i\r\n\r\n", http_table[index].flen);
+          len = sprintf((char*)tx, HTTP_JPEG_HEADER"%i\r\n\r\n", http_table[idx].flen);
           tx += len;
           break;
       }
     }
   }
 
-  if(http_table[index].flen) //file found
+  if(http_table[idx].flen) //file found
   {
-    switch(http_table[index].ftype)
+    switch(http_table[idx].ftype)
     {
       //dynamic content
       case HTML_FILE:
       case XML_FILE:
-        i = http_fparse(tx, http_table[index].file, &http_table[index].fparse, (ETH_MTUSIZE-IP_HEADERLEN-TCP_HEADERLEN-MAX_ADDR-100), http_table[index].fparam);
-        http_table[index].fpos += i;
+        i = http_fparse((char*)tx, http_table[idx].file, &http_table[idx].fparse, (ETH_MTUSIZE-IP_HEADERLEN-TCP_HEADERLEN-MAX_ADDR-100), http_table[idx].fparam);
+        http_table[idx].fpos += i;
         len += i;
         break;
       //static content
@@ -308,16 +309,16 @@ unsigned int http_sendfile(unsigned int index, const char *name, unsigned char *
       case ICON_FILE:
       case GIF_FILE:
       case JPEG_FILE:
-        i = http_fdata(tx, http_table[index].file, http_table[index].fpos, (ETH_MTUSIZE-IP_HEADERLEN-TCP_HEADERLEN-MAX_ADDR-100));
-        http_table[index].fpos += i;
+        i = http_fdata(tx, http_table[idx].file, http_table[idx].fpos, (ETH_MTUSIZE-IP_HEADERLEN-TCP_HEADERLEN-MAX_ADDR-100));
+        http_table[idx].fpos += i;
         len += i;
         break;
     }
-    tcp_send(index, len, 0);
-    if((http_table[index].fpos >= http_table[index].flen) || (len == 0))
+    tcp_send(idx, len, 0);
+    if((http_table[idx].fpos >= http_table[idx].flen) || (len == 0))
     {
-      http_close(index);
-      tcp_close(index);
+      http_close(idx);
+      tcp_close(idx);
     }
   }
 
@@ -325,22 +326,22 @@ unsigned int http_sendfile(unsigned int index, const char *name, unsigned char *
 }
 
 
-void http_close(unsigned int index)
+void http_close(unsigned int idx)
 {
-  http_table[index].status = HTTP_CLOSED;
-  http_table[index].flen   = 0;
+  http_table[idx].status = HTTP_CLOSED;
+  http_table[idx].flen   = 0;
 
   return;
 }
 
 
-void http_tcpapp(unsigned int index, unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void http_tcpapp(unsigned int idx, char *rx, unsigned int rx_len, unsigned char *tx)
 {
   unsigned int tx_len;
 
   DEBUGOUT("HTTP: TCP app\n");
 
-  switch(http_table[index].status)
+  switch(http_table[idx].status)
   {
     case HTTP_CLOSED: //new connection
       if(rx_len)
@@ -349,7 +350,7 @@ void http_tcpapp(unsigned int index, unsigned char *rx, unsigned int rx_len, uns
         {
           rx     += 3+1;
           rx_len -= 3+1;
-          http_sendfile(index, rx, tx);
+          http_sendfile(idx, rx, tx);
         }
         else if(strncmpi(rx, "POST", 4) == 0)
         {
@@ -357,50 +358,50 @@ void http_tcpapp(unsigned int index, unsigned char *rx, unsigned int rx_len, uns
           rx_len -= 4+1;
           if(strncmpi(rx, "/station", 8) == 0)
           {
-            http_table[index].status = HTTP_STATION;
-            rx = http_skiphd(rx, &rx_len);
+            http_table[idx].status = HTTP_STATION;
+            rx = (char*)http_skiphd(rx, &rx_len);
           }
           else if(strncmpi(rx, "/alarm", 6) == 0)
           {
-            http_table[index].status = HTTP_ALARM;
+            http_table[idx].status = HTTP_ALARM;
             rx = http_skiphd(rx, &rx_len);
           }
           else if(strncmpi(rx, "/settings", 9) == 0)
           {
-            http_table[index].status = HTTP_SETTINGS;
+            http_table[idx].status = HTTP_SETTINGS;
             rx = http_skiphd(rx, &rx_len);
           }
           else
           {
-            http_sendfile(index, rx, tx);
+            http_sendfile(idx, rx, tx);
           }
         }
         else
         {
-          tx_len = sprintf(tx, HTTP_400_HEADER"Error 400 Bad request\r\n\r\n");
-          tcp_send(index, tx_len, 0);
-          tcp_close(index);
+          tx_len = sprintf((char*)tx, HTTP_400_HEADER"Error 400 Bad request\r\n\r\n");
+          tcp_send(idx, tx_len, 0);
+          tcp_close(idx);
         }
       }
       break;
 
     case HTTP_SEND:
-      http_sendfile(index, 0, tx);
+      http_sendfile(idx, 0, tx);
       break;
   }
 
   //parse station, alarm or settings
-  switch(http_table[index].status)
+  switch(http_table[idx].status)
   {
     case HTTP_STATION:
       if(rx_len)
       {
         http_station(rx, rx_len);
-        http_sendfile(index, "/station", tx);
+        http_sendfile(idx, "/station", tx);
       }
       else
       {
-        tcp_send(index, 0, 0);
+        tcp_send(idx, 0, 0);
       }
       break;
 
@@ -408,11 +409,11 @@ void http_tcpapp(unsigned int index, unsigned char *rx, unsigned int rx_len, uns
       if(rx_len)
       {
         http_alarm(rx, rx_len);
-        http_sendfile(index, "/alarm", tx);
+        http_sendfile(idx, "/alarm", tx);
       }
       else
       {
-        tcp_send(index, 0, 0);
+        tcp_send(idx, 0, 0);
       }
       break;
 
@@ -420,11 +421,11 @@ void http_tcpapp(unsigned int index, unsigned char *rx, unsigned int rx_len, uns
       if(rx_len)
       {
         http_settings(rx, rx_len);
-        http_sendfile(index, "/settings", tx);
+        http_sendfile(idx, "/settings", tx);
       }
       else
       {
-        tcp_send(index, 0, 0);
+        tcp_send(idx, 0, 0);
       }
       break;
   }

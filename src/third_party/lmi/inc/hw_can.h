@@ -2,26 +2,23 @@
 //
 // hw_can.h - Defines and macros used when accessing the CAN controllers.
 //
-// Copyright (c) 2006-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2006-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -33,39 +30,40 @@
 // The following are defines for the CAN register offsets.
 //
 //*****************************************************************************
-#define CAN_O_CTL               0x00000000  // Control register
-#define CAN_O_STS               0x00000004  // Status register
-#define CAN_O_ERR               0x00000008  // Error register
-#define CAN_O_BIT               0x0000000C  // Bit Timing register
-#define CAN_O_INT               0x00000010  // Interrupt register
-#define CAN_O_TST               0x00000014  // Test register
-#define CAN_O_BRPE              0x00000018  // Baud Rate Prescaler register
-#define CAN_O_IF1CRQ            0x00000020  // Interface 1 Command Request reg
-#define CAN_O_IF1CMSK           0x00000024  // Interface 1 Command Mask reg
-#define CAN_O_IF1MSK1           0x00000028  // Interface 1 Mask 1 register
-#define CAN_O_IF1MSK2           0x0000002C  // Interface 1 Mask 2 register
-#define CAN_O_IF1ARB1           0x00000030  // Interface 1 Arbitration 1 reg
-#define CAN_O_IF1ARB2           0x00000034  // Interface 1 Arbitration 2 reg
-#define CAN_O_IF1MCTL           0x00000038  // Interface 1 Message Control reg
-#define CAN_O_IF1DA1            0x0000003C  // Interface 1 DataA 1 register
-#define CAN_O_IF1DA2            0x00000040  // Interface 1 DataA 2 register
-#define CAN_O_IF1DB1            0x00000044  // Interface 1 DataB 1 register
-#define CAN_O_IF1DB2            0x00000048  // Interface 1 DataB 2 register
-#define CAN_O_IF2CRQ            0x00000080  // Interface 2 Command Request reg
-#define CAN_O_IF2CMSK           0x00000084  // Interface 2 Command Mask reg
-#define CAN_O_IF2MSK1           0x00000088  // Interface 2 Mask 1 register
-#define CAN_O_IF2MSK2           0x0000008C  // Interface 2 Mask 2 register
-#define CAN_O_IF2ARB1           0x00000090  // Interface 2 Arbitration 1 reg
-#define CAN_O_IF2ARB2           0x00000094  // Interface 2 Arbitration 2 reg
-#define CAN_O_IF2MCTL           0x00000098  // Interface 2 Message Control reg
-#define CAN_O_IF2DA1            0x0000009C  // Interface 2 DataA 1 register
-#define CAN_O_IF2DA2            0x000000A0  // Interface 2 DataA 2 register
-#define CAN_O_IF2DB1            0x000000A4  // Interface 2 DataB 1 register
-#define CAN_O_IF2DB2            0x000000A8  // Interface 2 DataB 2 register
-#define CAN_O_TXRQ1             0x00000100  // Transmission Request 1 register
-#define CAN_O_TXRQ2             0x00000104  // Transmission Request 2 register
-#define CAN_O_NWDA1             0x00000120  // New Data 1 register
-#define CAN_O_NWDA2             0x00000124  // New Data 2 register
+#define CAN_O_CTL               0x00000000  // CAN Control
+#define CAN_O_STS               0x00000004  // CAN Status
+#define CAN_O_ERR               0x00000008  // CAN Error Counter
+#define CAN_O_BIT               0x0000000C  // CAN Bit Timing
+#define CAN_O_INT               0x00000010  // CAN Interrupt
+#define CAN_O_TST               0x00000014  // CAN Test
+#define CAN_O_BRPE              0x00000018  // CAN Baud Rate Prescaler
+                                            // Extension
+#define CAN_O_IF1CRQ            0x00000020  // CAN IF1 Command Request
+#define CAN_O_IF1CMSK           0x00000024  // CAN IF1 Command Mask
+#define CAN_O_IF1MSK1           0x00000028  // CAN IF1 Mask 1
+#define CAN_O_IF1MSK2           0x0000002C  // CAN IF1 Mask 2
+#define CAN_O_IF1ARB1           0x00000030  // CAN IF1 Arbitration 1
+#define CAN_O_IF1ARB2           0x00000034  // CAN IF1 Arbitration 2
+#define CAN_O_IF1MCTL           0x00000038  // CAN IF1 Message Control
+#define CAN_O_IF1DA1            0x0000003C  // CAN IF1 Data A1
+#define CAN_O_IF1DA2            0x00000040  // CAN IF1 Data A2
+#define CAN_O_IF1DB1            0x00000044  // CAN IF1 Data B1
+#define CAN_O_IF1DB2            0x00000048  // CAN IF1 Data B2
+#define CAN_O_IF2CRQ            0x00000080  // CAN IF2 Command Request
+#define CAN_O_IF2CMSK           0x00000084  // CAN IF2 Command Mask
+#define CAN_O_IF2MSK1           0x00000088  // CAN IF2 Mask 1
+#define CAN_O_IF2MSK2           0x0000008C  // CAN IF2 Mask 2
+#define CAN_O_IF2ARB1           0x00000090  // CAN IF2 Arbitration 1
+#define CAN_O_IF2ARB2           0x00000094  // CAN IF2 Arbitration 2
+#define CAN_O_IF2MCTL           0x00000098  // CAN IF2 Message Control
+#define CAN_O_IF2DA1            0x0000009C  // CAN IF2 Data A1
+#define CAN_O_IF2DA2            0x000000A0  // CAN IF2 Data A2
+#define CAN_O_IF2DB1            0x000000A4  // CAN IF2 Data B1
+#define CAN_O_IF2DB2            0x000000A8  // CAN IF2 Data B2
+#define CAN_O_TXRQ1             0x00000100  // CAN Transmission Request 1
+#define CAN_O_TXRQ2             0x00000104  // CAN Transmission Request 2
+#define CAN_O_NWDA1             0x00000120  // CAN New Data 1
+#define CAN_O_NWDA2             0x00000124  // CAN New Data 2
 #define CAN_O_MSG1INT           0x00000140  // CAN Message 1 Interrupt Pending
 #define CAN_O_MSG2INT           0x00000144  // CAN Message 2 Interrupt Pending
 #define CAN_O_MSG1VAL           0x00000160  // CAN Message 1 Valid
@@ -76,12 +74,12 @@
 // The following are defines for the bit fields in the CAN_O_CTL register.
 //
 //*****************************************************************************
-#define CAN_CTL_TEST            0x00000080  // Test mode enable
-#define CAN_CTL_CCE             0x00000040  // Configuration change enable
-#define CAN_CTL_DAR             0x00000020  // Disable automatic retransmission
-#define CAN_CTL_EIE             0x00000008  // Error interrupt enable
-#define CAN_CTL_SIE             0x00000004  // Status change interrupt enable
-#define CAN_CTL_IE              0x00000002  // Module interrupt enable
+#define CAN_CTL_TEST            0x00000080  // Test Mode Enable
+#define CAN_CTL_CCE             0x00000040  // Configuration Change Enable
+#define CAN_CTL_DAR             0x00000020  // Disable Automatic-Retransmission
+#define CAN_CTL_EIE             0x00000008  // Error Interrupt Enable
+#define CAN_CTL_SIE             0x00000004  // Status Interrupt Enable
+#define CAN_CTL_IE              0x00000002  // CAN Interrupt Enable
 #define CAN_CTL_INIT            0x00000001  // Initialization
 
 //*****************************************************************************
@@ -89,19 +87,20 @@
 // The following are defines for the bit fields in the CAN_O_STS register.
 //
 //*****************************************************************************
-#define CAN_STS_BOFF            0x00000080  // Bus Off status
-#define CAN_STS_EWARN           0x00000040  // Error Warning status
-#define CAN_STS_EPASS           0x00000020  // Error Passive status
-#define CAN_STS_RXOK            0x00000010  // Received Message Successful
-#define CAN_STS_TXOK            0x00000008  // Transmitted Message Successful
+#define CAN_STS_BOFF            0x00000080  // Bus-Off Status
+#define CAN_STS_EWARN           0x00000040  // Warning Status
+#define CAN_STS_EPASS           0x00000020  // Error Passive
+#define CAN_STS_RXOK            0x00000010  // Received a Message Successfully
+#define CAN_STS_TXOK            0x00000008  // Transmitted a Message
+                                            // Successfully
 #define CAN_STS_LEC_M           0x00000007  // Last Error Code
-#define CAN_STS_LEC_NONE        0x00000000  // No error
-#define CAN_STS_LEC_STUFF       0x00000001  // Stuff error
-#define CAN_STS_LEC_FORM        0x00000002  // Form(at) error
-#define CAN_STS_LEC_ACK         0x00000003  // Ack error
-#define CAN_STS_LEC_BIT1        0x00000004  // Bit 1 error
-#define CAN_STS_LEC_BIT0        0x00000005  // Bit 0 error
-#define CAN_STS_LEC_CRC         0x00000006  // CRC error
+#define CAN_STS_LEC_NONE        0x00000000  // No Error
+#define CAN_STS_LEC_STUFF       0x00000001  // Stuff Error
+#define CAN_STS_LEC_FORM        0x00000002  // Format Error
+#define CAN_STS_LEC_ACK         0x00000003  // ACK Error
+#define CAN_STS_LEC_BIT1        0x00000004  // Bit 1 Error
+#define CAN_STS_LEC_BIT0        0x00000005  // Bit 0 Error
+#define CAN_STS_LEC_CRC         0x00000006  // CRC Error
 #define CAN_STS_LEC_NOEVENT     0x00000007  // Unused
 
 //*****************************************************************************
@@ -109,11 +108,11 @@
 // The following are defines for the bit fields in the CAN_O_ERR register.
 //
 //*****************************************************************************
-#define CAN_ERR_RP              0x00008000  // Receive error passive status
+#define CAN_ERR_RP              0x00008000  // Received Error Passive
 #define CAN_ERR_REC_M           0x00007F00  // Receive Error Counter
 #define CAN_ERR_TEC_M           0x000000FF  // Transmit Error Counter
-#define CAN_ERR_REC_S           8           // Receive error counter bit pos
-#define CAN_ERR_TEC_S           0           // Transmit error counter bit pos
+#define CAN_ERR_REC_S           8
+#define CAN_ERR_TEC_S           0
 
 //*****************************************************************************
 //
@@ -123,7 +122,7 @@
 #define CAN_BIT_TSEG2_M         0x00007000  // Time Segment after Sample Point
 #define CAN_BIT_TSEG1_M         0x00000F00  // Time Segment Before Sample Point
 #define CAN_BIT_SJW_M           0x000000C0  // (Re)Synchronization Jump Width
-#define CAN_BIT_BRP_M           0x0000003F  // Baud Rate Prescalar
+#define CAN_BIT_BRP_M           0x0000003F  // Baud Rate Prescaler
 #define CAN_BIT_TSEG2_S         12
 #define CAN_BIT_TSEG1_S         8
 #define CAN_BIT_SJW_S           6
@@ -135,7 +134,7 @@
 //
 //*****************************************************************************
 #define CAN_INT_INTID_M         0x0000FFFF  // Interrupt Identifier
-#define CAN_INT_INTID_NONE      0x00000000  // No Interrupt Pending
+#define CAN_INT_INTID_NONE      0x00000000  // No interrupt pending
 #define CAN_INT_INTID_STATUS    0x00008000  // Status Interrupt
 
 //*****************************************************************************
@@ -143,22 +142,29 @@
 // The following are defines for the bit fields in the CAN_O_TST register.
 //
 //*****************************************************************************
-#define CAN_TST_RX              0x00000080  // CAN_RX pin status
-#define CAN_TST_TX_M            0x00000060  // Overide control of CAN_TX pin
-#define CAN_TST_TX_CANCTL       0x00000000  // CAN core controls CAN_TX
-#define CAN_TST_TX_SAMPLE       0x00000020  // Sample Point on CAN_TX
-#define CAN_TST_TX_DOMINANT     0x00000040  // Dominant value on CAN_TX
-#define CAN_TST_TX_RECESSIVE    0x00000060  // Recessive value on CAN_TX
-#define CAN_TST_LBACK           0x00000010  // Loop back mode
-#define CAN_TST_SILENT          0x00000008  // Silent mode
-#define CAN_TST_BASIC           0x00000004  // Basic mode
+#define CAN_TST_RX              0x00000080  // Receive Observation
+#define CAN_TST_TX_M            0x00000060  // Transmit Control
+#define CAN_TST_TX_CANCTL       0x00000000  // CANnTx is controlled by the CAN
+                                            // module; default operation
+#define CAN_TST_TX_SAMPLE       0x00000020  // The sample point is driven on
+                                            // the CANnTx signal. This mode is
+                                            // useful to monitor bit timing
+#define CAN_TST_TX_DOMINANT     0x00000040  // CANnTx drives a low value. This
+                                            // mode is useful for checking the
+                                            // physical layer of the CAN bus
+#define CAN_TST_TX_RECESSIVE    0x00000060  // CANnTx drives a high value. This
+                                            // mode is useful for checking the
+                                            // physical layer of the CAN bus
+#define CAN_TST_LBACK           0x00000010  // Loopback Mode
+#define CAN_TST_SILENT          0x00000008  // Silent Mode
+#define CAN_TST_BASIC           0x00000004  // Basic Mode
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the CAN_O_BRPE register.
 //
 //*****************************************************************************
-#define CAN_BRPE_BRPE_M         0x0000000F  // Baud Rate Prescalar Extension
+#define CAN_BRPE_BRPE_M         0x0000000F  // Baud Rate Prescaler Extension
 #define CAN_BRPE_BRPE_S         0
 
 //*****************************************************************************

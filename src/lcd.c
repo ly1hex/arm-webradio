@@ -1,7 +1,5 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "tools.h"
 #include "io.h"
 #include "lcd.h"
@@ -16,7 +14,7 @@
 #endif
 
 
-unsigned int lcd_checkbit(unsigned long *data, unsigned int nr)
+unsigned int lcd_checkbit(const unsigned long *data, unsigned int nr)
 {
   return (data[nr/32] & (0x80000000UL>>(nr&31))); // (data[nr/32] & (1<<(nr&31)))
 }
@@ -25,14 +23,15 @@ unsigned int lcd_checkbit(unsigned long *data, unsigned int nr)
 void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
 {
   int i, x0, y0, x1, y1;
-  unsigned long *ptr, start, end;
+  unsigned long start, end;
+  const unsigned long *ptr;
 
   if((x <= -32) || (x >= LCD_WIDTH))
   {
     return;
   }
 
-  ptr = (unsigned long*)img;
+  ptr = (const unsigned long*)img;
 
   if(x < 0)
   {
@@ -121,9 +120,95 @@ void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int col
 }
 
 
-void lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
+void lcd_putlinebr(unsigned int x, unsigned int y, const char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
 {
-  unsigned int start_x=x, font_height;
+  unsigned int i, start_x=x, font_height, wlen, llen;
+  char c;
+  const char *wstart;
+
+  switch(font)
+  {
+    case SMALLFONT:  font_height=SMALLFONT_HEIGHT-1;  break;
+#ifndef LOADER
+    case NORMALFONT: font_height=NORMALFONT_HEIGHT-1; break;
+    case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
+#endif
+  }
+
+  lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
+
+  llen   = (LCD_WIDTH-x)/8;
+  wstart = s;
+  while(*s)
+  {
+    c = *s++;
+    if(c == '\n') //new line
+    {
+      lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
+      x  = start_x;
+      y += (font_height*size)+2;
+      lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
+      continue;
+    }
+
+    if(c == ' ') //start of a new word
+    {
+      wstart = s;
+    }
+
+    if((c == ' ') && (x == start_x))
+    {
+      //do nothing
+    }
+    else if(c >= 0x20)
+    {
+      i = lcd_putc(x, y, c, font, size, color, bgcolor);
+      if(i > LCD_WIDTH) //new line
+      {
+        if(c == ' ') //do not start with space
+        {
+          lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
+          x  = start_x;
+          y += (font_height*size)+2;
+          lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
+        }
+        else
+        {
+          wlen = (s-wstart);
+          if(wlen > llen) //word too long
+          {
+            lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
+            x  = start_x;
+            y += (font_height*size)+2;
+            lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
+            x = lcd_putc(x, y, c, font, size, color, bgcolor);
+          }
+          else
+          {
+            lcd_fillrect(x-(wlen*8), y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
+            x  = start_x;
+            y += (font_height*size)+2;
+            lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
+            s = wstart;
+          }
+        }
+      }
+      else
+      {
+        x = i;
+      }
+    }
+  }
+
+  lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
+
+  return;
+}
+
+
+void lcd_putline(unsigned int x, unsigned int y, const char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
+{
+  unsigned int i, font_height;
   char c;
 
   switch(font)
@@ -140,69 +225,40 @@ void lcd_putlinebr(unsigned int x, unsigned int y, const unsigned char *s, unsig
   while(*s)
   {
     c = *s++;
-    if(c == '\n') //new line
+    if(c >= 0x20)
     {
-      lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
-      x  = start_x;
-      y += (font_height*size)+2;
-      lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
-      continue;
+      i = lcd_putc(x, y, c, font, size, color, bgcolor);
+      if(i > LCD_WIDTH)
+      {
+        break;
+      }
+      else
+      {
+        x = i;
+      }
     }
+  }
 
-    x = lcd_putc(x, y, c, font, size, color, bgcolor);
-    if(x >= LCD_WIDTH) //new line
+  lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
+
+  return;
+}
+
+
+unsigned int lcd_puts(unsigned int x, unsigned int y, const char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
+{
+  char c;
+
+  while(*s)
+  {
+    c = *s++;
+    if(c >= 0x20)
     {
-      lcd_fillrect(x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
-      x  = start_x;
-      y += (font_height*size)+2;
-      lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
       x = lcd_putc(x, y, c, font, size, color, bgcolor);
-    }
-  }
-
-  return;
-}
-
-
-void lcd_putline(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
-{
-  unsigned int last_x=x, font_height;
-
-  switch(font)
-  {
-    case SMALLFONT:  font_height=SMALLFONT_HEIGHT-1;  break;
-#ifndef LOADER
-    case NORMALFONT: font_height=NORMALFONT_HEIGHT-1; break;
-    case TIMEFONT:   font_height=TIMEFONT_HEIGHT-1;   break;
-#endif
-  }
-
-  lcd_fillrect(0, y, x-1, (y+(font_height*size)), bgcolor); //clear before text
-
-  while(*s)
-  {
-    x = lcd_putc(x, y, *s++, font, size, color, bgcolor);
-    if(x >= LCD_WIDTH)
-    {
-      break;
-    }
-    last_x = x;
-  }
-
-  lcd_fillrect(last_x, y, (LCD_WIDTH-1), (y+(font_height*size)), bgcolor); //clear after text
-
-  return;
-}
-
-
-unsigned int lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
-{
-  while(*s)
-  {
-    x = lcd_putc(x, y, *s++, font, size, color, bgcolor);
-    if(x >= LCD_WIDTH)
-    {
-      break;
+      if(x > LCD_WIDTH)
+      {
+        break;
+      }
     }
   }
 
@@ -213,26 +269,26 @@ unsigned int lcd_puts(unsigned int x, unsigned int y, const unsigned char *s, un
 unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned int font, unsigned int size, unsigned int color, unsigned int bgcolor)
 {
   unsigned int ret, i, j, width, height, w, h, wh;
-  unsigned long *ptr;
+  const unsigned long *ptr;
 
   switch(font)
   {
     case SMALLFONT:
       c     -= SMALLFONT_START;
-      ptr    = (unsigned long*)&SMALLFONT_NAME[c*(SMALLFONT_WIDTH*SMALLFONT_HEIGHT/8)];
+      ptr    = (const unsigned long*)&SMALLFONT_NAME[c*(SMALLFONT_WIDTH*SMALLFONT_HEIGHT/8)];
       width  = SMALLFONT_WIDTH;
       height = SMALLFONT_HEIGHT;
       break;
 #ifndef LOADER
     case NORMALFONT:
       c     -= NORMALFONT_START;
-      ptr    = (unsigned long*)&NORMALFONT_NAME[c*(NORMALFONT_WIDTH*NORMALFONT_HEIGHT/8)];
+      ptr    = (const unsigned long*)&NORMALFONT_NAME[c*(NORMALFONT_WIDTH*NORMALFONT_HEIGHT/8)];
       width  = NORMALFONT_WIDTH;
       height = NORMALFONT_HEIGHT;
       break;
     case TIMEFONT:
       c     -= TIMEFONT_START;
-      ptr    = (unsigned long*)&TIMEFONT_NAME[c*(TIMEFONT_WIDTH*TIMEFONT_HEIGHT/8)];
+      ptr    = (const unsigned long*)&TIMEFONT_NAME[c*(TIMEFONT_WIDTH*TIMEFONT_HEIGHT/8)];
       width  = TIMEFONT_WIDTH;
       height = TIMEFONT_HEIGHT;
       break;
@@ -240,9 +296,9 @@ unsigned int lcd_putc(unsigned int x, unsigned int y, unsigned int c, unsigned i
   }
 
   ret = x+(width*size);
-  if(ret >= LCD_WIDTH)
+  if(ret > LCD_WIDTH)
   {
-    return LCD_WIDTH;
+    return LCD_WIDTH+1;
   }
 
   if(size <= 1)

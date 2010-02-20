@@ -2,7 +2,7 @@
 <session>
  <Bookmarks/>
  <Breakpoints>
-  <BreakpointListItem line="719" action="" hardwareBreakpoint="" trigger="" useHWbreakpoint="false" group="Breakpoints" type="Breakpoint" state="2" counter="0" isFunctionBreakpoint="false" filename="D:\projects\WebRadio\svn\trunk\src\menu_dlg.c" expression="" />
+  <BreakpointListItem line="713" action="" hardwareBreakpoint="" trigger="" useHWbreakpoint="false" group="Breakpoints" type="Breakpoint" state="2" counter="0" isFunctionBreakpoint="false" filename="D:\projects\WebRadio\svn\trunk\src\menu_dlg.c" expression="" />
  </Breakpoints>
  <ExecutionCountWindow/>
  <Memory1>
@@ -51,7 +51,7 @@
   <Watches active="0" update="Never" />
  </Watch4>
  <Files>
-  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\readme.txt" y="0" path="D:\projects\WebRadio\svn\trunk\src\readme.txt" left="0" selected="1" name="unnamed" top="0" />
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="D:\projects\WebRadio\svn\trunk\src\readme.txt" y="0" path="D:\projects\WebRadio\svn\trunk\src\readme.txt" left="0" selected="1" name="unnamed" top="36" />
  </Files>
- <ARMCrossStudioWindow activeProject="WebRadio" autoConnectTarget="USB CrossConnect for ARM" debugSearchFileMap="" fileDialogInitialDirectory="D:\projects\WebRadio\svn\trunk\src\lcd" fileDialogDefaultFilter="*" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
+ <ARMCrossStudioWindow activeProject="WebRadio" autoConnectTarget="USB CrossConnect for ARM" debugSearchFileMap="" fileDialogInitialDirectory="D:\projects\WebRadio\svn\trunk\src\loader\ROM_RUN" fileDialogDefaultFilter="*" autoConnectCapabilities="388991" debugSearchPath="" buildConfiguration="THUMB Flash Release" />
 </session>

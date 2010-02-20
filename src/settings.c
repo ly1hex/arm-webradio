@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include "fatfs/ff.h"
+#include "debug.h"
 #include "tools.h"
 #include "main.h"
 #include "io.h"
@@ -74,7 +75,7 @@ unsigned int settings_getplaymode(void)
 
   if(ini_getentry(SETTINGS_FILE, "PLAYMODE", value, 16) == 0)
   {
-    return atoui(value);
+    return atou(value);
   }
 
   return 0;
@@ -280,7 +281,7 @@ unsigned int settings_openitem(unsigned int item)
 {
   char value[INI_BUFLEN];
   char buf[MAX_ADDR];
-  unsigned int abort=1;
+  unsigned int cancel=1;
   int i;
   MAC_Addr mac;
   IP_Addr ip;
@@ -302,8 +303,8 @@ unsigned int settings_openitem(unsigned int item)
     {
       case F_NR:  //p1-p2
         i = atoi(value);
-        abort = dlg_nr(settingsmenu[item].name, &i, settingsmenu[item].p1, settingsmenu[item].p2, settingsmenu[item].p3);
-        if(abort == 0)
+        cancel = dlg_nr(settingsmenu[item].name, &i, settingsmenu[item].p1, settingsmenu[item].p2, settingsmenu[item].p3);
+        if(cancel == 0)
         {
           itoa(i, buf, 10);
           if(settingsmenu[item].set){ settingsmenu[item].set((void*)(int)i); }
@@ -312,8 +313,8 @@ unsigned int settings_openitem(unsigned int item)
 
       case F_OR:  //p1 or p2
         i = atoi(value);
-        abort = dlg_or(settingsmenu[item].name, &i, settingsmenu[item].p1, settingsmenu[item].p2);
-        if(abort == 0)
+        cancel = dlg_or(settingsmenu[item].name, &i, settingsmenu[item].p1, settingsmenu[item].p2);
+        if(cancel == 0)
         {
           itoa(i, buf, 10);
           if(settingsmenu[item].set){ settingsmenu[item].set((void*)(int)i); }
@@ -321,8 +322,8 @@ unsigned int settings_openitem(unsigned int item)
         break;
 
       case F_STR: //p1=max len
-        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
-        if(abort == 0)
+        cancel = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
+        if(cancel == 0)
         {
           if(settingsmenu[item].set){ settingsmenu[item].set(buf); }
         }
@@ -330,8 +331,8 @@ unsigned int settings_openitem(unsigned int item)
 
       case F_MAC:
         mac = atomac(value);
-        abort = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
-        if(abort == 0)
+        cancel = dlg_str(settingsmenu[item].name, value, settingsmenu[item].p1, buf, MAX_ADDR);
+        if(cancel == 0)
         {
           //if(settingsmenu[item].set){ settingsmenu[item].set((void*)(MAC_Addr)atomac(buf)); }
         }
@@ -339,8 +340,8 @@ unsigned int settings_openitem(unsigned int item)
 
       case F_IP:
         ip = atoip(value);
-        abort = dlg_ip(settingsmenu[item].name, &ip);
-        if(abort == 0)
+        cancel = dlg_ip(settingsmenu[item].name, &ip);
+        if(cancel == 0)
         {
           strcpy(buf, iptoa(ip));
           if(settingsmenu[item].set){ settingsmenu[item].set((void*)(IP_Addr)ip); }
@@ -349,8 +350,8 @@ unsigned int settings_openitem(unsigned int item)
 
       case F_RGB:
         rgb = atorgb(value);
-        abort = dlg_rgb(settingsmenu[item].name, &rgb);
-        if(abort == 0)
+        cancel = dlg_rgb(settingsmenu[item].name, &rgb);
+        if(cancel == 0)
         {
           sprintf(buf, "%03i,%03i,%03i", GET_RED(rgb), GET_GREEN(rgb), GET_BLUE(rgb));
           if(settingsmenu[item].set){ settingsmenu[item].set((void*)(unsigned int)rgb); }
@@ -376,15 +377,15 @@ unsigned int settings_openitem(unsigned int item)
                                   "DNS  %i.%i.%i.%i\n"
                                   "NTP  %i.%i.%i.%i",
                  mactoa(eth_getmac()),
-                 (eth_getip()     >>0)&0xFF, (eth_getip()     >>8)&0xFF, (eth_getip()     >>16)&0xFF, (eth_getip()     >>24)&0xFF,
-                 (eth_getnetmask()>>0)&0xFF, (eth_getnetmask()>>8)&0xFF, (eth_getnetmask()>>16)&0xFF, (eth_getnetmask()>>24)&0xFF,
-                 (eth_getrouter() >>0)&0xFF, (eth_getrouter() >>8)&0xFF, (eth_getrouter() >>16)&0xFF, (eth_getrouter() >>24)&0xFF,
-                 (eth_getdns()    >>0)&0xFF, (eth_getdns()    >>8)&0xFF, (eth_getdns()    >>16)&0xFF, (eth_getdns()    >>24)&0xFF,
-                 (eth_getntp()    >>0)&0xFF, (eth_getntp()    >>8)&0xFF, (eth_getntp()    >>16)&0xFF, (eth_getntp()    >>24)&0xFF);
+                 (int)((eth_getip()     >>0)&0xFF), (int)((eth_getip()     >>8)&0xFF), (int)((eth_getip()     >>16)&0xFF), (int)((eth_getip()     >>24)&0xFF),
+                 (int)((eth_getnetmask()>>0)&0xFF), (int)((eth_getnetmask()>>8)&0xFF), (int)((eth_getnetmask()>>16)&0xFF), (int)((eth_getnetmask()>>24)&0xFF),
+                 (int)((eth_getrouter() >>0)&0xFF), (int)((eth_getrouter() >>8)&0xFF), (int)((eth_getrouter() >>16)&0xFF), (int)((eth_getrouter() >>24)&0xFF),
+                 (int)((eth_getdns()    >>0)&0xFF), (int)((eth_getdns()    >>8)&0xFF), (int)((eth_getdns()    >>16)&0xFF), (int)((eth_getdns()    >>24)&0xFF),
+                 (int)((eth_getntp()    >>0)&0xFF), (int)((eth_getntp()    >>8)&0xFF), (int)((eth_getntp()    >>16)&0xFF), (int)((eth_getntp()    >>24)&0xFF));
         dlg_msg(APPNAME" v"APPVERSION, buf);
         break;
     }
-    if(abort == 0)
+    if(cancel == 0)
     {
       ini_setentry(SETTINGS_FILE, settingsmenu[item].ini, buf);
     }

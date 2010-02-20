@@ -2,26 +2,23 @@
 //
 // hw_i2c.h - Macros used when accessing the I2C master and slave hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,8 +27,7 @@
 
 //*****************************************************************************
 //
-// The following are defines for the offsets between the I2C master and slave
-// registers.
+// The following are defines for the I2C register offsets.
 //
 //*****************************************************************************
 #define I2C_O_MSA               0x00000000  // I2C Master Slave Address
@@ -59,7 +55,7 @@
 //
 //*****************************************************************************
 #define I2C_MSA_SA_M            0x000000FE  // I2C Slave Address
-#define I2C_MSA_RS              0x00000001  // Receive not Send
+#define I2C_MSA_RS              0x00000001  // Receive not send
 #define I2C_MSA_SA_S            1
 
 //*****************************************************************************
@@ -173,7 +169,7 @@
 //*****************************************************************************
 #define I2C_SICR_STOPIC         0x00000004  // Stop Condition Interrupt Clear
 #define I2C_SICR_STARTIC        0x00000002  // Start Condition Interrupt Clear
-#define I2C_SICR_DATAIC         0x00000001  // Data Clear Interrupt
+#define I2C_SICR_DATAIC         0x00000001  // Data Interrupt Clear
 
 //*****************************************************************************
 //
@@ -207,8 +203,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the offsets between the I2C master
-// and slave registers.
+// The following are deprecated defines for the I2C register offsets.
 //
 //*****************************************************************************
 #define I2C_O_SLAVE             0x00000800  // Offset from master to slave

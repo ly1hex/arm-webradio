@@ -2,26 +2,23 @@
 //
 // hw_pwm.h - Defines and Macros for Pulse Width Modulation (PWM) ports.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,18 +27,18 @@
 
 //*****************************************************************************
 //
-// The following are defines for the PWM Module Register offsets.
+// The following are defines for the PWM register offsets.
 //
 //*****************************************************************************
-#define PWM_O_CTL               0x00000000  // PWM Master Control register
-#define PWM_O_SYNC              0x00000004  // PWM Time Base Sync register
-#define PWM_O_ENABLE            0x00000008  // PWM Output Enable register
-#define PWM_O_INVERT            0x0000000C  // PWM Output Inversion register
-#define PWM_O_FAULT             0x00000010  // PWM Output Fault register
-#define PWM_O_INTEN             0x00000014  // PWM Interrupt Enable register
-#define PWM_O_RIS               0x00000018  // PWM Interrupt Raw Status reg
-#define PWM_O_ISC               0x0000001C  // PWM Interrupt Status register
-#define PWM_O_STATUS            0x00000020  // PWM Status register
+#define PWM_O_CTL               0x00000000  // PWM Master Control
+#define PWM_O_SYNC              0x00000004  // PWM Time Base Sync
+#define PWM_O_ENABLE            0x00000008  // PWM Output Enable
+#define PWM_O_INVERT            0x0000000C  // PWM Output Inversion
+#define PWM_O_FAULT             0x00000010  // PWM Output Fault
+#define PWM_O_INTEN             0x00000014  // PWM Interrupt Enable
+#define PWM_O_RIS               0x00000018  // PWM Raw Interrupt Status
+#define PWM_O_ISC               0x0000001C  // PWM Interrupt Status and Clear
+#define PWM_O_STATUS            0x00000020  // PWM Status
 #define PWM_O_FAULTVAL          0x00000024  // PWM Fault Condition Value
 #define PWM_O_0_CTL             0x00000040  // PWM0 Control
 #define PWM_O_0_INTEN           0x00000044  // PWM0 Interrupt and Trigger
@@ -62,7 +59,8 @@
 #define PWM_O_0_FLTSRC1         0x00000078  // PWM0 Fault Source 1
 #define PWM_O_0_MINFLTPER       0x0000007C  // PWM0 Minimum Fault Period
 #define PWM_O_1_CTL             0x00000080  // PWM1 Control
-#define PWM_O_1_INTEN           0x00000084  // PWM1 Interrupt Enable
+#define PWM_O_1_INTEN           0x00000084  // PWM1 Interrupt and Trigger
+                                            // Enable
 #define PWM_O_1_RIS             0x00000088  // PWM1 Raw Interrupt Status
 #define PWM_O_1_ISC             0x0000008C  // PWM1 Interrupt Status and Clear
 #define PWM_O_1_LOAD            0x00000090  // PWM1 Load
@@ -79,7 +77,8 @@
 #define PWM_O_1_FLTSRC1         0x000000B8  // PWM1 Fault Source 1
 #define PWM_O_1_MINFLTPER       0x000000BC  // PWM1 Minimum Fault Period
 #define PWM_O_2_CTL             0x000000C0  // PWM2 Control
-#define PWM_O_2_INTEN           0x000000C4  // PWM2 InterruptEnable
+#define PWM_O_2_INTEN           0x000000C4  // PWM2 Interrupt and Trigger
+                                            // Enable
 #define PWM_O_2_RIS             0x000000C8  // PWM2 Raw Interrupt Status
 #define PWM_O_2_ISC             0x000000CC  // PWM2 Interrupt Status and Clear
 #define PWM_O_2_LOAD            0x000000D0  // PWM2 Load
@@ -141,52 +140,52 @@
 // The following are defines for the bit fields in the PWM_O_SYNC register.
 //
 //*****************************************************************************
-#define PWM_SYNC_SYNC3          0x00000008  // Reset generator 3 counter
-#define PWM_SYNC_SYNC2          0x00000004  // Reset generator 2 counter
-#define PWM_SYNC_SYNC1          0x00000002  // Reset generator 1 counter
-#define PWM_SYNC_SYNC0          0x00000001  // Reset generator 0 counter
+#define PWM_SYNC_SYNC3          0x00000008  // Reset Generator 3 Counter
+#define PWM_SYNC_SYNC2          0x00000004  // Reset Generator 2 Counter
+#define PWM_SYNC_SYNC1          0x00000002  // Reset Generator 1 Counter
+#define PWM_SYNC_SYNC0          0x00000001  // Reset Generator 0 Counter
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the PWM_O_ENABLE register.
 //
 //*****************************************************************************
-#define PWM_ENABLE_PWM7EN       0x00000080  // PWM7 pin enable
-#define PWM_ENABLE_PWM6EN       0x00000040  // PWM6 pin enable
-#define PWM_ENABLE_PWM5EN       0x00000020  // PWM5 pin enable
-#define PWM_ENABLE_PWM4EN       0x00000010  // PWM4 pin enable
-#define PWM_ENABLE_PWM3EN       0x00000008  // PWM3 pin enable
-#define PWM_ENABLE_PWM2EN       0x00000004  // PWM2 pin enable
-#define PWM_ENABLE_PWM1EN       0x00000002  // PWM1 pin enable
-#define PWM_ENABLE_PWM0EN       0x00000001  // PWM0 pin enable
+#define PWM_ENABLE_PWM7EN       0x00000080  // PWM7 Output Enable
+#define PWM_ENABLE_PWM6EN       0x00000040  // PWM6 Output Enable
+#define PWM_ENABLE_PWM5EN       0x00000020  // PWM5 Output Enable
+#define PWM_ENABLE_PWM4EN       0x00000010  // PWM4 Output Enable
+#define PWM_ENABLE_PWM3EN       0x00000008  // PWM3 Output Enable
+#define PWM_ENABLE_PWM2EN       0x00000004  // PWM2 Output Enable
+#define PWM_ENABLE_PWM1EN       0x00000002  // PWM1 Output Enable
+#define PWM_ENABLE_PWM0EN       0x00000001  // PWM0 Output Enable
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the PWM_O_INVERT register.
 //
 //*****************************************************************************
-#define PWM_INVERT_PWM7INV      0x00000080  // PWM7 pin invert
-#define PWM_INVERT_PWM6INV      0x00000040  // PWM6 pin invert
-#define PWM_INVERT_PWM5INV      0x00000020  // PWM5 pin invert
-#define PWM_INVERT_PWM4INV      0x00000010  // PWM4 pin invert
-#define PWM_INVERT_PWM3INV      0x00000008  // PWM3 pin invert
-#define PWM_INVERT_PWM2INV      0x00000004  // PWM2 pin invert
-#define PWM_INVERT_PWM1INV      0x00000002  // PWM1 pin invert
-#define PWM_INVERT_PWM0INV      0x00000001  // PWM0 pin invert
+#define PWM_INVERT_PWM7INV      0x00000080  // Invert PWM7 Signal
+#define PWM_INVERT_PWM6INV      0x00000040  // Invert PWM6 Signal
+#define PWM_INVERT_PWM5INV      0x00000020  // Invert PWM5 Signal
+#define PWM_INVERT_PWM4INV      0x00000010  // Invert PWM4 Signal
+#define PWM_INVERT_PWM3INV      0x00000008  // Invert PWM3 Signal
+#define PWM_INVERT_PWM2INV      0x00000004  // Invert PWM2 Signal
+#define PWM_INVERT_PWM1INV      0x00000002  // Invert PWM1 Signal
+#define PWM_INVERT_PWM0INV      0x00000001  // Invert PWM0 Signal
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the PWM_O_FAULT register.
 //
 //*****************************************************************************
-#define PWM_FAULT_FAULT7        0x00000080  // PWM7 pin fault
-#define PWM_FAULT_FAULT6        0x00000040  // PWM6 pin fault
-#define PWM_FAULT_FAULT5        0x00000020  // PWM5 pin fault
-#define PWM_FAULT_FAULT4        0x00000010  // PWM4 pin fault
-#define PWM_FAULT_FAULT3        0x00000008  // PWM3 pin fault
-#define PWM_FAULT_FAULT2        0x00000004  // PWM2 pin fault
-#define PWM_FAULT_FAULT1        0x00000002  // PWM1 pin fault
-#define PWM_FAULT_FAULT0        0x00000001  // PWM0 pin fault
+#define PWM_FAULT_FAULT7        0x00000080  // PWM7 Fault
+#define PWM_FAULT_FAULT6        0x00000040  // PWM6 Fault
+#define PWM_FAULT_FAULT5        0x00000020  // PWM5 Fault
+#define PWM_FAULT_FAULT4        0x00000010  // PWM4 Fault
+#define PWM_FAULT_FAULT3        0x00000008  // PWM3 Fault
+#define PWM_FAULT_FAULT2        0x00000004  // PWM2 Fault
+#define PWM_FAULT_FAULT1        0x00000002  // PWM1 Fault
+#define PWM_FAULT_FAULT0        0x00000001  // PWM0 Fault
 
 //*****************************************************************************
 //
@@ -238,10 +237,10 @@
 // The following are defines for the bit fields in the PWM_O_STATUS register.
 //
 //*****************************************************************************
-#define PWM_STATUS_FAULT3       0x00000008  // Fault3 Interrupt Status
-#define PWM_STATUS_FAULT2       0x00000004  // Fault2 Interrupt Status
-#define PWM_STATUS_FAULT1       0x00000002  // Fault1 Interrupt Status
-#define PWM_STATUS_FAULT0       0x00000001  // Fault0 Interrupt Status
+#define PWM_STATUS_FAULT3       0x00000008  // Generator 3 Fault Status
+#define PWM_STATUS_FAULT2       0x00000004  // Generator 2 Fault Status
+#define PWM_STATUS_FAULT1       0x00000002  // Generator 1 Fault Status
+#define PWM_STATUS_FAULT0       0x00000001  // Generator 0 Fault Status
 
 //*****************************************************************************
 //
@@ -259,40 +258,13 @@
 
 //*****************************************************************************
 //
-// The following are defines for the PWM Generator standard offsets.
-//
-//*****************************************************************************
-#define PWM_O_X_CTL             0x00000000  // Gen Control Reg
-#define PWM_O_X_INTEN           0x00000004  // Gen Int/Trig Enable Reg
-#define PWM_O_X_RIS             0x00000008  // Gen Raw Int Status Reg
-#define PWM_O_X_ISC             0x0000000C  // Gen Int Status Reg
-#define PWM_O_X_LOAD            0x00000010  // Gen Load Reg
-#define PWM_O_X_COUNT           0x00000014  // Gen Counter Reg
-#define PWM_O_X_CMPA            0x00000018  // Gen Compare A Reg
-#define PWM_O_X_CMPB            0x0000001C  // Gen Compare B Reg
-#define PWM_O_X_GENA            0x00000020  // Gen Generator A Ctrl Reg
-#define PWM_O_X_GENB            0x00000024  // Gen Generator B Ctrl Reg
-#define PWM_O_X_DBCTL           0x00000028  // Gen Dead Band Ctrl Reg
-#define PWM_O_X_DBRISE          0x0000002C  // Gen DB Rising Edge Delay Reg
-#define PWM_O_X_DBFALL          0x00000030  // Gen DB Falling Edge Delay Reg
-#define PWM_O_X_FLTSRC0         0x00000034  // Fault pin, comparator condition
-#define PWM_O_X_FLTSRC1         0x00000038  // Digital comparator condition
-#define PWM_O_X_MINFLTPER       0x0000003C  // Fault minimum period extension
-#define PWM_GEN_0_OFFSET        0x00000040  // PWM0 base
-#define PWM_GEN_1_OFFSET        0x00000080  // PWM1 base
-#define PWM_GEN_2_OFFSET        0x000000C0  // PWM2 base
-#define PWM_GEN_3_OFFSET        0x00000100  // PWM3 base
-
-//*****************************************************************************
-//
-// The following are defines for the PWM_X Control Register bit definitions.
+// The following are defines for the bit fields in the PWM_O_X_CTL register.
 //
 //*****************************************************************************
 #define PWM_X_CTL_LATCH         0x00040000  // Latch Fault Input
-#define PWM_X_CTL_MINFLTPER     0x00020000  // Minimum fault period enabled
+#define PWM_X_CTL_MINFLTPER     0x00020000  // Minimum Fault Period
 #define PWM_X_CTL_FLTSRC        0x00010000  // Fault Condition Source
-#define PWM_X_CTL_DBFALLUPD_M   0x0000C000  // Specifies the update mode for
-                                            // the PWMnDBFALL register
+#define PWM_X_CTL_DBFALLUPD_M   0x0000C000  // PWMnDBFALL Update Mode
 #define PWM_X_CTL_DBFALLUPD_I   0x00000000  // Immediate
 #define PWM_X_CTL_DBFALLUPD_LS  0x00008000  // Locally Synchronized
 #define PWM_X_CTL_DBFALLUPD_GS  0x0000C000  // Globally Synchronized
@@ -312,57 +284,50 @@
 #define PWM_X_CTL_GENAUPD_I     0x00000000  // Immediate
 #define PWM_X_CTL_GENAUPD_LS    0x00000080  // Locally Synchronized
 #define PWM_X_CTL_GENAUPD_GS    0x000000C0  // Globally Synchronized
-#define PWM_X_CTL_CMPBUPD       0x00000020  // Update mode for comp B reg
-#define PWM_X_CTL_CMPAUPD       0x00000010  // Update mode for comp A reg
-#define PWM_X_CTL_LOADUPD       0x00000008  // Update mode for the load reg
-#define PWM_X_CTL_DEBUG         0x00000004  // Debug mode
-#define PWM_X_CTL_MODE          0x00000002  // Counter mode, down or up/down
-#define PWM_X_CTL_ENABLE        0x00000001  // Master enable for gen block
+#define PWM_X_CTL_CMPBUPD       0x00000020  // Comparator B Update Mode
+#define PWM_X_CTL_CMPAUPD       0x00000010  // Comparator A Update Mode
+#define PWM_X_CTL_LOADUPD       0x00000008  // Load Register Update Mode
+#define PWM_X_CTL_DEBUG         0x00000004  // Debug Mode
+#define PWM_X_CTL_MODE          0x00000002  // Counter Mode
+#define PWM_X_CTL_ENABLE        0x00000001  // PWM Block Enable
 
 //*****************************************************************************
 //
-// The following are defines for the PWM Generator extended offsets.
+// The following are defines for the bit fields in the PWM_O_X_INTEN register.
 //
 //*****************************************************************************
-#define PWM_O_X_FLTSEN          0x00000000  // Fault logic sense
-#define PWM_O_X_FLTSTAT0        0x00000004  // Pin and comparator status
-#define PWM_O_X_FLTSTAT1        0x00000008  // Digital comparator status
-#define PWM_EXT_0_OFFSET        0x00000800  // PWM0 extended base
-#define PWM_EXT_1_OFFSET        0x00000880  // PWM1 extended base
-#define PWM_EXT_2_OFFSET        0x00000900  // PWM2 extended base
-#define PWM_EXT_3_OFFSET        0x00000980  // PWM3 extended base
+#define PWM_X_INTEN_TRCMPBD     0x00002000  // Trigger for Counter=PWMnCMPB
+                                            // Down
+#define PWM_X_INTEN_TRCMPBU     0x00001000  // Trigger for Counter=PWMnCMPB Up
+#define PWM_X_INTEN_TRCMPAD     0x00000800  // Trigger for Counter=PWMnCMPA
+                                            // Down
+#define PWM_X_INTEN_TRCMPAU     0x00000400  // Trigger for Counter=PWMnCMPA Up
+#define PWM_X_INTEN_TRCNTLOAD   0x00000200  // Trigger for Counter=PWMnLOAD
+#define PWM_X_INTEN_TRCNTZERO   0x00000100  // Trigger for Counter=0
+#define PWM_X_INTEN_INTCMPBD    0x00000020  // Interrupt for Counter=PWMnCMPB
+                                            // Down
+#define PWM_X_INTEN_INTCMPBU    0x00000010  // Interrupt for Counter=PWMnCMPB
+                                            // Up
+#define PWM_X_INTEN_INTCMPAD    0x00000008  // Interrupt for Counter=PWMnCMPA
+                                            // Down
+#define PWM_X_INTEN_INTCMPAU    0x00000004  // Interrupt for Counter=PWMnCMPA
+                                            // Up
+#define PWM_X_INTEN_INTCNTLOAD  0x00000002  // Interrupt for Counter=PWMnLOAD
+#define PWM_X_INTEN_INTCNTZERO  0x00000001  // Interrupt for Counter=0
 
 //*****************************************************************************
 //
-// The following are defines for the PWM_X Interrupt/Trigger Enable Register
-// bit definitions.
+// The following are defines for the bit fields in the PWM_O_X_RIS register.
 //
 //*****************************************************************************
-#define PWM_X_INTEN_TRCMPBD     0x00002000  // Trig if COUNT = CMPB D
-#define PWM_X_INTEN_TRCMPBU     0x00001000  // Trig if COUNT = CMPB U
-#define PWM_X_INTEN_TRCMPAD     0x00000800  // Trig if COUNT = CMPA D
-#define PWM_X_INTEN_TRCMPAU     0x00000400  // Trig if COUNT = CMPA U
-#define PWM_X_INTEN_TRCNTLOAD   0x00000200  // Trig if COUNT = LOAD
-#define PWM_X_INTEN_TRCNTZERO   0x00000100  // Trig if COUNT = 0
-#define PWM_X_INTEN_INTCMPBD    0x00000020  // Int if COUNT = CMPA D
-#define PWM_X_INTEN_INTCMPBU    0x00000010  // Int if COUNT = CMPA U
-#define PWM_X_INTEN_INTCMPAD    0x00000008  // Int if COUNT = CMPA D
-#define PWM_X_INTEN_INTCMPAU    0x00000004  // Int if COUNT = CMPA U
-#define PWM_X_INTEN_INTCNTLOAD  0x00000002  // Int if COUNT = LOAD
-#define PWM_X_INTEN_INTCNTZERO  0x00000001  // Int if COUNT = 0
-
-//*****************************************************************************
-//
-// The following are defines for the PWM_X Raw Interrupt Status Register bit
-// definitions.
-//
-//*****************************************************************************
-#define PWM_X_RIS_INTCMPBD      0x00000020  // PWM_X_COUNT = PWM_X_CMPB D int
-#define PWM_X_RIS_INTCMPBU      0x00000010  // PWM_X_COUNT = PWM_X_CMPB U int
-#define PWM_X_RIS_INTCMPAD      0x00000008  // PWM_X_COUNT = PWM_X_CMPA D int
-#define PWM_X_RIS_INTCMPAU      0x00000004  // PWM_X_COUNT = PWM_X_CMPA U int
-#define PWM_X_RIS_INTCNTLOAD    0x00000002  // PWM_X_COUNT = PWM_X_LOAD int
-#define PWM_X_RIS_INTCNTZERO    0x00000001  // PWM_X_COUNT = 0 int
+#define PWM_X_RIS_INTCMPBD      0x00000020  // Comparator B Down Interrupt
+                                            // Status
+#define PWM_X_RIS_INTCMPBU      0x00000010  // Comparator B Up Interrupt Status
+#define PWM_X_RIS_INTCMPAD      0x00000008  // Comparator A Down Interrupt
+                                            // Status
+#define PWM_X_RIS_INTCMPAU      0x00000004  // Comparator A Up Interrupt Status
+#define PWM_X_RIS_INTCNTLOAD    0x00000002  // Counter=Load Interrupt Status
+#define PWM_X_RIS_INTCNTZERO    0x00000001  // Counter=0 Interrupt Status
 
 //*****************************************************************************
 //
@@ -416,41 +381,41 @@
 #define PWM_X_GENA_ACTCMPBD_M   0x00000C00  // Action for Comparator B Down
 #define PWM_X_GENA_ACTCMPBD_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENA_ACTCMPBD_INV 0x00000400  // Invert the output signal
+#define PWM_X_GENA_ACTCMPBD_INV 0x00000400  // Invert pwmA
 #define PWM_X_GENA_ACTCMPBD_ZERO \
-                                0x00000800  // Set the output signal to 0
-#define PWM_X_GENA_ACTCMPBD_ONE 0x00000C00  // Set the output signal to 1
+                                0x00000800  // Drive pwmA Low
+#define PWM_X_GENA_ACTCMPBD_ONE 0x00000C00  // Drive pwmA High
 #define PWM_X_GENA_ACTCMPBU_M   0x00000300  // Action for Comparator B Up
 #define PWM_X_GENA_ACTCMPBU_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENA_ACTCMPBU_INV 0x00000100  // Invert the output signal
+#define PWM_X_GENA_ACTCMPBU_INV 0x00000100  // Invert pwmA
 #define PWM_X_GENA_ACTCMPBU_ZERO \
-                                0x00000200  // Set the output signal to 0
-#define PWM_X_GENA_ACTCMPBU_ONE 0x00000300  // Set the output signal to 1
+                                0x00000200  // Drive pwmA Low
+#define PWM_X_GENA_ACTCMPBU_ONE 0x00000300  // Drive pwmA High
 #define PWM_X_GENA_ACTCMPAD_M   0x000000C0  // Action for Comparator A Down
 #define PWM_X_GENA_ACTCMPAD_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENA_ACTCMPAD_INV 0x00000040  // Invert the output signal
+#define PWM_X_GENA_ACTCMPAD_INV 0x00000040  // Invert pwmA
 #define PWM_X_GENA_ACTCMPAD_ZERO \
-                                0x00000080  // Set the output signal to 0
-#define PWM_X_GENA_ACTCMPAD_ONE 0x000000C0  // Set the output signal to 1
+                                0x00000080  // Drive pwmA Low
+#define PWM_X_GENA_ACTCMPAD_ONE 0x000000C0  // Drive pwmA High
 #define PWM_X_GENA_ACTCMPAU_M   0x00000030  // Action for Comparator A Up
 #define PWM_X_GENA_ACTCMPAU_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENA_ACTCMPAU_INV 0x00000010  // Invert the output signal
+#define PWM_X_GENA_ACTCMPAU_INV 0x00000010  // Invert pwmA
 #define PWM_X_GENA_ACTCMPAU_ZERO \
-                                0x00000020  // Set the output signal to 0
-#define PWM_X_GENA_ACTCMPAU_ONE 0x00000030  // Set the output signal to 1
-#define PWM_X_GENA_ACTLOAD_M    0x0000000C  // Action for Counter=Load
+                                0x00000020  // Drive pwmA Low
+#define PWM_X_GENA_ACTCMPAU_ONE 0x00000030  // Drive pwmA High
+#define PWM_X_GENA_ACTLOAD_M    0x0000000C  // Action for Counter=LOAD
 #define PWM_X_GENA_ACTLOAD_NONE 0x00000000  // Do nothing
-#define PWM_X_GENA_ACTLOAD_INV  0x00000004  // Invert the output signal
-#define PWM_X_GENA_ACTLOAD_ZERO 0x00000008  // Set the output signal to 0
-#define PWM_X_GENA_ACTLOAD_ONE  0x0000000C  // Set the output signal to 1
+#define PWM_X_GENA_ACTLOAD_INV  0x00000004  // Invert pwmA
+#define PWM_X_GENA_ACTLOAD_ZERO 0x00000008  // Drive pwmA Low
+#define PWM_X_GENA_ACTLOAD_ONE  0x0000000C  // Drive pwmA High
 #define PWM_X_GENA_ACTZERO_M    0x00000003  // Action for Counter=0
 #define PWM_X_GENA_ACTZERO_NONE 0x00000000  // Do nothing
-#define PWM_X_GENA_ACTZERO_INV  0x00000001  // Invert the output signal
-#define PWM_X_GENA_ACTZERO_ZERO 0x00000002  // Set the output signal to 0
-#define PWM_X_GENA_ACTZERO_ONE  0x00000003  // Set the output signal to 1
+#define PWM_X_GENA_ACTZERO_INV  0x00000001  // Invert pwmA
+#define PWM_X_GENA_ACTZERO_ZERO 0x00000002  // Drive pwmA Low
+#define PWM_X_GENA_ACTZERO_ONE  0x00000003  // Drive pwmA High
 
 //*****************************************************************************
 //
@@ -460,41 +425,41 @@
 #define PWM_X_GENB_ACTCMPBD_M   0x00000C00  // Action for Comparator B Down
 #define PWM_X_GENB_ACTCMPBD_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENB_ACTCMPBD_INV 0x00000400  // Invert the output signal
+#define PWM_X_GENB_ACTCMPBD_INV 0x00000400  // Invert pwmB
 #define PWM_X_GENB_ACTCMPBD_ZERO \
-                                0x00000800  // Set the output signal to 0
-#define PWM_X_GENB_ACTCMPBD_ONE 0x00000C00  // Set the output signal to 1
+                                0x00000800  // Drive pwmB Low
+#define PWM_X_GENB_ACTCMPBD_ONE 0x00000C00  // Drive pwmB High
 #define PWM_X_GENB_ACTCMPBU_M   0x00000300  // Action for Comparator B Up
 #define PWM_X_GENB_ACTCMPBU_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENB_ACTCMPBU_INV 0x00000100  // Invert the output signal
+#define PWM_X_GENB_ACTCMPBU_INV 0x00000100  // Invert pwmB
 #define PWM_X_GENB_ACTCMPBU_ZERO \
-                                0x00000200  // Set the output signal to 0
-#define PWM_X_GENB_ACTCMPBU_ONE 0x00000300  // Set the output signal to 1
+                                0x00000200  // Drive pwmB Low
+#define PWM_X_GENB_ACTCMPBU_ONE 0x00000300  // Drive pwmB High
 #define PWM_X_GENB_ACTCMPAD_M   0x000000C0  // Action for Comparator A Down
 #define PWM_X_GENB_ACTCMPAD_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENB_ACTCMPAD_INV 0x00000040  // Invert the output signal
+#define PWM_X_GENB_ACTCMPAD_INV 0x00000040  // Invert pwmB
 #define PWM_X_GENB_ACTCMPAD_ZERO \
-                                0x00000080  // Set the output signal to 0
-#define PWM_X_GENB_ACTCMPAD_ONE 0x000000C0  // Set the output signal to 1
+                                0x00000080  // Drive pwmB Low
+#define PWM_X_GENB_ACTCMPAD_ONE 0x000000C0  // Drive pwmB High
 #define PWM_X_GENB_ACTCMPAU_M   0x00000030  // Action for Comparator A Up
 #define PWM_X_GENB_ACTCMPAU_NONE \
                                 0x00000000  // Do nothing
-#define PWM_X_GENB_ACTCMPAU_INV 0x00000010  // Invert the output signal
+#define PWM_X_GENB_ACTCMPAU_INV 0x00000010  // Invert pwmB
 #define PWM_X_GENB_ACTCMPAU_ZERO \
-                                0x00000020  // Set the output signal to 0
-#define PWM_X_GENB_ACTCMPAU_ONE 0x00000030  // Set the output signal to 1
-#define PWM_X_GENB_ACTLOAD_M    0x0000000C  // Action for Counter=Load
+                                0x00000020  // Drive pwmB Low
+#define PWM_X_GENB_ACTCMPAU_ONE 0x00000030  // Drive pwmB High
+#define PWM_X_GENB_ACTLOAD_M    0x0000000C  // Action for Counter=LOAD
 #define PWM_X_GENB_ACTLOAD_NONE 0x00000000  // Do nothing
-#define PWM_X_GENB_ACTLOAD_INV  0x00000004  // Invert the output signal
-#define PWM_X_GENB_ACTLOAD_ZERO 0x00000008  // Set the output signal to 0
-#define PWM_X_GENB_ACTLOAD_ONE  0x0000000C  // Set the output signal to 1
+#define PWM_X_GENB_ACTLOAD_INV  0x00000004  // Invert pwmB
+#define PWM_X_GENB_ACTLOAD_ZERO 0x00000008  // Drive pwmB Low
+#define PWM_X_GENB_ACTLOAD_ONE  0x0000000C  // Drive pwmB High
 #define PWM_X_GENB_ACTZERO_M    0x00000003  // Action for Counter=0
 #define PWM_X_GENB_ACTZERO_NONE 0x00000000  // Do nothing
-#define PWM_X_GENB_ACTZERO_INV  0x00000001  // Invert the output signal
-#define PWM_X_GENB_ACTZERO_ZERO 0x00000002  // Set the output signal to 0
-#define PWM_X_GENB_ACTZERO_ONE  0x00000003  // Set the output signal to 1
+#define PWM_X_GENB_ACTZERO_INV  0x00000001  // Invert pwmB
+#define PWM_X_GENB_ACTZERO_ZERO 0x00000002  // Drive pwmB Low
+#define PWM_X_GENB_ACTZERO_ONE  0x00000003  // Drive pwmB High
 
 //*****************************************************************************
 //
@@ -525,10 +490,10 @@
 // register.
 //
 //*****************************************************************************
-#define PWM_X_FLTSRC0_FAULT3    0x00000008  // Fault3
-#define PWM_X_FLTSRC0_FAULT2    0x00000004  // Fault2
-#define PWM_X_FLTSRC0_FAULT1    0x00000002  // Fault1
-#define PWM_X_FLTSRC0_FAULT0    0x00000001  // Fault0
+#define PWM_X_FLTSRC0_FAULT3    0x00000008  // Fault3 Input
+#define PWM_X_FLTSRC0_FAULT2    0x00000004  // Fault2 Input
+#define PWM_X_FLTSRC0_FAULT1    0x00000002  // Fault1 Input
+#define PWM_X_FLTSRC0_FAULT0    0x00000001  // Fault0 Input
 
 //*****************************************************************************
 //
@@ -592,6 +557,45 @@
 
 //*****************************************************************************
 //
+// The following are defines for the PWM Generator standard offsets.
+//
+//*****************************************************************************
+#define PWM_O_X_CTL             0x00000000  // Gen Control Reg
+#define PWM_O_X_INTEN           0x00000004  // Gen Int/Trig Enable Reg
+#define PWM_O_X_RIS             0x00000008  // Gen Raw Int Status Reg
+#define PWM_O_X_ISC             0x0000000C  // Gen Int Status Reg
+#define PWM_O_X_LOAD            0x00000010  // Gen Load Reg
+#define PWM_O_X_COUNT           0x00000014  // Gen Counter Reg
+#define PWM_O_X_CMPA            0x00000018  // Gen Compare A Reg
+#define PWM_O_X_CMPB            0x0000001C  // Gen Compare B Reg
+#define PWM_O_X_GENA            0x00000020  // Gen Generator A Ctrl Reg
+#define PWM_O_X_GENB            0x00000024  // Gen Generator B Ctrl Reg
+#define PWM_O_X_DBCTL           0x00000028  // Gen Dead Band Ctrl Reg
+#define PWM_O_X_DBRISE          0x0000002C  // Gen DB Rising Edge Delay Reg
+#define PWM_O_X_DBFALL          0x00000030  // Gen DB Falling Edge Delay Reg
+#define PWM_O_X_FLTSRC0         0x00000034  // Fault pin, comparator condition
+#define PWM_O_X_FLTSRC1         0x00000038  // Digital comparator condition
+#define PWM_O_X_MINFLTPER       0x0000003C  // Fault minimum period extension
+#define PWM_GEN_0_OFFSET        0x00000040  // PWM0 base
+#define PWM_GEN_1_OFFSET        0x00000080  // PWM1 base
+#define PWM_GEN_2_OFFSET        0x000000C0  // PWM2 base
+#define PWM_GEN_3_OFFSET        0x00000100  // PWM3 base
+
+//*****************************************************************************
+//
+// The following are defines for the PWM Generator extended offsets.
+//
+//*****************************************************************************
+#define PWM_O_X_FLTSEN          0x00000000  // Fault logic sense
+#define PWM_O_X_FLTSTAT0        0x00000004  // Pin and comparator status
+#define PWM_O_X_FLTSTAT1        0x00000008  // Digital comparator status
+#define PWM_EXT_0_OFFSET        0x00000800  // PWM0 extended base
+#define PWM_EXT_1_OFFSET        0x00000880  // PWM1 extended base
+#define PWM_EXT_2_OFFSET        0x00000900  // PWM2 extended base
+#define PWM_EXT_3_OFFSET        0x00000980  // PWM3 extended base
+
+//*****************************************************************************
+//
 // The following definitions are deprecated.
 //
 //*****************************************************************************
@@ -613,7 +617,7 @@
 // register.
 //
 //*****************************************************************************
-#define PWM_STATUS_FAULT        0x00000001  // Fault status
+#define PWM_STATUS_FAULT        0x00000001  // Fault Interrupt Status
 
 //*****************************************************************************
 //

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../vs.h"
@@ -41,7 +42,7 @@ char *upnp_getuuid(void)
 }
 
 
-void upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void upnp_tcpapp(unsigned int idx, const char *rx, unsigned int rx_len, unsigned char *tx)
 {
   unsigned int tx_len;
   const char *s;
@@ -55,7 +56,7 @@ void upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
     {
       rx     += 4;
       rx_len -= 4;
-      http_sendfile(index, rx, tx);
+      http_sendfile(idx, rx, tx);
     }
     else if(strncmpi(rx, "POST /control", 13) == 0)
     {
@@ -67,34 +68,34 @@ void upnp_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
       {
         s += 9;
   
-        tx_len = sprintf(tx, HTTP_XML_HEADER"\r\n\r\n");
+        tx_len = sprintf((char*)tx, HTTP_XML_HEADER"\r\n\r\n");
         tx    += tx_len;
         if(strncmpi(s, "SETVOLUME", 7) == 0)
         {
-          strstrk(tmp, rx, "<s:Envelope\0<s:Body\0<u:SETVOLUME\0<VOLUME>\0\0");
+          strstrk(tmp, (const char*)rx, "<s:Envelope\0<s:Body\0<u:SETVOLUME\0<VOLUME>\0\0");
           vs_setvolume(atoi(tmp));
           sprintf(tmp, "%i", vs_getvolume());
-          tx_len += sprintf(tx, CONTROL_ACTION_RESP, "SETVOLUME", "VOLUME", tmp, "VOLUME", "SETVOLUME");
+          tx_len += sprintf((char*)tx, CONTROL_ACTION_RESP, "SETVOLUME", "VOLUME", tmp, "VOLUME", "SETVOLUME");
         }
         else if(strncmpi(s, "GETVOLUME", 7) == 0)
         {
           sprintf(tmp, "%i", vs_getvolume());
-          tx_len += sprintf(tx, CONTROL_ACTION_RESP, "GETVOLUME", "VOLUME", tmp, "VOLUME", "GETVOLUME");
+          tx_len += sprintf((char*)tx, CONTROL_ACTION_RESP, "GETVOLUME", "VOLUME", tmp, "VOLUME", "GETVOLUME");
         }
-        tcp_send(index, tx_len, 0);
-        tcp_close(index);
+        tcp_send(idx, tx_len, 0);
+        tcp_close(idx);
       }
     }
     else
     {
-      tx_len = sprintf(tx, HTTP_400_HEADER);
-      tcp_send(index, tx_len, 0);
-      tcp_close(index);
+      tx_len = sprintf((char*)tx, HTTP_400_HEADER);
+      tcp_send(idx, tx_len, 0);
+      tcp_close(idx);
     }
   }
   else
   {
-    http_sendfile(index, 0, tx);
+    http_sendfile(idx, 0, tx);
   }
 
   return;

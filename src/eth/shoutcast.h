@@ -27,7 +27,7 @@ void                                   shoutcast_close(void);
 unsigned int                           shoutcast_open(void);
 void                                   shoutcast_putogg(const unsigned char *s, unsigned int len);
 void                                   shoutcast_putdata(const unsigned char *s, unsigned int len);
-void                                   shoutcast_tcpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
+void                                   shoutcast_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_SHOUTCAST_H_

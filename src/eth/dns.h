@@ -45,9 +45,9 @@ typedef struct __attribute__((packed))
 
 
 //----- PROTOTYPES -----
-unsigned int                           dns_request(unsigned int index, const char *domain);
+unsigned int                           dns_request(unsigned int idx, const char *domain);
 IP_Addr                                dns_getip(const char *domain);
-void                                   dns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
+void                                   dns_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx);
 
 
 #endif //_DNS_H_

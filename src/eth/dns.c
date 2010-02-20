@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -14,7 +15,7 @@ volatile IP_Addr dns_ip=0UL;
 unsigned int dns_id=0;
 
 
-unsigned int dns_request(unsigned int index, const char *domain)
+unsigned int dns_request(unsigned int idx, const char *domain)
 {
   MAC_Addr mac;
   DNS_Header *tx_dns;
@@ -37,14 +38,12 @@ unsigned int dns_request(unsigned int index, const char *domain)
   len = 0;
   while((*domain != 0) && (*domain != '/') && (*domain != ':'))
   {
-    ptr_len = ptr++;
-    len++;
-    for(i=0; (*domain != '.') && (*domain != 0) && (*domain != '/') && (*domain != ':'); i++)
+    ptr_len = ptr++; len++;
+    for(i=0; (*domain != 0) && (*domain != '.') && (*domain != '/') && (*domain != ':'); i++)
     {
-      *ptr++ = *domain++;
-      len++;
+      *ptr++ = *domain++; len++;
     }
-    while((*domain == '.') && (*domain != 0)){ *domain++; }
+    while((*domain != 0) && (*domain == '.')){ *domain++; }
     *ptr_len = i; //write len
   }
   *ptr++ = 0;
@@ -57,24 +56,24 @@ unsigned int dns_request(unsigned int index, const char *domain)
 
   len += 5;
 
-  mac   = arp_getmac(eth_getdns());
-  index = udp_open(index, mac, eth_getdns(), DNS_PORT, DNS_PORT, 0, DNS_HEADERLEN+len);
+  mac = arp_getmac(eth_getdns());
+  idx = udp_open(idx, mac, eth_getdns(), DNS_PORT, DNS_PORT, 0, DNS_HEADERLEN+len);
 
-  return index;
+  return idx;
 }
 
 
 IP_Addr dns_getip(const char *domain)
 {
   long timeout, timeout_dns;
-  unsigned int index;
+  unsigned int idx;
 
   dns_ip = 0UL;
   dns_id = generate_id();
 
-  index = dns_request(UDP_ENTRIES, domain);
+  idx = dns_request(UDP_ENTRIES, domain);
 
-  if(index < UDP_ENTRIES)
+  if(idx < UDP_ENTRIES)
   {
     timeout     = getontime()+ETH_TIMEOUT;
     timeout_dns = getontime()+DNS_TIMEOUT;
@@ -89,7 +88,7 @@ IP_Addr dns_getip(const char *domain)
       if(getdeltatime(timeout_dns) > 0)
       {
         timeout_dns = getontime()+DNS_TIMEOUT;
-        index = dns_request(index, domain);
+        idx = dns_request(idx, domain);
       }
       if(getdeltatime(timeout) > 0)
       {
@@ -97,29 +96,29 @@ IP_Addr dns_getip(const char *domain)
       }
     }
   
-    udp_close(index);
+    udp_close(idx);
   }
 
   return dns_ip;
 }
 
 
-void dns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void dns_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
-  DNS_Header *rx_dns;
-  DNS_Answer *rx_dnsa;
-  unsigned char *data;
+  const DNS_Header *rx_dns;
+  const DNS_Answer *rx_dnsa;
+  const unsigned char *data;
   unsigned int len;
 
   DEBUGOUT("DNS: UDP app\n");
 
-  rx_dns = (DNS_Header*) rx;
+  rx_dns = (const DNS_Header*) rx;
 
   if((rx_dns->id == swap16(dns_id))               &&
      (rx_dns->flags & SWAP16(DNS_FLAGS_RESPONSE)) &&
     ((rx_dns->flags&SWAP16(0x000F)) == 0)) //0 = no error
   {
-    data = (unsigned char*) &rx[DNS_HEADERLEN];
+    data = (const unsigned char*) &rx[DNS_HEADERLEN];
     len  = rx_len - DNS_HEADERLEN;
   
     //query
@@ -132,7 +131,7 @@ void dns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len
     //answers
     while(len > DNSA_HEADERLEN)
     {
-      rx_dnsa = (DNS_Answer*) data;
+      rx_dnsa = (const DNS_Answer*) data;
   
       if((rx_dnsa->type  == SWAP16(DNS_TYPE_A))   &&
          (rx_dnsa->clas  == SWAP16(DNS_CLASS_IN)) &&

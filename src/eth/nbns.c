@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
 #include "../eth.h"
@@ -10,11 +11,11 @@
 #include "nbns.h"
 
 
-void nbns_reply(unsigned int index, unsigned int id)
+void nbns_reply(unsigned int idx, unsigned int id)
 {
   NBNS_Header *tx_nbns;
 
-  if(index >= UDP_ENTRIES)
+  if(idx >= UDP_ENTRIES)
   {
     return;
   }
@@ -37,7 +38,7 @@ void nbns_reply(unsigned int index, unsigned int id)
   nbns_encode(tx_nbns->data.an.name, eth_getname(), 0x00); //0x00 = Workstation
   tx_nbns->data.an.name[32] = 0;
 
-  udp_send(index, NBNS_HEADERLEN+NBNSA_HEADERLEN);
+  udp_send(idx, NBNS_HEADERLEN+NBNSA_HEADERLEN);
 
   DEBUGOUT("Eth: NBNS reply\n");
 
@@ -45,15 +46,15 @@ void nbns_reply(unsigned int index, unsigned int id)
 }
 
 
-void nbns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
+void nbns_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len, unsigned char *tx)
 {
-  NBNS_Header *rx_nbns;
+  const NBNS_Header *rx_nbns;
   unsigned int type;
   char name[16];
 
   DEBUGOUT("NBNS: UDP app\n");
 
-  rx_nbns = (NBNS_Header*) rx;
+  rx_nbns = (const NBNS_Header*) rx;
 
   if(((swap16(rx_nbns->flags_op)&NBNS_FLAG_RESPONSE) == 0) &&
      ((swap16(rx_nbns->flags_op)&NBNS_OPMASK)        == 0) &&
@@ -70,7 +71,7 @@ void nbns_udpapp(unsigned int index, const unsigned char *rx, unsigned int rx_le
     {
       if(strcmp(name, eth_getname()) == 0)
       {
-        nbns_reply(index, swap16(rx_nbns->id));
+        nbns_reply(idx, swap16(rx_nbns->id));
       }
     }
   }

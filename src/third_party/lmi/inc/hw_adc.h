@@ -2,26 +2,23 @@
 //
 // hw_adc.h - Macros used when accessing the ADC hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -33,48 +30,61 @@
 // The following are defines for the ADC register offsets.
 //
 //*****************************************************************************
-#define ADC_O_ACTSS             0x00000000  // Active sample register
-#define ADC_O_RIS               0x00000004  // Raw interrupt status register
-#define ADC_O_IM                0x00000008  // Interrupt mask register
-#define ADC_O_ISC               0x0000000C  // Interrupt status/clear register
-#define ADC_O_OSTAT             0x00000010  // Overflow status register
-#define ADC_O_EMUX              0x00000014  // Event multiplexer select reg
-#define ADC_O_USTAT             0x00000018  // Underflow status register
-#define ADC_O_SSPRI             0x00000020  // Channel priority register
-#define ADC_O_PSSI              0x00000028  // Processor sample initiate reg
-#define ADC_O_SAC               0x00000030  // Sample Averaging Control reg
+#define ADC_O_ACTSS             0x00000000  // ADC Active Sample Sequencer
+#define ADC_O_RIS               0x00000004  // ADC Raw Interrupt Status
+#define ADC_O_IM                0x00000008  // ADC Interrupt Mask
+#define ADC_O_ISC               0x0000000C  // ADC Interrupt Status and Clear
+#define ADC_O_OSTAT             0x00000010  // ADC Overflow Status
+#define ADC_O_EMUX              0x00000014  // ADC Event Multiplexer Select
+#define ADC_O_USTAT             0x00000018  // ADC Underflow Status
+#define ADC_O_SSPRI             0x00000020  // ADC Sample Sequencer Priority
+#define ADC_O_PSSI              0x00000028  // ADC Processor Sample Sequence
+                                            // Initiate
+#define ADC_O_SAC               0x00000030  // ADC Sample Averaging Control
 #define ADC_O_DCISC             0x00000034  // ADC Digital Comparator Interrupt
                                             // Status and Clear
 #define ADC_O_CTL               0x00000038  // ADC Control
-#define ADC_O_SSMUX0            0x00000040  // Multiplexer select 0 register
-#define ADC_O_SSCTL0            0x00000044  // Sample sequence control 0 reg
-#define ADC_O_SSFIFO0           0x00000048  // Result FIFO 0 register
-#define ADC_O_SSFSTAT0          0x0000004C  // FIFO 0 status register
+#define ADC_O_SSMUX0            0x00000040  // ADC Sample Sequence Input
+                                            // Multiplexer Select 0
+#define ADC_O_SSCTL0            0x00000044  // ADC Sample Sequence Control 0
+#define ADC_O_SSFIFO0           0x00000048  // ADC Sample Sequence Result FIFO
+                                            // 0
+#define ADC_O_SSFSTAT0          0x0000004C  // ADC Sample Sequence FIFO 0
+                                            // Status
 #define ADC_O_SSOP0             0x00000050  // ADC Sample Sequence 0 Operation
 #define ADC_O_SSDC0             0x00000054  // ADC Sample Sequence 0 Digital
                                             // Comparator Select
-#define ADC_O_SSMUX1            0x00000060  // Multiplexer select 1 register
-#define ADC_O_SSCTL1            0x00000064  // Sample sequence control 1 reg
-#define ADC_O_SSFIFO1           0x00000068  // Result FIFO 1 register
-#define ADC_O_SSFSTAT1          0x0000006C  // FIFO 1 status register
+#define ADC_O_SSMUX1            0x00000060  // ADC Sample Sequence Input
+                                            // Multiplexer Select 1
+#define ADC_O_SSCTL1            0x00000064  // ADC Sample Sequence Control 1
+#define ADC_O_SSFIFO1           0x00000068  // ADC Sample Sequence Result FIFO
+                                            // 1
+#define ADC_O_SSFSTAT1          0x0000006C  // ADC Sample Sequence FIFO 1
+                                            // Status
 #define ADC_O_SSOP1             0x00000070  // ADC Sample Sequence 1 Operation
 #define ADC_O_SSDC1             0x00000074  // ADC Sample Sequence 1 Digital
                                             // Comparator Select
-#define ADC_O_SSMUX2            0x00000080  // Multiplexer select 2 register
-#define ADC_O_SSCTL2            0x00000084  // Sample sequence control 2 reg
-#define ADC_O_SSFIFO2           0x00000088  // Result FIFO 2 register
-#define ADC_O_SSFSTAT2          0x0000008C  // FIFO 2 status register
+#define ADC_O_SSMUX2            0x00000080  // ADC Sample Sequence Input
+                                            // Multiplexer Select 2
+#define ADC_O_SSCTL2            0x00000084  // ADC Sample Sequence Control 2
+#define ADC_O_SSFIFO2           0x00000088  // ADC Sample Sequence Result FIFO
+                                            // 2
+#define ADC_O_SSFSTAT2          0x0000008C  // ADC Sample Sequence FIFO 2
+                                            // Status
 #define ADC_O_SSOP2             0x00000090  // ADC Sample Sequence 2 Operation
 #define ADC_O_SSDC2             0x00000094  // ADC Sample Sequence 2 Digital
                                             // Comparator Select
-#define ADC_O_SSMUX3            0x000000A0  // Multiplexer select 3 register
-#define ADC_O_SSCTL3            0x000000A4  // Sample sequence control 3 reg
-#define ADC_O_SSFIFO3           0x000000A8  // Result FIFO 3 register
-#define ADC_O_SSFSTAT3          0x000000AC  // FIFO 3 status register
+#define ADC_O_SSMUX3            0x000000A0  // ADC Sample Sequence Input
+                                            // Multiplexer Select 3
+#define ADC_O_SSCTL3            0x000000A4  // ADC Sample Sequence Control 3
+#define ADC_O_SSFIFO3           0x000000A8  // ADC Sample Sequence Result FIFO
+                                            // 3
+#define ADC_O_SSFSTAT3          0x000000AC  // ADC Sample Sequence FIFO 3
+                                            // Status
 #define ADC_O_SSOP3             0x000000B0  // ADC Sample Sequence 3 Operation
 #define ADC_O_SSDC3             0x000000B4  // ADC Sample Sequence 3 Digital
                                             // Comparator Select
-#define ADC_O_TMLB              0x00000100  // Test mode loopback register
+#define ADC_O_TMLB              0x00000100  // ADC Test Mode Loopback
 #define ADC_O_DCRIC             0x00000D00  // ADC Digital Comparator Reset
                                             // Initial Conditions
 #define ADC_O_DCCTL0            0x00000E00  // ADC Digital Comparator Control 0
@@ -99,10 +109,10 @@
 // The following are defines for the bit fields in the ADC_O_ACTSS register.
 //
 //*****************************************************************************
-#define ADC_ACTSS_ASEN3         0x00000008  // Sample sequence 3 enable
-#define ADC_ACTSS_ASEN2         0x00000004  // Sample sequence 2 enable
-#define ADC_ACTSS_ASEN1         0x00000002  // Sample sequence 1 enable
-#define ADC_ACTSS_ASEN0         0x00000001  // Sample sequence 0 enable
+#define ADC_ACTSS_ASEN3         0x00000008  // ADC SS3 Enable
+#define ADC_ACTSS_ASEN2         0x00000004  // ADC SS2 Enable
+#define ADC_ACTSS_ASEN1         0x00000002  // ADC SS1 Enable
+#define ADC_ACTSS_ASEN0         0x00000001  // ADC SS0 Enable
 
 //*****************************************************************************
 //
@@ -111,10 +121,10 @@
 //*****************************************************************************
 #define ADC_RIS_INRDC           0x00010000  // Digital Comparator Raw Interrupt
                                             // Status
-#define ADC_RIS_INR3            0x00000008  // Sample sequence 3 interrupt
-#define ADC_RIS_INR2            0x00000004  // Sample sequence 2 interrupt
-#define ADC_RIS_INR1            0x00000002  // Sample sequence 1 interrupt
-#define ADC_RIS_INR0            0x00000001  // Sample sequence 0 interrupt
+#define ADC_RIS_INR3            0x00000008  // SS3 Raw Interrupt Status
+#define ADC_RIS_INR2            0x00000004  // SS2 Raw Interrupt Status
+#define ADC_RIS_INR1            0x00000002  // SS1 Raw Interrupt Status
+#define ADC_RIS_INR0            0x00000001  // SS0 Raw Interrupt Status
 
 //*****************************************************************************
 //
@@ -129,10 +139,10 @@
                                             // SS1
 #define ADC_IM_DCONSS0          0x00010000  // Digital Comparator Interrupt on
                                             // SS0
-#define ADC_IM_MASK3            0x00000008  // Sample sequence 3 mask
-#define ADC_IM_MASK2            0x00000004  // Sample sequence 2 mask
-#define ADC_IM_MASK1            0x00000002  // Sample sequence 1 mask
-#define ADC_IM_MASK0            0x00000001  // Sample sequence 0 mask
+#define ADC_IM_MASK3            0x00000008  // SS3 Interrupt Mask
+#define ADC_IM_MASK2            0x00000004  // SS2 Interrupt Mask
+#define ADC_IM_MASK1            0x00000002  // SS1 Interrupt Mask
+#define ADC_IM_MASK0            0x00000001  // SS0 Interrupt Mask
 
 //*****************************************************************************
 //
@@ -147,106 +157,106 @@
                                             // Status on SS1
 #define ADC_ISC_DCINSS0         0x00010000  // Digital Comparator Interrupt
                                             // Status on SS0
-#define ADC_ISC_IN3             0x00000008  // Sample sequence 3 interrupt
-#define ADC_ISC_IN2             0x00000004  // Sample sequence 2 interrupt
-#define ADC_ISC_IN1             0x00000002  // Sample sequence 1 interrupt
-#define ADC_ISC_IN0             0x00000001  // Sample sequence 0 interrupt
+#define ADC_ISC_IN3             0x00000008  // SS3 Interrupt Status and Clear
+#define ADC_ISC_IN2             0x00000004  // SS2 Interrupt Status and Clear
+#define ADC_ISC_IN1             0x00000002  // SS1 Interrupt Status and Clear
+#define ADC_ISC_IN0             0x00000001  // SS0 Interrupt Status and Clear
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the ADC_O_OSTAT register.
 //
 //*****************************************************************************
-#define ADC_OSTAT_OV3           0x00000008  // Sample sequence 3 overflow
-#define ADC_OSTAT_OV2           0x00000004  // Sample sequence 2 overflow
-#define ADC_OSTAT_OV1           0x00000002  // Sample sequence 1 overflow
-#define ADC_OSTAT_OV0           0x00000001  // Sample sequence 0 overflow
+#define ADC_OSTAT_OV3           0x00000008  // SS3 FIFO Overflow
+#define ADC_OSTAT_OV2           0x00000004  // SS2 FIFO Overflow
+#define ADC_OSTAT_OV1           0x00000002  // SS1 FIFO Overflow
+#define ADC_OSTAT_OV0           0x00000001  // SS0 FIFO Overflow
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the ADC_O_EMUX register.
 //
 //*****************************************************************************
-#define ADC_EMUX_EM3_M          0x0000F000  // Event mux 3 mask
-#define ADC_EMUX_EM3_PROCESSOR  0x00000000  // Processor event
-#define ADC_EMUX_EM3_COMP0      0x00001000  // Analog comparator 0 event
-#define ADC_EMUX_EM3_COMP1      0x00002000  // Analog comparator 1 event
-#define ADC_EMUX_EM3_COMP2      0x00003000  // Analog comparator 2 event
-#define ADC_EMUX_EM3_EXTERNAL   0x00004000  // External event
-#define ADC_EMUX_EM3_TIMER      0x00005000  // Timer event
-#define ADC_EMUX_EM3_PWM0       0x00006000  // PWM0 event
-#define ADC_EMUX_EM3_PWM1       0x00007000  // PWM1 event
-#define ADC_EMUX_EM3_PWM2       0x00008000  // PWM2 event
+#define ADC_EMUX_EM3_M          0x0000F000  // SS3 Trigger Select
+#define ADC_EMUX_EM3_PROCESSOR  0x00000000  // Processor (default)
+#define ADC_EMUX_EM3_COMP0      0x00001000  // Analog Comparator 0
+#define ADC_EMUX_EM3_COMP1      0x00002000  // Analog Comparator 1
+#define ADC_EMUX_EM3_COMP2      0x00003000  // Analog Comparator 2
+#define ADC_EMUX_EM3_EXTERNAL   0x00004000  // External (GPIO PB4)
+#define ADC_EMUX_EM3_TIMER      0x00005000  // Timer
+#define ADC_EMUX_EM3_PWM0       0x00006000  // PWM0
+#define ADC_EMUX_EM3_PWM1       0x00007000  // PWM1
+#define ADC_EMUX_EM3_PWM2       0x00008000  // PWM2
 #define ADC_EMUX_EM3_PWM3       0x00009000  // PWM3
-#define ADC_EMUX_EM3_ALWAYS     0x0000F000  // Always event
-#define ADC_EMUX_EM2_M          0x00000F00  // Event mux 2 mask
-#define ADC_EMUX_EM2_PROCESSOR  0x00000000  // Processor event
-#define ADC_EMUX_EM2_COMP0      0x00000100  // Analog comparator 0 event
-#define ADC_EMUX_EM2_COMP1      0x00000200  // Analog comparator 1 event
-#define ADC_EMUX_EM2_COMP2      0x00000300  // Analog comparator 2 event
-#define ADC_EMUX_EM2_EXTERNAL   0x00000400  // External event
-#define ADC_EMUX_EM2_TIMER      0x00000500  // Timer event
-#define ADC_EMUX_EM2_PWM0       0x00000600  // PWM0 event
-#define ADC_EMUX_EM2_PWM1       0x00000700  // PWM1 event
-#define ADC_EMUX_EM2_PWM2       0x00000800  // PWM2 event
+#define ADC_EMUX_EM3_ALWAYS     0x0000F000  // Always (continuously sample)
+#define ADC_EMUX_EM2_M          0x00000F00  // SS2 Trigger Select
+#define ADC_EMUX_EM2_PROCESSOR  0x00000000  // Processor (default)
+#define ADC_EMUX_EM2_COMP0      0x00000100  // Analog Comparator 0
+#define ADC_EMUX_EM2_COMP1      0x00000200  // Analog Comparator 1
+#define ADC_EMUX_EM2_COMP2      0x00000300  // Analog Comparator 2
+#define ADC_EMUX_EM2_EXTERNAL   0x00000400  // External (GPIO PB4)
+#define ADC_EMUX_EM2_TIMER      0x00000500  // Timer
+#define ADC_EMUX_EM2_PWM0       0x00000600  // PWM0
+#define ADC_EMUX_EM2_PWM1       0x00000700  // PWM1
+#define ADC_EMUX_EM2_PWM2       0x00000800  // PWM2
 #define ADC_EMUX_EM2_PWM3       0x00000900  // PWM3
-#define ADC_EMUX_EM2_ALWAYS     0x00000F00  // Always event
-#define ADC_EMUX_EM1_M          0x000000F0  // Event mux 1 mask
-#define ADC_EMUX_EM1_PROCESSOR  0x00000000  // Processor event
-#define ADC_EMUX_EM1_COMP0      0x00000010  // Analog comparator 0 event
-#define ADC_EMUX_EM1_COMP1      0x00000020  // Analog comparator 1 event
-#define ADC_EMUX_EM1_COMP2      0x00000030  // Analog comparator 2 event
-#define ADC_EMUX_EM1_EXTERNAL   0x00000040  // External event
-#define ADC_EMUX_EM1_TIMER      0x00000050  // Timer event
-#define ADC_EMUX_EM1_PWM0       0x00000060  // PWM0 event
-#define ADC_EMUX_EM1_PWM1       0x00000070  // PWM1 event
-#define ADC_EMUX_EM1_PWM2       0x00000080  // PWM2 event
+#define ADC_EMUX_EM2_ALWAYS     0x00000F00  // Always (continuously sample)
+#define ADC_EMUX_EM1_M          0x000000F0  // SS1 Trigger Select
+#define ADC_EMUX_EM1_PROCESSOR  0x00000000  // Processor (default)
+#define ADC_EMUX_EM1_COMP0      0x00000010  // Analog Comparator 0
+#define ADC_EMUX_EM1_COMP1      0x00000020  // Analog Comparator 1
+#define ADC_EMUX_EM1_COMP2      0x00000030  // Analog Comparator 2
+#define ADC_EMUX_EM1_EXTERNAL   0x00000040  // External (GPIO PB4)
+#define ADC_EMUX_EM1_TIMER      0x00000050  // Timer
+#define ADC_EMUX_EM1_PWM0       0x00000060  // PWM0
+#define ADC_EMUX_EM1_PWM1       0x00000070  // PWM1
+#define ADC_EMUX_EM1_PWM2       0x00000080  // PWM2
 #define ADC_EMUX_EM1_PWM3       0x00000090  // PWM3
-#define ADC_EMUX_EM1_ALWAYS     0x000000F0  // Always event
-#define ADC_EMUX_EM0_M          0x0000000F  // Event mux 0 mask
-#define ADC_EMUX_EM0_PROCESSOR  0x00000000  // Processor event
-#define ADC_EMUX_EM0_COMP0      0x00000001  // Analog comparator 0 event
-#define ADC_EMUX_EM0_COMP1      0x00000002  // Analog comparator 1 event
-#define ADC_EMUX_EM0_COMP2      0x00000003  // Analog comparator 2 event
-#define ADC_EMUX_EM0_EXTERNAL   0x00000004  // External event
-#define ADC_EMUX_EM0_TIMER      0x00000005  // Timer event
-#define ADC_EMUX_EM0_PWM0       0x00000006  // PWM0 event
-#define ADC_EMUX_EM0_PWM1       0x00000007  // PWM1 event
-#define ADC_EMUX_EM0_PWM2       0x00000008  // PWM2 event
+#define ADC_EMUX_EM1_ALWAYS     0x000000F0  // Always (continuously sample)
+#define ADC_EMUX_EM0_M          0x0000000F  // SS0 Trigger Select
+#define ADC_EMUX_EM0_PROCESSOR  0x00000000  // Processor (default)
+#define ADC_EMUX_EM0_COMP0      0x00000001  // Analog Comparator 0
+#define ADC_EMUX_EM0_COMP1      0x00000002  // Analog Comparator 1
+#define ADC_EMUX_EM0_COMP2      0x00000003  // Analog Comparator 2
+#define ADC_EMUX_EM0_EXTERNAL   0x00000004  // External (GPIO PB4)
+#define ADC_EMUX_EM0_TIMER      0x00000005  // Timer
+#define ADC_EMUX_EM0_PWM0       0x00000006  // PWM0
+#define ADC_EMUX_EM0_PWM1       0x00000007  // PWM1
+#define ADC_EMUX_EM0_PWM2       0x00000008  // PWM2
 #define ADC_EMUX_EM0_PWM3       0x00000009  // PWM3
-#define ADC_EMUX_EM0_ALWAYS     0x0000000F  // Always event
+#define ADC_EMUX_EM0_ALWAYS     0x0000000F  // Always (continuously sample)
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the ADC_O_USTAT register.
 //
 //*****************************************************************************
-#define ADC_USTAT_UV3           0x00000008  // Sample sequence 3 underflow
-#define ADC_USTAT_UV2           0x00000004  // Sample sequence 2 underflow
-#define ADC_USTAT_UV1           0x00000002  // Sample sequence 1 underflow
-#define ADC_USTAT_UV0           0x00000001  // Sample sequence 0 underflow
+#define ADC_USTAT_UV3           0x00000008  // SS3 FIFO Underflow
+#define ADC_USTAT_UV2           0x00000004  // SS2 FIFO Underflow
+#define ADC_USTAT_UV1           0x00000002  // SS1 FIFO Underflow
+#define ADC_USTAT_UV0           0x00000001  // SS0 FIFO Underflow
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the ADC_O_SSPRI register.
 //
 //*****************************************************************************
-#define ADC_SSPRI_SS3_M         0x00003000  // Sequencer 3 priority mask
+#define ADC_SSPRI_SS3_M         0x00003000  // SS3 Priority
 #define ADC_SSPRI_SS3_1ST       0x00000000  // First priority
 #define ADC_SSPRI_SS3_2ND       0x00001000  // Second priority
 #define ADC_SSPRI_SS3_3RD       0x00002000  // Third priority
 #define ADC_SSPRI_SS3_4TH       0x00003000  // Fourth priority
-#define ADC_SSPRI_SS2_M         0x00000300  // Sequencer 2 priority mask
+#define ADC_SSPRI_SS2_M         0x00000300  // SS2 Priority
 #define ADC_SSPRI_SS2_1ST       0x00000000  // First priority
 #define ADC_SSPRI_SS2_2ND       0x00000100  // Second priority
 #define ADC_SSPRI_SS2_3RD       0x00000200  // Third priority
 #define ADC_SSPRI_SS2_4TH       0x00000300  // Fourth priority
-#define ADC_SSPRI_SS1_M         0x00000030  // Sequencer 1 priority mask
+#define ADC_SSPRI_SS1_M         0x00000030  // SS1 Priority
 #define ADC_SSPRI_SS1_1ST       0x00000000  // First priority
 #define ADC_SSPRI_SS1_2ND       0x00000010  // Second priority
 #define ADC_SSPRI_SS1_3RD       0x00000020  // Third priority
 #define ADC_SSPRI_SS1_4TH       0x00000030  // Fourth priority
-#define ADC_SSPRI_SS0_M         0x00000003  // Sequencer 0 priority mask
+#define ADC_SSPRI_SS0_M         0x00000003  // SS0 Priority
 #define ADC_SSPRI_SS0_1ST       0x00000000  // First priority
 #define ADC_SSPRI_SS0_2ND       0x00000001  // Second priority
 #define ADC_SSPRI_SS0_3RD       0x00000002  // Third priority
@@ -259,10 +269,10 @@
 //*****************************************************************************
 #define ADC_PSSI_GSYNC          0x80000000  // Global Synchronize
 #define ADC_PSSI_SYNCWAIT       0x08000000  // Synchronize Wait
-#define ADC_PSSI_SS3            0x00000008  // Trigger sample sequencer 3
-#define ADC_PSSI_SS2            0x00000004  // Trigger sample sequencer 2
-#define ADC_PSSI_SS1            0x00000002  // Trigger sample sequencer 1
-#define ADC_PSSI_SS0            0x00000001  // Trigger sample sequencer 0
+#define ADC_PSSI_SS3            0x00000008  // SS3 Initiate
+#define ADC_PSSI_SS2            0x00000004  // SS2 Initiate
+#define ADC_PSSI_SS1            0x00000002  // SS1 Initiate
+#define ADC_PSSI_SS0            0x00000001  // SS0 Initiate
 
 //*****************************************************************************
 //
@@ -671,7 +681,7 @@
 // The following are defines for the bit fields in the ADC_O_TMLB register.
 //
 //*****************************************************************************
-#define ADC_TMLB_LB             0x00000001  // Loopback control signals
+#define ADC_TMLB_LB             0x00000001  // Loopback Mode Enable
 
 //*****************************************************************************
 //
@@ -702,24 +712,24 @@
 //*****************************************************************************
 #define ADC_DCCTL0_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL0_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL0_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL0_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL0_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL0_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL0_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL0_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL0_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL0_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL0_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL0_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL0_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL0_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL0_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL0_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL0_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL0_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL0_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL0_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL0_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL0_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL0_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL0_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL0_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL0_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL0_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL0_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL0_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL0_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -728,24 +738,24 @@
 //*****************************************************************************
 #define ADC_DCCTL1_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL1_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL1_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL1_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL1_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL1_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL1_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL1_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL1_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL1_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL1_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL1_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL1_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL1_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL1_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL1_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL1_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL1_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL1_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL1_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL1_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL1_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL1_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL1_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL1_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL1_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL1_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL1_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL1_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL1_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -754,24 +764,24 @@
 //*****************************************************************************
 #define ADC_DCCTL2_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL2_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL2_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL2_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL2_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL2_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL2_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL2_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL2_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL2_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL2_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL2_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL2_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL2_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL2_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL2_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL2_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL2_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL2_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL2_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL2_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL2_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL2_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL2_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL2_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL2_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL2_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL2_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL2_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL2_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -780,24 +790,24 @@
 //*****************************************************************************
 #define ADC_DCCTL3_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL3_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL3_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL3_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL3_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL3_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL3_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL3_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL3_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL3_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL3_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL3_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL3_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL3_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL3_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL3_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL3_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL3_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL3_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL3_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL3_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL3_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL3_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL3_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL3_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL3_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL3_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL3_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL3_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL3_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -806,24 +816,24 @@
 //*****************************************************************************
 #define ADC_DCCTL4_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL4_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL4_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL4_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL4_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL4_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL4_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL4_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL4_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL4_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL4_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL4_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL4_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL4_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL4_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL4_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL4_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL4_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL4_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL4_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL4_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL4_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL4_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL4_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL4_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL4_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL4_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL4_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL4_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL4_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -832,24 +842,24 @@
 //*****************************************************************************
 #define ADC_DCCTL5_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL5_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL5_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL5_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL5_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL5_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL5_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL5_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL5_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL5_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL5_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL5_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL5_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL5_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL5_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL5_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL5_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL5_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL5_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL5_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL5_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL5_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL5_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL5_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL5_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL5_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL5_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL5_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL5_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL5_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -858,24 +868,24 @@
 //*****************************************************************************
 #define ADC_DCCTL6_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL6_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL6_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL6_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL6_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL6_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL6_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL6_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL6_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL6_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL6_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL6_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL6_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL6_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL6_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL6_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL6_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL6_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL6_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL6_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL6_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL6_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL6_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL6_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL6_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL6_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL6_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL6_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL6_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL6_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //
@@ -884,24 +894,24 @@
 //*****************************************************************************
 #define ADC_DCCTL7_CTE          0x00001000  // Comparison Trigger Enable
 #define ADC_DCCTL7_CTC_M        0x00000C00  // Comparison Trigger Condition
-#define ADC_DCCTL7_CTC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL7_CTC_MID      0x00000400  // COMP0 >= CV < COMP1
-#define ADC_DCCTL7_CTC_HIGH     0x00000C00  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL7_CTC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL7_CTC_MID      0x00000400  // Mid Band
+#define ADC_DCCTL7_CTC_HIGH     0x00000C00  // High Band
 #define ADC_DCCTL7_CTM_M        0x00000300  // Comparison Trigger Mode
 #define ADC_DCCTL7_CTM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL7_CTM_ONCE     0x00000100  // Once
-#define ADC_DCCTL7_CTM_HALWAYS  0x00000200  // Hysteresis always
-#define ADC_DCCTL7_CTM_HONCE    0x00000300  // Hysteresis once
+#define ADC_DCCTL7_CTM_HALWAYS  0x00000200  // Hysteresis Always
+#define ADC_DCCTL7_CTM_HONCE    0x00000300  // Hysteresis Once
 #define ADC_DCCTL7_CIE          0x00000010  // Comparison Interrupt Enable
 #define ADC_DCCTL7_CIC_M        0x0000000C  // Comparison Interrupt Condition
-#define ADC_DCCTL7_CIC_LOW      0x00000000  // CV < COMP0 and < COMP1
-#define ADC_DCCTL7_CIC_MID      0x00000004  // COMP0 >= CV < COMP1
-#define ADC_DCCTL7_CIC_HIGH     0x0000000C  // CV <= COMP0 and <= COMP1
+#define ADC_DCCTL7_CIC_LOW      0x00000000  // Low Band
+#define ADC_DCCTL7_CIC_MID      0x00000004  // Mid Band
+#define ADC_DCCTL7_CIC_HIGH     0x0000000C  // High Band
 #define ADC_DCCTL7_CIM_M        0x00000003  // Comparison Interrupt Mode
 #define ADC_DCCTL7_CIM_ALWAYS   0x00000000  // Always
 #define ADC_DCCTL7_CIM_ONCE     0x00000001  // Once
-#define ADC_DCCTL7_CIM_HALWAYS  0x00000002  // Hysteresis always
-#define ADC_DCCTL7_CIM_HONCE    0x00000003  // Hysteresis once
+#define ADC_DCCTL7_CIM_HALWAYS  0x00000002  // Hysteresis Always
+#define ADC_DCCTL7_CIM_HONCE    0x00000003  // Hysteresis Once
 
 //*****************************************************************************
 //

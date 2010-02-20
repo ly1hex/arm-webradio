@@ -2,26 +2,23 @@
 //
 // hw_uart.h - Macros and defines used when accessing the UART hardware.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -30,23 +27,24 @@
 
 //*****************************************************************************
 //
-// The following are defines for the UART Register offsets.
+// The following are defines for the UART register offsets.
 //
 //*****************************************************************************
-#define UART_O_DR               0x00000000  // Data Register
-#define UART_O_RSR              0x00000004  // Receive Status Register (read)
-#define UART_O_ECR              0x00000004  // Error Clear Register (write)
-#define UART_O_FR               0x00000018  // Flag Register (read only)
+#define UART_O_DR               0x00000000  // UART Data
+#define UART_O_RSR              0x00000004  // UART Receive Status/Error Clear
+#define UART_O_ECR              0x00000004  // UART Receive Status/Error Clear
+#define UART_O_FR               0x00000018  // UART Flag
 #define UART_O_ILPR             0x00000020  // UART IrDA Low-Power Register
-#define UART_O_IBRD             0x00000024  // Integer Baud Rate Divisor Reg
-#define UART_O_FBRD             0x00000028  // Fractional Baud Rate Divisor Reg
+#define UART_O_IBRD             0x00000024  // UART Integer Baud-Rate Divisor
+#define UART_O_FBRD             0x00000028  // UART Fractional Baud-Rate
+                                            // Divisor
 #define UART_O_LCRH             0x0000002C  // UART Line Control
-#define UART_O_CTL              0x00000030  // Control Register
-#define UART_O_IFLS             0x00000034  // Interrupt FIFO Level Select Reg
-#define UART_O_IM               0x00000038  // Interrupt Mask Set/Clear Reg
-#define UART_O_RIS              0x0000003C  // Raw Interrupt Status Register
-#define UART_O_MIS              0x00000040  // Masked Interrupt Status Register
-#define UART_O_ICR              0x00000044  // Interrupt Clear Register
+#define UART_O_CTL              0x00000030  // UART Control
+#define UART_O_IFLS             0x00000034  // UART Interrupt FIFO Level Select
+#define UART_O_IM               0x00000038  // UART Interrupt Mask
+#define UART_O_RIS              0x0000003C  // UART Raw Interrupt Status
+#define UART_O_MIS              0x00000040  // UART Masked Interrupt Status
+#define UART_O_ICR              0x00000044  // UART Interrupt Clear
 #define UART_O_DMACTL           0x00000048  // UART DMA Control
 #define UART_O_LCTL             0x00000090  // UART LIN Control
 #define UART_O_LSS              0x00000094  // UART LIN Snap Shot
@@ -57,10 +55,10 @@
 // The following are defines for the bit fields in the UART_O_DR register.
 //
 //*****************************************************************************
-#define UART_DR_OE              0x00000800  // Overrun Error
-#define UART_DR_BE              0x00000400  // Break Error
-#define UART_DR_PE              0x00000200  // Parity Error
-#define UART_DR_FE              0x00000100  // Framing Error
+#define UART_DR_OE              0x00000800  // UART Overrun Error
+#define UART_DR_BE              0x00000400  // UART Break Error
+#define UART_DR_PE              0x00000200  // UART Parity Error
+#define UART_DR_FE              0x00000100  // UART Framing Error
 #define UART_DR_DATA_M          0x000000FF  // Data Transmitted or Received
 #define UART_DR_DATA_S          0
 
@@ -69,10 +67,10 @@
 // The following are defines for the bit fields in the UART_O_RSR register.
 //
 //*****************************************************************************
-#define UART_RSR_OE             0x00000008  // Overrun Error
-#define UART_RSR_BE             0x00000004  // Break Error
-#define UART_RSR_PE             0x00000002  // Parity Error
-#define UART_RSR_FE             0x00000001  // Framing Error
+#define UART_RSR_OE             0x00000008  // UART Overrun Error
+#define UART_RSR_BE             0x00000004  // UART Break Error
+#define UART_RSR_PE             0x00000002  // UART Parity Error
+#define UART_RSR_FE             0x00000001  // UART Framing Error
 
 //*****************************************************************************
 //
@@ -88,10 +86,10 @@
 //
 //*****************************************************************************
 #define UART_FR_RI              0x00000100  // Ring Indicator
-#define UART_FR_TXFE            0x00000080  // TX FIFO Empty
-#define UART_FR_RXFF            0x00000040  // RX FIFO Full
-#define UART_FR_TXFF            0x00000020  // TX FIFO Full
-#define UART_FR_RXFE            0x00000010  // RX FIFO Empty
+#define UART_FR_TXFE            0x00000080  // UART Transmit FIFO Empty
+#define UART_FR_RXFF            0x00000040  // UART Receive FIFO Full
+#define UART_FR_TXFF            0x00000020  // UART Transmit FIFO Full
+#define UART_FR_RXFE            0x00000010  // UART Receive FIFO Empty
 #define UART_FR_BUSY            0x00000008  // UART Busy
 #define UART_FR_DCD             0x00000004  // Data Carrier Detect
 #define UART_FR_DSR             0x00000002  // Data Set Ready
@@ -147,15 +145,15 @@
 #define UART_CTL_RTSEN          0x00004000  // Enable Request to Send
 #define UART_CTL_RTS            0x00000800  // Request to Send
 #define UART_CTL_DTR            0x00000400  // Data Terminal Ready
-#define UART_CTL_RXE            0x00000200  // Receive Enable
-#define UART_CTL_TXE            0x00000100  // Transmit Enable
-#define UART_CTL_LBE            0x00000080  // Loopback Enable
+#define UART_CTL_RXE            0x00000200  // UART Receive Enable
+#define UART_CTL_TXE            0x00000100  // UART Transmit Enable
+#define UART_CTL_LBE            0x00000080  // UART Loop Back Enable
 #define UART_CTL_LIN            0x00000040  // LIN Mode Enable
 #define UART_CTL_HSE            0x00000020  // High-Speed Enable
 #define UART_CTL_EOT            0x00000010  // End of Transmission
 #define UART_CTL_SMART          0x00000008  // ISO 7816 Smart Card Support
-#define UART_CTL_SIRLP          0x00000004  // SIR (IrDA) Low Power Enable
-#define UART_CTL_SIREN          0x00000002  // SIR (IrDA) Enable
+#define UART_CTL_SIRLP          0x00000004  // UART SIR Low-Power Mode
+#define UART_CTL_SIREN          0x00000002  // UART SIR Enable
 #define UART_CTL_UARTEN         0x00000001  // UART Enable
 
 //*****************************************************************************
@@ -163,18 +161,20 @@
 // The following are defines for the bit fields in the UART_O_IFLS register.
 //
 //*****************************************************************************
-#define UART_IFLS_RX_M          0x00000038  // RX FIFO Level Interrupt Mask
-#define UART_IFLS_RX1_8         0x00000000  // 1/8 Full
-#define UART_IFLS_RX2_8         0x00000008  // 1/4 Full
-#define UART_IFLS_RX4_8         0x00000010  // 1/2 Full
-#define UART_IFLS_RX6_8         0x00000018  // 3/4 Full
-#define UART_IFLS_RX7_8         0x00000020  // 7/8 Full
-#define UART_IFLS_TX_M          0x00000007  // TX FIFO Level Interrupt Mask
-#define UART_IFLS_TX1_8         0x00000000  // 1/8 Full
-#define UART_IFLS_TX2_8         0x00000001  // 1/4 Full
-#define UART_IFLS_TX4_8         0x00000002  // 1/2 Full
-#define UART_IFLS_TX6_8         0x00000003  // 3/4 Full
-#define UART_IFLS_TX7_8         0x00000004  // 7/8 Full
+#define UART_IFLS_RX_M          0x00000038  // UART Receive Interrupt FIFO
+                                            // Level Select
+#define UART_IFLS_RX1_8         0x00000000  // RX FIFO >= 1/8 full
+#define UART_IFLS_RX2_8         0x00000008  // RX FIFO >= 1/4 full
+#define UART_IFLS_RX4_8         0x00000010  // RX FIFO >= 1/2 full (default)
+#define UART_IFLS_RX6_8         0x00000018  // RX FIFO >= 3/4 full
+#define UART_IFLS_RX7_8         0x00000020  // RX FIFO >= 7/8 full
+#define UART_IFLS_TX_M          0x00000007  // UART Transmit Interrupt FIFO
+                                            // Level Select
+#define UART_IFLS_TX1_8         0x00000000  // TX FIFO <= 1/8 full
+#define UART_IFLS_TX2_8         0x00000001  // TX FIFO <= 1/4 full
+#define UART_IFLS_TX4_8         0x00000002  // TX FIFO <= 1/2 full (default)
+#define UART_IFLS_TX6_8         0x00000003  // TX FIFO <= 3/4 full
+#define UART_IFLS_TX7_8         0x00000004  // TX FIFO <= 7/8 full
 
 //*****************************************************************************
 //
@@ -185,13 +185,16 @@
 #define UART_IM_LME1IM          0x00004000  // LIN Mode Edge 1 Interrupt Mask
 #define UART_IM_LMSBIM          0x00002000  // LIN Mode Sync Break Interrupt
                                             // Mask
-#define UART_IM_OEIM            0x00000400  // Overrun Error Interrupt Mask
-#define UART_IM_BEIM            0x00000200  // Break Error Interrupt Mask
-#define UART_IM_PEIM            0x00000100  // Parity Error Interrupt Mask
-#define UART_IM_FEIM            0x00000080  // Framing Error Interrupt Mask
-#define UART_IM_RTIM            0x00000040  // Receive Timeout Interrupt Mask
-#define UART_IM_TXIM            0x00000020  // Transmit Interrupt Mask
-#define UART_IM_RXIM            0x00000010  // Receive Interrupt Mask
+#define UART_IM_OEIM            0x00000400  // UART Overrun Error Interrupt
+                                            // Mask
+#define UART_IM_BEIM            0x00000200  // UART Break Error Interrupt Mask
+#define UART_IM_PEIM            0x00000100  // UART Parity Error Interrupt Mask
+#define UART_IM_FEIM            0x00000080  // UART Framing Error Interrupt
+                                            // Mask
+#define UART_IM_RTIM            0x00000040  // UART Receive Time-Out Interrupt
+                                            // Mask
+#define UART_IM_TXIM            0x00000020  // UART Transmit Interrupt Mask
+#define UART_IM_RXIM            0x00000010  // UART Receive Interrupt Mask
 #define UART_IM_DSRMIM          0x00000008  // UART Data Set Ready Modem
                                             // Interrupt Mask
 #define UART_IM_DCDMIM          0x00000004  // UART Data Carrier Detect Modem
@@ -212,13 +215,20 @@
                                             // Status
 #define UART_RIS_LMSBRIS        0x00002000  // LIN Mode Sync Break Raw
                                             // Interrupt Status
-#define UART_RIS_OERIS          0x00000400  // Overrun Error Interrupt Status
-#define UART_RIS_BERIS          0x00000200  // Break Error Interrupt Status
-#define UART_RIS_PERIS          0x00000100  // Parity Error Interrupt Status
-#define UART_RIS_FERIS          0x00000080  // Framing Error Interrupt Status
-#define UART_RIS_RTRIS          0x00000040  // Receive Timeout Interrupt Status
-#define UART_RIS_TXRIS          0x00000020  // Transmit Interrupt Status
-#define UART_RIS_RXRIS          0x00000010  // Receive Interrupt Status
+#define UART_RIS_OERIS          0x00000400  // UART Overrun Error Raw Interrupt
+                                            // Status
+#define UART_RIS_BERIS          0x00000200  // UART Break Error Raw Interrupt
+                                            // Status
+#define UART_RIS_PERIS          0x00000100  // UART Parity Error Raw Interrupt
+                                            // Status
+#define UART_RIS_FERIS          0x00000080  // UART Framing Error Raw Interrupt
+                                            // Status
+#define UART_RIS_RTRIS          0x00000040  // UART Receive Time-Out Raw
+                                            // Interrupt Status
+#define UART_RIS_TXRIS          0x00000020  // UART Transmit Raw Interrupt
+                                            // Status
+#define UART_RIS_RXRIS          0x00000010  // UART Receive Raw Interrupt
+                                            // Status
 #define UART_RIS_DSRRIS         0x00000008  // UART Data Set Ready Modem Raw
                                             // Interrupt Status
 #define UART_RIS_DCDRIS         0x00000004  // UART Data Carrier Detect Modem
@@ -239,16 +249,23 @@
                                             // Status
 #define UART_MIS_LMSBMIS        0x00002000  // LIN Mode Sync Break Masked
                                             // Interrupt Status
-#define UART_MIS_OEMIS          0x00000400  // Overrun Error Interrupt Status
-#define UART_MIS_BEMIS          0x00000200  // Break Error Interrupt Status
-#define UART_MIS_PEMIS          0x00000100  // Parity Error Interrupt Status
-#define UART_MIS_FEMIS          0x00000080  // Framing Error Interrupt Status
-#define UART_MIS_RTMIS          0x00000040  // Receive Timeout Interrupt Status
-#define UART_MIS_TXMIS          0x00000020  // Transmit Interrupt Status
-#define UART_MIS_RXMIS          0x00000010  // Receive Interrupt Status
+#define UART_MIS_OEMIS          0x00000400  // UART Overrun Error Masked
+                                            // Interrupt Status
+#define UART_MIS_BEMIS          0x00000200  // UART Break Error Masked
+                                            // Interrupt Status
+#define UART_MIS_PEMIS          0x00000100  // UART Parity Error Masked
+                                            // Interrupt Status
+#define UART_MIS_FEMIS          0x00000080  // UART Framing Error Masked
+                                            // Interrupt Status
+#define UART_MIS_RTMIS          0x00000040  // UART Receive Time-Out Masked
+                                            // Interrupt Status
+#define UART_MIS_TXMIS          0x00000020  // UART Transmit Masked Interrupt
+                                            // Status
+#define UART_MIS_RXMIS          0x00000010  // UART Receive Masked Interrupt
+                                            // Status
 #define UART_MIS_DSRMIS         0x00000008  // UART Data Set Ready Modem Masked
                                             // Interrupt Status
-#define UART_MIS_DCDMIS         0x00000004  // UART Data Carrier Detect odem
+#define UART_MIS_DCDMIS         0x00000004  // UART Data Carrier Detect Modem
                                             // Masked Interrupt Status
 #define UART_MIS_CTSMIS         0x00000002  // UART Clear to Send Modem Masked
                                             // Interrupt Status
@@ -268,12 +285,12 @@
 #define UART_ICR_BEIC           0x00000200  // Break Error Interrupt Clear
 #define UART_ICR_PEIC           0x00000100  // Parity Error Interrupt Clear
 #define UART_ICR_FEIC           0x00000080  // Framing Error Interrupt Clear
-#define UART_ICR_RTIC           0x00000040  // Receive Timeout Interrupt Clear
+#define UART_ICR_RTIC           0x00000040  // Receive Time-Out Interrupt Clear
 #define UART_ICR_TXIC           0x00000020  // Transmit Interrupt Clear
 #define UART_ICR_RXIC           0x00000010  // Receive Interrupt Clear
 #define UART_ICR_DSRMIC         0x00000008  // UART Data Set Ready Modem
                                             // Interrupt Clear
-#define UART_ICR_DCDMIC         0x00000004  // UART Data Carrier Detect odem
+#define UART_ICR_DCDMIC         0x00000004  // UART Data Carrier Detect Modem
                                             // Interrupt Clear
 #define UART_ICR_CTSMIC         0x00000002  // UART Clear to Send Modem
                                             // Interrupt Clear
@@ -327,7 +344,7 @@
 
 //*****************************************************************************
 //
-// The following are deprecated defines for the UART Register offsets.
+// The following are deprecated defines for the UART register offsets.
 //
 //*****************************************************************************
 #define UART_O_LCR_H            0x0000002C  // Line Control Register, HIGH byte

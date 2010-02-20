@@ -2,26 +2,23 @@
 //
 // hw_flash.h - Macros used when accessing the flash controller.
 //
-// Copyright (c) 2005-2009 Luminary Micro, Inc.  All rights reserved.
+// Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
-// Luminary Micro, Inc. (LMI) is supplying this software for use solely and
-// exclusively on LMI's microcontroller products.
+// Texas Instruments (TI) is supplying this software for use solely and
+// exclusively on TI's microcontroller products. The software is owned by
+// TI and/or its suppliers, and is protected under applicable copyright
+// laws. You may not combine this software with "viral" open-source
+// software in order to form a larger program.
 // 
-// The software is owned by LMI and/or its suppliers, and is protected under
-// applicable copyright laws.  All rights are reserved.  You may not combine
-// this software with "viral" open-source software in order to form a larger
-// program.  Any use in violation of the foregoing restrictions may subject
-// the user to criminal sanctions under applicable laws, as well as to civil
-// liability for the breach of the terms and conditions of this license.
+// THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
+// NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
+// NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
+// CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+// DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
-// OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
-// LMI SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
-// CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
-// This is part of revision 5228 of the Stellaris Firmware Development Package.
+// This is part of revision 5570 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -33,33 +30,45 @@
 // The following are defines for the FLASH register offsets.
 //
 //*****************************************************************************
-#define FLASH_FMA               0x400FD000  // Memory address register
-#define FLASH_FMD               0x400FD004  // Memory data register
-#define FLASH_FMC               0x400FD008  // Memory control register
-#define FLASH_FCRIS             0x400FD00C  // Raw interrupt status register
-#define FLASH_FCIM              0x400FD010  // Interrupt mask register
-#define FLASH_FCMISC            0x400FD014  // Interrupt status register
+#define FLASH_FMA               0x400FD000  // Flash Memory Address
+#define FLASH_FMD               0x400FD004  // Flash Memory Data
+#define FLASH_FMC               0x400FD008  // Flash Memory Control
+#define FLASH_FCRIS             0x400FD00C  // Flash Controller Raw Interrupt
+                                            // Status
+#define FLASH_FCIM              0x400FD010  // Flash Controller Interrupt Mask
+#define FLASH_FCMISC            0x400FD014  // Flash Controller Masked
+                                            // Interrupt Status and Clear
 #define FLASH_FMC2              0x400FD020  // Flash Memory Control 2
 #define FLASH_FWBVAL            0x400FD030  // Flash Write Buffer Valid
-#define FLASH_FWBN              0x400FD100  // Flash Write Buffer Register n
+#define FLASH_FWBN              0x400FD100  // Flash Write Buffer n
 #define FLASH_RMCTL             0x400FE0F0  // ROM Control
 #define FLASH_RMVER             0x400FE0F4  // ROM Version Register
-#define FLASH_FMPRE             0x400FE130  // FLASH read protect register
-#define FLASH_FMPPE             0x400FE134  // FLASH program protect register
-#define FLASH_USECRL            0x400FE140  // uSec reload register
+#define FLASH_FMPRE             0x400FE130  // Flash Memory Protection Read
+                                            // Enable
+#define FLASH_FMPPE             0x400FE134  // Flash Memory Protection Program
+                                            // Enable
+#define FLASH_USECRL            0x400FE140  // USec Reload
 #define FLASH_USERDBG           0x400FE1D0  // User Debug
 #define FLASH_USERREG0          0x400FE1E0  // User Register 0
 #define FLASH_USERREG1          0x400FE1E4  // User Register 1
 #define FLASH_USERREG2          0x400FE1E8  // User Register 2
 #define FLASH_USERREG3          0x400FE1EC  // User Register 3
-#define FLASH_FMPRE0            0x400FE200  // FLASH read protect register 0
-#define FLASH_FMPRE1            0x400FE204  // FLASH read protect register 1
-#define FLASH_FMPRE2            0x400FE208  // FLASH read protect register 2
-#define FLASH_FMPRE3            0x400FE20C  // FLASH read protect register 3
-#define FLASH_FMPPE0            0x400FE400  // FLASH program protect register 0
-#define FLASH_FMPPE1            0x400FE404  // FLASH program protect register 1
-#define FLASH_FMPPE2            0x400FE408  // FLASH program protect register 2
-#define FLASH_FMPPE3            0x400FE40C  // FLASH program protect register 3
+#define FLASH_FMPRE0            0x400FE200  // Flash Memory Protection Read
+                                            // Enable 0
+#define FLASH_FMPRE1            0x400FE204  // Flash Memory Protection Read
+                                            // Enable 1
+#define FLASH_FMPRE2            0x400FE208  // Flash Memory Protection Read
+                                            // Enable 2
+#define FLASH_FMPRE3            0x400FE20C  // Flash Memory Protection Read
+                                            // Enable 3
+#define FLASH_FMPPE0            0x400FE400  // Flash Memory Protection Program
+                                            // Enable 0
+#define FLASH_FMPPE1            0x400FE404  // Flash Memory Protection Program
+                                            // Enable 1
+#define FLASH_FMPPE2            0x400FE408  // Flash Memory Protection Program
+                                            // Enable 2
+#define FLASH_FMPPE3            0x400FE40C  // Flash Memory Protection Program
+                                            // Enable 3
 
 //*****************************************************************************
 //
@@ -82,13 +91,11 @@
 // The following are defines for the bit fields in the FLASH_FMC register.
 //
 //*****************************************************************************
-#define FLASH_FMC_WRKEY_M       0xFFFF0000  // FLASH write key mask
 #define FLASH_FMC_WRKEY         0xA4420000  // FLASH write key
-#define FLASH_FMC_COMT          0x00000008  // Commit user register
-#define FLASH_FMC_MERASE        0x00000004  // Mass erase FLASH
-#define FLASH_FMC_ERASE         0x00000002  // Erase FLASH page
-#define FLASH_FMC_WRITE         0x00000001  // Write FLASH word
-#define FLASH_FMC_WRKEY_S       16
+#define FLASH_FMC_COMT          0x00000008  // Commit Register Value
+#define FLASH_FMC_MERASE        0x00000004  // Mass Erase Flash Memory
+#define FLASH_FMC_ERASE         0x00000002  // Erase a Page of Flash Memory
+#define FLASH_FMC_WRITE         0x00000001  // Write a Word into Flash Memory
 
 //*****************************************************************************
 //
@@ -122,14 +129,14 @@
 //
 //*****************************************************************************
 #define FLASH_FMC2_WRKEY        0xA4420000  // FLASH write key
-#define FLASH_FMC2_WRBUF        0x00000001  // Buffered Flash Write
+#define FLASH_FMC2_WRBUF        0x00000001  // Buffered Flash Memory Write
 
 //*****************************************************************************
 //
 // The following are defines for the bit fields in the FLASH_FWBVAL register.
 //
 //*****************************************************************************
-#define FLASH_FWBVAL_FWB_M      0xFFFFFFFF  // Flash Write Buffer
+#define FLASH_FWBVAL_FWB_M      0xFFFFFFFF  // Flash Memory Write Buffer
 
 //*****************************************************************************
 //
@@ -158,10 +165,9 @@
 #define FLASH_RMVER_CONT_LM_AES_SAFERTOS \
                                 0x03000000  // Stellaris Boot Loader &
                                             // DriverLib with AES and SAFERTOS
-#define FLASH_RMVER_SIZE_M      0x00FF0000  // ROM Size
-#define FLASH_RMVER_SIZE_11K    0x00000000  // 11KB Size
-#define FLASH_RMVER_SIZE_23_75K 0x00020000  // 23.75KB Size
-#define FLASH_RMVER_SIZE_28_25K 0x00030000  // 28.25KB Size
+#define FLASH_RMVER_CONT_LM_AES2 \
+                                0x05000000  // Stellaris Boot Loader &
+                                            // DriverLib with AES
 #define FLASH_RMVER_VER_M       0x0000FF00  // ROM Version
 #define FLASH_RMVER_REV_M       0x000000FF  // ROM Revision
 #define FLASH_RMVER_VER_S       8
@@ -285,6 +291,8 @@
 //
 //*****************************************************************************
 #define FLASH_FMC_WRKEY_MASK    0xFFFF0000  // FLASH write key mask
+#define FLASH_FMC_WRKEY_M       0xFFFF0000  // Flash Memory Write Key
+#define FLASH_FMC_WRKEY_S       16
 
 //*****************************************************************************
 //

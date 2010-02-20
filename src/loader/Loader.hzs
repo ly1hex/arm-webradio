@@ -17,6 +17,7 @@
  </Memory4>
  <Project>
   <ProjectSessionItem path="Loader" name="unnamed" />
+  <ProjectSessionItem path="Loader;Loader" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
@@ -46,6 +47,8 @@
  <Watch4>
   <Watches active="0" update="Never" />
  </Watch4>
- <Files/>
+ <Files>
+  <SessionOpenFile useTextEdit="1" useBinaryEdit="0" codecName="Latin1" x="0" debugPath="C:\Programme\CrossWorks for ARM\source\thumb_crt0.s" y="237" path="C:\Programme\CrossWorks for ARM\source\thumb_crt0.s" left="0" selected="1" name="unnamed" top="221" />
+ </Files>
  <ARMCrossStudioWindow activeProject="Loader" autoConnectTarget="" debugSearchFileMap="" fileDialogInitialDirectory="" fileDialogDefaultFilter="*.c" autoConnectCapabilities="0" debugSearchPath="" buildConfiguration="THUMB Flash Debug" />
 </session>
