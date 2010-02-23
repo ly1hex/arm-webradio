@@ -206,7 +206,6 @@ void                                   init_periph(void);
 void                                   init_pins(void);
 
 void                                   delay_ms(unsigned long ms);
-void                                   delay_1ms(void);
 
 void                                   GPIOSetOutputOD(unsigned long port, unsigned char pins);
 void                                   GPIOSetOutput(unsigned long port, unsigned char pins);

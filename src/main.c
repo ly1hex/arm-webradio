@@ -36,9 +36,8 @@
 
 volatile unsigned int status=0, standby_active=0;
 volatile long on_time=0;
-volatile unsigned int ms_time=0;
 unsigned long sec_time=0;
-TIME time;
+TIME timedate;
 char date_str[14] = {'T','h',' ','0','1','.','0','1','.','1','9','7','0',0}; //Th 01.01.1970
 char clock_str[9] = {'0','0',':','0','0',':','0','0',0}; //00:00:00
 
@@ -76,27 +75,27 @@ void systick(void) //100 Hz
 
     s  = status;
     s |= SEC_CHANGED;
-    if(++time.s == 60)
+    if(++timedate.s == 60)
     {
-      time.s = 0;
+      timedate.s = 0;
       s |= MIN_CHANGED;
-      if(++time.m == 60)
+      if(++timedate.m == 60)
       {
-        time.m = 0;
+        timedate.m = 0;
         s |= HOUR_CHANGED;
-        if(++time.h == 24)
+        if(++timedate.h == 24)
         {
-          time.h = 0;
+          timedate.h = 0;
           s |= DAY_CHANGED;
         }
-        clock_str[0] = clock_tab[time.h][0];
-        clock_str[1] = clock_tab[time.h][1];
+        clock_str[0] = clock_tab[timedate.h][0];
+        clock_str[1] = clock_tab[timedate.h][1];
       }
-      clock_str[3] = clock_tab[time.m][0];
-      clock_str[4] = clock_tab[time.m][1];
+      clock_str[3] = clock_tab[timedate.m][0];
+      clock_str[4] = clock_tab[timedate.m][1];
     }
-    clock_str[6] = clock_tab[time.s][0];
-    clock_str[7] = clock_tab[time.s][1];
+    clock_str[6] = clock_tab[timedate.s][0];
+    clock_str[7] = clock_tab[timedate.s][1];
     status = s;
   }
 
@@ -118,13 +117,13 @@ char* getdate(void)
 
 void gettime(TIME* t)
 {
-  t->year  = time.year;
-  t->month = time.month;
-  t->day   = time.day;
-  t->wday  = time.wday;
-  t->h     = time.h;
-  t->m     = time.m;
-  t->s     = time.s;
+  t->year  = timedate.year;
+  t->month = timedate.month;
+  t->day   = timedate.day;
+  t->wday  = timedate.wday;
+  t->h     = timedate.h;
+  t->m     = timedate.m;
+  t->s     = timedate.s;
 
   return;
 }
@@ -136,30 +135,30 @@ void settime(unsigned long s)
 
   SysTickIntDisable();
   sectotime(s-1, &t);
-  sec_time   = s;
-  time.year  = t.year;
-  time.month = t.month;
-  time.day   = t.day;
-  time.wday  = t.wday;
-  time.h     = t.h;
-  time.m     = t.m;
-  time.s     = t.s;
+  sec_time = s;
+  timedate.year  = t.year;
+  timedate.month = t.month;
+  timedate.day   = t.day;
+  timedate.wday  = t.wday;
+  timedate.h     = t.h;
+  timedate.m     = t.m;
+  timedate.s     = t.s;
   SysTickIntEnable();
 
-  date_str[0] = day_tab[time.wday][0];
-  date_str[1] = day_tab[time.wday][1];
-  date_str[3] = clock_tab[time.day][0];
-  date_str[4] = clock_tab[time.day][1];
-  date_str[6] = clock_tab[time.month][0];
-  date_str[7] = clock_tab[time.month][1];
-  itoa(time.year, &date_str[9], 10);
+  date_str[0] = day_tab[timedate.wday][0];
+  date_str[1] = day_tab[timedate.wday][1];
+  date_str[3] = clock_tab[timedate.day][0];
+  date_str[4] = clock_tab[timedate.day][1];
+  date_str[6] = clock_tab[timedate.month][0];
+  date_str[7] = clock_tab[timedate.month][1];
+  itoa(timedate.year, &date_str[9], 10);
 
-  clock_str[0] = clock_tab[time.h][0];
-  clock_str[1] = clock_tab[time.h][1];
-  clock_str[3] = clock_tab[time.m][0];
-  clock_str[4] = clock_tab[time.m][1];
-  clock_str[6] = clock_tab[time.s][0];
-  clock_str[7] = clock_tab[time.s][1];
+  clock_str[0] = clock_tab[timedate.h][0];
+  clock_str[1] = clock_tab[timedate.h][1];
+  clock_str[3] = clock_tab[timedate.m][0];
+  clock_str[4] = clock_tab[timedate.m][1];
+  clock_str[6] = clock_tab[timedate.s][0];
+  clock_str[7] = clock_tab[timedate.s][1];
 
   DEBUGOUT("Set time: %s %s\n", getclock(), getdate());
 
@@ -238,7 +237,7 @@ unsigned int standby(unsigned int param)
       {
         settime(sec_time);
       }
-      i = alarm_check(&time);
+      i = alarm_check(&timedate);
       if(i == 1) //alarm: play
       {
         alarm = i;
@@ -255,7 +254,7 @@ unsigned int standby(unsigned int param)
       if(alarm == 0)
       {
         pwm_led(80);
-        daytime(tmp, &time);
+        daytime(tmp, &timedate);
         lcd_puts(10, 10, tmp, NORMALFONT, 1, RGB(255,255,255), RGB(0,0,0));
 
         chucknorris_rfact();
@@ -409,7 +408,7 @@ int main()
   USB_ON();
 
   //check alarm
-  alarm = alarm_check(&time);
+  alarm = alarm_check(&timedate);
   menu_alarm(alarm);
 
   DEBUGOUT("Ready...\n");
@@ -432,7 +431,7 @@ int main()
       {
         settime(sec_time);
       }
-      alarm = alarm_check(&time);
+      alarm = alarm_check(&timedate);
       if(alarm == 2)
       {
         standby(0);
