@@ -147,7 +147,7 @@ void lcd_reset(void)
   lcd_cmd(0xEE, 0x04);
   lcd_cmd(0x43, 0x06);
 
-  delay_ms(6); //important: 6-7 ms
+  delay_ms(7); //important: 6-7 ms
 
   //init 2
   lcd_cmd(0xEF, 0x90);

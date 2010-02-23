@@ -958,47 +958,9 @@ void init_pins(void)
 
 void delay_ms(unsigned long ms)
 {
-  for(; ms!=0; ms--)
-  {
-    delay_1ms();
-  }
+  unsigned long t;
 
-  return;
-}
-
-
-void delay_1ms(void)
-{
-  unsigned long t, rcc, rcc2;
-
-  rcc  = HWREG(SYSCTL_RCC);
-  rcc2 = HWREG(SYSCTL_RCC2);
-
-  if(((rcc2 & SYSCTL_RCC2_USERCC2) && !(rcc2 & SYSCTL_RCC2_BYPASS2)) ||
-     (!(rcc2 & SYSCTL_RCC2_USERCC2) && !(rcc & SYSCTL_RCC_BYPASS))) //PLL on?
-  {
-#if   LM3S_SYSDIV == SYSCTL_SYSDIV_4  //50.0 MHz
-    #define DELAY_100US_MHZ (200000000/4)
-#elif LM3S_SYSDIV == SYSCTL_SYSDIV_5  //40.0 MHz
-    #define DELAY_100US_MHZ (200000000/5)
-#elif LM3S_SYSDIV == SYSCTL_SYSDIV_6  //33.3 MHz
-    #define DELAY_100US_MHZ (200000000/6)
-#elif LM3S_SYSDIV == SYSCTL_SYSDIV_7  //28.6 MHz
-    #define DELAY_100US_MHZ (200000000/7)
-#elif LM3S_SYSDIV == SYSCTL_SYSDIV_8  //25.0 MHz
-    #define DELAY_100US_MHZ (200000000/8)
-#elif LM3S_SYSDIV == SYSCTL_SYSDIV_9  //22.2 MHz
-    #define DELAY_100US_MHZ (200000000/9)
-#elif LM3S_SYSDIV == SYSCTL_SYSDIV_10 //20.0 MHz
-    #define DELAY_100US_MHZ (200000000/10)
-#endif
-    t = (unsigned long)(double)(((double)DELAY_100US_MHZ/1000) / 3);
-  }
-  else
-  {
-    t = (unsigned long)(double)((8000000/1000) / 3); //8 MHz
-  }
-
+  t =  ms * (SysCtlClockGet() / 3000);
   SysCtlDelay(t); //3 cycles
 
   return;
