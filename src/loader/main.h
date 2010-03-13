@@ -4,7 +4,7 @@
 
 //----- DEFINES -----
 //Application settings
-#define VERSION                        "0.03"
+#define VERSION                        "0.04"
 #define RELEASE                        //Release version
 #define APPNAME                        "Loader"
 #if defined DEBUG
@@ -25,7 +25,6 @@
 
 //----- PROTOTYPES -----
 void                                   systick(void);
-
 long                                   backup_app(const char* fname);
 long                                   flash_app(const char* fname);
 void                                   start_app(void);

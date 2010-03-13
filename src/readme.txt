@@ -1,4 +1,4 @@
-WebRadio v0.07 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.08 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.05
                          CPU Support Pkg. Stellaris 1.3
@@ -6,7 +6,7 @@ WebRadio v0.07 (c) Andreas Watterott (www.watterott.net)
 
 Third party software
 --------------------
-  Luminary Micro StellarisWare Driver Library 5570
+  Luminary Micro StellarisWare Driver Library 5727
     http://www.luminarymicro.com
     Modifications:
       lmi/driverlib/cpu.c: 43: PRIMASK -> primask
@@ -27,6 +27,9 @@ License
 
 History
 -------
+  Mar 12 2010  v0.08  Improved LS020 code
+                      Changed MMC init to old version
+
   Feb 20 2010  v0.07  CodeSourcery Toolchain support
                       (Thanks to Daniel Buergin)
                       Added Chuck Norris Facts

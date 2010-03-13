@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -929,14 +929,32 @@ uDMAChannelSizeGet(unsigned long ulChannel)
     pControlTable = (tDMAControlTable *)HWREG(UDMA_CTLBASE);
 
     //
-    // Get the current control word value and mask off all but the size field.
+    // Get the current control word value and mask off all but the size field
+    // and the mode field.
     //
-    ulControl = pControlTable[ulChannel].ulControl & UDMA_CHCTL_XFERSIZE_M;
+    ulControl = pControlTable[ulChannel].ulControl &
+                (UDMA_CHCTL_XFERSIZE_M | UDMA_CHCTL_XFERMODE_M);
 
     //
-    // Shift the size field and add one, then return to user.
+    // If the size field and mode field are 0 then the transfer is finished
+    // and there are no more items to transfer
     //
-    return((ulControl >> 4) + 1);
+    if(ulControl == 0)
+    {
+        return(0);
+    }
+
+    //
+    // Otherwise, if either the size field or more field is non-zero, then
+    // not all the items have been transferred.
+    //
+    else
+    {
+        //
+        // Shift the size field and add one, then return to user.
+        //
+        return((ulControl >> 4) + 1);
+    }
 }
 
 //*****************************************************************************

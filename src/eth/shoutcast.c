@@ -418,7 +418,7 @@ void shoutcast_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx
                     break;
                   }
                 }
-                else if(rx_len >= 3)
+                if(rx_len >= 3)
                 {
                   if((rx[0] == 'A') && 
                      (rx[1] == 'D') &&

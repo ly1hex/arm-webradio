@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Firmware Development Package.
+// This is part of revision 5727 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -73,10 +73,7 @@
 #define EPI_CFG_BLKEN           0x00000010  // Block Enable
 #define EPI_CFG_MODE_M          0x0000000F  // Mode Select
 #define EPI_CFG_MODE_NONE       0x00000000  // General Purpose
-#define EPI_CFG_MODE_SDRAM      0x00000001  // Supports SDR SDRAM. Control,
-                                            // address, and data pins are
-                                            // configured using the EPISDRAMCFG
-                                            // register
+#define EPI_CFG_MODE_SDRAM      0x00000001  // SDRAM
 #define EPI_CFG_MODE_HB8        0x00000002  // 8-Bit Host-Bus (HB8)
 
 //*****************************************************************************
@@ -146,8 +143,8 @@
 //*****************************************************************************
 #define EPI_HB8CFG_XFFEN        0x00800000  // External FIFO FULL Enable
 #define EPI_HB8CFG_XFEEN        0x00400000  // External FIFO EMPTY Enable
-#define EPI_HB8CFG_WRHIGH       0x00200000  // WRITE Strobe Polarity
-#define EPI_HB8CFG_RDHIGH       0x00100000  // READ Strobe Polarity
+#define EPI_HB8CFG_WRHIGH       0x00200000  // CS0n WRITE Strobe Polarity
+#define EPI_HB8CFG_RDHIGH       0x00100000  // CS0n READ Strobe Polarity
 #define EPI_HB8CFG_MAXWAIT_M    0x0000FF00  // Maximum Wait
 #define EPI_HB8CFG_WRWS_M       0x000000C0  // Write Wait States
 #define EPI_HB8CFG_WRWS_0       0x00000000  // No wait states
@@ -162,7 +159,7 @@
 #define EPI_HB8CFG_MODE_M       0x00000003  // Host Bus Sub-Mode
 #define EPI_HB8CFG_MODE_MUX     0x00000000  // ADMUX - AD[7:0]
 #define EPI_HB8CFG_MODE_NMUX    0x00000001  // ADNONMUX - D[7:0]
-#define EPI_HB8CFG_MODE_SRAM    0x00000002  // SRAM
+#define EPI_HB8CFG_MODE_SRAM    0x00000002  // Continuous Read - D[7:0]
 #define EPI_HB8CFG_MODE_FIFO    0x00000003  // XFIFO - D[7:0]
 #define EPI_HB8CFG_MAXWAIT_S    8
 

@@ -218,9 +218,6 @@
       <folder Name="third_party">
         <file file_name="../third_party/readme.txt"/>
         <folder Name="fatfs">
-          <folder Name="option">
-            <file file_name="../third_party/fatfs/option/ccsbcs.c"/>
-          </folder>
           <file file_name="../third_party/fatfs/00readme.txt"/>
           <file file_name="../third_party/fatfs/diskio.h"/>
           <file file_name="../third_party/fatfs/ff.c"/>

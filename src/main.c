@@ -264,11 +264,7 @@ unsigned int standby(unsigned int param)
     }
   }
 
-  //re-mount card
-  fs_unmount();
-  fs_mount();
-
-  USB_ON();
+  USB_ON(); //speaker on
 
   cpu_speed(0); //high speed
 

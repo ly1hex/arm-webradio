@@ -133,7 +133,6 @@ SRC += ../lcd/font_8x8.c
 SRC += ../mmc_io.c
 SRC += ../mmc.c
 SRC += ../third_party/fatfs/ff.c
-SRC += ../third_party/fatfs/option/ccsbcs.c
 SRC += ../startup.c
 # Needed by the Codesourcery toolchain
 SRC += ../syscalls.c

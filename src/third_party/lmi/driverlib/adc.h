@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -135,6 +135,14 @@ extern "C"
 
 //*****************************************************************************
 //
+// Values that can be passed to ADCReferenceSet as the ulRef parameter.
+//
+//*****************************************************************************
+#define ADC_REF_INT             0x00000000  // Internal reference
+#define ADC_REF_EXT_3V          0x00000001  // External 3V reference
+
+//*****************************************************************************
+//
 // Prototypes for the APIs.
 //
 //*****************************************************************************
@@ -200,7 +208,8 @@ extern void ADCComparatorIntEnable(unsigned long ulBase,
 extern unsigned long ADCComparatorIntStatus(unsigned long ulBase);
 extern void ADCComparatorIntClear(unsigned long ulBase,
                                   unsigned long ulStatus);
-
+extern void ADCReferenceSet(unsigned long ulBase, unsigned long ulRef);
+extern unsigned long ADCReferenceGet(unsigned long ulBase);
 
 //*****************************************************************************
 //

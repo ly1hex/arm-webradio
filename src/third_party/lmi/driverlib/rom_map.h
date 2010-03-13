@@ -19,7 +19,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -2393,12 +2393,12 @@
 #define MAP_USBDevDisconnect \
         USBDevDisconnect
 #endif
-#ifdef ROM_USBDevEndpointConfig
-#define MAP_USBDevEndpointConfig \
-        ROM_USBDevEndpointConfig
+#ifdef ROM_USBDevEndpointConfigSet
+#define MAP_USBDevEndpointConfigSet \
+        ROM_USBDevEndpointConfigSet
 #else
-#define MAP_USBDevEndpointConfig \
-        USBDevEndpointConfig
+#define MAP_USBDevEndpointConfigSet \
+        USBDevEndpointConfigSet
 #endif
 #ifdef ROM_USBDevEndpointDataAck
 #define MAP_USBDevEndpointDataAck \
@@ -2483,13 +2483,6 @@
 #else
 #define MAP_USBFIFOConfigSet \
         USBFIFOConfigSet
-#endif
-#ifdef ROM_USBFIFOFlush
-#define MAP_USBFIFOFlush \
-        ROM_USBFIFOFlush
-#else
-#define MAP_USBFIFOFlush \
-        USBFIFOFlush
 #endif
 #ifdef ROM_USBFrameNumberGet
 #define MAP_USBFrameNumberGet \
@@ -2755,6 +2748,16 @@
 #else
 #define MAP_WatchdogStallDisable \
         WatchdogStallDisable
+#endif
+
+//*****************************************************************************
+//
+// Deprecated ROM functions.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+#define MAP_USBDevEndpointConfig \
+        MAP_USBDevEndpointConfigSet
 #endif
 
 #endif // __ROM_MAP_H__

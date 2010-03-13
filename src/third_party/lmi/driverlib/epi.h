@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -187,41 +187,46 @@ extern "C"
 // API Function prototypes
 //
 //*****************************************************************************
-void EPIModeSet(unsigned long ulBase, unsigned long ulMode);
-void EPIDividerSet(unsigned long ulBase, unsigned long ulDivider);
-void EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
-                       unsigned long ulRefresh);
-void EPIConfigGPModeSet(unsigned long ulBase, unsigned long ulConfig,
-                        unsigned long ulFrameCount, unsigned long ulMaxWait);
-void EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
-                     unsigned long ulMaxWait);
-void EPIAddressMapSet(unsigned long ulBase, unsigned long ulMap);
-void EPINonBlockingReadConfigure(unsigned long ulBase, unsigned long ulChannel,
-                            unsigned long ulDataSize, unsigned long ulAddress);
-void EPINonBlockingReadStart(unsigned long ulBase, unsigned long ulChannel,
-                             unsigned long ulCount);
-void EPINonBlockingReadStop(unsigned long ulBase, unsigned long ulChannel);
-unsigned long EPINonBlockingReadCount(unsigned long ulBase,
-                                      unsigned long ulChannel);
-unsigned long EPINonBlockingReadAvail(unsigned long ulBase);
-unsigned long EPINonBlockingReadGet32(unsigned long ulBase,
-                                      unsigned long ulCount,
-                                      unsigned long *pulBuf);
-unsigned long EPINonBlockingReadGet16(unsigned long ulBase,
-                                      unsigned long ulCount,
-                                      unsigned short *pusBuf);
-unsigned long EPINonBlockingReadGet8(unsigned long ulBase,
-                                     unsigned long ulCount,
-                                     unsigned char *pucBuf);
-void EPIFIFOConfig(unsigned long ulBase, unsigned long ulConfig);
-unsigned long EPIWriteFIFOCountGet(unsigned long ulBase);
-void EPIIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
-void EPIIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
-unsigned long EPIIntStatus(unsigned long ulBase, tBoolean bMasked);
-unsigned long EPIIntErrorStatus(unsigned long ulBase);
-void EPIIntErrorClear(unsigned long ulBase, unsigned long ulErrFlags);
-void EPIIntRegister(unsigned long ulBase, void (*pfnHandler)(void));
-void EPIIntUnregister(unsigned long ulBase);
+extern void EPIModeSet(unsigned long ulBase, unsigned long ulMode);
+extern void EPIDividerSet(unsigned long ulBase, unsigned long ulDivider);
+extern void EPIConfigSDRAMSet(unsigned long ulBase, unsigned long ulConfig,
+                              unsigned long ulRefresh);
+extern void EPIConfigGPModeSet(unsigned long ulBase, unsigned long ulConfig,
+                               unsigned long ulFrameCount,
+                               unsigned long ulMaxWait);
+extern void EPIConfigHB8Set(unsigned long ulBase, unsigned long ulConfig,
+                            unsigned long ulMaxWait);
+extern void EPIAddressMapSet(unsigned long ulBase, unsigned long ulMap);
+extern void EPINonBlockingReadConfigure(unsigned long ulBase,
+                                        unsigned long ulChannel,
+                                        unsigned long ulDataSize,
+                                        unsigned long ulAddress);
+extern void EPINonBlockingReadStart(unsigned long ulBase,
+                                    unsigned long ulChannel,
+                                    unsigned long ulCount);
+extern void EPINonBlockingReadStop(unsigned long ulBase,
+                                   unsigned long ulChannel);
+extern unsigned long EPINonBlockingReadCount(unsigned long ulBase,
+                                             unsigned long ulChannel);
+extern unsigned long EPINonBlockingReadAvail(unsigned long ulBase);
+extern unsigned long EPINonBlockingReadGet32(unsigned long ulBase,
+                                             unsigned long ulCount,
+                                             unsigned long *pulBuf);
+extern unsigned long EPINonBlockingReadGet16(unsigned long ulBase,
+                                             unsigned long ulCount,
+                                             unsigned short *pusBuf);
+extern unsigned long EPINonBlockingReadGet8(unsigned long ulBase,
+                                            unsigned long ulCount,
+                                            unsigned char *pucBuf);
+extern void EPIFIFOConfig(unsigned long ulBase, unsigned long ulConfig);
+extern unsigned long EPIWriteFIFOCountGet(unsigned long ulBase);
+extern void EPIIntEnable(unsigned long ulBase, unsigned long ulIntFlags);
+extern void EPIIntDisable(unsigned long ulBase, unsigned long ulIntFlags);
+extern unsigned long EPIIntStatus(unsigned long ulBase, tBoolean bMasked);
+extern unsigned long EPIIntErrorStatus(unsigned long ulBase);
+extern void EPIIntErrorClear(unsigned long ulBase, unsigned long ulErrFlags);
+extern void EPIIntRegister(unsigned long ulBase, void (*pfnHandler)(void));
+extern void EPIIntUnregister(unsigned long ulBase);
 
 //*****************************************************************************
 //
