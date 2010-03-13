@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Firmware Development Package.
+// This is part of revision 5727 of the Stellaris Firmware Development Package.
 //
 //*****************************************************************************
 
@@ -143,6 +143,12 @@ typedef unsigned char tBoolean;
 #define REVISION_IS_B1                                                     \
         ((HWREG(SYSCTL_DID0) & (SYSCTL_DID0_MAJ_M | SYSCTL_DID0_MIN_M)) == \
          (SYSCTL_DID0_MAJ_REVB | SYSCTL_DID0_MIN_1))
+#endif
+
+#ifndef REVISION_IS_C0
+#define REVISION_IS_C0                                                     \
+        ((HWREG(SYSCTL_DID0) & (SYSCTL_DID0_MAJ_M | SYSCTL_DID0_MIN_M)) == \
+         (SYSCTL_DID0_MAJ_REVC | SYSCTL_DID0_MIN_0))
 #endif
 
 #ifndef REVISION_IS_C1

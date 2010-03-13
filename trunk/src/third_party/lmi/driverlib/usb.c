@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -3346,42 +3346,67 @@ USBHostHubAddrGet(unsigned long ulBase, unsigned long ulEndpoint,
 //! \param ulBase specifies the USB module base address.
 //! \param ulFlags specifies the configuration of the power fault.
 //!
-//! This function will set the behavior of the USB controller during a power
-//! fault and the behavior of the USBPEN pin.  The flags specify the power
+//! This function controls how the USB controller uses its external power
+//! control pins(USBnPFTL and USBnEPEN).  The flags specify the power
 //! fault level sensitivity, the power fault action, and the power enable level
-//! and source.  One of the following can be selected as the power fault level
+//! and source.
+//!
+//! One of the following can be selected as the power fault level
 //! sensitivity:
 //!
-//! - \b USB_HOST_PWRFLT_LOW - Power fault is indicated by the pin being driven
-//!   low.
-//! - \b USB_HOST_PWRFLT_HIGH - Power fault is indicated by the pin being
-//!   driven! high.
+//! - \b USB_HOST_PWRFLT_LOW - An external power fault is indicated by the pin
+//!                            being driven low.
+//! - \b USB_HOST_PWRFLT_HIGH - An external power fault is indicated by the pin
+//!                             being driven high.
 //!
 //! One of the following can be selected as the power fault action:
 //!
 //! - \b USB_HOST_PWRFLT_EP_NONE - No automatic action when power fault
 //!   detected.
-//! - \b USB_HOST_PWRFLT_EP_TRI - Automatically Tri-state the USBEPEN pin on a
-//!   power fault.
-//! - \b USB_HOST_PWRFLT_EP_LOW - Automatically drive USBEPEN pin low on a
-//!   power fault.
-//! - \b USB_HOST_PWRFLT_EP_HIGH - Automatically drive USBEPEN pin high on a
-//!   power fault.
+//! - \b USB_HOST_PWRFLT_EP_TRI - Automatically Tri-state the USBnEPEN pin on a
+//!                               power fault.
+//! - \b USB_HOST_PWRFLT_EP_LOW - Automatically drive USBnEPEN pin low on a
+//!                               power fault.
+//! - \b USB_HOST_PWRFLT_EP_HIGH - Automatically drive USBnEPEN pin high on a
+//!                                power fault.
 //!
 //! One of the following can be selected as the power enable level and source:
 //!
-//! - \b USB_HOST_PWREN_LOW - USBEPEN is driven low when power is enabled.
-//! - \b USB_HOST_PWREN_HIGH - USBEPEN is driven high when power is enabled.
-//! - \b USB_HOST_PWREN_VBLOW - USBEPEN is driven high when VBUS is low.
-//! - \b USB_HOST_PWREN_VBHIGH - USBEPEN is driven high when VBUS is high.
+//! - \b USB_HOST_PWREN_MAN_LOW - USBEPEN is driven low by the USB controller
+//!                               when USBHostPwrEnable() is called.
+//! - \b USB_HOST_PWREN_MAN_HIGH - USBEPEN is driven high by the USB controller
+//!                                when USBHostPwrEnable() is called.
+//! - \b USB_HOST_PWREN_AUTOLOW - USBEPEN is driven low by the USB controller
+//!                               automatically if USBOTGSessionRequest() has
+//!                               enabled a session.
+//! - \b USB_HOST_PWREN_AUTOHIGH - USBEPEN is driven high by the USB controller
+//!                                automatically if USBOTGSessionRequest() has
+//!                                enabled a session.
 //!
-//! \note This function should only be called in host mode.
+//! On devices that support the VBUS glitch filter, the
+//! \b USB_HOST_PWREN_FILTER can be added to ignore small short drops in VBUS
+//! level caused by high power consumption.  This is mainly used to avoid
+//! causing VBUS errors caused by devices with high in-rush current.
+//!
+//! \note The following values have been deprecated and should no longer be
+//!       used.
+//! - \b USB_HOST_PWREN_LOW - Automatically drive USBnEPEN low when power is
+//!                           enabled.
+//! - \b USB_HOST_PWREN_HIGH - Automatically drive USBnEPEN high when power is
+//!                            enabled.
+//! - \b USB_HOST_PWREN_VBLOW - Automatically drive USBnEPEN low when power is
+//!                             enabled.
+//! - \b USB_HOST_PWREN_VBHIGH - Automatically drive USBnEPEN high when power is
+//!                              enabled.
+//!
+//! \note This function should only be called on microcontrollers that support
+//! host mode or OTG operation.
 //!
 //! \return None.
 //
 //*****************************************************************************
 void
-USBHostPwrFaultConfig(unsigned long ulBase, unsigned long ulFlags)
+USBHostPwrConfig(unsigned long ulBase, unsigned long ulFlags)
 {
     //
     // Check the arguments.
@@ -3389,6 +3414,12 @@ USBHostPwrFaultConfig(unsigned long ulBase, unsigned long ulFlags)
     ASSERT(ulBase == USB0_BASE);
     ASSERT((ulFlags & ~(USB_EPC_PFLTACT_M | USB_EPC_PFLTAEN |
                        USB_EPC_PFLTSEN_HIGH | USB_EPC_EPEN_M)) == 0);
+
+    //
+    // If requested, enable VBUS droop detection on parts that support this
+    // feature.
+    //
+    HWREG(ulBase + USB_O_VDC) = ulFlags >> 16;
 
     //
     // Set the power fault configuration as specified.  This will not change

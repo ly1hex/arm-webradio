@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1938,7 +1938,7 @@
         ((void (*)(unsigned long ulBase))ROM_USBTABLE[4])
 #endif
 #if defined(TARGET_IS_TEMPEST_RB1)
-#define ROM_USBDevEndpointConfig                                              \
+#define ROM_USBDevEndpointConfigSet                                           \
         ((void (*)(unsigned long ulBase,                                      \
                    unsigned long ulEndpoint,                                  \
                    unsigned long ulMaxPacketSize,                             \

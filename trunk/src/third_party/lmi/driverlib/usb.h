@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -224,7 +224,7 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to USBHostPwrFaultConfig() as
+// The following are values that can be passed to USBHostPwrConfig() as
 // the ulFlags parameter.
 //
 //*****************************************************************************
@@ -234,10 +234,17 @@ extern "C"
 #define USB_HOST_PWRFLT_EP_TRI  0x00000140
 #define USB_HOST_PWRFLT_EP_LOW  0x00000240
 #define USB_HOST_PWRFLT_EP_HIGH 0x00000340
-#define USB_HOST_PWREN_LOW      0x00000000
-#define USB_HOST_PWREN_HIGH     0x00000001
+#ifndef DEPRECATED
+#define USB_HOST_PWREN_LOW      0x00000002
+#define USB_HOST_PWREN_HIGH     0x00000003
 #define USB_HOST_PWREN_VBLOW    0x00000002
 #define USB_HOST_PWREN_VBHIGH   0x00000003
+#endif
+#define USB_HOST_PWREN_MAN_LOW  0x00000000
+#define USB_HOST_PWREN_MAN_HIGH 0x00000001
+#define USB_HOST_PWREN_AUTOLOW  0x00000002
+#define USB_HOST_PWREN_AUTOHIGH 0x00000003
+#define USB_HOST_PWREN_FILTER   0x00010000
 
 //*****************************************************************************
 //
@@ -363,6 +370,10 @@ extern "C"
                                             // the cable.
 #define USB_OTG_MODE_ASIDE_NPWR 0x00000001  // OTG controller on the A side of
                                             // the cable.
+#define USB_OTG_MODE_ASIDE_SESS 0x00000009  // OTG controller on the A side of
+                                            // the cable Session Valid.
+#define USB_OTG_MODE_ASIDE_AVAL 0x00000011  // OTG controller on the A side of
+                                            // the cable A valid.
 #define USB_OTG_MODE_ASIDE_DEV  0x00000019  // OTG controller on the A side of
                                             // the cable.
 #define USB_OTG_MODE_BSIDE_HOST 0x0000009d  // OTG controller on the B side of
@@ -458,7 +469,10 @@ extern void USBHostHubAddrSet(unsigned long ulBase, unsigned long ulEndpoint,
                               unsigned long ulAddr, unsigned long ulFlags);
 extern void USBHostPwrDisable(unsigned long ulBase);
 extern void USBHostPwrEnable(unsigned long ulBase);
-extern void USBHostPwrFaultConfig(unsigned long ulBase, unsigned long ulFlags);
+extern void USBHostPwrConfig(unsigned long ulBase, unsigned long ulFlags);
+#ifndef DEPRECATED
+#define USBHostPwrFaultConfig   USBHostPwrConfig
+#endif
 extern void USBHostPwrFaultDisable(unsigned long ulBase);
 extern void USBHostPwrFaultEnable(unsigned long ulBase);
 extern void USBHostRequestIN(unsigned long ulBase, unsigned long ulEndpoint);

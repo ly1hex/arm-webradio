@@ -133,7 +133,12 @@ void lcd_reset(void)
   LCD_RST_ENABLE();
   delay_ms(50);
   LCD_RST_DISABLE();
-  delay_ms(100);
+  delay_ms(50);
+
+  lcd_cmd(0xFD, 0xFD);
+  lcd_cmd(0xFD, 0xFD);
+
+  delay_ms(10);
 
   //init 1
   lcd_cmd(0xEF, 0x00);
@@ -147,7 +152,7 @@ void lcd_reset(void)
   lcd_cmd(0xEE, 0x04);
   lcd_cmd(0x43, 0x06);
 
-  delay_ms(7); //important: 6-7 ms
+  delay_ms(7); //important: 7ms
 
   //init 2
   lcd_cmd(0xEF, 0x90);
@@ -170,13 +175,11 @@ void lcd_reset(void)
   lcd_cmd(0xE2, 0x02);
   lcd_cmd(0xE2, 0x76);
   lcd_cmd(0xE1, 0x83);
-
-  delay_ms(50);
-
-  //init 3
-  lcd_cmd(0x80, 0x01); //display on
-
-  delay_ms(10);
+  
+  //display on
+  lcd_cmd(0x80, 0x01);
+  lcd_cmd(0xEF, 0x90);
+  lcd_cmd(0x00, 0x00);
 
   //display options
   lcd_cmd(0xEF, 0x90);

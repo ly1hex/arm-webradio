@@ -124,7 +124,7 @@ void lcd_reset(void)
   LCD_RST_ENABLE();
   delay_ms(50);
   LCD_RST_DISABLE();
-  delay_ms(100);
+  delay_ms(50);
 
   lcd_cmd(0xAE); //display off
 

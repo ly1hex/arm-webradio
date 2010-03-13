@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+// This is part of revision 5727 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1299,7 +1299,7 @@ void
 ADCComparatorIntClear(unsigned long ulBase, unsigned long ulStatus)
 {
     //
-    // Check the arugments.
+    // Check the arguments.
     //
     ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
 
@@ -1307,6 +1307,72 @@ ADCComparatorIntClear(unsigned long ulBase, unsigned long ulStatus)
     // Clear the interrupt.
     //
     HWREG(ulBase + ADC_O_DCISC) = ulStatus;
+}
+
+//*****************************************************************************
+//
+//! Selects the ADC reference.
+//!
+//! \param ulBase is the base address of the ADC module.
+//! \param ulRef is the reference to use.
+//!
+//! The ADC reference is set as specified by \e ulRef.  It must be one of
+//! \b ADC_REF_INT or \b ADC_REF_EXT_3V, for internal or external reference.
+//! If \b ADC_REF_INT is chosen, then an internal 3V reference is used and
+//! no external reference is needed.  If \b ADC_REF_EXT_3V is chosen, then a 3V
+//! reference must be supplied to the AVREF pin.
+//!
+//! \note The ADC reference can only be selected on parts that have an external
+//! reference.  Consult the data sheet for your part to determine if there is
+//! an external reference.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+ADCReferenceSet(unsigned long ulBase, unsigned long ulRef)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
+    ASSERT((ulRef == ADC_REF_INT) || (ulRef == ADC_REF_EXT_3V));
+
+    //
+    // Set the reference.
+    //
+    HWREG(ulBase + ADC_O_CTL) = (HWREG(ulBase + ADC_O_CTL) & ~ADC_CTL_VREF) |
+                                ulRef;
+}
+
+//*****************************************************************************
+//
+//! Returns the current setting of the ADC reference.
+//!
+//! \param ulBase is the base address of the ADC module.
+//!
+//! Returns the value of the ADC reference setting.  The returned value will be
+//! one of \b ADC_REF_INT or \b ADC_REF_EXT_3V.
+//!
+//! \note The value returned by this function is only meaningful if used on a
+//! part that is capable of using an external reference.  Consult the data
+//! sheet for your part to determine if it has an external reference input.
+//!
+//! \return The current setting of the ADC reference.
+//
+//*****************************************************************************
+unsigned long
+ADCReferenceGet(unsigned long ulBase)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT((ulBase == ADC0_BASE) || (ulBase == ADC1_BASE));
+
+    //
+    // Return the value of the reference.
+    //
+    return(HWREG(ulBase + ADC_O_CTL) & ADC_CTL_VREF);
 }
 
 //*****************************************************************************

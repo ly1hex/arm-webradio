@@ -57,7 +57,7 @@ long backup_app(const char* fname)
   {
     err = 0;
     lcd_putline(ITEM_X, ITEM_Y, "Save Flash...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
-    for(i=APPSTARTADDR; i<FLASHSIZE; i+=1024)
+    for(i=APPSTARTADDR; (i>=APPSTARTADDR) && (i<FLASHSIZE); i+=1024)
     {
       if(f_write(&fileobj, (unsigned char*)i, FLASHBUF, &wr) != FR_OK)
       {
@@ -93,7 +93,7 @@ long flash_app(const char* fname)
     if(err == 0)
     {
       lcd_putline(ITEM_X, ITEM_Y, "Erase Flash...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
-      for(i=APPSTARTADDR; i<FLASHSIZE; i+=1024)
+      for(i=APPSTARTADDR; (i>=APPSTARTADDR) && (i<FLASHSIZE); i+=1024)
       {
         if(FlashErase(i) != 0)
         {
@@ -106,7 +106,7 @@ long flash_app(const char* fname)
     if(err == 0)
     {
       lcd_putline(ITEM_X, ITEM_Y, "Flash App...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
-      for(i=APPSTARTADDR; i<=FLASHSIZE;)
+      for(i=APPSTARTADDR; (i>=APPSTARTADDR) && (i<FLASHSIZE);)
       {
         if(f_read(&fileobj, flashbuf, FLASHBUF, &rd) == FR_OK)
         {
@@ -280,6 +280,8 @@ int main()
   start_app();
 
   DEBUGOUT("ERROR: No App \n");
+
+  lcd_putline(ITEM_X, ITEM_Y, "ERROR", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
 
   while(1);
 }

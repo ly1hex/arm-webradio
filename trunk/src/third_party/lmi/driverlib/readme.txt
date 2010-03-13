@@ -18,4 +18,4 @@ A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, FOR ANY REASON WHATSOEVER.
 
-This is part of revision 5570 of the Stellaris Peripheral Driver Library.
+This is part of revision 5727 of the Stellaris Peripheral Driver Library.

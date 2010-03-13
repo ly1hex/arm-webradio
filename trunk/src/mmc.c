@@ -12,9 +12,44 @@
 
 
 FATFS fatfs;
+#ifndef LOADER
 FIL fileobj;
 char lfn[_DF1S ? ((_MAX_LFN*2)+1) : (_MAX_LFN+1)];
+#endif
 
+
+void fs_unmount(void)
+{
+  DEBUGOUT("MMC: unmount\n");
+
+  f_mount(0, 0);
+
+  return;
+}
+
+
+void fs_mount(void)
+{
+  unsigned int mount_try=3;
+
+  if(disk_status(0) & STA_NOINIT)
+  {
+    DEBUGOUT("MMC: init\n");
+    while((disk_initialize(0) & STA_NOINIT) && --mount_try);
+  }
+
+  DEBUGOUT("MMC: mount\n");
+
+  if(disk_status(0) == 0)
+  {
+    f_mount(0, &fatfs);
+  }
+
+  return;
+}
+
+
+#ifndef LOADER
 
 unsigned int fs_checkitem(FILINFO *finfo)
 {
@@ -100,14 +135,14 @@ unsigned int fs_isdir(const char *path, unsigned int item)
 
 /*
 MP3 ID3 Tag v1
-offset len
-0        3        TAG -> ID3v1
-3        30        Song title
-33        30        Artist
-63        30        Album
-93        4        Year
-97        30        Comment
-127        1        Genre
+offset  len
+ 0        3        TAG -> ID3v1
+ 3       30        Song title
+ 33      30        Artist
+ 63      30        Album
+ 93       4        Year
+ 97      30        Comment
+127       1        Genre
 */
 void fs_getitemtag(const char *path, unsigned int item, char *dst, unsigned int len)
 {
@@ -230,37 +265,6 @@ unsigned int fs_items(const char *path)
   }
 
   return i;
-}
-
-
-void fs_unmount(void)
-{
-  DEBUGOUT("MMC: unmount\n");
-
-  f_mount(0, 0);
-
-  return;
-}
-
-
-void fs_mount(void)
-{
-  unsigned int mount_try=3;
-
-  if(disk_status(0) & STA_NOINIT)
-  {
-    DEBUGOUT("MMC: init\n");
-    while((disk_initialize(0) & STA_NOINIT) && --mount_try);
-  }
-
-  DEBUGOUT("MMC: mount\n");
-
-  if(disk_status(0) == 0)
-  {
-    f_mount(0, &fatfs);
-  }
-
-  return;
 }
 
 
@@ -668,3 +672,5 @@ unsigned int ini_renentry(const char *filename, const char *entry, const char *n
 
   return 0;
 }
+
+#endif

@@ -221,12 +221,13 @@ DSTATUS disk_initialize(BYTE drv)
   MMC_SELECT();   //CS = low
   MMC_POWEROFF(); //sd power off
   delay_ms(100);
-  init_bor(0);    //BOR off
-  delay_ms(2);
+//  init_bor(0);    //BOR off
+//  delay_ms(2);
   MMC_POWERON();  //sd power on
+  delay_ms(1);
   MMC_DESELECT(); //CS = high
-  delay_ms(2);
-  init_bor(1);    //BOR on
+//  delay_ms(2);
+//  init_bor(1);    //BOR on
   delay_ms(50);
 
   //80 dummy clocks
