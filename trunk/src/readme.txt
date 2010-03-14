@@ -28,28 +28,29 @@ License
 History
 -------
   Mar 12 2010  v0.08  Improved LS020 code
-                      Changed MMC init to old version
+               r122   Changed MMC init to old version
 
   Feb 20 2010  v0.07  CodeSourcery Toolchain support
-                      (Thanks to Daniel Buergin)
+               r117   (Thanks to Daniel Buergin)
                       Added Chuck Norris Facts
                       Some Bugfixes
 
   Jan 07 2010  v0.06  Bugfix release
+               r116
 
   Dec 22 2009  v0.05  IR commands changeable
-                      Different Alarm actions
+               r112   Different Alarm actions
 
   Nov 29 2009  v0.04  Changes in VS interface
-                      LCD L2F50 support
+               r107   LCD L2F50 support
 
   Nov 18 2009  v0.03  Switched to CrossWorks CPU Support Pkg. Stellaris 1.1
-                      Bootloader added
+               r99    Bootloader added
                       New buffer system
                       F-RAM support
 
   Aug 19 2009  v0.02  VS1053b FLAC decoder plugin
-                      Auto detection of VS type (VS1053b, VS1033c, VS1033d)
+               r77     Auto detection of VS type (VS1053b, VS1033c, VS1033d)
                       Automatic standby
                       LFN support
                       Modify settings via Webinterface
@@ -57,3 +58,4 @@ History
                       DNS client
 
   Mar 16 2009  v0.01  First release
+               r6

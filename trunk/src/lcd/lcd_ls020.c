@@ -175,7 +175,9 @@ void lcd_reset(void)
   lcd_cmd(0xE2, 0x02);
   lcd_cmd(0xE2, 0x76);
   lcd_cmd(0xE1, 0x83);
-  
+
+  delay_ms(10);
+
   //display on
   lcd_cmd(0x80, 0x01);
   lcd_cmd(0xEF, 0x90);
