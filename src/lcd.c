@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include "fatfs/ff.h"
 #include "tools.h"
 #include "io.h"
 #include "lcd.h"
@@ -20,7 +21,61 @@ unsigned int lcd_checkbit(const unsigned long *data, unsigned int nr)
 }
 
 
-void lcd_img32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
+void lcd_drawbmp(char *file, unsigned int x, unsigned int y)
+{
+  FIL fsrc;        //file objects
+  FRESULT res;     //result code
+  UINT rd;         //file R/W count
+  unsigned char buf[40]; //read buf (min. size = sizeof(BMP_DIPHeader))
+  BMP_Header *bmp_hd;
+  BMP_DIPHeader *bmp_dip;
+  int width, height, pad, w, h;
+
+  res = f_open(&fsrc, file, FA_OPEN_EXISTING | FA_READ);
+  if(res != FR_OK)
+  {
+    return;
+  }
+
+  //BMP Header
+  bmp_hd = (BMP_Header*)&buf[0];
+  res = f_read(&fsrc, &buf, sizeof(BMP_Header), &rd);
+  if((res == FR_OK) &&
+     (bmp_hd->magic[0] == 'B') && (bmp_hd->magic[1] == 'M') && (bmp_hd->offset == 54))
+  {
+    //BMP DIP-Header
+    bmp_dip = (BMP_DIPHeader*)&buf[0];
+    res = f_read(&fsrc, &buf, sizeof(BMP_DIPHeader), &rd);
+    if((res == FR_OK) && 
+       (bmp_dip->size == sizeof(BMP_DIPHeader)) && (bmp_dip->bitspp == 24) && (bmp_dip->compress == 0))
+    {
+      //BMP data (1. pixel = bottom left)
+      width  = bmp_dip->width;
+      height = bmp_dip->height;
+      pad    = width % 4; //padding (line is multiply of 4)
+      lcd_setarea(x, y, x+width, y+height);
+      for(h=(y+height-1); h >= y; h--) //for every line
+      {
+        for(w=x; w < (x+width); w++) //for every pixel in line
+        {
+          f_read(&fsrc, &buf, 3, &rd);
+          lcd_drawpixel(w, h, RGB(buf[2],buf[1],buf[0]));
+        }
+        if(pad)
+        {
+          f_read(&fsrc, &buf, pad, &rd);
+        }
+      }
+    }
+  }
+
+  f_close(&fsrc);
+
+  return;
+}
+
+
+void lcd_drawimg32(int x, unsigned int y, const unsigned char *img, unsigned int color, unsigned int bgcolor)
 {
   int i, x0, y0, x1, y1;
   unsigned long start, end;

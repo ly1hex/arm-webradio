@@ -78,6 +78,9 @@ void share_init(void)
   gbuf.share.name[0] = 0;
   gbuf.share.info[0] = 0;
   gbuf.share.file[0] = 0;
+  gbuf.share.name[MAX_NAME-1] = 0;
+  gbuf.share.info[MAX_INFO-1] = 0;
+  gbuf.share.file[MAX_ADDR-1] = 0;
 
   return;
 }

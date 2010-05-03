@@ -11,8 +11,10 @@
 #include "lmi/inc/hw_memmap.h"
 #include "lmi/driverlib/sysctl.h"
 #include "lmi/driverlib/gpio.h"
+#include "lmi/driverlib/interrupt.h"
 #include "lmi/driverlib/systick.h"
 #include "fatfs/ff.h"
+#include "fatfs/diskio.h"
 #include "debug.h"
 #include "tools.h"
 #include "main.h"
@@ -36,7 +38,7 @@
 
 volatile unsigned int status=0, standby_active=0;
 volatile long on_time=0;
-unsigned long sec_time=0;
+volatile unsigned long sec_time=0;
 TIME timedate;
 char date_str[14] = {'T','h',' ','0','1','.','0','1','.','1','9','7','0',0}; //Th 01.01.1970
 char clock_str[9] = {'0','0',':','0','0',':','0','0',0}; //00:00:00
@@ -61,7 +63,7 @@ const char clock_tab[60][3] =
 void systick(void) //100 Hz
 {
   static unsigned long sec=1;
-  unsigned int s;
+  unsigned int s, a;
 
   disk_timerproc();
   keys_timerservice();
@@ -87,12 +89,24 @@ void systick(void) //100 Hz
         {
           timedate.h = 0;
           s |= DAY_CHANGED;
+          settime(sec_time); //set date
         }
         clock_str[0] = clock_tab[timedate.h][0];
         clock_str[1] = clock_tab[timedate.h][1];
       }
       clock_str[3] = clock_tab[timedate.m][0];
       clock_str[4] = clock_tab[timedate.m][1];
+
+      //alarm check
+      a = alarm_check(&timedate);
+      if(a == 1)
+      {
+        s |= ALARM_PLAY;
+      }
+      else if(a == 2)
+      {
+        s |= ALARM_STANDBY;
+      }
     }
     clock_str[6] = clock_tab[timedate.s][0];
     clock_str[7] = clock_tab[timedate.s][1];
@@ -117,6 +131,7 @@ char* getdate(void)
 
 void gettime(TIME* t)
 {
+  IntMasterDisable();
   t->year  = timedate.year;
   t->month = timedate.month;
   t->day   = timedate.day;
@@ -124,6 +139,7 @@ void gettime(TIME* t)
   t->h     = timedate.h;
   t->m     = timedate.m;
   t->s     = timedate.s;
+  IntMasterEnable();
 
   return;
 }
@@ -133,9 +149,10 @@ void settime(unsigned long s)
 {
   TIME t;
 
+  IntMasterDisable();
   SysTickIntDisable();
-  sectotime(s-1, &t);
   sec_time = s;
+  sectotime(s-1, &t);
   timedate.year  = t.year;
   timedate.month = t.month;
   timedate.day   = t.day;
@@ -144,6 +161,7 @@ void settime(unsigned long s)
   timedate.m     = t.m;
   timedate.s     = t.s;
   SysTickIntEnable();
+  IntMasterEnable();
 
   date_str[0] = day_tab[timedate.wday][0];
   date_str[1] = day_tab[timedate.wday][1];
@@ -194,7 +212,7 @@ unsigned int standby_isactive(void)
 
 unsigned int standby(unsigned int param)
 {
-  unsigned int i, alarm;
+  unsigned int i, alarm=0;
   unsigned long t;
   char tmp[32];
 
@@ -225,23 +243,23 @@ unsigned int standby(unsigned int param)
 
   cpu_speed(1); //low speed
 
-  for(alarm=0; alarm == 0;)
+  for(;;)
   {
     eth_service();
 
+    IntMasterDisable();
     i = status;
     status &= ~i;
+    IntMasterEnable();
+
     if(i & MIN_CHANGED)
     {
-      if(i & DAY_CHANGED)
+      if(i & ALARM_PLAY)
       {
-        settime(sec_time);
+        alarm = 1;
+        break;
       }
-      i = alarm_check(&timedate);
-      if(i == 1) //alarm: play
-      {
-        alarm = i;
-      }
+
       tmp[0] = clock_str[0];
       tmp[1] = clock_str[1];
       tmp[3] = clock_str[3];
@@ -277,7 +295,7 @@ unsigned int standby(unsigned int param)
 
   if(alarm != 0)
   {
-    menu_alarm(alarm);
+    menu_alarm();
   }
 
   return 0;
@@ -286,7 +304,7 @@ unsigned int standby(unsigned int param)
 
 int main()
 {
-  unsigned int i, alarm;
+  unsigned int i;
   unsigned long l;
 
   //init debug output
@@ -327,6 +345,10 @@ int main()
   DEBUGOUT("Low speed and IRQs on...\n");
   cpu_speed(1);
 
+  //init mmc & mount filesystem
+  DEBUGOUT("Init Memory Card...\n");
+  fs_mount();
+
   //init lcd
   DEBUGOUT("Init LCD...\n");
   lcd_init();
@@ -338,6 +360,7 @@ int main()
   lcd_fillrect( 0, LCD_HEIGHT-1-13, LCD_WIDTH-1, LCD_HEIGHT-1, DEFAULT_EDGECOLOR);
   lcd_puts(20, LCD_HEIGHT-1-10, "www.watterott.net", SMALLFONT, 1, DEFAULT_BGCOLOR, DEFAULT_EDGECOLOR);
   lcd_puts(10, 20, "HW:"LM3S_NAME","LCD_NAME, SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR);
+
   if(l) //l = reset cause
   {
     i = lcd_puts(10,  35, "Reset:", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4;
@@ -347,13 +370,23 @@ int main()
     if(l & SYSCTL_CAUSE_BOR) { i = lcd_puts(i, 35, "BOR", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
     if(l & SYSCTL_CAUSE_POR) { i = lcd_puts(i, 35, "POR", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
     if(l & SYSCTL_CAUSE_EXT) { i = lcd_puts(i, 35, "EXT", SMALLFONT, 1, DEFAULT_EDGECOLOR, DEFAULT_BGCOLOR) + 4; }
+    i = 35+15; //msg y start
+  }
+  else
+  {
+    i = 35; //msg y start
   }
 
-  i = 52; //msg y start
-
-  //init mmc & mount filesystem
-  lcd_puts(10,  i, "Init Memory Card...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR); i += 10;
-  fs_mount();
+  //show mmc state
+  if(disk_status(0) == 0)
+  {
+    lcd_puts(10,  i, "Memory Card: OK", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  }
+  else
+  {
+    lcd_puts(10,  i, "Memory Card: Error", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
+  }
+  i += 10;
 
   //init fram
   lcd_puts(10,  i, "Init F-RAM...", SMALLFONT, 1, DEFAULT_FGCOLOR, DEFAULT_BGCOLOR);
@@ -404,8 +437,11 @@ int main()
   USB_ON();
 
   //check alarm
-  alarm = alarm_check(&timedate);
-  menu_alarm(alarm);
+  i = alarm_check(&timedate);
+  if(i == 1)
+  {
+    menu_alarm();
+  }
 
   DEBUGOUT("Ready...\n");
 
@@ -413,8 +449,11 @@ int main()
   {
     eth_service();
 
+    IntMasterDisable();
     i = status;
     status &= ~i;
+    IntMasterEnable();
+
 #ifdef DEBUG
 //    if(i & SEC_CHANGED)
 //    {
@@ -423,19 +462,14 @@ int main()
 #endif
     if(i & MIN_CHANGED)
     {
-      if(i & DAY_CHANGED)
+      if(i & ALARM_PLAY)
       {
-        settime(sec_time);
+        menu_alarm();
       }
-      alarm = alarm_check(&timedate);
-      if(alarm == 2)
+      else if(i & ALARM_STANDBY)
       {
         standby(0);
         i |= DRAWALL;
-      }
-      else if(alarm != 0)
-      {
-        menu_alarm(alarm);
       }
     }
     menu_service(i);

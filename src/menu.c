@@ -436,34 +436,31 @@ void menu_service(unsigned int draw)
 }
 
 
-void menu_alarm(unsigned int action)
+void menu_alarm(void)
 {
   unsigned int i;
 
   DEBUGOUT("Alarm\n");
 
-  if(action == 1) //play
+  //set alarm volume
+  i = alarm_getvol();
+  if(i)
   {
-    //set alarm volume
-    i = alarm_getvol();
-    if(i)
+    vs_setvolume(i);
+    menu_drawvol();
+  }
+
+  //open alarm file
+  if(menu_status == MENU_STATE_STOP)
+  {
+    menu_drawpopup("Alarm");
+    for(i=1; i<=ALARM_FILEITEMS; i++) //open alarm file
     {
-      vs_setvolume(i);
-      menu_drawvol();
-    }
-  
-    //open alarm file
-    if(menu_status == MENU_STATE_STOP)
-    {
-      menu_drawpopup("Alarm");
-      for(i=1; i<=ALARM_FILEITEMS; i++) //open alarm file
+      if(alarm_getfile(gbuf.menu.file, i) == 0)
       {
-        if(alarm_getfile(gbuf.menu.file, i) == 0)
+        if(menu_openfile(gbuf.menu.file) == 0)
         {
-          if(menu_openfile(gbuf.menu.file) == 0)
-          {
-            break;
-          }
+          break;
         }
       }
     }
@@ -621,7 +618,7 @@ void menu_drawwndmain(unsigned int redraw)
         case IMG_RIGHT-(IMG_MIDDLE/2):  state[i]=1;         break;
         case IMG_RIGHT-(IMG_MIDDLE/3):  state[i]=2;         break;
       }
-      lcd_img32(x[i], IMG_TOP, mainmenu[item[i]].img[state[i]], fgcolor, bgcolor);
+      lcd_drawimg32(x[i], IMG_TOP, mainmenu[item[i]].img[state[i]], fgcolor, bgcolor);
     }
   }
 
@@ -1025,12 +1022,12 @@ void menu_init(void)
 
   DEBUGOUT("Menu: init\n");
 
-  gbuf.menu.name[0]             = 0;
-  gbuf.menu.name[MAX_NAME-1]    = 0;
-  gbuf.menu.info[0]             = 0;
-  gbuf.menu.info[MAX_INFO-1]    = 0;
-  gbuf.menu.file[0]             = 0;
-  gbuf.menu.file[MAX_ADDR-1]    = 0;
+  gbuf.menu.name[0]          = 0;
+  gbuf.menu.info[0]          = 0;
+  gbuf.menu.file[0]          = 0;
+  gbuf.menu.name[MAX_NAME-1] = 0;
+  gbuf.menu.info[MAX_INFO-1] = 0;
+  gbuf.menu.file[MAX_ADDR-1] = 0;
 
   menu_setstatus(MENU_STATE_STOP);
   gettime(&t);

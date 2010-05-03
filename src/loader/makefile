@@ -241,7 +241,7 @@ ADEFS = -D__ASSEMBLY__
 # gnu89 - c89 plus GCC extensions
 # c99   - ISO C99 standard (not yet fully implemented)
 # gnu99 - c99 plus GCC extensions
-CSTANDARD = -std=gnu99
+CSTANDARD = -std=c99
 
 #-----
 
@@ -258,6 +258,7 @@ ADEFS += -D$(RUN_MODE) -D$(CHIP)
 
 ifeq ($(USE_THUMB_MODE),YES)
 THUMB    = -mthumb
+THUMB_IW =
 ### no for CM3 THUMB_IW = -mthumb-interwork
 else 
 THUMB    = 
@@ -283,18 +284,19 @@ CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS)) -I.
 # (at least from my eabi tests), not needed if assembler-wrapper is used 
 ##CFLAGS += -mapcs-frame 
 ##CFLAGS += -fomit-frame-pointer
+##CFLAGS += -fmessage-length=0
+##CFLAGS += -fno-dwarf2-cfi-asm -fno-builtin
 CFLAGS += -ffunction-sections -fdata-sections
-CFLAGS += -Wall -Wextra
-CFLAGS += -Wimplicit -Wpointer-arith
-CFLAGS += -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align
-#CFLAGS += -Wredundant-decls -Wcast-qual -Wcast-align
-#CFLAGS += -pedantic
+##CFLAGS += -Wall -Wextra
+##CFLAGS += -Wimplicit -Wpointer-arith
+##CFLAGS += -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align
+##CFLAGS += -pedantic
 CFLAGS += -Wa,-adhlns=$(addprefix $(OUTDIR)/, $(notdir $(addsuffix .lst, $(basename $<))))
 # Compiler flags to generate dependency files:
 CFLAGS += -MD -MP -MF $(OUTDIR)/dep/$(@F).d
 
 # flags only for C
-CONLYFLAGS += -Wnested-externs 
+##CONLYFLAGS += -Wnested-externs 
 CONLYFLAGS += $(CSTANDARD)
 
 ifeq ($(AT91LIBNOWARN),yes)

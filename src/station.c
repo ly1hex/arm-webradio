@@ -424,6 +424,13 @@ void station_init(void)
   gbuf.station.info[0] = 0;
   gbuf.station.addr[0] = 0;
 
+  gbuf.station.name[0] = 0;
+  gbuf.station.info[0] = 0;
+  gbuf.station.addr[0] = 0;
+  gbuf.station.name[MAX_NAME-1] = 0;
+  gbuf.station.info[MAX_INFO-1] = 0;
+  gbuf.station.addr[MAX_ADDR-1] = 0;
+
   menu_setstatus(MENU_STATE_STOP);
 
   return;

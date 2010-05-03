@@ -7,7 +7,7 @@ MEMORY
 
 SECTIONS
 {
-    __STACKSIZE__ = 1024;
+    __STACKSIZE__ = 2048;
     __HEAPSIZE__  =  128;
     __SRAM_TOP__  = 0x20000000 + 0x00010000;
 

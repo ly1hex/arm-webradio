@@ -69,7 +69,7 @@ void release_spi(void)
 
 void power_on(void)
 {
-  MMC_POWERON();
+  //MMC_POWERON();
   MMC_DESELECT();
 
   return;
@@ -217,18 +217,16 @@ DSTATUS disk_initialize(BYTE drv)
   if(drv) return STA_NOINIT; //Supports only single drive
   if(Stat & STA_NODISK) return Stat; //No card in the socket
 
+/*
   ssi_off();      //SCK, SI = low (and released from ssi)
   MMC_SELECT();   //CS = low
   MMC_POWEROFF(); //sd power off
   delay_ms(100);
-//  init_bor(0);    //BOR off
-//  delay_ms(2);
   MMC_POWERON();  //sd power on
   delay_ms(1);
   MMC_DESELECT(); //CS = high
-//  delay_ms(2);
-//  init_bor(1);    //BOR on
   delay_ms(50);
+*/
 
   //80 dummy clocks
   MMC_SI_HIGH();

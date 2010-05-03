@@ -3,7 +3,7 @@
 
 
 //----- DEFINES -----
-#define CARD_TIMEOUT                   (2) //seconds
+#define CARD_TIMEOUT                   (3) //seconds
 
 #define CARD_CLOSED                    (0)
 #define CARD_PLAY                      (1)

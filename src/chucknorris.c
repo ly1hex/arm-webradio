@@ -21,27 +21,30 @@ void chucknorris_rfact(void)
   {
     entries = atou(value);
 
-    if(getontime()&1)
+    if(entries)
     {
-      srand(getontime()+rand());
-    }
-    else
-    {
-      srand(getontime()-rand());
-    }
-  
-    i = rand();
-    while(i >= entries)
-    {
-      j = rand();
-      while(j > i)
+      if(getontime()&1)
       {
-        j /= 10;
+        srand(getontime()+rand());
       }
-      i -= j;
+      else
+      {
+        srand(getontime()-rand());
+      }
+    
+      i = rand();
+      while(i >= entries)
+      {
+        j = rand();
+        while(j > i)
+        {
+          j /= 10;
+        }
+        i -= j;
+      }
+  
+      chucknorris_fact(i);
     }
-
-    chucknorris_fact(i);
   }
 
   return;

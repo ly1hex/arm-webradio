@@ -226,6 +226,10 @@ int main()
   if(!ENC_SW_READ() && !i) //read switch state twice
 #endif
   {
+    //init mmc & mount filesystem
+    DEBUGOUT("Init Memory Card...\n");
+    fs_mount();
+
     //init lcd
     DEBUGOUT("Init LCD...\n");
     lcd_init();
@@ -236,10 +240,6 @@ int main()
     lcd_puts(20, LCD_HEIGHT-1-8, "www.watterott.net", SMALLFONT, 1, RGB(0,0,0), RGB(180,150,0));
     lcd_puts(10, 18, "HW:"LM3S_NAME","LCD_NAME, SMALLFONT, 1, RGB(140,140,140), RGB(0,0,0));
     lcd_putline(ITEM_X, ITEM_Y, "Start Loader...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
-
-    //init mmc & mount filesystem
-    lcd_putline(ITEM_X, ITEM_Y, "Init Memory Card...", SMALLFONT, 1, RGB(255,255,0), RGB(0,0,0));
-    fs_mount();
 
     //menu
     lcd_fillrect(ITEM_X-10, ITEM_Y, LCD_WIDTH-1, LCD_HEIGHT-1-11, RGB(0,0,0));
