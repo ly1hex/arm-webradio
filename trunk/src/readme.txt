@@ -1,4 +1,4 @@
-WebRadio v0.08 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.09 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.05
                          CPU Support Pkg. Stellaris 1.3
@@ -27,6 +27,9 @@ License
 
 History
 -------
+  May 03 2010  v0.09  MMC power control disabled
+               r124
+
   Mar 12 2010  v0.08  Improved LS020 code
                r122   Changed MMC init to old version
 

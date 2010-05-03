@@ -233,6 +233,9 @@ void card_init(void)
   gbuf.card.name[0] = 0;
   gbuf.card.info[0] = 0;
   gbuf.card.file[0] = 0;
+  gbuf.card.name[MAX_NAME-1] = 0;
+  gbuf.card.info[MAX_INFO-1] = 0;
+  gbuf.card.file[MAX_ADDR-1] = 0;
 
   menu_setstatus(MENU_STATE_STOP);
 

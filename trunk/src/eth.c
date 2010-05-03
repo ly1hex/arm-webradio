@@ -23,9 +23,9 @@
 
 
 Device dev;
-volatile MAC_Addr requested_mac=0UL;
 TCP_Table tcp_table[TCP_ENTRIES];
 UDP_Table udp_table[UDP_ENTRIES];
+volatile MAC_Addr requested_mac=0UL;
 unsigned char eth_txbuf[ETH_MTUSIZE], *eth_rxbuf, eth_rxfifo[ETH_RXFIFO][ETH_MTUSIZE];
 volatile unsigned int rxfifo_head=0, rxfifo_tail=0;
 

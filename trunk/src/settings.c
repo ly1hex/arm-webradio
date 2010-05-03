@@ -368,14 +368,14 @@ unsigned int settings_openitem(unsigned int item)
         break;
 
       case F_INFO:
-        snprintf(buf, MAX_ADDR-1, __DATE__" "__TIME__"\n"
-                                  "\n"
-                                  "MAC %s\n"
-                                  "IP   %i.%i.%i.%i\n"
-                                  "Mask %i.%i.%i.%i\n"
-                                  "Rout %i.%i.%i.%i\n"
-                                  "DNS  %i.%i.%i.%i\n"
-                                  "NTP  %i.%i.%i.%i",
+        sprintf(buf, __DATE__" "__TIME__"\n"
+                    "\n"
+                    "MAC %s\n"
+                    "IP   %i.%i.%i.%i\n"
+                    "Mask %i.%i.%i.%i\n"
+                    "Rout %i.%i.%i.%i\n"
+                    "DNS  %i.%i.%i.%i\n"
+                    "NTP  %i.%i.%i.%i",
                  mactoa(eth_getmac()),
                  (int)((eth_getip()     >>0)&0xFF), (int)((eth_getip()     >>8)&0xFF), (int)((eth_getip()     >>16)&0xFF), (int)((eth_getip()     >>24)&0xFF),
                  (int)((eth_getnetmask()>>0)&0xFF), (int)((eth_getnetmask()>>8)&0xFF), (int)((eth_getnetmask()>>16)&0xFF), (int)((eth_getnetmask()>>24)&0xFF),
@@ -412,7 +412,7 @@ void settings_getitem(unsigned int item, char *name)
     {
       if(ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, buf, INI_BUFLEN) == 0)
       {
-        snprintf(name, MAX_NAME-1, "%s %s", settingsmenu[item].name, buf);
+        sprintf(name, "%s %s", settingsmenu[item].name, buf);
         name[MAX_NAME-1] = 0;
       }
       else
