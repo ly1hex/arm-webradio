@@ -28,7 +28,7 @@ License
 History
 -------
   May 03 2010  v0.09  MMC power control disabled
-               r124
+               r125
 
   Mar 12 2010  v0.08  Improved LS020 code
                r122   Changed MMC init to old version
