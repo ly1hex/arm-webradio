@@ -10,6 +10,7 @@
 #include "lmi/driverlib/interrupt.h"
 #include "lmi/driverlib/uart.h"
 #include "debug.h"
+#include "tools.h"
 
 
 #ifdef DEBUG
