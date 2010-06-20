@@ -1,0 +1,26 @@
+Current issues:
+---------------
+
+- Rotary encoder does the wrong thing the first time used after system startup
+  - solutionn could be to wait at least two events to get the correct direction
+
+- support more SD card vendors and their capacities
+  - SanDisk 512 MiB SD [works]
+  - Kingston 2 GiB [fails to detect]
+
+- MAC address modification in the web interface is broken
+
+Wishlist:
+---------
+
+- password protection in the web interface
+- playing all songs available on the SD card
+- displaying interpret and song title for webradio and SD card
+- moving forward/backward in songs from the SD card and also skipping songs
+- add a macro to change rotary encoder's direction (currently for the V3
+  PCB it interacts in a non intuitive manner)
+
+Doc wishlist:
+-------------
+
+- how to use (play) the network shares
