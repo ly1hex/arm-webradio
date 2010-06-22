@@ -39,6 +39,6 @@ Tested SD-Cards
 
 || SD-Card Vendor || Capacity || Firmware 008 || firmware 009 || trunk  ||
 ||    SanDisk     || 512 MiB  ||    works     ||   works      || works  ||
-||   Kingston     ||  2 GiB   ||    works     ||   fail       ||  fail  ||
+||   Kingston     ||  2 GiB   ||    works     ||   fails      || fails  ||
 
 (this list will be expanded whenever we will check a new card. If your SD card is not in the list, please drop us a note if it works or not)
