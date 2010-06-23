@@ -217,8 +217,9 @@ DSTATUS disk_initialize(BYTE drv)
   if(drv) return STA_NOINIT; //Supports only single drive
   if(Stat & STA_NODISK) return Stat; //No card in the socket
 
-/*
   ssi_off();      //SCK, SI = low (and released from ssi)
+
+/*
   MMC_SELECT();   //CS = low
   MMC_POWEROFF(); //sd power off
   delay_ms(100);
@@ -229,6 +230,7 @@ DSTATUS disk_initialize(BYTE drv)
 */
 
   //80 dummy clocks
+  MMC_DESELECT();
   MMC_SI_HIGH();
   MMC_SCK_LOW();
   for(n=80; n; n--)

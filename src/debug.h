@@ -27,11 +27,11 @@
 //----- PROTOTYPES -----
 #ifndef __GNUC__
 /* keep old behaviour for non gcc (strict ANSI)  */
-#define DEBUGOUT			debug_out
+#define DEBUGOUT                        debug_out
 #else
 # ifdef DEBUG
 /* this is not strict ANSI, but gcc can handle variable parameter macros */
-#  define DEBUGOUT(x,y...)		debug_out(x, ##y);
+#  define DEBUGOUT(x,y...)                debug_out(x, ##y);
 #else
 /* remove corresponding code entirely from the binary */
 #  define DEBUGOUT(x,y...)
