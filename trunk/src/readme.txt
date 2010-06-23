@@ -1,7 +1,7 @@
 WebRadio v0.09 (c) Andreas Watterott (www.watterott.net)
 ========================================================
-  Compiled with Rowley's CrossWorks for ARM 2.05
-                         CPU Support Pkg. Stellaris 1.3
+  Compiled with Rowley's CrossWorks for ARM 2.07
+                         CPU Support Pkg. Stellaris 1.4
 
 
 Third party software
@@ -27,7 +27,10 @@ License
 
 History
 -------
-  May 03 2010  v0.09  MMC power control disabled
+  Jul 23 2010  v0.10  SD init bugfix
+               r135
+
+  May 03 2010  v0.09  SD power control disabled
                r125
 
   Mar 12 2010  v0.08  Improved LS020 code
@@ -53,7 +56,7 @@ History
                       F-RAM support
 
   Aug 19 2009  v0.02  VS1053b FLAC decoder plugin
-               r77     Auto detection of VS type (VS1053b, VS1033c, VS1033d)
+               r77    Auto detection of VS type (VS1053b, VS1033c, VS1033d)
                       Automatic standby
                       LFN support
                       Modify settings via Webinterface
