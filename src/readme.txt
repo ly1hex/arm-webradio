@@ -1,4 +1,4 @@
-WebRadio v0.09 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.10 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.07
                          CPU Support Pkg. Stellaris 1.4
