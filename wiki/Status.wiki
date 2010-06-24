@@ -41,7 +41,7 @@
 ||   Kingston       ||    2 GiB   || works   ||  fails  ||  works  ||  works  ||
 ||   Platinum       ||    1 GiB   ||         ||         ||  works  ||  works  ||
 ||   Platinum       ||    2 GiB   ||         ||         ||  works  ||  works  ||
-||   SanDisk        ||  512 MiB   || works   ||  works  ||         ||         ||
+||   SanDisk        ||  512 MiB   || works   ||  works  ||  works  ||  works  ||
 ||   SanDisk        ||    2 GiB   || works   ||  works  ||  works  ||  works  ||
 
-(This list will be expanded whenever we will check a new card. If your SD card is not in the list, please drop us a note if it works or not.)
+(This list will be expanded whenever we will check a new card. If your SD card is not listed, please drop us a note if it works or not.)
