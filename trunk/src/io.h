@@ -16,7 +16,7 @@
 //LM3S6950 Revision: LM3S_REV_A1, LM3S_REV_A2 or LM3S_REV_B0
 #define LM3S_REV_A2
 
-//Display: LCD_L2F50, LCD_LPH88, LCD_LS020, LCD_MIO283QT
+//Display: LCD_L2F50, LCD_LPH88, LCD_LS020, LCD_MIO283QT1, LCD_MIO283QT2
 #define LCD_LPH88
 //#define LCD_MIRROR                     //mirror display
 //#define LCD_ROTATE                     //rotate display (90 degree)
@@ -85,8 +85,10 @@
 # define LCD_NAME "S65-LPH88"
 #elif defined LCD_LS020
 # define LCD_NAME "S65-LS020"
-#elif defined LCD_MIO283QT
-# define LCD_NAME "MIO283QT"
+#elif defined LCD_MIO283QT1
+# define LCD_NAME "MIO283QT1"
+#elif defined LCD_MIO283QT2
+# define LCD_NAME "MIO283QT2"
 #else
 # warning "LCD not defined"
 #endif
