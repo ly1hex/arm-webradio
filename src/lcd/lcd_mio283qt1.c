@@ -4,10 +4,10 @@
 #include "lmi/driverlib/gpio.h"
 #include "../io.h"
 #include "../lcd.h"
-#include "lcd_mio283qt.h"
+#include "lcd_mio283qt1.h"
 
 
-#ifdef LCD_MIO283QT
+#ifdef LCD_MIO283QT1
 
 
 void lcd_draw(unsigned int color)
@@ -114,7 +114,7 @@ void lcd_reset(void)
   LCD_RST_ENABLE();
   delay_ms(50);
   LCD_RST_DISABLE();
-  delay_ms(100);
+  delay_ms(50);
 
   //display power control
   lcd_cmd(0x00, 0x0000);
@@ -159,4 +159,4 @@ void lcd_reset(void)
 }
 
 
-#endif //LCD_MIO283QT
+#endif //LCD_MIO283QT1

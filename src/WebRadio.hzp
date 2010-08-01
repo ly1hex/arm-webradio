@@ -56,8 +56,10 @@
         <file file_name="lcd/lcd_lph88.h"/>
         <file file_name="lcd/lcd_ls020.c"/>
         <file file_name="lcd/lcd_ls020.h"/>
-        <file file_name="lcd/lcd_mio283qt.c"/>
-        <file file_name="lcd/lcd_mio283qt.h"/>
+        <file file_name="lcd/lcd_mio283qt1.c"/>
+        <file file_name="lcd/lcd_mio283qt1.h"/>
+        <file file_name="lcd/lcd_mio283qt2.c"/>
+        <file file_name="lcd/lcd_mio283qt2.h"/>
       </folder>
       <folder Name="eth">
         <file file_name="eth/dhcp.c"/>
@@ -206,14 +208,16 @@
         <file file_name="../lcd/lcd_lph88.h"/>
         <file file_name="../lcd/lcd_ls020.c"/>
         <file file_name="../lcd/lcd_ls020.h"/>
-        <file file_name="../lcd/lcd_mio283qt.c"/>
-        <file file_name="../lcd/lcd_mio283qt.h"/>
         <file file_name="../lcd/font_8x12.c"/>
         <file file_name="../lcd/font_8x12.h"/>
         <file file_name="../lcd/font_8x8.c"/>
         <file file_name="../lcd/font_8x8.h"/>
         <file file_name="../lcd/font_clock.c"/>
         <file file_name="../lcd/font_clock.h"/>
+        <file file_name="../lcd/lcd_mio283qt2.h"/>
+        <file file_name="../lcd/lcd_mio283qt1.c"/>
+        <file file_name="../lcd/lcd_mio283qt1.h"/>
+        <file file_name="../lcd/lcd_mio283qt2.c"/>
       </folder>
       <folder Name="third_party">
         <file file_name="../third_party/readme.txt"/>

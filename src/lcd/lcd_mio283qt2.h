@@ -1,8 +1,8 @@
-#ifndef _LCD_MIO283QT_H_
-#define _LCD_MIO283QT_H_
+#ifndef _LCD_MIO283QT2_H_
+#define _LCD_MIO283QT2_H_
 
 
-#ifdef LCD_MIO283QT
+#ifdef LCD_MIO283QT2
 
 //----- DEFINES -----
 #define LCD_ID                         (0)
@@ -14,8 +14,8 @@
 void                                   lcd_draw(unsigned int color);
 void                                   lcd_drawstop(void);
 void                                   lcd_drawstart(void);
-void                                   lcd_area(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1);
-void                                   lcd_cursor(unsigned int x, unsigned int y);
+void                                   lcd_setarea(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1);
+void                                   lcd_setcursor(unsigned int x, unsigned int y);
 void                                   lcd_cmd(unsigned int reg, unsigned int param);
 void                                   lcd_data(unsigned int c);
 void                                   lcd_reset(void);
@@ -23,4 +23,4 @@ void                                   lcd_reset(void);
 #endif
 
 
-#endif //_LCD_MIO283QT_H_
+#endif //_LCD_MIO283QT2_H_

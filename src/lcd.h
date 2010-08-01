@@ -19,7 +19,7 @@
 #define TIMEFONT_WIDTH                 FONT3_WIDTH
 #define TIMEFONT_HEIGHT                FONT3_HEIGHT
 
-#ifdef MIO283QT
+#if defined(LCD_MIO283QT1) || defined(LCD_MIO283QT2)
 # define _LCD_WIDTH                     (320)
 # define _LCD_HEIGHT                    (240)
 #else //S65 Displays: L2F50, LPH88, LS020

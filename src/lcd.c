@@ -7,7 +7,8 @@
 #include "lcd/lcd_l2f50.h"
 #include "lcd/lcd_ls020.h"
 #include "lcd/lcd_lph88.h"
-#include "lcd/lcd_mio283qt.h"
+#include "lcd/lcd_mio283qt1.h"
+#include "lcd/lcd_mio283qt2.h"
 #include "lcd/font_8x8.h"
 #ifndef LOADER
 # include "lcd/font_8x12.h"
