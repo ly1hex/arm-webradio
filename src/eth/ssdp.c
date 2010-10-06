@@ -26,7 +26,7 @@ void ssdp_advertise(void)
 
   len = sprintf(ssdp, "NOTIFY * HTTP/1.0\r\n"
                       "Host: %i.%i.%i.%i:%i\r\n"
-                      "Cach-Control: max-age=900\r\n"
+                      "Cache-Control: max-age=900\r\n"
                       "Location: http://%i.%i.%i.%i:%i/device.xml\r\n"
                       "NT: upnp:rootdevice\r\n"
                       "USN: uuid:%s::upnp:rootdevice\r\n"
