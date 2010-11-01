@@ -412,7 +412,7 @@ void settings_getitem(unsigned int item, char *name)
     {
       if(ini_getentry(SETTINGS_FILE, settingsmenu[item].ini, buf, INI_BUFLEN) == 0)
       {
-        sprintf(name, "%s %s", settingsmenu[item].name, buf);
+        snprintf(name, MAX_NAME, "%s %s", settingsmenu[item].name, buf);
         name[MAX_NAME-1] = 0;
       }
       else

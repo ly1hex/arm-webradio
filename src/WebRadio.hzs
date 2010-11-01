@@ -19,8 +19,8 @@
  </Memory4>
  <Project>
   <ProjectSessionItem path="WebRadio" name="unnamed" />
+  <ProjectSessionItem path="WebRadio;Loader" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio" name="unnamed" />
-  <ProjectSessionItem path="WebRadio;WebRadio;Source Files" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
