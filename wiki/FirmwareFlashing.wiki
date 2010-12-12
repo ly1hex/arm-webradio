@@ -1,5 +1,4 @@
 #summary HowTo flash the bootloader and the firmware.
-#labels Featured
 
 === Program the Bootloader ===
  # Flash the loader binary to the flash start address *0x0000*.
