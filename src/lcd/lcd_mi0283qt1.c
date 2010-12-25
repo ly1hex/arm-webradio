@@ -4,10 +4,10 @@
 #include "lmi/driverlib/gpio.h"
 #include "../io.h"
 #include "../lcd.h"
-#include "lcd_mio283qt1.h"
+#include "lcd_mi0283qt1.h"
 
 
-#ifdef LCD_MIO283QT1
+#ifdef LCD_MI0283QT1
 
 
 void lcd_draw(unsigned int color)
@@ -159,4 +159,4 @@ void lcd_reset(void)
 }
 
 
-#endif //LCD_MIO283QT1
+#endif //LCD_MI0283QT1
