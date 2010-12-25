@@ -1,8 +1,8 @@
-#ifndef _LCD_MIO283QT2_H_
-#define _LCD_MIO283QT2_H_
+#ifndef _LCD_MI0283QT1_H_
+#define _LCD_MI0283QT1_H_
 
 
-#ifdef LCD_MIO283QT2
+#ifdef LCD_MI0283QT1
 
 //----- DEFINES -----
 #define LCD_ID                         (0)
@@ -20,7 +20,7 @@ void                                   lcd_cmd(unsigned int reg, unsigned int pa
 void                                   lcd_data(unsigned int c);
 void                                   lcd_reset(void);
 
-#endif
+#endif //LCD_MI0283QT1
 
 
-#endif //_LCD_MIO283QT2_H_
+#endif //_LCD_MI0283QT1_H_

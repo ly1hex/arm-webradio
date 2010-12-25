@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <meta http-equiv="Content-Style-Type" content="text/css">
 <link rel="up" title="FatFs" href="../00index_e.html">
+<link rel="alternate" hreflang="ja" title="Japanese" href="../ja/rename.html">
 <link rel="stylesheet" href="../css_e.css" type="text/css" media="screen" title="ELM Default">
 <title>FatFs - f_rename</title>
 </head>
@@ -12,11 +13,11 @@
 
 <div class="para">
 <h2>f_rename</h2>
-<p>Rename file or directory.</p>
+<p>Renames an object.</p>
 <pre>
 FRESULT f_rename (
-  const XCHAR* <em>OldName</em>, /* Pointer to old file/directory name */
-  const XCHAR* <em>NewName</em>  /* Pointer to new file/directory name */
+  const TCHAR* <em>OldName</em>, <span>/* Pointer to old object name */</span>
+  const TCHAR* <em>NewName</em>  <span>/* Pointer to new object name */</span>
 );
 </pre>
 </div>
@@ -25,9 +26,9 @@ FRESULT f_rename (
 <h4>Parameters</h4>
 <dl class="par">
 <dt>OldName</dt>
-<dd>Pointer to a null-terminated string specifies the old <a href="filename.html">file/directory name</a> to be renamed.</dd>
+<dd>Pointer to a null-terminated string specifies the old <a href="filename.html">object name</a> to be renamed.</dd>
 <dt>NewName</dt>
-<dd>Pointer to a null-terminated string specifies the new file/directory name without drive number.</dd>
+<dd>Pointer to a null-terminated string specifies the new object name without drive number.</dd>
 </dl>
 </div>
 
@@ -60,14 +61,16 @@ FRESULT f_rename (
 <dt>FR_NOT_ENABLED</dt>
 <dd>The logical drive has no work area.</dd>
 <dt>FR_NO_FILESYSTEM</dt>
-<dd>There is no valid FAT volume on the disk.</dd>
+<dd>There is no valid FAT volume on the drive.</dd>
+<dt>FR_LOCKED</dt>
+<dd>The function was rejected due to file shareing policy (_FS_SHARE).</dd>
 </dl>
 </div>
 
 
 <div class="para">
 <h4>Description</h4>
-<p>Rename a file or directory and can move it to other directory. Logical drive number is determined by old name, new name must not contain logical drive number.</p>
+<p>Renames an object (file or directory) and can also move it to other directory. The logical drive number is determined by old name, new name must not contain a logical drive number. <em>Do not rename open objects</em>.</p>
 </div>
 
 
@@ -80,10 +83,10 @@ FRESULT f_rename (
 <div class="para">
 <h4>Example</h4>
 <pre>
-    // Rename a file or directory
+    <span>/* Rename an object */</span>
     f_rename("oldname.txt", "newname.txt");
 
-    // Rename and move a file or directory to other directory simultaneously
+    <span>/* Rename and move an object to other directory */</span>
     f_rename("oldname.txt", "dir1/newname.txt");
 </pre>
 </div>

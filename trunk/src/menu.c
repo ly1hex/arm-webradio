@@ -88,6 +88,8 @@ unsigned int menu_openfile(char *file)
     mainmenu[menu_sub].init();
     if(card_openfile(tmp) == MENU_PLAY)
     {
+      menu_setname(tmp);
+      menu_setinfo("");
       ret = 0;
     }
   }

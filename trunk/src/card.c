@@ -96,8 +96,6 @@ unsigned int card_openfile(const char *file)
     card_status = CARD_PLAY;
     vs_start();
     menu_setstatus(MENU_STATE_PLAY);
-    menu_setname(file);
-    menu_setinfo("");
     return MENU_PLAY;
   }
 
@@ -182,11 +180,9 @@ unsigned int card_openitem(unsigned int item)
       strncat(gbuf.card.file, "/", MAX_ADDR-1-len);
       strncat(gbuf.card.file, tmp, MAX_ADDR-1-len-1);
       DEBUGOUT("Card: %s\n", gbuf.card.file);
-      if(f_open(&gbuf.card.fsrc, gbuf.card.file, FA_OPEN_EXISTING | FA_READ) == FR_OK)
+
+      if(card_openfile(gbuf.card.file) == MENU_PLAY)
       {
-        card_status = CARD_PLAY;
-        vs_start();
-        menu_setstatus(MENU_STATE_PLAY);
         return MENU_PLAY;
       }
       else

@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="Content-Style-Type" content="text/css">
 <link rel="up" title="FatFs" href="../00index_e.html">
+<link rel="alternate" hreflang="ja" title="Japanese" href="../ja/dread.html">
 <link rel="stylesheet" href="../css_e.css" type="text/css" media="screen" title="ELM Default">
 <title>FatFs - disk_read</title>
 </head>
@@ -15,10 +16,10 @@
 <p>The disk_read function reads sector(s) from the disk drive.</p>
 <pre>
 DRESULT disk_read (
-  BYTE <em>Drive</em>,          /* Physical drive number */
-  BYTE* <em>Buffer</em>,        /* Pointer to the read data buffer */
-  DWORD <em>SectorNumber</em>,  /* Start sector number */
-  BYTE <em>SectorCount</em>     /* Number of sectros to read */
+  BYTE <em>Drive</em>,          <span>/* Physical drive number */</span>
+  BYTE* <em>Buffer</em>,        <span>/* Pointer to the read data buffer */</span>
+  DWORD <em>SectorNumber</em>,  <span>/* Start sector number */</span>
+  BYTE <em>SectorCount</em>     <span>/* Number of sectros to read */</span>
 );
 </pre>
 </div>
@@ -29,11 +30,11 @@ DRESULT disk_read (
 <dt>Drive</dt>
 <dd>Specifies the physical drive number.</dd>
 <dt>Buffer</dt>
-<dd>Pointer to the byte array to store the read data. The buffer size of number of bytes to be read, sector size * sector count, is required. The memory address specified by upper layer may or may not be aligned to word boundary.</dd>
+<dd>Pointer to the <em>byte array</em> to store the read data. The buffer size of number of bytes to be read, sector size * sector count, is required. Note that the specified memory address is not that always aligned to word boundary. If the hardware does not support misaligned data transfer, it must be solved in this function.</dd>
 <dt>SectorNumber</dt>
 <dd>Specifies the start sector number in logical block address (LBA).</dd>
 <dt>SectorCount</dt>
-<dd>Specifies number of sectors to read. The value can be 1 to 255.</dd>
+<dd>Specifies number of sectors to read. The value can be 1 to 128. Generally, a multiple sector transfer request must not be split into single sector transactions to the device, or you may not get good read performance.</dd>
 </dl>
 </div>
 

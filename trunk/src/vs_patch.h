@@ -5,8 +5,7 @@
 //----- DEFINES -----
 #define VS1033C_PATCHLEN               (288)
 #define VS1033D_PATCHLEN               (142)
-//#define VS1053B_PATCHLEN               (605)
-#define VS1053B_PATCHLEN               (5433) //with FLAC decoder
+#define VS1053B_PATCHLEN               (6486)
 
 
 //----- GLOBALS -----

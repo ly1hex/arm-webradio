@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="Content-Style-Type" content="text/css">
 <link rel="up" title="FatFs" href="../00index_e.html">
+<link rel="alternate" hreflang="ja" title="Japanese" href="../ja/fattime.html">
 <link rel="stylesheet" href="../css_e.css" type="text/css" media="screen" title="ELM Default">
 <title>FatFs - get_fattime</title>
 </head>
@@ -41,7 +42,7 @@ DWORD get_fattime (void);
 
 <div class="para">
 <h4>Description</h4>
-<p>The get_fattime function must return any valid time even if the system does not support a real time clock. This fucntion is not required in read only configuration.</p>
+<p>The get_fattime function must return any valid time even if the system does not support a real time clock. If a zero is returned, the file will not have a valid time. This fucntion is not required in read only configuration.</p>
 </div>
 
 
