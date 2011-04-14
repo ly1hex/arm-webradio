@@ -141,7 +141,7 @@ BYTE xmit_datablock(const BYTE *buff, BYTE token)
   if(token != 0xFD)
   {
     wc = 0;
-    // Xmit the 512 byte data block to MMC */
+    //Xmit the 512 byte data block to MMC
     do
     {
       xmit_spi(*buff++);
@@ -188,14 +188,14 @@ BYTE send_cmd(BYTE cmd, DWORD arg)
   }
 
   //Send command packet
-  xmit_spi(0x40 | cmd);        //Start + Command index
+  xmit_spi(cmd);               //Start + Command index
   xmit_spi((BYTE)(arg >> 24)); //Argument[31..24]
   xmit_spi((BYTE)(arg >> 16)); //Argument[23..16]
   xmit_spi((BYTE)(arg >> 8));  //Argument[15..8]
   xmit_spi((BYTE)arg);         //Argument[7..0]
-  n = 0x01;                    //Dummy CRC + Stop */
-  if(cmd == CMD0){ n = 0x95; } //Valid CRC for CMD0(0) */
-  if(cmd == CMD8){ n = 0x87; } //Valid CRC for CMD8(0x1AA) */
+  n = 0x01;                    //Dummy CRC + Stop
+  if(cmd == CMD0){ n = 0x95; } //Valid CRC for CMD0(0)
+  if(cmd == CMD8){ n = 0x87; } //Valid CRC for CMD8(0x1AA)
   xmit_spi(n);
 
   //Receive command response
@@ -526,7 +526,9 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
         {
           rcvr_spi();
           if(rcvr_datablock(ptr, 64))
+          {
             res = RES_OK;
+          }
         }
         break;
 
