@@ -4,7 +4,7 @@
 
 //----- DEFINES -----
 //Application settings
-#define VERSION                        "0.07"
+#define VERSION                        "0.08"
 #define RELEASE                        //Release version
 #define APPNAME                        "Loader"
 #if defined DEBUG

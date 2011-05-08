@@ -6,6 +6,7 @@
 #include "../debug.h"
 #include "../tools.h"
 #include "../main.h"
+#include "../io.h"
 #include "../lcd.h"
 #include "../mmc.h"
 #include "../eth.h"
@@ -25,10 +26,9 @@ HTTP_Table http_table[TCP_ENTRIES];
 
 void http_station(char *rx, unsigned int rx_len)
 {
-  unsigned int i, save, add, del, up, down;
+  unsigned int i, save=0, add=0, del=0, up=0, down=0, play=0;
   char *name, *addr, *item;
 
-  save=0; add=0; del=0; up=0; down=0;
   name=0; addr=0; item=0;
   for(; rx_len!=0;)
   {
@@ -48,6 +48,8 @@ void http_station(char *rx, unsigned int rx_len)
     { rx += 3; rx_len -= 3; up   = 1; }
     else if(strncmpi(rx, "down=", 5) == 0)
     { rx += 5; rx_len -= 5; down = 1; }
+    else if(strncmpi(rx, "play=", 5) == 0)
+    { rx += 5; rx_len -= 5; play = 1; }
     else
     { rx++;    rx_len--; }
   }
@@ -97,6 +99,14 @@ void http_station(char *rx, unsigned int rx_len)
     {
       i = atoi(item);
       station_moveitem(i, 0);
+      menu_drawwnd(1);
+    }
+  }
+  else if(play && item)
+  {
+    if(strlen(item) > 0)
+    {
+      menu_openfile(item);
       menu_drawwnd(1);
     }
   }
@@ -152,6 +162,29 @@ void http_settings(char *rx, unsigned int rx_len)
 
   for(; rx_len!=0;)
   {
+    len = strlen("restartwebradio=");
+    if(strncmpi(rx, "restartwebradio=", len) == 0)
+    {
+      rx += len; rx_len -= len;
+
+      //disable interrupts
+      __asm("cpsid   i\n");
+      delay_ms(1);
+      //jump to 0x0000
+      __asm("ldr     r0, =%0\n"         //load app start address
+    
+            "ldr     r1, =0xe000ed08\n" //set vector table addr to the beginning of the app
+            "str     r0, [r1]\n"
+    
+            "ldr     r1, [r0]\n"        //load stack ptr from the app's vector table
+            "mov     sp, r1\n"
+    
+            "ldr     r0, [r0, #4]\n"    //load the initial PC from the app's vector table and
+            "bx      r0\n"              //branch to the app's entry point
+            :
+            : "i" (0x0000));
+    }
+
     for(item=0, found=0; item<SETTINGSITEMS; item++)
     {
       if(settingsmenu[item].ini[0] == 0)

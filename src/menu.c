@@ -28,17 +28,17 @@
 
 
 #define SUB_STATION  (0)
-#define SUB_SHARE    (1)
-#define SUB_CARD     (2)
-#define SUB_ALARM    (3)
-#define SUB_SETTINGS (4)
-#define SUB_BACK     (5)
-#define SUB_STANDBY  (6)
-#define MAINITEMS    (7)
+//#define SUB_SHARE    (1)
+#define SUB_CARD     (1)
+#define SUB_ALARM    (2)
+#define SUB_SETTINGS (3)
+#define SUB_BACK     (4)
+#define SUB_STANDBY  (5)
+#define MAINITEMS    (6)
 const MAINMENUITEM mainmenu[MAINITEMS] =
 {
   {"Station",  {&img_station[0][0],  &img_station[1][0],  &img_station[2][0]},  station_init,  station_items,  station_getitem,  station_openitem,  station_closeitem, station_service},
-  {"Share",    {&img_share[0][0],    &img_share[1][0],    &img_share[2][0]},    share_init,    share_items,    share_getitem,    share_openitem,    share_closeitem,   share_service},
+//  {"Share",    {&img_share[0][0],    &img_share[1][0],    &img_share[2][0]},    share_init,    share_items,    share_getitem,    share_openitem,    share_closeitem,   share_service},
   {"Card",     {&img_card[0][0],     &img_card[1][0],     &img_card[2][0]},     card_init,     card_items,     card_getitem,     card_openitem,     card_closeitem,    card_service},
   {"Alarm",    {&img_clock[0][0],    &img_clock[1][0],    &img_clock[2][0]},    alarm_init,    alarm_items,    alarm_getitem,    alarm_openitem,    0,                 0},
   {"Settings", {&img_settings[0][0], &img_settings[1][0], &img_settings[2][0]}, settings_init, settings_items, settings_getitem, settings_openitem, 0,                 0},

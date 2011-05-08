@@ -1,6 +1,6 @@
-WebRadio v0.11 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.12 (c) Andreas Watterott (www.watterott.net)
 ========================================================
-  Compiled with Rowley's CrossWorks for ARM 2.08
+  Compiled with Rowley's CrossWorks for ARM 2.11
                          CPU Support Pkg. Stellaris 1.5
 
 
@@ -13,7 +13,7 @@ Third party software
       lmi/driverlib/cpu.c:125: PRIMASK -> primask
       lmi/driverlib/interrupt.c:108: vtable -> .vectors_ram
 
-  ChaN's FatFs 0.08a
+  ChaN's FatFs 0.08b
     http://elm-chan.org/fsw/ff/00index_e.html
 
   Makefile from WinARM (by Martin Thomas)
@@ -27,6 +27,9 @@ License
 
 History
 -------
+  May 09 2011  v0.12  VS1053 patch 1.8
+               r147   FatFS 0.08b
+
   Dec 25 2010  v0.11  VS1053 patch 1.5
                r144   FatFS 0.08a
 

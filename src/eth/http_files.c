@@ -80,7 +80,7 @@ const unsigned char STATION_HTM[] =
   "<div id=\"container\">\r\n" \
   "<div id=\"head\"><h1>"APPNAME"</h1><a href=\"/\">Home</a> | <a href=\"/station\">Station</a> | <a href=\"/alarm\">Alarm</a> | <a href=\"/settings\">Settings</a></div>\r\n" \
   "<div id=\"content\">\r\n" \
-  "<table width=\"100%\" border=\"0\"><tr><td valign=\"top\">\r\n" \
+  "<table width=\"100%\" border=\"0\" cellpadding=\"4\"><tr><td valign=\"top\">\r\n" \
   "<form name=\"list\" id=\"list\">\r\n" \
   "  <select name=\"station\" id=\"station\" size=\"15\" onClick=\"getStation(document.list.station.selectedIndex+1);\"></select>\r\n" \
   "</form>\r\n" \
@@ -88,6 +88,7 @@ const unsigned char STATION_HTM[] =
   "  <input type=\"submit\" name=\"up\"   id=\"up\"   value=\"Up\">\r\n" \
   "  <input type=\"submit\" name=\"down\" id=\"down\" value=\"Down\">\r\n" \
   "  <input type=\"submit\" name=\"del\"  id=\"del\"  value=\"Del\">\r\n" \
+  "  <input type=\"submit\" name=\"play\" id=\"play\" value=\"Play\">\r\n" \
   "  <input type=\"hidden\" name=\"item\" id=\"item\" value=\"\">\r\n" \
   "</form>\r\n" \
   "</td><td valign=\"top\">\r\n" \
@@ -137,7 +138,7 @@ const unsigned char ALARM_HTM[] =
   "<div id=\"container\">\r\n" \
   "<div id=\"head\"><h1>"APPNAME"</h1><a href=\"/\">Home</a> | <a href=\"/station\">Station</a> | <a href=\"/alarm\">Alarm</a> | <a href=\"/settings\">Settings</a></div>\r\n" \
   "<div id=\"content\">\r\n" \
-  "<table width=\"100%\" border=\"0\"><tr><td valign=\"top\">\r\n" \
+  "<table width=\"100%\" border=\"0\" cellpadding=\"4\"><tr><td valign=\"top\">\r\n" \
   "<form name=\"list\" id=\"list\">\r\n" \
   "  <select name=\"alarm\" id=\"alarm\" size=\"10\" onClick=\"getAlarm(document.list.alarm.selectedIndex+1);\"></select>\r\n" \
   "</form>\r\n" \
@@ -184,7 +185,7 @@ const unsigned char SETTINGS_HTM[] =
   "<div id=\"container\">\r\n" \
   "<div id=\"head\"><h1>"APPNAME"</h1><a href=\"/\">Home</a> | <a href=\"/station\">Station</a> | <a href=\"/alarm\">Alarm</a> | <a href=\"/settings\">Settings</a></div>\r\n" \
   "<div id=\"content\">\r\n" \
-  "<table width=\"100%\"><tr><td valign=\"top\"><pre>" \
+  "<table width=\"100%\" border=\"0\" cellpadding=\"4\"><tr><td valign=\"top\"><pre>" \
   "<b>General</b><form method=\"post\">\r\n" \
   "Play Mode   <input type=\"text\" name=\"playmode\"  id=\"playmode\"    value=\"$PLAYMODE\">\r\n" \
   "Volume      <input type=\"text\" name=\"volume\"    id=\"volume\"      value=\"$VOLUME\">\r\n" \
@@ -231,6 +232,7 @@ const unsigned char SETTINGS_HTM[] =
   "IR Key Vol- <input type=\"text\" name=\"irkeyvolm\"  id=\"irkeyvolm\"  value=\"$IRKEYVOLM\">\r\n" \
   "<input type=\"reset\" name=\"reset\" value=\"Reset\"> <input type=\"submit\" name=\"save\" value=\"Save\"></form>\r\n" \
   "\r\n* Restart required\r\n" \
+  "\r\n\r\n<form method=\"post\"><input type=\"submit\" name=\"restartwebradio\" id=\"restartwebradio\" value=\"Restart "APPNAME"\"></form>\r\n" \
   "</pre></td></tr></table>\r\n" \
   "</div>\r\n" \
   "</div>\r\n" \
