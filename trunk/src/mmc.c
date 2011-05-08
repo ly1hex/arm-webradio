@@ -14,7 +14,7 @@
 FATFS fatfs;
 #ifndef LOADER
 FIL fileobj;
-char lfn[_DF1S ? ((_MAX_LFN*2)+1) : (_MAX_LFN+1)];
+char lfn[_MAX_LFN+1];
 #endif
 
 
