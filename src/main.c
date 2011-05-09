@@ -210,6 +210,14 @@ unsigned int standby_isactive(void)
 }
 
 
+void standby_off(void)
+{
+  standby_active = 0;
+
+  return;
+}
+
+
 unsigned int standby(unsigned int param)
 {
   unsigned int i, alarm=0;
@@ -241,9 +249,9 @@ unsigned int standby(unsigned int param)
   if(t){ settime(t); }
 #endif
 
-  cpu_speed(1); //low speed
+  cpu_speed(1); //low speed & reduce LED power%
 
-  for(;;)
+  while(standby_active == 1)
   {
     eth_service();
 
@@ -284,7 +292,7 @@ unsigned int standby(unsigned int param)
 
   USB_ON(); //speaker on
 
-  cpu_speed(0); //high speed
+  cpu_speed(0); //high speed & LED 100%
 
   //clear cmds
   keys_sw();

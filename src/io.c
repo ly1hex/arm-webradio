@@ -835,6 +835,34 @@ void cpu_speed(unsigned int low_speed)
 }
 
 
+void cpu_reset(void)
+{
+  //disable interrupts
+  cpu_speed(1);
+  SysTickDisable();
+  IntMasterDisable();
+  delay_ms(1);
+
+  //jump to 0x0000
+  __asm("cpsid   i\n"               //disable interrupts
+         
+        "ldr     r0, =%0\n"         //load app start address
+
+        "ldr     r1, =0xe000ed08\n" //set vector table addr to the beginning of the app
+        "str     r0, [r1]\n"
+
+        "ldr     r1, [r0]\n"        //load stack ptr from the app's vector table
+        "mov     sp, r1\n"
+
+        "ldr     r0, [r0, #4]\n"    //load the initial PC from the app's vector table and
+        "bx      r0\n"              //branch to the app's entry point
+        :
+        : "i" (0x0000)); //0x0000 0x5000
+
+  return;
+}
+
+
 void init_bor(unsigned int on)
 {
   unsigned long reset;

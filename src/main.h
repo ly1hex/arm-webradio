@@ -40,6 +40,7 @@ long                                   getdeltatime(long t);
 long                                   getontime(void);
 
 unsigned int                           standby_isactive(void);
+void                                   standby_off(void);
 unsigned int                           standby(unsigned int param);
 
 
