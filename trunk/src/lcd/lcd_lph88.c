@@ -102,7 +102,15 @@ void lcd_reg(unsigned int c)
   return;
 }
 
+/*&H01 , &H0215% , &H0F , &H0000% , &H0B , &H0000%
+Data &H11 , &H0000% , &H06 , &H0000% , &H05 , &H0030% , &H14 , &HAF00% , &H15 , &H0000% , &H16 , &H8300%
+Data &H17 , &HAF00% , &H20 , &H0000% , 
 
+&H30 , &H0000% , &H31 , &H0400%
+Data &H32 , &H0207% , &H33 , &H0700% , &H34 , &H0005% , &H35 , &H0703% , &H36 , &H0707% , &H37 , &H0007%
+Data &H3A , &H1200% , &H3B , &H0009% , 
+
+*/
 void lcd_reset(void)
 {
   //reset
@@ -113,25 +121,26 @@ void lcd_reset(void)
   LCD_RST_DISABLE();
   delay_ms(50);
 
+  lcd_cmd(0x00, 0x0001); //start oscillation
+  delay_ms(50);
   lcd_cmd(0x07, 0x0000); //display off
   delay_ms(10);
 
   //power on sequence
   lcd_cmd(0x02, 0x0400); //lcd drive control
-  lcd_cmd(0x0C, 0x0001); //power control 3: VC        //step 1
-  lcd_cmd(0x0D, 0x0006); //power control 4: VRH
-  lcd_cmd(0x04, 0x0000); //power control 2: CAD
-  lcd_cmd(0x0D, 0x0616); //power control 4: VRL
-  lcd_cmd(0x0E, 0x0010); //power control 5: VCM
-  lcd_cmd(0x0E, 0x1010); //power control 5: VDV
-  lcd_cmd(0x03, 0x0000); //power control 1: BT        //step 2
-  lcd_cmd(0x03, 0x0000); //power control 1: DC
-  lcd_cmd(0x03, 0x000C); //power control 1: AP
+  lcd_cmd(0x04, 0x0000); //power control 2  //step 1
+  lcd_cmd(0x0C, 0x0001); //power control 3
+  lcd_cmd(0x0D, 0x0616); //power control 4
+  lcd_cmd(0x0E, 0x1010); //power control 5
+  lcd_cmd(0x03, 0x000C); //power control 1
   delay_ms(40);
-  lcd_cmd(0x0E, 0x2D1F); //power control 5: VCOMG     //step 3
+  lcd_cmd(0x0E, 0x2D1F); //power control 5  //step 3
   delay_ms(40);
-  lcd_cmd(0x0D, 0x0616); //power control 4: PON       //step 4
+  lcd_cmd(0x0D, 0x0616); //power control 4  //step 4
   delay_ms(100);
+  lcd_cmd(0x01, 0x0015); //driver output control
+  lcd_cmd(0x0F, 0x0000); //gate scan starting pos
+  lcd_cmd(0x0B, 0x0000); //frame cycle control 
 
   //display options
 #ifdef LCD_MIRROR

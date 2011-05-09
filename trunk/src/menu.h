@@ -57,6 +57,7 @@ typedef struct
 
 //----- PROTOTYPES -----
 unsigned int                           menu_openfile(char *file);
+void                                   menu_stopfile(void);
 unsigned int                           menu_sw(void);
 unsigned int                           menu_swlong(void);
 void                                   menu_up(void);

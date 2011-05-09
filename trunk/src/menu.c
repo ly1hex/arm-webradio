@@ -105,6 +105,19 @@ unsigned int menu_openfile(char *file)
 }
 
 
+void menu_stopfile(void)
+{
+  if(mainmenu[menu_sub].close)
+  {
+    mainmenu[menu_sub].close();
+  }
+
+  menu_drawwnd(1);
+
+  return;
+}
+
+
 unsigned int menu_sw(void)
 {
   switch(menu_mode)

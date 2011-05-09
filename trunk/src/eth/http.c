@@ -26,7 +26,7 @@ HTTP_Table http_table[TCP_ENTRIES];
 
 void http_station(char *rx, unsigned int rx_len)
 {
-  unsigned int i, save=0, add=0, del=0, up=0, down=0, play=0;
+  unsigned int i, save=0, add=0, del=0, up=0, down=0, play=0, stop=0;
   char *name, *addr, *item;
 
   name=0; addr=0; item=0;
@@ -50,6 +50,8 @@ void http_station(char *rx, unsigned int rx_len)
     { rx += 5; rx_len -= 5; down = 1; }
     else if(strncmpi(rx, "play=", 5) == 0)
     { rx += 5; rx_len -= 5; play = 1; }
+    else if(strncmpi(rx, "stop=", 5) == 0)
+    { rx += 5; rx_len -= 5; stop = 1; }
     else
     { rx++;    rx_len--; }
   }
@@ -106,8 +108,15 @@ void http_station(char *rx, unsigned int rx_len)
   {
     if(strlen(item) > 0)
     {
+      standby_off();
       menu_openfile(item);
-      menu_drawwnd(1);
+    }
+  }
+  else if(stop)
+  {
+    if(!standby_isactive())
+    {
+      menu_stopfile();
     }
   }
 
@@ -166,23 +175,7 @@ void http_settings(char *rx, unsigned int rx_len)
     if(strncmpi(rx, "restartwebradio=", len) == 0)
     {
       rx += len; rx_len -= len;
-
-      //disable interrupts
-      __asm("cpsid   i\n");
-      delay_ms(1);
-      //jump to 0x0000
-      __asm("ldr     r0, =%0\n"         //load app start address
-    
-            "ldr     r1, =0xe000ed08\n" //set vector table addr to the beginning of the app
-            "str     r0, [r1]\n"
-    
-            "ldr     r1, [r0]\n"        //load stack ptr from the app's vector table
-            "mov     sp, r1\n"
-    
-            "ldr     r0, [r0, #4]\n"    //load the initial PC from the app's vector table and
-            "bx      r0\n"              //branch to the app's entry point
-            :
-            : "i" (0x0000));
+      cpu_reset();
     }
 
     for(item=0, found=0; item<SETTINGSITEMS; item++)

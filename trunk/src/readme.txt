@@ -28,7 +28,7 @@ License
 History
 -------
   May 09 2011  v0.12  VS1053 patch 1.8
-               r147   FatFS 0.08b
+               r148   FatFS 0.08b
 
   Dec 25 2010  v0.11  VS1053 patch 1.5
                r144   FatFS 0.08a

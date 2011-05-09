@@ -89,6 +89,7 @@ const unsigned char STATION_HTM[] =
   "  <input type=\"submit\" name=\"down\" id=\"down\" value=\"Down\">\r\n" \
   "  <input type=\"submit\" name=\"del\"  id=\"del\"  value=\"Del\">\r\n" \
   "  <input type=\"submit\" name=\"play\" id=\"play\" value=\"Play\">\r\n" \
+  "  <input type=\"submit\" name=\"stop\" id=\"stop\" value=\"Stop\">\r\n" \
   "  <input type=\"hidden\" name=\"item\" id=\"item\" value=\"\">\r\n" \
   "</form>\r\n" \
   "</td><td valign=\"top\">\r\n" \

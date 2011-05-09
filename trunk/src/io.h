@@ -203,6 +203,7 @@ int                                    keys_sw(void);
 void                                   keys_timerservice(void);
 
 void                                   cpu_speed(unsigned int low_speed);
+void                                   cpu_reset(void);
 void                                   init_bor(unsigned int on);
 void                                   init_periph(void);
 void                                   init_pins(void);
