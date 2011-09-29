@@ -33,6 +33,7 @@
   "HTTP/1.0 200 OK\r\n" \
   "Server: "APPNAME"\r\n" \
   "Connection: Close\r\n" \
+  "Cache-Control: no-store, no-cache, max-age=86400\r\n" \
   "Content-Type: application/x-javascript\r\n" \
   "Content-Length: "
 
@@ -40,6 +41,7 @@
   "HTTP/1.0 200 OK\r\n" \
   "Server: "APPNAME"\r\n" \
   "Connection: Close\r\n" \
+  "Cache-Control: no-store, no-cache, max-age=86400\r\n" \
   "Content-Type: text/css\r\n" \
   "Content-Length: "
 
@@ -47,6 +49,7 @@
   "HTTP/1.0 200 OK\r\n" \
   "Server: "APPNAME"\r\n" \
   "Connection: Close\r\n" \
+  "Cache-Control: no-store, no-cache, max-age=0\r\n" \
   "Content-Type: text/plain\r\n" \
   "Content-Length: "
 
@@ -54,6 +57,7 @@
   "HTTP/1.0 200 OK\r\n" \
   "Server: "APPNAME"\r\n" \
   "Connection: Close\r\n" \
+  "Cache-Control: no-store, no-cache, max-age=86400\r\n" \
   "Content-Type: image/x-icon\r\n" \
   "Content-Length: "
 
@@ -61,6 +65,7 @@
   "HTTP/1.0 200 OK\r\n" \
   "Server: "APPNAME"\r\n" \
   "Connection: Close\r\n" \
+  "Cache-Control: no-store, no-cache, max-age=86400\r\n" \
   "Content-Type: image/gif\r\n" \
   "Content-Length: "
 
@@ -68,6 +73,7 @@
   "HTTP/1.0 200 OK\r\n" \
   "Server: "APPNAME"\r\n" \
   "Connection: Close\r\n" \
+  "Cache-Control: no-store, no-cache, max-age=86400\r\n" \
   "Content-Type: image/jpeg\r\n" \
   "Content-Length: "
 

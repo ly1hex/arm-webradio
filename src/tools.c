@@ -135,7 +135,7 @@ const char* strstri(const char *s, const char *pattern)
 }
 
 
-#ifndef strncmpi
+#ifdef TOOLS_STRNCMPI
 int strncmpi(const char *s1, const char *s2, size_t n)
 {
   unsigned char c1, c2;
@@ -161,7 +161,7 @@ int strncmpi(const char *s1, const char *s2, size_t n)
 #endif
 
 
-#ifndef itoa
+#ifdef TOOLS_ITOA
 char* itoa(int val, char *buf, int radix)
 {
   char *p;
@@ -192,7 +192,7 @@ char* itoa(int val, char *buf, int radix)
 #endif
 
 
-#ifndef utoa
+#ifdef TOOLS_UTOA
 char* utoa(unsigned val, char *buf, int radix)
 {
   char *s, *p;
@@ -221,7 +221,7 @@ char* utoa(unsigned val, char *buf, int radix)
 #endif
 
 
-#ifndef ltoa
+#ifdef TOOLS_LTOA
 char* ltoa(long val, char *buf, int radix)
 {
   char *p;
@@ -252,7 +252,7 @@ char* ltoa(long val, char *buf, int radix)
 #endif
 
 
-#ifndef ultoa
+#ifdef TOOLS_ULTOA
 char* ultoa(unsigned long val, char *buf, int radix)
 {
   char *s, *p;

@@ -32,18 +32,18 @@ void vs_requesthandler(void)
   len = vs_buflen();
   if(len != 0)
   {
-    if(len > 32)
+    if(len > 16)
     {
-      len = 32;
+      len = 16;
     }
-    vs_ssi_writewait(); //transmit fifo full?
+    vs_ssi_writewait(); //ssi transmit fifo full?
     VS_DCS_DISABLE();
     tail = vs_buftail;
     VS_DCS_ENABLE();
     for(; len!=0; len--)
     {
       vs_ssi_write(vs_buf.b8[tail]);
-      if(++tail >= VS_BUFSIZE)
+      if(++tail == VS_BUFSIZE)
       {
         tail = 0;
       }
@@ -69,8 +69,8 @@ unsigned char vs_bufgetc(void)
 
   if(head != tail)
   {
-    c = vs_buf.b8[tail];
-    if(++tail >= VS_BUFSIZE)
+    c = vs_buf.b8[tail++];
+    if(tail == VS_BUFSIZE)
     {
       tail = 0;
     }
@@ -92,8 +92,8 @@ void vs_bufputs(const unsigned char *s, unsigned int len)
   head = vs_bufhead;
   while(len--)
   {
-    vs_buf.b8[head] = *s++;
-    if(++head >= VS_BUFSIZE)
+    vs_buf.b8[head++] = *s++;
+    if(head == VS_BUFSIZE)
     {
       head = 0;
     }
@@ -586,14 +586,14 @@ void vs_reset(void)
   if(i == 4)                                                         //VS1053
   {
     DEBUGOUT("VS: VS1053\n");
-    vs_write_reg(VS_CLOCKF, 0x1800|VS1053_SC_MUL_3X);
+    vs_write_reg(VS_CLOCKF, 0x1800|VS1053_SC_MUL_4X);
     DEBUGOUT("VS: load VS1053B patch\n");                            //VS1053B
     vs_write_plugin(vs1053b_patch, VS1053B_PATCHLEN);
   }
   else if(i == 5)                                                    //VS1033
   {
     DEBUGOUT("VS: VS1033\n");
-    vs_write_reg(VS_CLOCKF, 0x1800|VS1033_SC_MUL_3X);
+    vs_write_reg(VS_CLOCKF, 0x1800|VS1033_SC_MUL_4X);
     i = vs_read_ram(0x1942); //extra parameter (0x1940) -> version (0x1942)
     if(i < 3)                                                        //VS1033C
     {

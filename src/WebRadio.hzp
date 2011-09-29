@@ -1,5 +1,5 @@
 <!DOCTYPE CrossStudio_Project_File>
-<solution Name="WebRadio" version="2">
+<solution Name="WebRadio" target="8" version="2">
   <project Name="WebRadio">
     <configuration Name="Common" Target="LM3S6950" arm_architecture="v7M" arm_core_type="Cortex-M3" arm_interwork="Yes" arm_linker_heap_size="128" arm_linker_process_stack_size="0" arm_linker_stack_size="2048" arm_simulator_memory_simulation_filename="$(TargetsDir)/LM3S/LM3SSimulatorMemory.dll" arm_simulator_memory_simulation_parameter="0x40000;0x10000" arm_target_debug_interface_type="ADIv5" arm_target_flash_loader_type="LIBMEM RPC Loader" c_preprocessor_definitions="STARTUP_FROM_RESET;gcc;PART_LM3S6950" c_user_include_directories="$(TargetsDir)/LM3S/include;$(ProjectDir)/third_party;$(ProjectDir)/third_party/fatfs;$(ProjectDir)/third_party/lmi" linker_additional_files="$(TargetsDir)/LM3S/lib/libcmsis$(LibExt)$(LIB)" linker_memory_map_file="$(TargetsDir)/LM3S/LM3S6950_MemoryMap.xml" linker_output_format="bin" project_directory="" project_type="Executable" property_groups_file_path="$(TargetsDir)/LM3S/propertyGroups.xml"/>
     <configuration Name="Flash" Placement="Flash" arm_target_flash_loader_file_path="$(TargetsDir)/LM3S/Release/Loader.elf" linker_section_placement_file="$(ProjectDir)/flash_placement.xml" target_reset_script="FLASHReset()"/>
@@ -183,6 +183,7 @@
     </folder>
     <configuration Name="Release" gcc_optimization_level="Optimize For Size"/>
     <configuration Name="Debug" build_treat_warnings_as_errors="Yes"/>
+    <configuration Name="THUMB Flash Release" gcc_optimization_level="Optimize For Size"/>
   </project>
   <configuration Name="THUMB Flash Debug" inherited_configurations="THUMB;Flash;Debug"/>
   <configuration Name="THUMB" Platform="ARM" arm_instruction_set="THUMB" arm_library_instruction_set="THUMB" c_preprocessor_definitions="__THUMB" hidden="Yes"/>

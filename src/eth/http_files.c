@@ -80,14 +80,14 @@ const unsigned char STATION_HTM[] =
   "<div id=\"container\">\r\n" \
   "<div id=\"head\"><h1>"APPNAME"</h1><a href=\"/\">Home</a> | <a href=\"/station\">Station</a> | <a href=\"/alarm\">Alarm</a> | <a href=\"/settings\">Settings</a></div>\r\n" \
   "<div id=\"content\">\r\n" \
-  "<table width=\"100%\" border=\"0\" cellpadding=\"4\"><tr><td valign=\"top\">\r\n" \
+  "<table width=\"100%\" border=\"0\" cellpadding=\"4\"><tr><td valign=\"top\" align=\"center\">\r\n" \
   "<form name=\"list\" id=\"list\">\r\n" \
   "  <select name=\"station\" id=\"station\" size=\"15\" onClick=\"getStation(document.list.station.selectedIndex+1);\"></select>\r\n" \
   "</form>\r\n" \
   "<form name=\"move\" id=\"move\" method=\"post\">\r\n" \
   "  <input type=\"submit\" name=\"up\"   id=\"up\"   value=\"Up\">\r\n" \
   "  <input type=\"submit\" name=\"down\" id=\"down\" value=\"Down\">\r\n" \
-  "  <input type=\"submit\" name=\"del\"  id=\"del\"  value=\"Del\">\r\n" \
+  "  <input type=\"submit\" name=\"del\"  id=\"del\"  value=\"Del\"><br>\r\n" \
   "  <input type=\"submit\" name=\"play\" id=\"play\" value=\"Play\">\r\n" \
   "  <input type=\"submit\" name=\"stop\" id=\"stop\" value=\"Stop\">\r\n" \
   "  <input type=\"hidden\" name=\"item\" id=\"item\" value=\"\">\r\n" \

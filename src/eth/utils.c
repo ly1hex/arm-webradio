@@ -43,12 +43,12 @@ unsigned int base64_decode(unsigned char *dst, const unsigned char *src, unsigne
       c = base64_test(*src);
       if(c)
       {
-        buf[i++] = c-1;
+        buf[i++] = c-1; //save to buffer
       }
-      /*else if(*src == '=')
+      else if(*src == '=')
       {
-        buf[i++] = 0;
-      }*/
+        buf[i++] = 0xFF; //skip
+      }
       else
       {
         break;
@@ -61,6 +61,14 @@ unsigned int base64_decode(unsigned char *dst, const unsigned char *src, unsigne
       *dst++ = ((buf[1]&0x0F) << 4) | ((buf[2]&0x3C) >> 2);
       *dst++ = ((buf[2]&0x03) << 6) |   buf[3];
       written += 3;
+      if(buf[2] == 0xFF)
+      {
+        written--;
+      }
+      if(buf[3] == 0xFF)
+      {
+        written--;
+      }
     }
     else
     {

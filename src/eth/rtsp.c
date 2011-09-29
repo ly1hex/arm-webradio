@@ -23,9 +23,22 @@ unsigned int rtsp_localport=0;
 
 void rtsp_close(void)
 {
+  long timeout;
+
   if(rtsp_status != RTSP_CLOSED)
   {
     rtsp_status = RTSP_CLOSE;
+
+    timeout = getontime()+3; //3 seconds
+    while(rtsp_status != RTSP_CLOSED)
+    {
+      eth_service();
+      if(getdeltatime(timeout) > 0)
+      {
+        rtsp_status = RTSP_CLOSED;
+        break;
+      }
+    }
   }
 
   return;

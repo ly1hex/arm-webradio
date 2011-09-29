@@ -22,18 +22,27 @@ char*                                  strtoupper(char *dst, const char *src);
 int                                    strstrk(char *dst, const char *src, const char *key);
 const char*                            strstri(const char *s, const char *pattern);
 #ifndef strncmpi
+# define TOOLS_STRNCMPI
 int                                    strncmpi(const char *s1, const char *s2, size_t n);
 #endif
+
 #ifndef itoa
+//# define TOOLS_ITOA
 char*                                  itoa(int val, char *buf, int radix);
 #endif
+
 #ifndef utoa
+//# define TOOLS_UTOA
 char*                                  utoa(unsigned val, char *buf, int radix);
 #endif
+
 #ifndef ltoa
+//# define TOOLS_LTOA
 char*                                  ltoa(long val, char *buf, int radix);
 #endif
+
 #ifndef ultoa
+//# define TOOLS_ULTOA
 char*                                  ultoa(unsigned long val, char *buf, int radix);
 #endif
 
