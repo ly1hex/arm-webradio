@@ -4,7 +4,6 @@ Current issues:
 - Rotary encoder does the wrong thing the first time used after system startup
   - solutionn could be to wait at least two events to get the correct direction
 
-- MAC address modification in the web interface is broken
 
 Wishlist:
 ---------

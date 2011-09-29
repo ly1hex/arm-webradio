@@ -22,9 +22,22 @@ unsigned int shoutcast_localport=0;
 
 void shoutcast_close(void)
 {
+  long timeout;
+
   if(shoutcast_status != SHOUTCAST_CLOSED)
   {
     shoutcast_status = SHOUTCAST_CLOSE;
+
+    timeout = getontime()+3; //3 seconds
+    while(shoutcast_status != SHOUTCAST_CLOSED)
+    {
+      eth_service();
+      if(getdeltatime(timeout) > 0)
+      {
+        shoutcast_status = SHOUTCAST_CLOSED;
+        break;
+      }
+    }
   }
 
   return;
