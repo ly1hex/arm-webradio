@@ -24,7 +24,7 @@
 || ELM ChaN's FatFs with LFN         || working ||
 || *Features* ||
 || Play Shoutcast/Icecast streams    || working ||
-|| Play RTSP streams                 || 50%     ||
+|| Play RTSP streams                 || experimental ||
 || Play from SMB/CIFS Shares         || -       ||
 || Play from Memory Card             || working ||
 || Load Settings from Memory Card    || working ||
