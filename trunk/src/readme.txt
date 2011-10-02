@@ -1,4 +1,4 @@
-WebRadio v0.13 (c) Andreas Watterott (www.watterott.net)
+WebRadio v0.14 (c) Andreas Watterott (www.watterott.net)
 ========================================================
   Compiled with Rowley's CrossWorks for ARM 2.1.1
                          CPU Support Pkg. Stellaris 1.7
@@ -27,6 +27,9 @@ License
 
 History
 -------
+  Oct 02 2011  v0.14  RTSP support improved (keepalive)
+               r152
+
   Sep 29 2011  v0.13  Bugfix in base64_decode()
                r150   Streaming improved
 

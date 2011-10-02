@@ -1,41 +1,35 @@
 [PLAYLIST]
-NUMBEROFENTRIES=13
+NUMBEROFENTRIES=11
 
-FILE1=http://edge.live.mp3.mdn.newmedia.nacamar.net/projectreloaded/livestream.mp3
+FILE1=http://stream.project-reloaded.com/pr/mp3-128
 TITLE1=Project reloaded
 
-FILE2=http://62.26.4.172:8010/
-TITLE2=Project reloaded (OLD)
+FILE2=http://87.230.53.43:8000/
+TITLE2=Star FM (MP3)
 
-FILE3=http://91.121.123.102:8000/evil.mp3
-TITLE3=Project-Fx (MP3)
+FILE3=http://87.230.53.43:8002/
+TITLE3=Star FM (AAC)
 
-FILE4=http://91.121.123.102:8000/evil.ogg
-TITLE4=Project-Fx (OGG)
+FILE4=http://alternative.mthn.net:8700/
+TITLE4=ShoutedFM Alternative
 
-FILE5=http://stream.starfm.q-nic.eu:8000/
-TITLE5=Star FM (MP3)
+FILE5=http://rockradio.de:8090/
+TITLE5=Rockradio
 
-FILE6=http://stream.starfm.q-nic.eu:8002/  
-TITLE6=Star FM (AAC)
+FILE6=http://mp3.webradio.rockantenne.de:80/
+TITLE6=Rock Antenne
 
-FILE7=http://alternative.mthn.net:8700/
-TITLE7=ShoutedFM Alternative
+FILE7=http://gffstream.ic.llnwd.net/stream/gffstream_stream_wdr_einslive_a
+TITLE7=1Live
 
-FILE8=http://rockradio.de:8090/
-TITLE8=Rockradio
+FILE8=rtsp://gffstream-w1b.wm.llnwd.net/gffstream_w1a
+TITLE8=Bayern 1 (RTSP)
 
-FILE9=http://mp3.webradio.rockantenne.de:80/
-TITLE9=Rock Antenne
+FILE9=http://icecast.scanamerica.us/ny_nyfd
+TITLE9=NY Fire Dep.
 
-FILE10=http://gffstream.ic.llnwd.net/stream/gffstream_stream_wdr_einslive_a
-TITLE10=1Live
+FILE10=http://listen-west.liveatc.net:8011/kpsp
+TITLE10=LiveATC KPSP
 
-FILE11=rtsp://gffstream-w1b.wm.llnwd.net/gffstream_w1a
-TITLE11=Bayern 1 (RTSP)
-
-FILE12=http://icecast.scanamerica.us/ny_nyfd
-TITLE12=NY Fire Dep.
-
-FILE13=http://listen-west.liveatc.net:8011/kpsp
-TITLE13=LiveATC KPSP
+FILE11=rtsp://mtg-wms.bahnhof.net/banditsthlm
+TITLE11=Bandit (RTSP)
