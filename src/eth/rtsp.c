@@ -160,6 +160,8 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
   static unsigned int seq=0, content_len=0, pkt_len=0;
   const RTSP_Header *rtsp;
 
+static long keepalive=0;
+
   switch(rtsp_status)
   {
     case RTSP_OPENED:
@@ -167,9 +169,23 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
       //save audio data
       while(rx_len)
       {
-        //read rtsp header
+        
         if(pkt_len == 0)
         {
+          //send keepalive
+          if(getdeltatime(keepalive) > 0)
+          {
+            keepalive = getontime()+60;
+            tx_len = sprintf((char*)tx, "GET_PARAMETER rtsp://%s%s/audio RTSP/1.0\r\n"
+                                        "CSeq: %i\r\n"
+                                        "Session: %s\r\n"
+                                        "User-Agent: "APPNAME"\r\n"
+                                        "\r\n",
+                                        iptoa(gbuf.station.ip), gbuf.station.file, ++seq, session);
+            tcp_send(idx, tx_len, 0);
+          }
+
+          //read rtsp header
           rtsp = (const RTSP_Header*)rx;
           if((rx_len >= (RTSP_HEADERLEN+RTP_HEADERLEN+RTPASF_HEADERLEN)) &&
              (rtsp->magic == 0x24))
@@ -183,23 +199,25 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
           {
             rx++;
             rx_len--;
-            continue;
           }
-        }
-        //save data
-        if(rx_len > pkt_len)
-        {
-          rtsp_putdata(rx, pkt_len);
-          rx     += pkt_len;
-          rx_len -= pkt_len;
-          pkt_len = 0;
         }
         else
         {
-          rtsp_putdata(rx, rx_len);
-          pkt_len -= rx_len;
-          rx_len = 0;
-          break;
+          //save data
+          if(rx_len > pkt_len)
+          {
+            rtsp_putdata(rx, pkt_len);
+            rx     += pkt_len;
+            rx_len -= pkt_len;
+            pkt_len = 0;
+          }
+          else
+          {
+            rtsp_putdata(rx, rx_len);
+            pkt_len -= rx_len;
+            rx_len = 0;
+            break;
+          }
         }
       }
       break;
@@ -234,14 +252,13 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
           for(i=0; isdigit(session[i]) && (i<(32-1)); i++);
           session[i] = 0;
 
-          seq++;
           tx_len = sprintf((char*)tx, "PLAY rtsp://%s%s RTSP/1.0\r\n"
                                       "CSeq: %i\r\n"
                                       "Session: %s\r\n"
                                       "Range: npt=0.000-\r\n"
                                       "User-Agent: "APPNAME"\r\n"
                                       "\r\n",
-                                      iptoa(gbuf.station.ip), gbuf.station.file, seq, session);
+                                      iptoa(gbuf.station.ip), gbuf.station.file, ++seq, session);
           tcp_send(idx, tx_len, 0);
           DEBUGOUT("RTSP: PLAY\n");
         }
@@ -280,13 +297,12 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
             DEBUGOUT("RTSP: ASF header: %i\n", i);
 
             rtsp_status = RTSP_SETUP;
-            seq++;
             tx_len = sprintf((char*)tx, "SETUP rtsp://%s%s/audio RTSP/1.0\r\n"
                                         "CSeq: %i\r\n"
                                         "Transport: RTP/AVP/TCP;unicast;interleaved=0-1;mode=PLAY\r\n"
                                         "User-Agent: "APPNAME"\r\n"
                                         "\r\n",
-                                        iptoa(gbuf.station.ip), gbuf.station.file, seq);
+                                        iptoa(gbuf.station.ip), gbuf.station.file, ++seq);
             tcp_send(idx, tx_len, 0);
             DEBUGOUT("RTSP: SETUP\n");
           }
@@ -341,12 +357,11 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
         {
           menu_drawpopup("Station: OK");
           rtsp_status = RTSP_DESCRIBE1;
-          seq++;
           tx_len = sprintf((char*)tx, "DESCRIBE rtsp://%s%s RTSP/1.0\r\n"
                                       "CSeq: %i\r\n"
                                       "User-Agent: "APPNAME"\r\n"
                                       "\r\n",
-                                      iptoa(gbuf.station.ip), gbuf.station.file, seq);
+                                      iptoa(gbuf.station.ip), gbuf.station.file, ++seq);
           tcp_send(idx, tx_len, 0);
           DEBUGOUT("RTSP: DESCRIPE\n");
         }
@@ -391,12 +406,11 @@ void rtsp_tcpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
 
     case RTSP_CLOSE:
       rtsp_status = RTSP_CLOSED;
-      seq++;
       tx_len = sprintf((char*)tx, "TEARDOWN rtsp://%s%s RTSP/1.0\r\n"
                                   "CSeq: %i\r\n"
                                   "User-Agent: "APPNAME"\r\n"
                                   "\r\n",
-                                  iptoa(gbuf.station.ip), gbuf.station.file, seq);
+                                  iptoa(gbuf.station.ip), gbuf.station.file, ++seq);
       tcp_send(idx, tx_len, 0);
       tcp_close(idx);
       DEBUGOUT("RTSP: TEARDOWN\n");
