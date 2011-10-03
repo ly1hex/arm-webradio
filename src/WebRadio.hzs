@@ -1,9 +1,7 @@
 <!DOCTYPE CrossStudio_for_ARM_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints>
-  <BreakpointListItem line="713" action="" hardwareBreakpoint="" trigger="" useHWbreakpoint="false" group="Breakpoints" type="Breakpoint" state="2" counter="0" isFunctionBreakpoint="false" filename="D:\projects\WebRadio\svn\trunk\src\menu_dlg.c" expression="" />
- </Breakpoints>
+ <Breakpoints/>
  <ETMWindow>
   <ETMRegister number="0" value="800" />
   <ETMRegister number="8" value="6f" />
@@ -11,7 +9,7 @@
  </ETMWindow>
  <ExecutionCountWindow/>
  <Memory1>
-  <MemoryWindow autoEvaluate="0" addressText="0x1a8" numColumns="8" sizeText="sizeof(int)" dataSize="1" radix="16" addressSpace="" />
+  <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
  </Memory1>
  <Memory2>
   <MemoryWindow autoEvaluate="0" addressText="" numColumns="8" sizeText="" dataSize="1" radix="16" addressSpace="" />
