@@ -36,7 +36,6 @@ void nbns_reply(unsigned int idx, unsigned int id)
   tx_nbns->data.an.addr  = eth_getip();
 
   nbns_encode(tx_nbns->data.an.name, eth_getname(), 0x00); //0x00 = Workstation
-  tx_nbns->data.an.name[32] = 0;
 
   udp_send(idx, NBNS_HEADERLEN+NBNSA_HEADERLEN);
 
@@ -69,7 +68,7 @@ void nbns_udpapp(unsigned int idx, const unsigned char *rx, unsigned int rx_len,
 
     if(type == 0x00) //0x00 = Workstation
     {
-      if(strcmp(name, eth_getname()) == 0)
+      if(strcasecmp(name, eth_getname()) == 0)
       {
         nbns_reply(idx, swap16(rx_nbns->id));
       }

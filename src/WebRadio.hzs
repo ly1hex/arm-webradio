@@ -23,7 +23,6 @@
  <Project>
   <ProjectSessionItem path="WebRadio" name="unnamed" />
   <ProjectSessionItem path="WebRadio;WebRadio" name="unnamed" />
-  <ProjectSessionItem path="WebRadio;WebRadio;Source Files" name="unnamed" />
  </Project>
  <Register1>
   <RegisterWindow openNodes="" binaryNodes="" hiddenNodes="" unsignedNodes="" visibleGroups="" decimalNodes="" octalNodes="" asciiNodes="" />
