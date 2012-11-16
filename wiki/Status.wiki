@@ -1,4 +1,3 @@
-#labels Featured
 ==Status==
 || *Hardware* ||
 || Display                           || working (S65-L2F50, S65-LPH88, S65-LS020, MIO283QT-1, MIO283QT-2) ||
